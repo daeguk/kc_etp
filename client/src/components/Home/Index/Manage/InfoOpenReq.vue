@@ -109,30 +109,40 @@ export default {
             console.log("getInfoOpenReqList");
             var vm = this;
 
-            axios.get(Config.base_url + "/user/index/getinfoopenreqlist", {
-                    params: {
-                        // "bbs_id" : vm.bbs_id,
-                        // "seloption" : vm.seloption,
-                        // "searchinfo" : vm.searchinfo,
-                        // "curPage": vm.curPage,
-                        // "perPage": vm.perPage
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getinfoopenreqlist"
+                        ,   "data"      :   {
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
                     }
-                }).then(response => {
-                    // console.log(response);
-                    if (response.data.success == false) {
-                        alert("해당 신청현황이 없습니다");
-                    } else {
-                        var items = response.data.results;
-                        
-                        //console.log("response=" + JSON.stringify(items));
-                        vm.results = items;
-                        
-                         reqTable.clear().draw();
-                         reqTable.rows.add(vm.results).draw();
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
+                            } else {
+                                var items = response.data.results;
+                                
+                                //console.log("response=" + JSON.stringify(items));
+                                vm.results = items;
+                                
+                                reqTable.clear().draw();
+                                reqTable.rows.add(vm.results).draw();
+                            } 
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
                     }
-                }).catch(error => {
-                    vm.$root.$confirm.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-                });
+                ,   function(error) {
+
+                        if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );            
+
         }, 
         async dialogOpen(flag, item) {
             
@@ -158,20 +168,33 @@ export default {
         
         updateIndexOpenYn: function(flag, item) {
             this.dialog = false;
+            var vm = this;
 
             if(flag == 'Y') {
                 console.log("JISU_ID="+this.selected.F16013);
-                axios.post(Config.base_url + '/user/index/updateIndexOpenYn', {
-                    params : {
-                        flag : flag,
-                        reqFlag : this.reqFlag,
-                        JISU_ID : this.selected.F16013,
-                        INST_CD : this.selected.INST_CD
-                    }
-                }).then(response => {
-                  
-                    this.getInfoOpenReqList();
-                })
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + '/user/index/updateIndexOpenYn'
+                            ,   "data"      :   {
+                                    flag : flag,
+                                    reqFlag : this.reqFlag,
+                                    JISU_ID : this.selected.F16013,
+                                    INST_CD : this.selected.INST_CD
+                                }
+                            ,   "method"    :   "post"
+                            ,   "paramKey"  :   "params"
+                        }
+                    ,   function(response) {
+
+                            this.getInfoOpenReqList();
+                        }
+                    ,   function(error) {
+
+                            if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
             }
         }
     }

@@ -64,7 +64,11 @@
                     
                 </v-card>
             </v-flex>
-        </v-layout>
+            <v-flex>
+                <ProgressBar ref="progress"></ProgressBar>
+                <ConfirmDialog ref="confirm2"></ConfirmDialog>
+            </v-flex>             
+        </v-layout>       
     </v-dialog>
 
 </template>
@@ -76,6 +80,9 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 
 import Config from '@/js/config.js';
+import util       from "@/js/util.js";
+import ProgressBar from "@/components/common/ProgressBar.vue";
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexFixJongmokInout = null;
 var tableIndexFixModify = null;
@@ -83,6 +90,11 @@ var tableIndexFixModify = null;
 
 export default {
     props: [ "indexBasic", "indexFixDialog" ],
+
+    components : {
+        ProgressBar: ProgressBar,
+        ConfirmDialog: ConfirmDialog
+    },    
 
     data() {
         return {
@@ -130,83 +142,114 @@ export default {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/index/getIndexFixList", {
-                data: this.indexBasic
-            }).then(response => {
+            util.processing(vm.$refs.progress, true);
 
-                if (response && response.data) {
-
-                    /* 지수조치 현황의 기본정보 */
-                    var indexFixData                =   response.data.indexFixData;
-                    if( indexFixData ) {
-                        vm.indexFixData             =   indexFixData;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexFixList"
+                        ,   "data"      :   vm.indexBasic
+                        ,   "method"    :   "post"
                     }
+                ,   function(response) {
 
-                    /* 지수조치 종목 편출입 정보 */
-                    tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
-                        "processing": true,
-                        "serverSide": false,
-                        "info": false,   // control table information display field
-                        "stateSave": true,  //restore table state on page reload,
-                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                        paging: false,
-                        searching: false,
-                        data : [],
-                        "columnDefs": [
-                            { "targets": 0, className: "dt-left" },
-                            { "targets": 2, className: "dt-right" },
-                        ],            
-                        columns: [
-                            { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true , className:"txt_left" },      /* code */
-                            { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true , className:"txt_left" },      /* 종목명 */
-                            { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true , className:"txt_right" },      /* 구분 */
-                            { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true , className:"txt_right" },      /* 비중(%) */
-                        ]
-                    });
+                        try{
+
+                            util.processing(vm.$refs.progress, false);
+
+                            if (response && response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        if ( vm.$refs.confirm2.open( '확인', msg, {}, 1 ) ) {}
+                                        return  false;
+                                    }
+                                }
+
+                                /* 지수조치 현황의 기본정보 */
+                                var indexFixData                =   response.data.indexFixData;
+                                if( indexFixData ) {
+                                    vm.indexFixData             =   indexFixData;
+                                }
+
+                                /* 지수조치 종목 편출입 정보 */
+                                tableIndexFixJongmokInout = $('#tableIndexFixJongmokInout').DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    paging: false,
+                                    searching: false,
+                                    data : [],
+                                    "columnDefs": [
+                                        { "targets": 0, className: "dt-left" },
+                                        { "targets": 2, className: "dt-right" },
+                                    ],            
+                                    columns: [
+                                        { "title"   :   "code"      ,   "data": "code"           ,   "orderable" : true , className:"txt_left" },      /* code */
+                                        { "title"   :   "종목명"    ,   "data": "name"            ,   "orderable" : true , className:"txt_left" },      /* 종목명 */
+                                        { "title"   :   "구분"      ,   "data": "gubun_name"      ,   "orderable" : true , className:"txt_right" },      /* 구분 */
+                                        { "title"   :   "비중(%)"   ,   "data": "rate"            ,   "orderable" : true , className:"txt_right" },      /* 비중(%) */
+                                    ]
+                                });
 
 
-                    /* 지수채용 주식수 변경 정보 */
-                    tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
-                        "processing": true,
-                        "serverSide": false,
-                        "info": false,   // control table information display field
-                        "stateSave": true,  //restore table state on page reload,
-                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                        paging: false,
-                        searching: false,
-                        data : [],
-                    
-                        columns: [
-                            { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true , className:"txt_left"  },      /* 종목코드 */
-                            { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true , className:"txt_left"  },      /* 한글종목명 */
-                            { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true , className:"txt_right"  },      /* 당일 금액 */
-                            { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true , className:"txt_right"  },      /* 전일 금액 */
-                            { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true , className:"txt_right"  },      /* 변경분 */
-                        ]
-                    });
+                                /* 지수채용 주식수 변경 정보 */
+                                tableIndexFixModify = $('#tableIndexFixModify').DataTable( {
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "info": false,   // control table information display field
+                                    "stateSave": true,  //restore table state on page reload,
+                                    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                    paging: false,
+                                    searching: false,
+                                    data : [],
+                                
+                                    columns: [
+                                        { "title"   :   "code"      ,   "data": "code"                ,   "orderable" : true , className:"txt_left"  },      /* 종목코드 */
+                                        { "title"   :   "종목명"    ,   "data": "name"                ,   "orderable" : true , className:"txt_left"  },      /* 한글종목명 */
+                                        { "title"   :   vm.indexFixData.now_date      ,   "data": "now_date_money"      ,   "orderable" : true , className:"txt_right"  },      /* 당일 금액 */
+                                        { "title"   :   vm.indexFixData.oper_date      ,   "data": "prev_date_money"     ,   "orderable" : true , className:"txt_right"  },      /* 전일 금액 */
+                                        { "title"   :   "변경분"    ,   "data": "in_out_money"        ,   "orderable" : true , className:"txt_right"  },      /* 변경분 */
+                                    ]
+                                });
 
 
-                    /* 지수조치 종목 편출입 정보 */
-                    var indexFixJongmokInoutList    =   response.data.indexFixJongmokInoutList;
-                    if( indexFixJongmokInoutList && indexFixJongmokInoutList.length > 0 ) {
-                        vm.indexFixJongmokInoutList =   indexFixJongmokInoutList;
+                                /* 지수조치 종목 편출입 정보 */
+                                var indexFixJongmokInoutList    =   response.data.indexFixJongmokInoutList;
+                                if( indexFixJongmokInoutList && indexFixJongmokInoutList.length > 0 ) {
+                                    vm.indexFixJongmokInoutList =   indexFixJongmokInoutList;
 
-                        tableIndexFixJongmokInout.clear().draw();
-                        tableIndexFixJongmokInout.rows.add(indexFixJongmokInoutList).draw();
-                        tableIndexFixJongmokInout.draw(indexFixJongmokInoutList);                        
+                                    tableIndexFixJongmokInout.clear().draw();
+                                    tableIndexFixJongmokInout.rows.add(indexFixJongmokInoutList).draw();
+                                    tableIndexFixJongmokInout.draw(indexFixJongmokInoutList);                        
+                                }
+                                
+                                /* 지수채용 주식수 변경 정보 */
+                                var indexFixModifyList          =   response.data.indexFixModifyList;
+                                if( indexFixModifyList && indexFixModifyList.length > 0 ) {
+                                    vm.indexFixModifyList       =   indexFixModifyList;
+
+                                    tableIndexFixModify.clear().draw();
+                                    tableIndexFixModify.rows.add(indexFixModifyList).draw();
+                                    tableIndexFixModify.draw(indexFixModifyList);                        
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
                     }
-                    
-                    /* 지수채용 주식수 변경 정보 */
-                    var indexFixModifyList          =   response.data.indexFixModifyList;
-                    if( indexFixModifyList && indexFixModifyList.length > 0 ) {
-                        vm.indexFixModifyList       =   indexFixModifyList;
+                ,   function(error) {
+                        util.processing(vm.$refs.progress, false);
 
-                        tableIndexFixModify.clear().draw();
-                        tableIndexFixModify.rows.add(indexFixModifyList).draw();
-                        tableIndexFixModify.draw(indexFixModifyList);                        
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
                     }
-                }
-            });
+            );
+
         }        
     }
 };

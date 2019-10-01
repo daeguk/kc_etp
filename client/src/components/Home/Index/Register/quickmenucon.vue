@@ -33,6 +33,7 @@
 
 <script>
 import Config from "@/js/config.js";
+import util   from "@/js/util.js";
 import Constant from "@/store/store_constant.js";
 
 export default {
@@ -52,6 +53,7 @@ export default {
     }),
 
     created() {
+
         this.fn_getStatusList();
 /*        
         console.log( "eventBus on >> ");
@@ -81,25 +83,49 @@ export default {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/index/getStatusList", {
-                data: { com_mst_cd: "COM001" }
-            }).then(function(response) {
+            vm.$emit( "fn_showProgress", true );
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getStatusList"
+                        ,   "data"      :   { com_mst_cd: "COM001" }
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                if (response && response.data) {
+                        try{
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                            vm.$emit( "fn_showProgress", false );
+
+                            if (response && response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                vm.statusList   = response.data.arrList;
+
+                                vm.fn_getIndexSelectList();
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    vm.statusList   = response.data.arrList;
+                        vm.$emit( "fn_showProgress", false );
 
-                    vm.fn_getIndexSelectList();
-                }
-            });
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },
 
         /*
@@ -110,22 +136,47 @@ export default {
 
             var vm = this;
 
-            axios.post(Config.base_url + "/user/index/getIndexSelectList", {
-                data: {  }
-            }).then(function(response) {
-                if (response && response.data) {
+            vm.$emit( "fn_showProgress", true );
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexSelectList"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            vm.$emit( "fn_showProgress", false );
+
+                            if (response && response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                vm.indexSelectList   = response.data.dataList;
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    vm.indexSelectList   = response.data.dataList;
-                }
-            });
+                        vm.$emit( "fn_showProgress", false );
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },
 
         /*

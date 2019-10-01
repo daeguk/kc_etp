@@ -99,6 +99,7 @@
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
+import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
@@ -252,7 +253,7 @@ console.log( vm.pdfData );
 
                 vm.fn_getExistsNowPdfBaisc().then( function( e ) {
 
-                    if( !e ) {
+                    if( !e || !e.result ) {
                         return  false;
                     }
 
@@ -289,41 +290,55 @@ console.log( vm.pdfData );
          * 현재일자에 pdf basic 데이터가 존재하는지 체크한다.
          * 2019-05-03  bkLove(촤병국)
          */
-        fn_getExistsNowPdfBaisc() {
+        async fn_getExistsNowPdfBaisc() {
             var vm = this;
 
-            return  new Promise(function(resolve, reject) {
+            return await new Promise(function(resolve, reject) {
                 console.log( "fn_getExistsNowPdfBaisc called" );
 
                 vm.$emit( "fn_showProgress", true );
-                axios.post( Config.base_url + "/user/etp/getExistsNowPdfBaisc", {
-                    data: vm.pdfData
-                }).then(function(response) {
-                    console.log(response);
 
-                    vm.$emit( "fn_showProgress", false );
-                    if (response.data) {
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/etp/getExistsNowPdfBaisc"
+                            ,   "data"      :   vm.pdfData
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
 
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-                        if (!response.data.result) {
-                            if( msg ) {
-                                resolve(false);
+                            try{
+
+                                vm.$emit( "fn_showProgress", false );
+                                if (response.data) {
+
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            resolve( { result : false } );
+                                        }
+                                    }
+
+                                    vm.exists_now_pdf_yn      =   response.data.exists_now_pdf_yn;
+                                }
+
+                                resolve({ result : true });
+
+                            }catch(ex) {
+                                resolve({ result : false });
+                                console.log( "error", ex );
                             }
                         }
+                    ,   function(error) {
+                            vm.$emit( "fn_showProgress", false );
 
-                        vm.exists_now_pdf_yn      =   response.data.exists_now_pdf_yn;
-                    }
+                            if( error ) {
+                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                            }
 
-                    resolve(true);
-                    
-                }).catch(error => {
-                    console.log( error );
+                            resolve({ result : false });
+                        }
+                );
 
-                    vm.$emit( "fn_showProgress", false );
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-
-                    resolve(false);
-                });
 
             }).catch( function(e) {
                 console.log( e );
@@ -331,7 +346,7 @@ console.log( vm.pdfData );
                 vm.$emit( "fn_showProgress", false );
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
 
-                resolve(false);
+//                resolve(false);
             });
         },
 

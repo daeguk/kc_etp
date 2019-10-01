@@ -99,6 +99,8 @@ import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 import Config from "@/js/config.js";
+import util       from "@/js/util.js";  
+
 export default {
     props: ['paramData', 'showDialog', 'showView'],
     data() {
@@ -220,25 +222,45 @@ export default {
         getIndexBaseInfo: function() {
             var vm = this;
             console.log("getIndexBaseInfo");
-            
-            axios.get(Config.base_url + "/user/index/getIndexBaseInfo", {
-                    params: {
-                        jisu_cd : vm.basicData.jisu_cd,
-                        market_id : vm.basicData.market_id,
-                        large_type : vm.basicData.large_type
+
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexBaseInfo"
+                        ,   "data"      :   {
+                                jisu_cd : vm.basicData.jisu_cd,
+                                market_id : vm.basicData.market_id,
+                                large_type : vm.basicData.large_type
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
                     }
-            }).then(response => {
-                // console.log(response);
-                if (response.data.success == false) {
-                    alert("지수정보가 없습니다.");
-                } else {
-                    var items = response.data.results;
-                    vm.results = items[0];
-                    
-                    vm.openSubIndexInfoTab      =   true;
-                    //this.list_cnt = this.results.length;
-                }
-            });
+                ,   function(response) {
+
+                        try{
+
+                            if (response.data.success == false) {
+                                if ( vm.$refs.confirm.open( '확인', "지수정보가 없습니다.", {}, 1 ) ) {}
+                            } else {
+                                var items = response.data.results;
+                                vm.results = items[0];
+                                
+                                vm.openSubIndexInfoTab      =   true;
+                                //this.list_cnt = this.results.length;
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+
+                        if( error ) {
+                            if ( vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
+
 
         },   
         
@@ -265,92 +287,111 @@ export default {
                 // Create the data table.
                 var data = new google.visualization.DataTable();
                 data.addColumn('date', 'date');
-            
-                axios.get(Config.base_url + "/user/index/getIndexEtpHistoryData", {                    
-                    params: {
-                        jisu_cd : jisu_cd,
-                        market_id : market_id,
-                        large_type : large_type,
-                        term : term
-                    }
-                }).then(response => {
 
-                    var INDEX_NM = "";
-                    var ETP_NM = "";
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/index/getIndexEtpHistoryData"
+                            ,   "data"      :   {
+                                    jisu_cd : jisu_cd,
+                                    market_id : market_id,
+                                    large_type : large_type,
+                                    term : term
+                                }
+                            ,   "method"    :   "get"
+                            ,   "paramKey"  :   "params"
+                        }
+                    ,   function(response) {
 
-                    if (response.data.results[0] != null) {
-                        INDEX_NM = response.data.results[0].INDEX_NM;
-                        ETP_NM = response.data.results[0].ETP_NM;
-                    }
+                            try{
 
-                    data.addColumn('number', INDEX_NM);
+                                var INDEX_NM = "";
+                                var ETP_NM = "";
 
-                    // ETP 정보가 있으면 추가 
-                    if (ETP_NM != null) {
-                        data.addColumn('number', ETP_NM);
-                    }
+                                if (response.data.results[0] != null) {
+                                    INDEX_NM = response.data.results[0].INDEX_NM;
+                                    ETP_NM = response.data.results[0].ETP_NM;
+                                }
 
-                    // console.log(response);
-                    if (response.data.success == false) {                    
+                                data.addColumn('number', INDEX_NM);
 
-                        data.addRows(
-                            []
-                        );
+                                // ETP 정보가 있으면 추가 
+                                if (ETP_NM != null) {
+                                    data.addColumn('number', ETP_NM);
+                                }
 
-                         // Set chart options
-                        var options = {'title':' ',
-                                'height':'300',
-                                'colors':['#85c406', '#787878', '#ff4366', '#727281'],
-                                'hAxis':{
-                                    format: "MM.dd",
-                                    ticks: data.getDistinctValues(0),
-                                },
-                            };
-                        // Instantiate and draw our chart, passing in some options.
-                        var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
+                                // console.log(response);
+                                if (response.data.success == false) {                    
 
-                        
-                        chart.draw(data, options);
-                    } else {
+                                    data.addRows(
+                                        []
+                                    );
 
-                       
-                        var items = [] 
+                                    // Set chart options
+                                    var options = {'title':' ',
+                                            'height':'300',
+                                            'colors':['#85c406', '#787878', '#ff4366', '#727281'],
+                                            'hAxis':{
+                                                format: "MM.dd",
+                                                ticks: data.getDistinctValues(0),
+                                            },
+                                        };
+                                    // Instantiate and draw our chart, passing in some options.
+                                    var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
 
-                        for (let item of response.data.results) {
-                            let trd_dd = item.trd_dd.split(',');
-                            if (ETP_NM != null) {
-                                items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx), Number(item.ept_close_idx)]);
-                            } else {
-                                items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx)]);
+                                    
+                                    chart.draw(data, options);
+                                } else {
+
+                                
+                                    var items = [] 
+
+                                    for (let item of response.data.results) {
+                                        let trd_dd = item.trd_dd.split(',');
+                                        if (ETP_NM != null) {
+                                            items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx), Number(item.ept_close_idx)]);
+                                        } else {
+                                            items.push([new Date(trd_dd[0], trd_dd[1], trd_dd[2], trd_dd[3], trd_dd[4], trd_dd[5]), Number(item.close_idx)]);
+                                        }
+                                    
+                                    }
+
+                                    data.addRows(
+                                        items
+                                    );
+
+                                    // Set chart options
+                                    var options = {'title':' ',
+                                            'height':'300',
+                                            'colors':['#85c406', '#787878', '#ff4366', '#727281'],
+                                            'hAxis':{
+                                                format: "MM.dd",
+                                                ticks: data.getDistinctValues(0),
+                                            },
+                                    };
+
+                                    if (term == "1D" || term == "1W") {
+                                        options.hAxis.format = "HH:mm";
+                                        options.hAxis.ticks = data.getDistinctValues(0);
+                                    }
+                                    // Instantiate and draw our chart, passing in some options.
+                                    var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
+
+                                    
+                                    chart.draw(data, options);
+                                }
+
+                            }catch(ex) {
+                                console.log( "error", ex );
                             }
-                          
                         }
+                    ,   function(error) {
 
-                        data.addRows(
-                            items
-                        );
-
-                         // Set chart options
-                        var options = {'title':' ',
-                                'height':'300',
-                                'colors':['#85c406', '#787878', '#ff4366', '#727281'],
-                                'hAxis':{
-                                    format: "MM.dd",
-                                    ticks: data.getDistinctValues(0),
-                                },
-                        };
-
-                        if (term == "1D" || term == "1W") {
-                            options.hAxis.format = "HH:mm";
-                            options.hAxis.ticks = data.getDistinctValues(0);
+                            if( error ) {
+                                if ( vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                            }
                         }
-                        // Instantiate and draw our chart, passing in some options.
-                        var chart = new google.visualization.LineChart(document.getElementById('index_chart_div'));
-
-                        
-                        chart.draw(data, options);
-                    }
-                });
+                );
+            
             }
         },
         showMessageBox: function(title, msg, option, gubun) {

@@ -228,38 +228,53 @@ export default {
 // console.log("fn_getEtpOerPdf............");
 // console.log(vm.searchParam);
                 vm.pdfDataList  =   [];
-                
+
                 vm.$emit( "fn_showProgress", true );
-                axios.post( url, {
-                    data: vm.searchParam
-                }).then(function(response) {
-                    console.log(response);
+                util.axiosCall(
+                        {
+                                "url"       :   url
+                            ,   "data"      :   vm.searchParam
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
 
-                    vm.$emit( "fn_showProgress", false );
-                    if (response.data) {
+                            try{
 
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.$emit("showMessageBox", '확인', msg,{},1);
-                                return  false;
+                                vm.$emit( "fn_showProgress", false );
+
+                                if (response.data) {
+
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                                            return  false;
+                                        }
+                                    }
+
+                                    var dataList = response.data.dataList;
+
+                                    if (dataList && dataList.length > 0) {
+                                        tblPdfList.rows.add(dataList).draw();
+
+                                        vm.indexBasic   =   dataList[0];
+                                        vm.pdfDataList  =   dataList;
+                                    }
+                                }
+
+                            }catch(ex) {
+                                console.log( "error", ex );
                             }
                         }
+                    ,   function(error) {
+                            vm.$emit( "fn_showProgress", false );
 
-                        var dataList = response.data.dataList;
-
-                        if (dataList && dataList.length > 0) {
-                            tblPdfList.rows.add(dataList).draw();
-
-                            vm.indexBasic   =   dataList[0];
-                            vm.pdfDataList  =   dataList;
+                            if( error ) {
+                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                            }
                         }
-                    }
+                );
 
-                }).catch(error => {
-                    vm.$emit( "fn_showProgress", false );
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-                });
             }
             
         },
@@ -279,28 +294,46 @@ export default {
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
             vm.searchParam.isInstCd     =   "N";        /* 기관에 속한 정보만 노출하는지 */
 
-            axios.post(  Config.base_url + "/user/etp/getEtpOperPdfByRateTitle", {
-                data: vm.searchParam
-            }).then(function(response) {
-                console.log(response);
 
-                if (response.data) {
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getEtpOperPdfByRateTitle"
+                        ,   "data"      :   vm.searchParam
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit("showMessageBox", '확인', msg,{},1);
-                            return  false;
+                        try{
+
+                            if (response.data) {
+
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
+
+                                var rateTitleList = response.data.rateTitleList;
+                                vm.rateTitleList =   rateTitleList;
+                            }
+
+                            vm.fn_setTableInfo();
+                            vm.fn_getEtpOerPdf( 'N' );  
+
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    var rateTitleList = response.data.rateTitleList;
-                    vm.rateTitleList =   rateTitleList;
-                }
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                        }
+                    }
+            );
 
-                vm.fn_setTableInfo();
-                vm.fn_getEtpOerPdf( 'N' );                
-            });
         },        
 
         fn_setEtpOperPdfByRate : function( paramData ) {
@@ -333,36 +366,51 @@ export default {
                 
                 vm.$emit( "fn_showProgress", true );
 
-                axios.post( Config.base_url + "/user/etp/getPdfExistYnByNow", {
-                    data: vm.searchParam
-                }).then(function(response) {
-                    console.log(response);
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/etp/getPdfExistYnByNow"
+                            ,   "data"      :   vm.searchParam
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
 
-                    vm.$emit( "fn_showProgress", false );
+                            try{
 
-                    if (response.data) {
-                        var msg = ( response.data.msg ? response.data.msg : "" );
-                        if (!response.data.result) {
-                            if( msg ) {
-                                vm.$emit("showMessageBox", '확인',msg,{},4);
+                                vm.$emit( "fn_showProgress", false );
+
+                                if (response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.$emit("showMessageBox", '확인',msg,{},4);
+                                            resolve(false);
+                                        }
+                                    }
+
+                                    if( response.data.emergency_exist_yn ) {
+                                        vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
+                                    }
+                                }
+
+                                resolve(true);
+
+                            }catch(ex) {
                                 resolve(false);
+                                console.log( "error", ex );
                             }
                         }
+                    ,   function(error) {
 
-                        if( response.data.emergency_exist_yn ) {
-                            vm.emergency_exist_yn   =   response.data.emergency_exist_yn;
+                            vm.$emit( "fn_showProgress", false );
+
+                            if( error ) {
+                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                            }
+
+                            resolve(false);
                         }
-                    }
+                );
 
-                    resolve(true);
-                }).catch(error => {
-                    console.log( error );
-
-                    vm.$emit( "fn_showProgress", false );
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-
-                    resolve(false);
-                });
 
             }).catch( function(e) {
                 console.log( e );
@@ -389,37 +437,53 @@ export default {
                     resolve(true);
                 }else{
                     vm.$emit( "fn_showProgress", true );
-                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
-                        data: vm.searchParam
-                    }).then(function(response) {
-                        console.log(response);
 
-                        vm.$emit( "fn_showProgress", false );
-                        if (response.data) {
+                    util.axiosCall(
+                            {
+                                    "url"       :   Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506"
+                                ,   "data"      :   vm.searchParam
+                                ,   "method"    :   "post"
+                            }
+                        ,   function(response) {
 
-                            var msg = ( response.data.msg ? response.data.msg : "" );
-                            if (!response.data.result) {
-                                if( msg ) {
-                                    vm.$emit("showMessageBox", '확인', msg,{},1);
+                                try{
+
+                                    if (response.data) {
+                                        var msg = ( response.data.msg ? response.data.msg : "" );
+                                        if (!response.data.result) {
+                                            if( msg ) {
+                                                vm.$emit("showMessageBox", '확인', msg,{},1);
+                                                resolve(false);
+                                            }
+                                        }
+
+                                        if( response.data.dateInfo ) {
+                                            vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
+                                        }
+                                    }
+
+                                    vm.$emit( "fn_showProgress", false );
+                                    resolve(true);
+
+                                }catch(ex) {
+                                    vm.$emit( "fn_showProgress", false );
+                                    console.log( "error", ex );
+
                                     resolve(false);
                                 }
                             }
+                        ,   function(error) {
 
-                            if( response.data.dateInfo ) {
-                                vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
+                                vm.$emit( "fn_showProgress", false );
+
+                                if( error ) {
+                                    vm.$emit("showMessageBox", '확인', msg,{},4);
+                                }
+
+                                resolve(false);
                             }
-                        }
+                    );
 
-                        resolve(true);
-
-                    }).catch(error => {
-                        console.log( error );
-
-                        vm.$emit( "fn_showProgress", false );
-                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-
-                        resolve(false);
-                    });
                 }
 
             }).catch( function(e) {

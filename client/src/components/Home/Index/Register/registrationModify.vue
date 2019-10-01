@@ -587,6 +587,7 @@ import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import Constant from "@/store/store_constant.js";
+import util       from "@/js/util.js";
 
 var table01 = null;
 
@@ -775,36 +776,40 @@ export default {
                     }                    
 
                     var flag    =   true;
-                    new Promise(function(resolve, reject) {
-                        if( !selfThis.fn_checkFile( file ) ) {
+                    selfThis.fn_checkFile( file ).then( function(e){
+
+                        if( e && e.result ) {
+                            return  selfThis.fn_sizeCheck( file, "file" );
+                        }else{
                             flag    =   false;
-                            return  false;
                         }
-                        resolve();
+
+                    }).then( function(e) {
+
+                        if( e && e.result ) {
+                            return  selfThis.fn_jisuFileUpload( file, selfThis );
+                        }else{
+                            flag    =   false;
+                        }
+
+                    }).then( function(e) {
+
+                        if( e && e.result ) {
+                        }else{
+                            flag    =   false;
+                        }
+
+                        if( !flag ) {
+                            selfThis.$refs.file1.value  =   null;
+
+                            if( selfThis.$refs.file1.files ) {
+                                selfThis.$refs.file1.files  =   null;
+                            }
+                        }                    
+
                     }).catch( function(e) {
                         console.log( e );
-                    }).then( function() {
-                        new Promise(function(resolve, reject) {
-                            if( !selfThis.fn_sizeCheck( file, "file" ) ) {
-                                flag    =   false;
-                                return  false;
-                            }
-                            resolve();                      
-                        }).catch( function(e) {
-                            console.log( e );
-                        }).then( function() {    
-                            selfThis.fn_jisuFileUpload( file, selfThis );
-                        });
                     });
-
-                    if( !flag ) {
-                        this.$refs.file1.value  =   null;
-
-                        if( this.$refs.file1.files ) {
-                            this.$refs.file1.files  =   null;
-                        }
-                        return  false;
-                    }
 
                 }.bind(this)
             );
@@ -828,28 +833,27 @@ export default {
                     }                    
 
                     var flag    =   true;
-                    new Promise(function(resolve, reject) {
-                        if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                    selfThis.fn_sizeCheck( file, "methodFile" ).then( function(e){
+
+                        if( e && e.result ) {
+                            selfThis.modForm.show_method_file   =   file.name;
+                            selfThis.$refs.methodFile1.files    =   files;
+                        }else{
                             flag    =   false;
-                            return  false;
                         }
-                        resolve();                      
+
+
+                        if( !flag ) {
+                            selfThis.$refs.methodFile1.value =   null;
+
+                            if( selfThis.$refs.methodFile1.files ) {
+                                selfThis.$refs.methodFile1.files =   null;
+                            }
+                        }                     
+
                     }).catch( function(e) {
                         console.log( e );
-                    }).then( function() {    
-                        this.modForm.show_method_file   =   file.name;
-                        this.$refs.methodFile1.files    =   files;
                     });
-
-                    if( !flag ) {
-                        this.$refs.methodFile1.value =   null;
-
-                        if( this.$refs.methodFile1.files ) {
-                            this.$refs.methodFile1.files =   null;
-                        }
-
-                        return  false;
-                    }
 
                 }.bind(this)
             );            
@@ -873,36 +877,40 @@ export default {
                 }                
 
                 var flag    =   true;
-                new Promise(function(resolve, reject) {
-                    if( !selfThis.fn_checkFile( file ) ) {
+                selfThis.fn_checkFile( file ).then( function(e){
+
+                    if( e && e.result ) {
+                        return  selfThis.fn_sizeCheck( file, "file" );
+                    }else{
                         flag    =   false;
-                        return  false;
                     }
-                    resolve();
+
+                }).then( function(e) {
+
+                    if( e && e.result ) {
+                        return  selfThis.fn_jisuFileUpload( file, selfThis );
+                    }else{
+                        flag    =   false;
+                    }
+
+                }).then( function(e) {
+
+                    if( e && e.result ) {
+                    }else{
+                        flag    =   false;
+                    }
+
+                    if( !flag ) {
+                        selfThis.$refs.file1.value  =   null;
+
+                        if( selfThis.$refs.file1.files ) {
+                            selfThis.$refs.file1.files  =   null;
+                        }
+                    }
+
                 }).catch( function(e) {
                     console.log( e );
-                }).then( function() {
-                    new Promise(function(resolve, reject) {
-                        if( !selfThis.fn_sizeCheck( file, "file" ) ) {
-                            flag    =   false;
-                            return  false;
-                        }
-                        resolve();                      
-                    }).catch( function(e) {
-                        console.log( e );
-                    }).then( function() {    
-                        selfThis.fn_jisuFileUpload( file, selfThis );
-                    });
                 });
-
-                if( !flag ) {
-                    this.$refs.file1.value  =   null;
-
-                    if( this.$refs.file1.files ) {
-                        this.$refs.file1.files  =   null;
-                    }
-                    return  false;
-                }
 
                 this.$refs.fileform1.addEventListener(
                     evt,
@@ -933,29 +941,28 @@ export default {
                 }                
 
                 var flag    =   true;
-                new Promise(function(resolve, reject) {
-                    if( !selfThis.fn_sizeCheck( file, "methodFile" ) ) {
+                selfThis.fn_sizeCheck( file, "methodFile" ).then( function(e){
+
+                    if( e && e.result ) {
+                        selfThis.modForm.show_method_file   =   file.name;
+//                      selfThis.$refs.methodFile1.files    =   files;
+                    }else{
                         flag    =   false;
-                        return  false;
                     }
-                    resolve();                      
+
+
+                    if( !flag ) {
+                        selfThis.$refs.methodFile1.value =   null;
+
+                        if( selfThis.$refs.methodFile1.files ) {
+                            selfThis.$refs.methodFile1.files =   null;
+                        }
+                    }                     
+
                 }).catch( function(e) {
                     console.log( e );
-                }).then( function() {    
-                    selfThis.modForm.show_method_file  =   file.name;
-//                    selfThis.$refs.methodFile1.files =   file;
                 });
 
-                if( !flag ) {
-                    this.$refs.methodFile1.value  =   null;
-
-                    if( this.$refs.methodFile1.files ) {
-                        this.$refs.methodFile1.files  =   null;
-                    }
-                    return  false;
-                }
-
-//                this.modForm.show_method_file   =   file.name;
 
                 this.$refs.methodForm1.addEventListener(
                     evt,
@@ -1024,13 +1031,7 @@ export default {
             /* 1. 지수 ID 필수 체크 */
             if (!vm.modForm.jisu_id) {
 
-                if( await vm.$root.$confirm2.open(
-                            '[지수 ID]',
-                            '[지수 ID] is required',
-                            {}
-                        ,   2
-                    )
-                ) {
+                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] is required" ,{},1) ){
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1038,13 +1039,7 @@ export default {
                 
             } else if (vm.modForm.jisu_id.length > 10) {
 
-                if( await vm.$root.$confirm2.open(
-                            '[지수 ID]',
-                            '[지수 ID] 10자리 까지만 입력 가능합니다.',
-                            {}
-                        ,   1
-                    )
-                ) {
+                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 10자리 까지만 입력 가능합니다." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1052,13 +1047,7 @@ export default {
 
             } else if (vm.modForm.jisu_id.length < 5) {
 
-                if( await vm.$root.$confirm2.open(
-                            '[지수 ID]',
-                            '[지수 ID] 5자리 이상 입력해 주세요.',
-                            {}
-                        ,   1
-                    )
-                ) {
+                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 5자리 이상 입력해 주세요." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1066,14 +1055,7 @@ export default {
 
             } else if( !regType.test( vm.modForm.jisu_id ) ) {
 
-                if( await vm.$root.$confirm2.open(
-                            '[지수 ID]',
-                            '[지수 ID] 숫자와 영문자만 가능합니다.',
-                            {}
-                        ,   1
-
-                    )
-                ) {
+                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 숫자와 영문자만 가능합니다." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1082,39 +1064,54 @@ export default {
             }
 
             /* 2. 지수 ID 중복 체크 */
-            axios.post(Config.base_url + "/user/index/getJisuDuplCheck", {
-                data: { jisu_id: this.modForm.jisu_id }
-            }).then( async function(response) {
-                if (response && response.data) {
-                    if (response.data.result == true) {
+            vm.$emit( "fn_showProgress", true );
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getJisuDuplCheck"
+                        ,   "data"      :   { jisu_id: this.modForm.jisu_id }
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
 
-                        if( await vm.$root.$confirm2.open(
-                                    '[지수 ID]',
-                                    '[지수 ID] 이미 존재합니다.',
-                                    {}
-                                ,   1
-                            )
-                        ) {
-                            vm.$refs.jisu_id.focus();
-                            vm.modForm.duplCheckResult = false;
-                            return false;
-                        }
+                        try{
 
-                    } else {
+                            vm.$emit( "fn_showProgress", false );
 
-                        if( await vm.$root.$confirm2.open(
-                                    '[지수 ID]',
-                                    '[지수 ID] 사용 가능합니다.',
-                                    {}
-                                ,   1
-                            )
-                        ) {
-                            vm.modForm.duplCheckResult = true;
-                            return false;
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (response.data.result == true) {
+
+                                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 이미 존재합니다." ,{},1) ) {
+                                        vm.$refs.jisu_id.focus();
+                                        vm.modForm.duplCheckResult = false;
+                                        return false;
+                                    }
+
+                                } else {
+
+                                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 사용 가능합니다." ,{},1) ) {
+                                        vm.modForm.duplCheckResult = true;
+                                        return false;
+                                    }
+                                }
+                            }
+
+                        }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
-                }
-            });
+                ,   function(error) {
+
+                        vm.$emit( "fn_showProgress", false );
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },
 
         /*
@@ -1145,13 +1142,7 @@ export default {
 
                 if (!this.modForm.duplCheckResult) {
 
-                    if( await this.$root.$confirm2.open(
-                                '[지수 ID]',
-                                '[지수 ID] 중복확인을 해주세요.',
-                                {}
-                            ,   1
-                        )
-                    ) {
+                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 중복확인을 해주세요." ,{},1) ) {
                         this.$refs.jisu_id.focus();
 
                         return false;
@@ -1179,26 +1170,14 @@ export default {
 
                 if( !this.modForm.show_method_file ) {
 
-                    if( await this.$root.$confirm2.open(
-                                '[지수방법론]',
-                                msgTitle + " 지수방법론을 필수로 업로드 해주세요.",
-                                {}
-                            ,   1
-                        )
-                    ) {
+                    if( await vm.$emit("showMessageBox", '확인', msgTitle + " 지수방법론을 필수로 업로드 해주세요." ,{},1) ) {
                         return false;
                     }
                 }
 
                 if( this.modForm.jisu_file_id == -1 ) {
 
-                    if( await this.$root.$confirm2.open(
-                                '[소급지수]',
-                                msgTitle + " 소급지수를 필수로 업로드 해주세요.",
-                                {}
-                            ,   1
-                        )
-                    ) {
+                    if( await vm.$emit("showMessageBox", '확인', msgTitle + " 소급지수를 필수로 업로드 해주세요." ,{},1) ) {
                         return false;
                     }
                 }
@@ -1212,8 +1191,8 @@ export default {
 
 
             if( await this.$root.$confirm2.open(
-                        '[지수 수정]',
-                        msgTitle,
+                        '[신규 지수 등록]',
+                        '저장하시겠습니까?',
                         {}
                     ,   2
                 )
@@ -1228,37 +1207,53 @@ export default {
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
             vm.$emit( "fn_showProgress", true );
-            axios.post(
-                Config.base_url + "/user/index/modifyJisu",
-                this.formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/modifyJisu"
+                        ,   "data"      :   vm.formData
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   ""
+                        ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                     }
-                }).then( async function(response) {
+                ,   async function(response) {
 
-                    vm.$emit( "fn_showProgress", false );
-                    if( response.data ) {
+                        try{
 
-                        var resultData = response.data;
+                            vm.$emit( "fn_showProgress", false );
 
-                        if( await vm.$root.$confirm2.open(
-                                    ''
-                                ,   resultData.msg
-                                ,   {}
-                                ,   1
-                            )
-                        ) {
-                        }
+                            if( response.data ) {
 
-                        if( resultData.result ) {
-                            vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
+                                var resultData = response.data;
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if( msg ) {
+                                    if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                        if (!response.data.result) {
+                                            return false;
+                                        }
+                                    }
+                                }
+
+                                vm.$emit( "fn_refresh", { 'jisu_id' : resultData.jisu_id, 'jisu_seq' : resultData.jisu_seq  } );
+                            }
+
+                        }catch(ex) {
+
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
-                }).catch(error => {
-                    vm.$emit( "fn_showProgress", false );
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-                });
+                ,   function(error) {
+
+                        vm.$emit( "fn_showProgress", false );
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },
 
 
@@ -1276,7 +1271,7 @@ export default {
             }
 
             if( await this.$root.$confirm2.open(
-                        '[지수 삭제]',
+                        '[지수삭제]',
                         '삭제하시겠습니까?',
                         {}
                     ,   2
@@ -1285,31 +1280,55 @@ export default {
                 if( "Y" != this.$root.$confirm2.val ) {
                     return false;
                 }
-            } 
-
-            axios.post(
-                Config.base_url + "/user/index/deleteJisu",
-                { data : this.modForm }
-            ).then( async function(response) {
-                if( response.data ) {
-
-                    var resultData = response.data;
+            }
 
 
-                    if( await vm.$root.$confirm2.open(
-                                ''
-                            ,   resultData.msg
-                            ,   {}
-                            ,   1
-                        )
-                    ) {
+            vm.$emit( "fn_showProgress", true );
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/deleteJisu"
+                        ,   "data"      :   vm.modForm
+                        ,   "method"    :   "post"
                     }
+                ,   async function(response) {
 
-                    if( resultData.result ) {
-                        vm.$emit( "fn_moveRegisterPage" );
+                        try{
+
+                            vm.$emit( "fn_showProgress", false );
+
+                            if( response.data ) {
+
+                                var resultData = response.data;
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if( msg ) {
+                                    if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                        if (!response.data.result) {
+                                            return false;
+                                        }
+                                    }
+                                }             
+
+                                vm.$emit( "fn_moveRegisterPage" );
+                            }
+
+                        }catch(ex) {
+
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
+                        }
                     }
-                }
-            });
+                ,   function(error) {
+
+                        vm.$emit( "fn_showProgress", false );
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );            
+
         },
         
 
@@ -1362,102 +1381,121 @@ export default {
          * 엑셀 유형인지 파일을 체크한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_checkFile( file ) {
+        async fn_checkFile( file ) {
+
+            var vm = this;
 
             var fileLen = file.name.length;
             var lastDot = file.name.lastIndexOf(".");
 
-            /* 1. 확장자가 존재하지 않는지 확인 */
-            if (lastDot == -1) {
+            return  await new Promise(async function(resolve, reject) {
 
-                if( this.$root.$confirm2.open(
-                            '[엑셀파일 유형확인]',
-                            "엑셀유형의 파일인지 확인 해 주세요.",
-                            {}
-                        ,   1
-                    )
-                ) {
-                    return  false;
+                try{
+
+                    /* 1. 확장자가 존재하지 않는지 확인 */
+                    if (lastDot == -1) {
+
+                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                            resolve( {result : false} );
+                            return  false;;
+                        }
+                    }
+
+                    var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
+                    var allowExt    =   ["xls", "xlsx", "csv"];
+
+                    /* 2. 허용되는 확장자에 포함되는지 확인 */
+                    if (!allowExt.includes(fileExt)) {
+
+                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                            resolve( {result : false} );
+                            return  false;;
+                        }
+
+                    }
+
+                    resolve( {result : true} );
+
+                }catch(e) {
+                    resolve( {result : false} );
                 }
-            }
 
-            var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
-            var allowExt    =   ["xls", "xlsx", "csv"];
-
-            /* 2. 허용되는 확장자에 포함되는지 확인 */
-            if (!allowExt.includes(fileExt)) {
-
-                if( this.$root.$confirm2.open(
-                            '[엑셀파일 유형확인]',
-                            "엑셀유형의 파일인지 확인 해 주세요.",
-                            {}
-                        ,   1
-                    )
-                ) {
-                    return  false;
-                }
-
-            }
-
-            return  true;
+            });
         },
 
         /*
          * 소급지수 파일을 업로드한다.
          * 2019-04-02  bkLove(촤병국)
          */
-        fn_jisuFileUpload : function( file, selfThis ){
+        async fn_jisuFileUpload( file, selfThis ){
             var vm = this;
 
             let formData = new FormData();
-            formData.append("files", file);
 
-            if( table01 ) {
-                table01.clear().draw();
-            }                  
+            return  await new Promise(function(resolve, reject) {
+                formData.append("files", file);
 
-            vm.$emit( "fn_showProgress", true );
-            axios.post(
-                Config.base_url + "/user/index/fileuploadSingle",
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                }
-            ).then( async function(response) {
-                console.log( response );
+                if( table01 ) {
+                    table01.clear().draw();
+                }                  
 
-                vm.$emit( "fn_showProgress", false );
-                if( response.data ) {
-                    selfThis.jisuUploadResult = response.data.result;
-                    
-                    if( !response.data.result ) {
+                vm.$emit( "fn_showProgress", true );
 
-                        if( await selfThis.$root.$confirm2.open(
-                                    ''
-                                ,   response.data.msg
-                                ,   {}
-                                ,   1
-                            )
-                        ) {
-                            return false;
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/index/fileuploadSingle"
+                            ,   "data"      :   formData
+                            ,   "method"    :   "post"
+                            ,   "paramKey"  :   ""
+                            ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                         }
-                    }
+                    ,   async function(response) {
 
-                    if( response.data.result ) {
-                        selfThis.modForm.jisu_file_id = response.data.jisu_file_id;
-                        selfThis.jisuDataList = response.data.dataList;
+                            try{
 
-                        if( table01 ) {
-                            table01.rows.add( selfThis.jisuDataList ).draw();                        
-                        }                        
-                    }
-                }
+                                vm.$emit( "fn_showProgress", false );
+                                if( response.data ) {
+                                    selfThis.jisuUploadResult = response.data.result;
+                                    
+                                    if( !response.data.result ) {
 
-            }).catch(error => {
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                                        if( await vm.$emit("showMessageBox", '확인', response.data.msg ,{},1) ) {
+                                            resolve( { result : false } );
+                                            return false;
+                                        }
+                                    }
+
+                                    if( response.data.result ) {
+                                        selfThis.modForm.jisu_file_id = response.data.jisu_file_id;
+                                        selfThis.jisuDataList = response.data.dataList;
+
+                                        if( table01 ) {
+                                            table01.rows.add( selfThis.jisuDataList ).draw();                        
+                                        }                        
+                                    }
+
+                                    resolve( { result : true } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+
+                                vm.$emit( "fn_showProgress", false );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+
+                            resolve( { result : false } );
+
+                            vm.$emit( "fn_showProgress", false );
+
+                            if( error ) {
+                                vm.$emit("showMessageBox", '확인',error,{},4);
+                            }
+                        }
+                );
+
             });
         },
 
@@ -1466,35 +1504,55 @@ export default {
          * 2019-04-02  bkLove(촤병국)
          */
         fn_getDomainInst() {
+            var vm = this;
             var selfThis = this;
 
             /* 1. 기관정보를 조회한다. */
-            axios.post(Config.base_url + "/user/index/getDomainInst", {
-                data: {}
-            }).then( async function(response) {
-                if (response && response.data) {
+            vm.$emit( "fn_showProgress", true );
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getDomainInst"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
 
-                    var msg = ( response.data.message ? response.data.message : "" );
+                        try{
 
-                    if (!response.data.success) {
+                            vm.$emit( "fn_showProgress", false );
 
-                        if( msg ) {
-                            if( await selfThis.$root.$confirm1.open(
-                                        '확인',
-                                        msg,
-                                        {}
-                                    ,   1
-                                )
-                            ) {
-                                return false;
+                            if (response && response.data) {
+
+                                var msg = ( response.data.message ? response.data.message : "" );
+
+                                if (!response.data.success) {
+
+                                    if( msg ) {
+                                        if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                            return false;
+                                        }
+                                    }
+                                }
+
+                                selfThis.arr_group_inst = response.data.dataGroupList;
+                                selfThis.arr_org_inst = response.data.dataList;
                             }
+
+                        }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    selfThis.arr_group_inst = response.data.dataGroupList;
-                    selfThis.arr_org_inst = response.data.dataList;
-                }
-            });
+                        vm.$emit( "fn_showProgress", false );
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
+                        }
+                    }
+            );
+
         },
 
         /*
@@ -1595,124 +1653,132 @@ export default {
          */        
         fn_getRegistedJisuData() {
 
+            var vm = this;
             var selfThis = this;
 
             if( table01 ) {
                 table01.clear().draw();
-            }            
+            }
 
-            selfThis.$emit( "fn_showProgress", true );
-            axios.post(Config.base_url + "/user/index/getRegistedJisuData", {
-                data: selfThis.editData
-            }).then( async function(response) {
 
-                selfThis.$emit( "fn_showProgress", false );
+            vm.$emit( "fn_showProgress", true );
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getRegistedJisuData"
+                        ,   "data"      :   vm.editData
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
 
-                if (response && response.data) {
+                        try{
 
-                    var msg = ( response.data.msg ? response.data.msg : "" );
+                            vm.$emit( "fn_showProgress", false );
 
-                    if (!response.data.result) {
+                            if (response && response.data) {
 
-                        if( msg ) {
-                            if( await selfThis.$root.$confirm1.open(
-                                        '확인',
-                                        msg,
-                                        {}
-                                    ,   1
-                                )
-                            ) {
-                                return false;
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+
+                                    if( msg ) {
+                                        if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                            return false;
+                                        }
+                                    }
+                                }
+
+                                if( response.data.jisuInfo ) {
+                                    vm.modForm = response.data.jisuInfo;
+                                    vm.modForm.duplCheckResult    =   true;
+                                }
+
+                                vm.modForm.arr_jisu_inst          =   [];
+                                vm.selectedInst          =   [];
+                                if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
+                                    vm.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    // 선택된 기관 정보 
+                                    vm.selectedInst = response.data.arr_jisu_inst;
+                                }
+
+                                vm.modForm.arr_show_inst          =   [];
+                                if( response.data.arr_show_inst && response.data.arr_show_inst.length > 0 ) {
+                                    vm.arr_show_inst              =   response.data.arr_show_inst;    /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
+                                }
+
+                                vm.modForm.jisuDataList           =   [];
+                                if( response.data.jisuDataList && response.data.jisuDataList.length > 0 ) {
+                                    vm.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
+                                    vm.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
+
+                                    if( table01 ) {
+                                        table01.rows.add( vm.jisuDataList ).draw();                        
+                                    }
+                                }
                             }
+
+                        }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
+                            console.log( "error", ex );
                         }
                     }
+                ,   function(error) {
 
-                    if( response.data.jisuInfo ) {
-                        selfThis.modForm = response.data.jisuInfo;
-                        selfThis.modForm.duplCheckResult    =   true;
-                    }
+                        vm.$emit( "fn_showProgress", false );
 
-                    selfThis.modForm.arr_jisu_inst          =   [];
-                    selfThis.selectedInst          =   [];
-                    if( response.data.arr_jisu_inst && response.data.arr_jisu_inst.length > 0 ) {
-                        selfThis.modForm.arr_jisu_inst      =   response.data.arr_jisu_inst;    // 선택된 기관 정보 
-                        selfThis.selectedInst = response.data.arr_jisu_inst;
-                    }
-
-                    selfThis.modForm.arr_show_inst          =   [];
-                    if( response.data.arr_show_inst && response.data.arr_show_inst.length > 0 ) {
-                        selfThis.arr_show_inst              =   response.data.arr_show_inst;    /* (사용자가 선택) 4개를 1개로 그룹핑한 기관정보 ( 팝업창에서 선택된 기관정보 노출 ) */
-                    }
-
-                    selfThis.modForm.jisuDataList           =   [];
-                    if( response.data.jisuDataList && response.data.jisuDataList.length > 0 ) {
-                        selfThis.jisuDataList               =   response.data.jisuDataList;     /* 소급지수 업로드 후 목록정보 */
-                        selfThis.jisuUploadResult           =   true;                           /* 소급지수 업로드 결과 여부 */
-
-                        if( table01 ) {
-                            table01.rows.add( selfThis.jisuDataList ).draw();                        
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인',error,{},4);
                         }
                     }
-                }
-            }).catch(error => {
-                selfThis.$emit( "fn_showProgress", false );
-                selfThis.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-            });
+            );
+
         },
 
         /*
          * 파일 사이즈를 체크한다.
          * 2019-06-21  bkLove(촤병국)
          */
-        fn_sizeCheck( file, gubun ) {
+        async fn_sizeCheck( file, gubun ) {
 
             var vm = this;
 
-            if( file ) {
-                var title = "";
-                var maxSize = 0;
+            return  await new Promise( async function(resolve, reject) {
 
-                if( gubun == "file") {
-                    title = "소급지수";
+                if( file ) {
+                    var title = "";
+                    var maxSize = 0;
 
-                    if( vm.limit ) {
-                        maxSize = vm.limit.jisu_max_size;
-                    }
-                }else if( gubun == "methodFile" ) {
-                    title = "지수방법론";
+                    if( gubun == "file") {
+                        title = "소급지수";
 
-                    if( vm.limit ) {
-                        maxSize = vm.limit.method_max_size;
-                    }                    
-                }
-
-                if( maxSize > 0 ) {
-                    if( file.size == 0 ) {
-                        if( this.$root.$confirm1.open(
-                                    '확인',
-                                    title + ' 파일용량이 0 byte 입니다.',
-                                    {}
-                                ,   1
-                            )
-                        ) {
-                            return false;
+                        if( vm.limit ) {
+                            maxSize = vm.limit.jisu_max_size;
                         }
+                    }else if( gubun == "methodFile" ) {
+                        title = "지수방법론";
+
+                        if( vm.limit ) {
+                            maxSize = vm.limit.method_max_size;
+                        }                    
                     }
 
-                    if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                        if( this.$root.$confirm1.open(
-                                    '확인',
-                                    title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
-                                    {}
-                                ,   1
-                            )
-                        ) {                       
-                            return false;
+                    if( maxSize > 0 ) {
+                        if( file.size == 0 ) {
+                            if( await vm.$emit("showMessageBox", '확인', title + ' 파일용량이 0 byte 입니다.' ,{},1) ) {
+                                resolve( { result: false } );
+                                return false;
+                            }
+                        }
+
+                        if( ( maxSize * 1024 * 1024 ) < file.size ) {
+                            if( await vm.$emit("showMessageBox", '확인', title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.' ,{},1) ) {
+                                resolve( { result: false } );            
+                                return false;
+                            }
                         }
                     }
                 }
-            }
-            return  true;
+
+                resolve( { result: true } );
+            });            
         },
 
         /*

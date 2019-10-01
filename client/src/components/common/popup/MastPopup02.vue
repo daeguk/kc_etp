@@ -190,38 +190,52 @@ export default {
 
         return  await new Promise(function(resolve, reject) {
 
-            vm.fn_showProgress( true );
-            axios.get( Config.base_url + "/user/common/getAllKspjongBasic", {
-                data: {}
-            }).then(async function(response) {
-                vm.fn_showProgress( false );
+            util.processing(vm.$refs.progress2, true);
 
-                if (response.data) {
-                    var results = response.data.results;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/common/getAllKspjongBasic"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   async function(response) {
 
-                    results.forEach( function(item, index, array) {
-                        if( item.F33861 == "0" ) {
-                            vm.kospiList.push( item );
-                        }else if( item.F33861 == "1" ) {
-                            vm.kosdaqList.push( item );
+                        try{
+
+                            util.processing(vm.$refs.progress2, false);
+
+                            if (response.data) {
+                                var results = response.data.results;
+
+                                results.forEach( function(item, index, array) {
+                                    if( item.F33861 == "0" ) {
+                                        vm.kospiList.push( item );
+                                    }else if( item.F33861 == "1" ) {
+                                        vm.kosdaqList.push( item );
+                                    }
+                                })
+                            }
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            resolve( { result : false } );
+
+                            console.log( "error", ex );
                         }
-                    })
-                }
+                    }
+                ,   function(error) {
+                        resolve( { result : false } );
 
-                resolve( { result : true } );
+                        util.processing(vm.$refs.progress2, false);
 
-            }).catch(error => {
-                resolve( { result : false } );
+                        if( error ) {
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                    }
+            );
 
-                vm.fn_showProgress( false );
-
-                vm.fn_showMessageBox(
-                    '확인',
-                    '서버로 부터 응답을 받지 못하였습니다.',
-                    {}
-                    ,4
-                );
-            });
         }).catch( function(e1) {
             console.log( e1 );
             resolve( { result : false } );

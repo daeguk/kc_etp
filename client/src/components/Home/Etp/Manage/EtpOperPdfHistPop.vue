@@ -1,10 +1,8 @@
 <template>
     <v-container>
         <v-flex>
-            <v-dialog v-model="showDialog" persistent  max-width="1100" max-height="8
-            
-            00" >
-                <v-card class="mx-auto" >
+            <v-dialog v-model="showDialog" persistent  max-width="1100" max-height="800" >
+                <v-card class="mx-auto">
                     <v-card flat class="listset_pop ver2">
                         <h5>
                             <v-card-title ma-0>
@@ -60,6 +58,7 @@
                                         </v-flex>
                                         <v-flex>
                                             <ProgressBar ref="progress"></ProgressBar>
+                                            <ConfirmDialog ref="confirm2"></ConfirmDialog>
                                         </v-flex>
 
                              </v-card>
@@ -83,13 +82,15 @@ import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var tblPdfHistList = null;
 
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
-        ProgressBar: ProgressBar
+        ProgressBar: ProgressBar,
+        ConfirmDialog: ConfirmDialog
     },
     data() {
         return {
@@ -164,163 +165,178 @@ export default {
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfEmergencyHistNow");            
 
             util.processing(vm.$refs.progress, true);
-            axios.post( Config.base_url + "/user/etp/getEtpOperPdfEmergencyHistNow", {
-                data: vm.searchParam
-            }).then(function(response) {
 
-                console.log(response);
-
-                util.processing(vm.$refs.progress, false);
-                if (response.data) {
-
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.$emit('showMessageBox', '확인', msg,{},1);
-                            return  false;
-                        }
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getEtpOperPdfEmergencyHistNow"
+                        ,   "data"      :   vm.searchParam
+                        ,   "method"    :   "post"
                     }
+                ,   function(response) {
 
-                    if( response.data.allDataList.length > 0 ) {
-                        vm.allDataList  =   response.data.allDataList;
+                        try{
 
-                        vm.step     =   3;
-                        if( vm.allDataList.length > 0 ) {
+                            util.processing(vm.$refs.progress, false);
+                            if (response.data) {
 
-                            var items = [];
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.$emit('showMessageBox', '확인', msg,{},1);
+                                        return  false;
+                                    }
+                                }
 
-                            for ( let subData of vm.allDataList ) {
-                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
-                                    $('#step3_' + subData.etf_F16012).DataTable().destroy();
+                                if( response.data.allDataList.length > 0 ) {
+                                    vm.allDataList  =   response.data.allDataList;
+
+                                    vm.step     =   3;
+                                    if( vm.allDataList.length > 0 ) {
+
+                                        var items = [];
+
+                                        for ( let subData of vm.allDataList ) {
+                                            if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
+                                                $('#step3_' + subData.etf_F16012).DataTable().destroy();
+                                            }
+                                        }
+
+                                        for ( let subData of vm.allDataList ) {
+
+                                            vm.$nextTick().then(() => {
+
+                                                if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
+                                                    $('#step3_' + subData.etf_F16012).DataTable().destroy();
+                                                }   
+
+                                                items = subData.data;
+
+                                                console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
+                                                console.log( "items" );
+                                                console.log( items );
+                                                
+                                                $( '#step3_' + subData.etf_F16012 ).DataTable( {
+                                                        "processing": true,
+                                                        "serverSide": false,
+                                                        "info": false,   // control table information display field
+                                                        "stateSave": true,  //restore table state on page reload,
+                                                        "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                                        "scrollY": ( items.length >= 12 ? '27vh' : '' ),
+                                                        select: {
+                                                            style:    'single',
+                                                            selector: 'td:first-child'
+                                                        },
+                                                        paging: false,
+                                                        searching: false,
+                                                        data : items,
+                                                        ordering : false,
+                                                        "columnDefs": [
+                                                            {  
+                                                                /* 상태 */
+                                                                "render": function ( data, type, row ) {
+
+                                                                    var htm = "";
+                                                                    if( typeof row.status != "undefined" ) {
+                                                                        if( row.status == "insert" ) {
+                                                                            htm = "신규";
+                                                                        }else{
+                                                                            htm = "변경";
+                                                                        }
+                                                                    }
+
+                                                                    return htm;
+                                                                },
+                                                                "targets": 2
+                                                            },
+                                                            {  
+                                                                /* CU shrs (변경전) */
+                                                                "render": function ( data, type, row ) {
+
+                                                                    var htm = "";
+                                                                    if( typeof row.status != "undefined" ) {
+                                                                        if( row.status == "insert" ) {
+                                                                            htm = "-";
+                                                                        }else{
+                                                                            htm = util.formatNumber( data );
+                                                                        }
+                                                                    }
+
+                                                                    return htm;
+                                                                },
+                                                                "targets": 5
+                                                            },
+                                                            {  
+                                                                /* CU shrs (변경후) */
+                                                                "render": function ( data, type, row ) {
+
+                                                                    var htm = "";
+                                                                    htm    +=  util.formatNumber( data );
+
+                                                                    return htm;
+                                                                },
+                                                                "targets": 6
+                                                            },
+                                                            {  
+                                                                /* 액면금액 (변경전) */
+                                                                "render": function ( data, type, row ) {
+
+                                                                    var htm = "";
+                                                                    if( typeof row.status != "undefined" ) {
+                                                                        if( row.status == "insert" ) {
+                                                                            htm = "-";
+                                                                        }else{
+                                                                            htm = util.formatNumber( data );
+                                                                        }
+                                                                    }
+
+                                                                    return htm;
+                                                                },
+                                                                "targets": 7
+                                                            },
+                                                            {  
+                                                                /* 액면금액 (변경후) */
+                                                                "render": function ( data, type, row ) {
+
+                                                                    var htm = "";
+                                                                    htm    +=  util.formatNumber( data );
+
+                                                                    return htm;
+                                                                },
+                                                                "targets": 8
+                                                            },
+                                                        ],
+                                                        columns: [
+                                                            { "data" : "email"          ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 이메일 */
+                                                            { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 시간 */
+                                                            { "data" : "status"         ,   "width" :   "6%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
+                                                            { "data" : "F16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
+                                                            { "data" : "F16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
+
+                                                            { "data" : "F16499_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
+                                                            { "data" : "F16499"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
+
+                                                            { "data" : "F34840_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
+                                                            { "data" : "F34840"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
+                                                        ]
+                                                }).draw();
+                                            });
+                                        }
+                                    }
                                 }
                             }
 
-                            for ( let subData of vm.allDataList ) {
-
-                                vm.$nextTick().then(() => {
-
-                                    if ( $.fn.DataTable.isDataTable('#step3_' + subData.etf_F16012 ) ) {
-                                        $('#step3_' + subData.etf_F16012).DataTable().destroy();
-                                    }   
-
-                                    items = subData.data;
-
-                                    console.log("subData.etf_F16012=[" + subData.etf_F16012 + "]");
-                                    console.log( "items" );
-                                    console.log( items );
-                                    
-                                    $( '#step3_' + subData.etf_F16012 ).DataTable( {
-                                            "processing": true,
-                                            "serverSide": false,
-                                            "info": false,   // control table information display field
-                                            "stateSave": true,  //restore table state on page reload,
-                                            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                                            "scrollY": ( items.length >= 12 ? '27vh' : '' ),
-                                            select: {
-                                                style:    'single',
-                                                selector: 'td:first-child'
-                                            },
-                                            paging: false,
-                                            searching: false,
-                                            data : items,
-                                            ordering : false,
-                                            "columnDefs": [
-                                                {  
-                                                    /* 상태 */
-                                                    "render": function ( data, type, row ) {
-
-                                                        var htm = "";
-                                                        if( typeof row.status != "undefined" ) {
-                                                            if( row.status == "insert" ) {
-                                                                htm = "신규";
-                                                            }else{
-                                                                htm = "변경";
-                                                            }
-                                                        }
-
-                                                        return htm;
-                                                    },
-                                                    "targets": 2
-                                                },
-                                                {  
-                                                    /* CU shrs (변경전) */
-                                                    "render": function ( data, type, row ) {
-
-                                                        var htm = "";
-                                                        if( typeof row.status != "undefined" ) {
-                                                            if( row.status == "insert" ) {
-                                                                htm = "-";
-                                                            }else{
-                                                                htm = util.formatNumber( data );
-                                                            }
-                                                        }
-
-                                                        return htm;
-                                                    },
-                                                    "targets": 5
-                                                },
-                                                {  
-                                                    /* CU shrs (변경후) */
-                                                    "render": function ( data, type, row ) {
-
-                                                        var htm = "";
-                                                        htm    +=  util.formatNumber( data );
-
-                                                        return htm;
-                                                    },
-                                                    "targets": 6
-                                                },
-                                                {  
-                                                    /* 액면금액 (변경전) */
-                                                    "render": function ( data, type, row ) {
-
-                                                        var htm = "";
-                                                        if( typeof row.status != "undefined" ) {
-                                                            if( row.status == "insert" ) {
-                                                                htm = "-";
-                                                            }else{
-                                                                htm = util.formatNumber( data );
-                                                            }
-                                                        }
-
-                                                        return htm;
-                                                    },
-                                                    "targets": 7
-                                                },
-                                                {  
-                                                    /* 액면금액 (변경후) */
-                                                    "render": function ( data, type, row ) {
-
-                                                        var htm = "";
-                                                        htm    +=  util.formatNumber( data );
-
-                                                        return htm;
-                                                    },
-                                                    "targets": 8
-                                                },
-                                            ],
-                                            columns: [
-                                                { "data" : "email"          ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 이메일 */
-                                                { "data" : "fmt_reg_time"   ,   "width" :   "8%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 시간 */
-                                                { "data" : "status"         ,   "width" :   "6%"    ,   "orderable" : false  ,   "className" : "txt_center"     },     /* 상태 */
-                                                { "data" : "F16316"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 코드 */
-                                                { "data" : "F16004"         ,   "width" :   "18%"   ,   "orderable" : false  ,   "className" : "txt_left"       },     /* 종목명 */
-
-                                                { "data" : "F16499_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs (변경전) */
-                                                { "data" : "F16499"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* CU shrs */
-
-                                                { "data" : "F34840_prev"    ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 (변경전) */
-                                                { "data" : "F34840"         ,   "width" :   "10%"   ,   "orderable" : false  ,   "className" : "txt_right"      },     /* 액면금액 */
-                                            ]
-                                    }).draw();
-                                });
-                            }
+                        }catch(ex) {
+                            console.log( "error", ex );
                         }
                     }
-                }
-            }).catch(error => {
-                util.processing(vm.$refs.progress, false);
-            });
+                ,   function(error) {
+
+                        util.processing(vm.$refs.progress, false);
+
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+
         },
 
         /*

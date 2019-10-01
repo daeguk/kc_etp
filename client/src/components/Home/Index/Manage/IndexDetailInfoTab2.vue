@@ -165,6 +165,7 @@ import jongmokPopup from "@/components/common/popup/jongmokPopup";
 import $      from 'jquery'
 import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
+import util       from "@/js/util.js";
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
 
@@ -459,37 +460,56 @@ export default {
                             jisu_cd = sel_items[i].F16013;
                             market_id = sel_items[i].market_id;
                         }
-                        axios.get(Config.base_url + "/user/index/getIndexAnalysisData", {
-                                params: {
-                                    jisu_cd : jisu_cd,                            
-                                    market_id : market_id,
-                                    gubun : gubun
+
+                        util.axiosCall(
+                                {
+                                        "url"       :   Config.base_url + "/user/index/getIndexAnalysisData"
+                                    ,   "data"      :   {
+                                            jisu_cd : jisu_cd,                            
+                                            market_id : market_id,
+                                            gubun : gubun
+                                        }
+                                    ,   "method"    :   "get"
+                                    ,   "paramKey"  :   "params"
                                 }
-                        }).then(response => {
-                                // console.log(response);
-                            if (response.data.success == false) {
-                                vm.$emit("showMessageBox", '확인','데이터가 없습니다.',{},1);
-                            } else {
-                                var items = response.data.results[0];
-                                                
-                                perf_table.row.add(  {
-                                    F16012 : items.F16012,
-                                    F16013 : items.F16013,
-                                    F16002 : items.F16002,
-                                    Week1 : items.Week1,
-                                    Month1 : items.Month1,
-                                    Month3 : items.Month3,
-                                    YTD : items.YTD,
-                                    Year1 : items.Year1,
-                                    Year3 : items.Year3,
-                                    Year5 : items.Year5,
-                                    Year10 : items.Year10,
-                                } ).draw(false); 
-                                
-                                vm.performance_chart();
-                            }
-                       
-                        });
+                            ,   function(response) {
+
+                                    try{
+                                        
+                                        if (response.data.success == false) {
+                                            vm.$emit("showMessageBox", '확인','데이터가 없습니다.',{},1);
+                                        } else {
+                                            var items = response.data.results[0];
+                                                            
+                                            perf_table.row.add(  {
+                                                F16012 : items.F16012,
+                                                F16013 : items.F16013,
+                                                F16002 : items.F16002,
+                                                Week1 : items.Week1,
+                                                Month1 : items.Month1,
+                                                Month3 : items.Month3,
+                                                YTD : items.YTD,
+                                                Year1 : items.Year1,
+                                                Year3 : items.Year3,
+                                                Year5 : items.Year5,
+                                                Year10 : items.Year10,
+                                            } ).draw(false); 
+                                            
+                                            vm.performance_chart();
+                                        }
+
+                                    }catch(e) {
+                                        console.log( e );
+                                    }
+                                }
+                            ,   function(error) {
+
+                                    if( error ) {
+                                        vm.$emit("showMessageBox", '확인', error,{}, 4);
+                                    }
+                                }
+                        );
+
                     } else {                            
                             vm.$emit("showMessageBox", '확인',sel_items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
                     }

@@ -431,90 +431,111 @@ export default {
             util.processing(vm.$refs.progress, true);
             console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
 
-            axios.get( Config.base_url + "/user/etp/getiNavData", {
-                params: {
-                    //F16012 : 'KR7261110001',
-                    F16012 : F16012,
-                }
-            }).then(async function(response) {
-                if (response.data.success) {
 
-                    vm.etpBasic = response.data.etpBasic;
-                    vm.pdfList = response.data.pdfList;
-                    
-                    
-                    var market_amt = 0;
-                    var market_tot_amt = 0;
-                    var index = 0;
-                    /* pdf데이터가 없을 경우 */
-                    if (vm.pdfList.length == 0) {
-                        util.processing(vm.$refs.progress, false);                      
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/etp/getiNavData"
+                        ,   "data"      :   {
+                                //F16012 : 'KR7261110001',
+                                F16012 : F16012,
+                            }
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
                     }
-                    for (let item of vm.pdfList) {                                            
-                        await vm.iNavCalulator(item, simulationMode).then(function(jongItem) {
-                            /* 종목 정보 바인딩 */                            
-                            item.F16588 = jongItem.market_amt; /* 시가 총액 (처음 로딩시는 etp 평가 금액으로 세팅)*/
-                            item.F15001 = jongItem.F15001;  /* 현재가 */
-                            item.F15007 = jongItem.F15007;  /* 기준가 */
-                            item.F15004 = jongItem.F15004;  /* 등락률 */
-                            item.F15472 = jongItem.F15472;  /* 대비 */
-                            item.F16013 = jongItem.F16013;  /* 단축코드 */
-                            item.F15001_US = 0;                  /* 달러 현재가 */
-                            item.F14531 = 0;                     /* JPYUSD 매수호가 */
-                            item.F14501 = 0;                     /* JPYUSD 매도호가 */
-                            item.F03003 = 0;                     /* JPYUSD 전일종가 */
-                            item.F33904 = 0;                     /* 단위계약승수 */
-                            
-                            // 엔화예금일경우 
-                            if(item.F16316 == 'JPYZZ0000001') {
-                                item.F15001_US = jongItem.F15001_US;                  /* 달러 현재가 */
-                                item.F14531 = jongItem.F14531;                     /* JPYUSD 매수호가 */
-                                item.F14501 = jongItem.F14501;                     /* JPYUSD 매도호가 */
-                                item.F03003 = jongItem.F03003;                     /* JPYUSD 전일종가 */
-                            }
+                ,   async function(response) {
 
-                            // 선물 또는 옵션일 경우
-                            if(item.F33861 == '4') {
-                                item.F33904 = jongItem.F33904;                     /* 단위계약승수 */
-                            }
+                        try{
 
-                            market_tot_amt += jongItem.market_amt;
-                            
-                            if (index == (vm.pdfList.length-1)) {                                                
-                                vm.market_tot_amt = market_tot_amt;
+                            if (response.data.success) {
 
-                                /*INav 계산 : CU시가총액 / CU당 주식수*/
-                                if (vm.etpBasic.F16499 > 0) {
-                                    vm.iNav_amt = vm.market_tot_amt / vm.etpBasic.F16499;
-                                } else {
-                                    vm.iNav_amt = vm.market_tot_amt;
-                                }
-                                /* INav 등락률 */                                
-                                vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.F03329) - 1) * 100;
-
-                                /* 비중 정보 산출*/
-                                for (let item of vm.pdfList) {        
-                                   
-                                    item.F34743 = ((item.F16588 /  vm.market_tot_amt) * 100).toFixed(2);                                    
-                                }
-                                vm.pdf_reload(vm.pdfList);
+                                vm.etpBasic = response.data.etpBasic;
+                                vm.pdfList = response.data.pdfList;
                                 
+                                
+                                var market_amt = 0;
+                                var market_tot_amt = 0;
+                                var index = 0;
+                                /* pdf데이터가 없을 경우 */
+                                if (vm.pdfList.length == 0) {
+                                    util.processing(vm.$refs.progress, false);                      
+                                }
+                                for (let item of vm.pdfList) {                                            
+                                    await vm.iNavCalulator(item, simulationMode).then(function(jongItem) {
+                                        /* 종목 정보 바인딩 */                            
+                                        item.F16588 = jongItem.market_amt; /* 시가 총액 (처음 로딩시는 etp 평가 금액으로 세팅)*/
+                                        item.F15001 = jongItem.F15001;  /* 현재가 */
+                                        item.F15007 = jongItem.F15007;  /* 기준가 */
+                                        item.F15004 = jongItem.F15004;  /* 등락률 */
+                                        item.F15472 = jongItem.F15472;  /* 대비 */
+                                        item.F16013 = jongItem.F16013;  /* 단축코드 */
+                                        item.F15001_US = 0;                  /* 달러 현재가 */
+                                        item.F14531 = 0;                     /* JPYUSD 매수호가 */
+                                        item.F14501 = 0;                     /* JPYUSD 매도호가 */
+                                        item.F03003 = 0;                     /* JPYUSD 전일종가 */
+                                        item.F33904 = 0;                     /* 단위계약승수 */
+                                        
+                                        // 엔화예금일경우 
+                                        if(item.F16316 == 'JPYZZ0000001') {
+                                            item.F15001_US = jongItem.F15001_US;                  /* 달러 현재가 */
+                                            item.F14531 = jongItem.F14531;                     /* JPYUSD 매수호가 */
+                                            item.F14501 = jongItem.F14501;                     /* JPYUSD 매도호가 */
+                                            item.F03003 = jongItem.F03003;                     /* JPYUSD 전일종가 */
+                                        }
 
-                               
+                                        // 선물 또는 옵션일 경우
+                                        if(item.F33861 == '4') {
+                                            item.F33904 = jongItem.F33904;                     /* 단위계약승수 */
+                                        }
+
+                                        market_tot_amt += jongItem.market_amt;
+                                        
+                                        if (index == (vm.pdfList.length-1)) {                                                
+                                            vm.market_tot_amt = market_tot_amt;
+
+                                            /*INav 계산 : CU시가총액 / CU당 주식수*/
+                                            if (vm.etpBasic.F16499 > 0) {
+                                                vm.iNav_amt = vm.market_tot_amt / vm.etpBasic.F16499;
+                                            } else {
+                                                vm.iNav_amt = vm.market_tot_amt;
+                                            }
+                                            /* INav 등락률 */                                
+                                            vm.iNav_percent =  ((vm.iNav_amt / vm.etpBasic.F03329) - 1) * 100;
+
+                                            /* 비중 정보 산출*/
+                                            for (let item of vm.pdfList) {        
+                                            
+                                                item.F34743 = ((item.F16588 /  vm.market_tot_amt) * 100).toFixed(2);                                    
+                                            }
+                                            vm.pdf_reload(vm.pdfList);
+                                            
+
+                                        
+                                        }
+                                        //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
+                                        
+                                        index++;
+                                    });                        
+                                }
+                            } else {
+                                util.processing(vm.$refs.progress, false);
                             }
-                            //console.log("market_amt:"+market_amt + "idx:" + index + "lenght:" + (vm.pdfList.length-1));     
-                            
-                            index++;
-                        });                        
+
+                        }catch(ex) {
+                            util.processing(vm.$refs.progress, false);
+                            console.log( "error", ex );
+                        }
                     }
-                } else {
-                    util.processing(vm.$refs.progress, false);
-                }
-            }).catch(error => {
-                console.log(error);
-                util.processing(vm.$refs.progress, false);   
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);             
-            });
+                ,   function(error) {
+                        console.log(error);
+                        util.processing(vm.$refs.progress, false);   
+
+                        if( error ) {
+                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                        }                        
+                    }
+            );            
+
+
         },        
 
         pdf_reload: function() {

@@ -158,30 +158,49 @@ export default {
             tableIndexDetailList.clear().draw();
             vm.indexDetailList  =   [];
 
-            axios.post(Config.base_url + "/user/index/getIndexDetailList", {
-                data:  vm.paramData
-            }).then(response => {
 
-                if (response && response.data) {
-
-                    var indexBasic = response.data.indexBasic;
-                    if( indexBasic ) {
-                        vm.indexBasic   =  indexBasic;
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getIndexDetailList"
+                        ,   "data"      :   vm.paramData
+                        ,   "method"    :   "post"
                     }
+                ,   function(response) {
 
-                    var indexDetailList =   response.data.indexDetailList;
+                        try{
 
-                    if( indexDetailList ) {
-                        tableIndexDetailList.rows.add( indexDetailList ).draw();
-                        vm.indexDetailList  =   indexDetailList;
+                            if (response && response.data) {
+
+                                var indexBasic = response.data.indexBasic;
+                                if( indexBasic ) {
+                                    vm.indexBasic   =  indexBasic;
+                                }
+
+                                var indexDetailList =   response.data.indexDetailList;
+
+                                if( indexDetailList ) {
+                                    tableIndexDetailList.rows.add( indexDetailList ).draw();
+                                    vm.indexDetailList  =   indexDetailList;
+                                }
+                            }
+
+                            util.processing(vm.$refs.progress, false);
+
+                        }catch(ex) {
+                            util.processing(vm.$refs.progress, false);
+                            console.log( "error", ex );
+                        }
                     }
-                }
+                ,   function(error) {
 
-                util.processing(vm.$refs.progress, false);
-            }).catch(error => {
-                util.processing(vm.$refs.progress, false);
-                vm.showMessageBox( '확인','서버로 부터 응답을 받지 못하였습니다.',{},4 );
-            });            
+                        util.processing(vm.$refs.progress, false);
+                        
+                        if( error ) {
+                            vm.showMessageBox( '확인', error,{},4 );
+                        }
+                    }
+            );
+     
         },
 
         fn_closePop() {

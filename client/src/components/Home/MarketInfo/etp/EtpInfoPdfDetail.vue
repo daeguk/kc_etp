@@ -450,37 +450,53 @@ export default {
                     resolve(true);
                 }else{
                     util.processing(vm.$refs.progress, true);
-                    axios.post( Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506", {
-                        data: vm.searchParam
-                    }).then(function(response) {
-                        console.log(response);
 
-                        util.processing(vm.$refs.progress, false);
-                        if (response.data) {
+                    util.axiosCall(
+                            {
+                                    "url"       :   Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506"
+                                ,   "data"      :   vm.searchParam
+                                ,   "method"    :   "post"
+                            }
+                        ,   function(response) {
 
-                            var msg = ( response.data.msg ? response.data.msg : "" );
-                            if (!response.data.result) {
-                                if( msg ) {
-                                    vm.$emit("showMessageBox", '확인', msg,{},1);
+                                try{
+
+                                    if (response.data) {
+                                        var msg = ( response.data.msg ? response.data.msg : "" );
+                                        if (!response.data.result) {
+                                            if( msg ) {
+                                                vm.$emit("showMessageBox", '확인', msg,{},1);
+                                                resolve(false);
+                                            }
+                                        }
+
+                                        if( response.data.dateInfo ) {
+                                            vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
+                                        }
+                                    }
+
+                                    util.processing(vm.$refs.progress, false);
+                                    resolve(true);
+
+                                }catch(ex) {
+                                    util.processing(vm.$refs.progress, false);
+                                    console.log( "error", ex );
+
                                     resolve(false);
                                 }
                             }
+                        ,   function(error) {
 
-                            if( response.data.dateInfo ) {
-                                vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
+                                util.processing(vm.$refs.progress, false);
+
+                                if( error ) {
+                                    vm.$emit("showMessageBox", '확인', msg,{},4);
+                                }
+
+                                resolve(false);
                             }
-                        }
+                    );
 
-                        resolve(true);
-
-                    }).catch(error => {
-                        console.log( error );
-
-                        util.processing(vm.$refs.progress, false);
-                        vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
-
-                        resolve(false);
-                    });
                 }
 
             }).catch( function(e) {
