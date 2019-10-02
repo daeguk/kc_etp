@@ -795,60 +795,69 @@ export default {
 
 
                 /* 비중 설정 방식에 따라 각 종목의 비중정보를 구한다. */
-                var v_returnObj =   vm.fn_calcImportance( importance_method_cd, v_portfolioObj );
-                var total       =   {};
+                vm.fn_calcImportance( importance_method_cd, v_portfolioObj ).then( function(e2){
+                    var v_returnObj =   {};
+                    var total       =   {};
 
 
-                /* 직접입력인 경우 */
-                if( [ "1"].includes( importance_method_cd ) ) {
+                    if( e2 && e2.returnData ) {
 
-                    /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
-                    vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );
-                }
-                /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
-                else if( [ "2", "3"].includes( importance_method_cd ) ) {
+                        v_returnObj =  e2.returnData; 
 
-                    if( v_returnObj.resultListObj && typeof v_returnObj.resultListObj[ vm.rebalance_date ] != "undefined" && v_returnObj.resultListObj[ vm.rebalance_date ] ) {
-
-                        var result  =   v_returnObj.resultListObj[ vm.rebalance_date ];
-
-                        if( result && result.length > 0 ) {
-
-                            /* 비중 정보를 tr 에 설정한다. */
-                            var v_inx   =   0;
-                            table01.find( "tbody tr" ).each( function( inx, rowItem ) {
-                                var tr = $(this);
-
-                                var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
-                                var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
-                                var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
-                                var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
-
-                                if( typeof v_F16013.val() != "undefined" ) {
-                                    if( v_F16013.val() != "" ) {
-                                        v_importance.val( result[v_inx].importance );                       /* 비중 */
-                                        v_inx++;
-                                    }
-                                }
-                            });
+                        /* 직접입력인 경우 */
+                        if( [ "1"].includes( importance_method_cd ) ) {
 
                             /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
-                            vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );                        
-
-                            /* 모든 일자별 포트폴리오 정보를 v_returnObj 에 맞게 설정한다. */
-                            vm.fn_modifyAllRebalancePortfolioObj( importance_method_cd );
+                            vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );
                         }
+                        /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
+                        else if( [ "2", "3"].includes( importance_method_cd ) ) {
+
+                            if( v_returnObj.resultListObj && typeof v_returnObj.resultListObj[ vm.rebalance_date ] != "undefined" && v_returnObj.resultListObj[ vm.rebalance_date ] ) {
+
+                                var result  =   v_returnObj.resultListObj[ vm.rebalance_date ];
+
+                                if( result && result.length > 0 ) {
+
+                                    /* 비중 정보를 tr 에 설정한다. */
+                                    var v_inx   =   0;
+                                    table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                                        var tr = $(this);
+
+                                        var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
+                                        var v_F16013        =   tr.find( "td input[name=F16013]" );                 /* 종목코드 */
+                                        var v_F15028        =   tr.find( "td:eq(3)" );                              /* 시가총액 */
+                                        var v_importance    =   tr.find( "td input[name=importance]" );             /* 비중 */
+
+                                        if( typeof v_F16013.val() != "undefined" ) {
+                                            if( v_F16013.val() != "" ) {
+                                                v_importance.val( result[v_inx].importance );                       /* 비중 */
+                                                v_inx++;
+                                            }
+                                        }
+                                    });
+
+                                    /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
+                                    vm.fn_setRebalancePortfolioObj( { p_gubun : "table" } );                        
+
+                                    /* 모든 일자별 포트폴리오 정보를 v_returnObj 에 맞게 설정한다. */
+                                    vm.fn_modifyAllRebalancePortfolioObj( importance_method_cd );
+                                }
+                            }
+                        }
+
+
+                        if( v_returnObj.totalObj && typeof v_returnObj.totalObj[ vm.rebalance_date ] != "undefined" && v_returnObj.totalObj[ vm.rebalance_date ] ) {
+                            total   =   v_returnObj.totalObj[ vm.rebalance_date ];
+                        }
+
+                        vm.importance_method_cd =   importance_method_cd;
+
+                        resolve( { result : true } );
+                    }else{
+                        resolve( { result : false } );
                     }
-                }
-
-
-                if( v_returnObj.totalObj && typeof v_returnObj.totalObj[ vm.rebalance_date ] != "undefined" && v_returnObj.totalObj[ vm.rebalance_date ] ) {
-                    total   =   v_returnObj.totalObj[ vm.rebalance_date ];
-                }
-
-                vm.importance_method_cd =   importance_method_cd;
-
-                resolve( { result : true } );
+                });
 
             }).catch( function(e1) {
 
@@ -860,150 +869,168 @@ export default {
          * 비중 설정 방식에 따라 각 종목의 비중정보를 구한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_calcImportance( p_importance_method_cd, p_portfolioObj ) {
+        async fn_calcImportance( p_importance_method_cd, p_portfolioObj ) {
 
             var vm = this;
 
+            var returnData      =   {
+                    totalObj        :   {}
+                ,   resultListObj   :   {}
+                ,   resultObj       :   {}
+            };
             var totalObj        =   {};         /* total 정보 */
             var resultListObj   =   {};         /* 결과정보 */
             var resultObj       =   {};
 
 
-            if( p_portfolioObj && Object.keys( p_portfolioObj ).length > 0 ) {
+            return  await new Promise(function(resolve, reject) {
 
-                for( var i=0; i < Object.keys( p_portfolioObj ).length; i++ ) {
+                try{
 
-                    var v_key   =   Object.keys( p_portfolioObj )[i];
-                    var v_item  =   p_portfolioObj[ v_key ];
+                    if( p_portfolioObj && Object.keys( p_portfolioObj ).length > 0 ) {
 
-                    if( v_item && Object.keys( v_item ).length > 0 ) {
+                        for( var i=0; i < Object.keys( p_portfolioObj ).length; i++ ) {
 
-                        totalObj[ v_key ]       =       {
-                                length          :   0       /* 총건수 */
-                            ,   same_rate_sum   :   100     /* 동일가중 합계 */
+                            var v_key   =   Object.keys( p_portfolioObj )[i];
+                            var v_item  =   p_portfolioObj[ v_key ];
 
-                            ,   F15028          :   0       /* (합계) 시가총액 */
-                            ,   importance      :   0       /* (합계) 비중 */
-                        };
+                            if( v_item && Object.keys( v_item ).length > 0 ) {
 
-                        resultListObj[ v_key ]      =   [];
-                        resultObj[ v_key ]          =   {};
+                                totalObj[ v_key ]       =       {
+                                        length          :   0       /* 총건수 */
+                                    ,   same_rate_sum   :   100     /* 동일가중 합계 */
 
-                        for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+                                    ,   F15028          :   0       /* (합계) 시가총액 */
+                                    ,   importance      :   0       /* (합계) 비중 */
+                                };
 
-                            var v_sub_key   =   Object.keys( v_item )[j];
-                            var v_sub_item  =   v_item[ v_sub_key ];
+                                resultListObj[ v_key ]      =   [];
+                                resultObj[ v_key ]          =   {};
 
-                            totalObj[ v_key ].length++;                         /* 총건수 */
+                                for( var j=0; j < Object.keys( v_item ).length; j++ ) {
 
-                            totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );     /* (합계) 시가총액 */
-                            totalObj[ v_key ].importance        =   Number (
-                                ( Number( totalObj[ v_key ].importance ) + Number( v_sub_item.importance ) ).toFixed(2)
-                            );                                                                                                              /* (합계) 비중 */
+                                    var v_sub_key   =   Object.keys( v_item )[j];
+                                    var v_sub_item  =   v_item[ v_sub_key ];
 
+                                    totalObj[ v_key ].length++;                         /* 총건수 */
 
-                            resultListObj[ v_key ].push({
-                                    F16013      :   v_sub_item.F16013           /* 종목코드 */
-                                ,   F15028      :   v_sub_item.F15028           /* 시가총액 */
-                                ,   importance  :   v_sub_item.importance       /* 비중 */
-                            });
+                                    totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );     /* (합계) 시가총액 */
+                                    totalObj[ v_key ].importance        =   Number (
+                                        ( Number( totalObj[ v_key ].importance ) + Number( v_sub_item.importance ) ).toFixed(2)
+                                    );                                                                                                              /* (합계) 비중 */
 
 
-                            if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
-                                resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
-                            }   
-
-                            resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   v_sub_item.F15028;
-                            resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   v_sub_item.importance;
-                        }
-                    
-
-                        /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
-                        if( [ "2", "3"].includes( p_importance_method_cd ) ) {
-
-                            var same_rate           =   0;      /* 동일 가중 비율 */
-                            var v_temp_importance   =   0;
-                            var v_inx               =   0; 
+                                    resultListObj[ v_key ].push({
+                                            F16013      :   v_sub_item.F16013           /* 종목코드 */
+                                        ,   F15028      :   v_sub_item.F15028           /* 시가총액 */
+                                        ,   importance  :   v_sub_item.importance       /* 비중 */
+                                    });
 
 
+                                    if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
+                                        resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
+                                    }   
 
-                            totalObj[ v_key ].importance		=	0;
-
-                            same_rate           =   (
-                                Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100 ) / 100
-                            );                                                                                      /* 동일 가중 비율 */
-                            v_temp_importance   =   0;
-                            v_inx               =   0;
-
-                            for( var j=0; j < Object.keys( v_item ).length; j++ ) {
-
-                                var v_sub_key   =   Object.keys( v_item )[j];
-                                var v_sub_item  =   v_item[ v_sub_key ];                            
-
-                                /* 동일가중인 경우 */
-                                if( p_importance_method_cd == "2" ) {
-                                    v_temp_importance       =   same_rate;
+                                    resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   v_sub_item.F15028;
+                                    resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   v_sub_item.importance;
                                 }
-                                /* 시총비중인 경우 */
-                                else if( p_importance_method_cd == "3" ) {
-                                    v_temp_importance       =   Number(
-                                        ( ( Number( v_sub_item.F15028 ) / Number( totalObj[ v_key ].F15028 ) ) * 100 ).toFixed(2)
-                                    );
+                            
+
+                                /*  레코드별 비중정보를 구한다. (동일가중, 시총비중) */
+                                if( [ "2", "3"].includes( p_importance_method_cd ) ) {
+
+                                    var same_rate           =   0;      /* 동일 가중 비율 */
+                                    var v_temp_importance   =   0;
+                                    var v_inx               =   0; 
+
+
+
+                                    totalObj[ v_key ].importance		=	0;
+
+                                    same_rate           =   (
+                                        Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100 ) / 100
+                                    );                                                                                      /* 동일 가중 비율 */
+                                    v_temp_importance   =   0;
+                                    v_inx               =   0;
+
+                                    for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+
+                                        var v_sub_key   =   Object.keys( v_item )[j];
+                                        var v_sub_item  =   v_item[ v_sub_key ];
+
+                                        /* 동일가중인 경우 */
+                                        if( p_importance_method_cd == "2" ) {
+                                            v_temp_importance       =   same_rate;
+                                        }
+                                        /* 시총비중인 경우 */
+                                        else if( p_importance_method_cd == "3" ) {
+                                            v_temp_importance       =   Number(
+                                                Math.floor( ( Number( v_sub_item.F15028 ) / Number( totalObj[ v_key ].F15028 ) ) * 10000 ) / 100
+                                            );
+                                        }
+
+                                        totalObj[ v_key ].importance                =   Number( 
+                                            ( Number( totalObj[ v_key ].importance ) +   Number( v_temp_importance ) ).toFixed(2)
+                                        );                                                                                  /* (합계) 비중 */
+
+                                        resultListObj[ v_key ][v_inx].F16013        =   v_sub_item.F16013;                  /* 종목코드 */
+                                        resultListObj[ v_key ][v_inx].F15028        =   Number( v_sub_item.F15028 );        /* 시가총액 */
+                                        resultListObj[ v_key ][v_inx].importance    =   Number( v_temp_importance );        /* 비중 */
+
+
+
+                                        if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
+                                            resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
+                                        }
+
+                                        resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   Number( v_sub_item.F15028 );        /* 시가총액 */
+                                        resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   Number( v_temp_importance );        /* 비중 */
+
+                                        v_inx++;
+                                    }
                                 }
 
-                                totalObj[ v_key ].importance                =   Number( 
-                                    ( Number( totalObj[ v_key ].importance ) +   Number( v_temp_importance ) ).toFixed(2)
-                                );                                                                                  /* (합계) 비중 */
 
-                                resultListObj[ v_key ][v_inx].F16013        =   v_sub_item.F16013;                  /* 종목코드 */
-                                resultListObj[ v_key ][v_inx].F15028        =   Number( v_sub_item.F15028 );        /* 시가총액 */
-                                resultListObj[ v_key ][v_inx].importance    =   Number( v_temp_importance );        /* 비중 */
+                                /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
+                                if( Number( ( Number( totalObj[ v_key ].same_rate_sum ) - Number( totalObj[ v_key ].importance ) ).toFixed(2) ) != 0 ) {
 
+                                    for( var j in resultListObj[ v_key ] ) {
 
+                                        totalObj[ v_key ].importance    =   Number(
+                                            ( Number( totalObj[ v_key ].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                        );
 
-                                if( !resultObj[ v_key ][ v_sub_item.F16013 ] || Object.keys( resultObj[ v_key ][ v_sub_item.F16013 ] ).length == 0 ) {
-                                    resultObj[ v_key ][ v_sub_item.F16013 ]     =   {};
-                                }
-
-                                resultObj[ v_key ][ v_sub_item.F16013 ].F15028      =   Number( v_sub_item.F15028 );        /* 시가총액 */
-                                resultObj[ v_key ][ v_sub_item.F16013 ].importance  =   Number( v_temp_importance );        /* 비중 */
-
-                                v_inx++;
-                            }
-                        }
+                                        resultListObj[ v_key ][j].importance   =   Number( 
+                                            ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                        );
 
 
-                        /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
-                        if( Number( ( Number( totalObj[ v_key ].same_rate_sum ) - Number( totalObj[ v_key ].importance ) ).toFixed(2) ) != 0 ) {
+                                        resultObj[ v_key ][ resultListObj[ v_key ][j].F16013 ].importance  =   Number( resultListObj[ v_key ][j].importance );      /* 비중 */
 
-                            for( var j in resultListObj[ v_key ] ) {
-
-                                totalObj[ v_key ].importance    =   Number(
-                                    ( Number( totalObj[ v_key ].importance ) +  Number( 0.01 ) ).toFixed(2)
-                                );
-
-                                resultListObj[ v_key ][j].importance   =   Number( 
-                                    ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.01 ) ).toFixed(2)
-                                );
-
-
-                                resultObj[ v_key ][ resultListObj[ v_key ][j].F16013 ].importance  =   Number( resultListObj[ v_key ][j].importance );      /* 비중 */
-
-                                if( Number( totalObj[ v_key ].importance ) == Number( totalObj[ v_key ].same_rate_sum ) ) {
-                                    break;
+                                        if( Number( totalObj[ v_key ].importance ) == Number( totalObj[ v_key ].same_rate_sum ) ) {
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
 
-            return  { 
-                    totalObj        :   totalObj
-                ,   resultListObj   :   resultListObj
-                ,   resultObj       :   resultObj
-            };            
+                    returnData.totalObj        =    totalObj;
+                    returnData.resultListObj   =    resultListObj;
+                    returnData.resultObj       =    resultObj;
 
+                    resolve( { result : true, returnData : returnData } );
+
+                }catch( e1 ) {
+                    console.log( e1 );
+                    resolve( { result : false, returnData : returnData } );
+                };
+
+            }).catch(error => {
+                console.log( error );
+                resolve( { result : false, returnData : returnData } );                    
+            });
         },
 
         /*
@@ -2730,32 +2757,46 @@ console.log( "######2" );
                 try{
                     if( vm.rebalancePortfolioObj && Object.keys( vm.rebalancePortfolioObj ).length > 0 ) {
 
-                        var v_result            =   vm.fn_calcImportance( importance_method_cd, vm.rebalancePortfolioObj );          
+                        vm.fn_calcImportance( importance_method_cd, vm.rebalancePortfolioObj ).then( function(e2) {
 
-                        if( v_result && v_result.resultObj && Object.keys( v_result.resultObj ).length > 0 ) {
+                            var v_result            =   {};
 
-                            for( var i=0; i < Object.keys( vm.rebalancePortfolioObj ).length; i++ ) {
+                            if( e2 && e2.returnData ) {
 
-                                var v_key           =   Object.keys( vm.rebalancePortfolioObj )[i];
-                                var v_item          =   vm.rebalancePortfolioObj[ v_key ];
+                                v_result    =   e2.returnData;
 
-                                var v_returnItem    =   v_result.resultObj[ v_key ];
+                                if( v_result && v_result.resultObj && Object.keys( v_result.resultObj ).length > 0 ) {
 
-                                if( v_returnItem && Object.keys( v_returnItem ).length > 0  ) {
+                                    for( var i=0; i < Object.keys( vm.rebalancePortfolioObj ).length; i++ ) {
 
-                                    for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+                                        var v_key           =   Object.keys( vm.rebalancePortfolioObj )[i];
+                                        var v_item          =   vm.rebalancePortfolioObj[ v_key ];
 
-                                        var v_sub_key   =   Object.keys( v_item )[j];
-                                        var v_sub_item  =   v_item[ v_sub_key ];
+                                        var v_returnItem    =   v_result.resultObj[ v_key ];
 
-                                        v_sub_item.importance	=   v_returnItem[ v_sub_item.F16013 ].importance;
+                                        if( v_returnItem && Object.keys( v_returnItem ).length > 0  ) {
+
+                                            for( var j=0; j < Object.keys( v_item ).length; j++ ) {
+
+                                                var v_sub_key   =   Object.keys( v_item )[j];
+                                                var v_sub_item  =   v_item[ v_sub_key ];
+
+                                                v_sub_item.importance	=   v_returnItem[ v_sub_item.F16013 ].importance;
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        }
-                    }
 
-                    resolve( { result : true } );
+                                resolve( { result : true } );
+                            }else{
+                                
+                                resolve( { result : false } );
+                            }
+                        });
+
+                    }else{
+                        resolve( { result : false } );
+                    }
 
                 }catch( e1 ) {
                     console.log( e1 );
