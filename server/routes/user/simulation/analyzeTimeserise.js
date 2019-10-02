@@ -30,6 +30,8 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                 analyzeObj.benchmark = item.bm_data01;
             }
             analyzeObj.kospi = item.KOSPI_F15001;
+            analyzeObj.F15028_S = item.tot_F15028_S;
+            analyzeObj.F15028_C = item.tot_F15028_C;
             analyzeList.push(analyzeObj);
         }
     });

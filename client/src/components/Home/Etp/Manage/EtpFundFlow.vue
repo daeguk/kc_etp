@@ -44,7 +44,8 @@
       </v-flex>
     </v-layout>
     <EtpRankPopup v-if="RankModalFlag" @closeRankModal="closeRankModal"
-      :gubun="modalGubun" :itemList="modalList"></EtpRankPopup>
+      :gubun="modalGubun" :itemList="modalList" :curCode="etpBasic.F16013"
+      :rank="modalRank"></EtpRankPopup>
   </div>
 </template>
 
@@ -75,6 +76,7 @@ export default {
       chartLoadFlag3: false,
       chartLoadFlag4: false,
       RankModalFlag: false,
+      modalRank: 0,
       modalGubun: 0,
       modalList: [],
     };
@@ -158,6 +160,7 @@ export default {
       this.RankModalFlag = true;
       this.modalGubun = val;
       this.modalList = this.cRes[val];
+      this.modalRank = this.rank[val];
 
       // console.log("openRankModal.....");
       // console.log(this.modalList);

@@ -892,10 +892,11 @@
       AND B.TRADE_DATE = (SELECT MAX(TRADE_DATE) from td_msci_factor)
     </select>
     <select id="getEtpFundFlowRank">
-      SELECT A.F16013, B.F16002, (A.F15301 *  (A.F33835 - A.F33836)) AS FLOW
+      SELECT A.F16013, B.F16002, SUM(A.F15301 *  (A.F33835 - A.F33836)) AS FLOW
       FROM td_etp_hist A, td_etp_basic B
       WHERE A.F12506 > #{befDate}
       AND A.F16013 = B.F16013
+      AND (B.F16493 = 1 OR B.F16493 = 2)
       GROUP BY A.F16013 
       ORDER BY FLOW DESC, F16013 ASC
     </select>
