@@ -240,6 +240,7 @@ var runBacktest = async function(req, res, paramData) {
 
                                     return callback(resultMsg);
                                 } else {
+
                                     paramData.first_date = rows[0].F12506;
                                     temp_kspjong_hist = rows;
                                     
@@ -248,6 +249,7 @@ var runBacktest = async function(req, res, paramData) {
                                             temp_kspjong_hist           /*DB에서 조회된 종목별 히스토리*/
                                         ,   msg.v_simulPortfolio        /* 시작일 포트롤리오 */
                                         ,   msg.v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
+                                        ,   msg.v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
                                     );
                     
                                 }
@@ -1867,11 +1869,19 @@ var fn_history_filter   = function(
         temp_kspjong_hist       /*DB에서 조회된 종목별 히스토리*/
     ,   v_simulPortfolio        /* 시작일 포트롤리오 */
     ,   v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
+    ,   v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
 ) {
     var kspjong_hist = [];
     let simulPortfolio = v_simulPortfolio;
                                     
     temp_kspjong_hist.forEach(function(kspjong_item) {
+        
+        kspjong_item.rebalancing    =   "0";
+
+        var v_rebalancing = _.filter( v_arrRebalanceDate, { 'F12506': kspjong_item.F12506 } );
+        if( v_rebalancing && v_rebalancing.length > 0 ) {
+            kspjong_item.rebalancing    =   "1";
+        }
 
         if (kspjong_item.rebalancing == 1) {
             simulPortfolio = v_simulPortfolioList[kspjong_item.F12506];
@@ -1885,6 +1895,7 @@ var fn_history_filter   = function(
             }
         }
 
+        log.debug( "kspjong_item", kspjong_item );
     });           
 
     return kspjong_hist;
