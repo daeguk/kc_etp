@@ -1894,8 +1894,6 @@ var fn_history_filter   = function(
                 kspjong_hist.push(kspjong_item);
             }
         }
-
-        log.debug( "kspjong_item", kspjong_item );
     });           
 
     return kspjong_hist;
