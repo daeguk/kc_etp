@@ -982,7 +982,7 @@ export default {
                                     ( Number( totalObj[ v_key ].importance ) +  Number( 0.01 ) ).toFixed(2)
                                 );
 
-                                resultListObj[ v_key ][j].importance   =   ( 
+                                resultListObj[ v_key ][j].importance   =   Number( 
                                     ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.01 ) ).toFixed(2)
                                 );
 
@@ -1617,7 +1617,7 @@ export default {
             /* v_total 에 값이 있는 경우 tr 들을 순회하지 않는다.  */
             if( !v_total || Object.keys( v_total ).length == 0 ) {
 
-                table01.find( "tbody tr input[name=F16013]" ).parents("tr").each( function( inx, rowItem ) {
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
                     var tr = $(this);
 
                     var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );                /* 첫번째 컬럼 */
@@ -1628,7 +1628,11 @@ export default {
                     if( typeof v_F16013.val() != "undefined" ) {
                         if( v_F16013.val() != "" ) {
                             total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
-                            total.importance        =   Math.floor( ( total.importance * 100 )  +  ( Number( util.NumtoStr( v_importance.val() ) ) * 100 ) ) / 100;     /* (합계) 비중 */
+                            total.importance        =   Number(
+                                                            Number(
+                                                                Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
+                                                            ).toFixed(2)
+                                                        );                                                                                                              /* (합계) 비중 */
                         }
                     }
                 });
