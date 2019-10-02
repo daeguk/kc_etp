@@ -73,19 +73,9 @@
                 ,   tm_simul_portfolio.F16013                           AS  F16013                      /* 구성종목코드 */       
                 ,   tm_simul_portfolio.importance                       AS  importance                  /* 비중 */
                 ,   tm_simul_portfolio.jisu_rate                        AS  jisu_rate                   /* 지수적용비율 */
-                
-                ,   IFNULL(
-                            td_kspjong_basic.F16013
-                        ,   td_etp_basic.F16013
-                    )                                                   AS  F16013                      /* 단축코드 */
-                ,   IFNULL(
-                            td_kspjong_basic.F16002   
-                        ,   td_etp_basic.F16002
-                    )                                                   AS  F16002                      /* 한글종목명 */
-                ,   IFNULL(
-                            td_kspjong_basic.F16017
-                        ,   td_etp_basic.F16017
-                    )                                                   AS  F16017                      /* 상장일 */
+                ,   td_kspjong_basic.F16013                             AS  F16013                      /* 단축코드 */
+                ,   td_kspjong_basic.F16002                             AS  F16002                      /* 한글종목명 */
+                ,   td_kspjong_basic.F16017                             AS  F16017                      /* 상장일 */                    
                 ,   '0'                                                 AS  IMPORT_YN                   /* 시물레이션에 포함 여부*/
                 ,   tm_simul_portfolio.rebalance_date                   AS  rebalance_date              /* 리밸런싱 날짜 */
 
@@ -104,9 +94,6 @@
 
           LEFT  JOIN    td_kspjong_basic
                   ON    (   tm_simul_portfolio.F16013   =   td_kspjong_basic.F16013 )
-
-          LEFT  JOIN    td_etp_basic
-                  ON    (   tm_simul_portfolio.F16013   =   td_etp_basic.F16013 )                  
         
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd        =   #{grp_cd}
@@ -487,19 +474,7 @@
                     ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
                     ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
                     ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
-                    ,   (
-                            CASE    WHEN    (
-                                                SELECT  tm_simul_portfolio.rebalance_date AS F12506
-                                                  FROM  tm_simul_portfolio
-                                                 WHERE  tm_simul_portfolio.grp_cd    =   #{grp_cd}
-                                                   AND  tm_simul_portfolio.scen_cd   =   #{scen_cd}
-                                                   AND  tm_simul_portfolio.rebalance_date       =   td_kspjong_hist.F12506
-                                                GROUP BY tm_simul_portfolio.rebalance_date                                              
-                                            )   IS  NULL
-                                    THEN    '0'
-                                    ELSE    '1'
-                            END
-                        )                                                   AS  rebalancing             /* 리밸런싱 여부 */                
+
             FROM  (
                         SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
                                 ,   (
