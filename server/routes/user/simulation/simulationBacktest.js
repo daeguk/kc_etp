@@ -1561,6 +1561,7 @@ var	fn_get_simulation_data  =   function(
 							,   v_dailyObj                                                  /* 일자별 정보 */
                             ,   p_simulPortfolio                                            /* [tm_simul_portfolio] 기준 종목 데이터 */
                             ,   JongmokImportDateList                                       /* 종목별 편입일자*/
+                            ,   v_prev_jongmok                                              /* 전날 종목 데이터 */
 						);
                     }
                 }

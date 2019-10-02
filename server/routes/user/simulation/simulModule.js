@@ -143,6 +143,7 @@ var	fn_set_dayilyJongmok =	function(
     ,   p_dailyObj                          /* 일자별 정보 */
     ,   p_simulPortfolioObj                 /* [tm_simul_portfolio] 기준 종목 데이터 */
     ,   JongmokImportDateList               /* 종목별 편입일자*/
+    ,   p_prev_jongmok                      /* 전날 종목 데이터 */
 ) {
 
     /* 소수점시 계산시 사용할 고정값 */
@@ -228,6 +229,13 @@ var	fn_set_dayilyJongmok =	function(
                     v_portItem.TODAY_RATE               =   0;
                     v_portItem.BEFORE_RATE              =   0;
 
+                    // 기준가가 0이면 전날 종가 가져옴
+                    if (Number(p_jongmok[ v_portKey ].F15007) == 0) {
+                        if(Object.keys( p_prev_jongmok ).includes( v_portKey ) ) {
+                            p_jongmok[ v_portKey ].F15007 = p_prev_jongmok[v_portKey].F15007;
+                        }
+                    }
+                    
                     Object.assign( p_jongmok[ v_portKey ],  v_portItem );
 
                     if( totalInfo.rebalancing == "0" ) {
@@ -235,6 +243,8 @@ var	fn_set_dayilyJongmok =	function(
                             totalInfo.rebalancing       =   "1";
                         }
                     }
+
+                    
                 } else {
                     /* 항목정보 설정 */
                     v_portItem.F12506                   =   p_param.F12506;
