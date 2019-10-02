@@ -1679,12 +1679,37 @@ export default {
         async fn_getSelectedItem( items, gubun ) {
             var vm = this;
 
+            var flag = true;
+            var existInx = 0;
             for( let i=0; i < items.length; i++ ) {
 
-                /* 추가된 자산정보를 table 에 설정한다. */
-                await vm.fn_setMastRowData( vm.selectedRowIndex + i, items[i], gubun );
+                flag = true;
+                table01.find( "tbody tr" ).each( async function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
+
+
+                    /* 종목코드가 존재하는 경우 */
+                    if( typeof v_F16013.val() != "undefined" ) {
+                        /* 중복된 종목은 추가하지 않음. */
+                        if( v_F16013.val() != "" && v_F16013.val() == items[i].F16013 ) {
+                            flag = false;
+                        }
+                    }
+                });
+
+
+                if( flag ) {
+                    /* 추가된 자산정보를 table 에 설정한다. */
+                    await vm.fn_setMastRowData( vm.selectedRowIndex + existInx, items[i], gubun );
+
+                    existInx++;
+                }
             }
 
+console.log( "######2" );
             /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
                 vm.fn_setTotalRecord();
@@ -1698,12 +1723,12 @@ export default {
         fn_setMastRowData: function( rowIndex=0, rowItem, gubun ) {
             var vm = this;
 
-            var dataTrCnt   =   table01.find( "tbody tr input[name=F16013]" ).parents("tr").length;
+            var dataTrCnt   =   table01.find( "tbody tr input[name=F16013]" ).length;
             if( rowIndex > dataTrCnt-1 ) {
                 vm.fn_addRecords( dataTrCnt, 5 );
             }
 
-            var tr;          
+            var tr;
 
             return  new Promise(function(resolve, reject) {
 
