@@ -644,7 +644,7 @@ var modifyGroup = function(req, res) {
                                     if( exist_yn == "Y" ) {
                                         resultMsg.result = false;
                                         resultMsg.msg   = "시나리오 그룹명이 이미 존재합니다.";
-                                        resultMsg.err   = config.MSG.error01;
+                                        resultMsg.err   = "시나리오 그룹명이 이미 존재합니다.";
 
                                         return callback(resultMsg);                                    
                                     }
@@ -1521,7 +1521,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                                 if( exist_yn == "Y" ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg   = config.MSG.error01;
+                                    resultMsg.msg   = "시나리오명이 이미 존재합니다.";
                                     resultMsg.err   = "시나리오명이 이미 존재합니다.";
 
                                     return callback(resultMsg);                                    
@@ -2063,7 +2063,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             if( !msg.arr_portfolio || msg.arr_portfolio.length == 0  ){
 
                                 resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.msg = "[백테스트] 포트폴리오 정보가 존재하지 않습니다.";
                                 resultMsg.err = "[백테스트] 포트폴리오 정보가 존재하지 않습니다.";
 
                                 callback(resultMsg);
@@ -2313,7 +2313,7 @@ var deleteAllSimul = function(req, res) {
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
                                     resultMsg.msg = "이미 삭제된 상태입니다.";
-                                    resultMsg.err = err;
+                                    resultMsg.err = "이미 삭제된 상태입니다.";
 
                                     return callback(resultMsg);
                                 }
