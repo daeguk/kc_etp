@@ -545,9 +545,11 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                                 break;
                                 
                     case    'btnLpSpreadClose'  :
+                                var v_divObj    =   $(this).closest("div.tooltip2");
 
-                                $(`<span class="tooltiptext" style="width:70px;">LP차트</span>`).appendTo( $(this).parents("div") );
+                                $(`<span class="tooltiptext" style="width:70px;">LP차트</span>`).appendTo( v_divObj );
                                 $(this).closest("span.tooltiptext2").remove();
+                                v_divObj.attr( "class", "tooltip" );
                                 
                                 vm.showLpSpreadTooltip1 = false;
                                 Config.showLpSpreadTooltip1 = false;
