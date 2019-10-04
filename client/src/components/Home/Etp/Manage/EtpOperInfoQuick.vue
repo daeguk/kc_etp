@@ -64,7 +64,25 @@
                                         v-model="toggleEtpLpspread"
                                     >
                                         <v-list-tile-avatar>
+                                            <!--말풍선 추가---->
+                                            <div class="text-xs-center">
+                                                <v-menu v-model="showPdfTooltip" :nudge-width="80" offset-x left class="arrow_menu">
+                                                    <template v-slot:activator="{ on }">
                                            <div :class="( toggleEtpLpspread ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon9"></span></div>
+                                            </template>
+                                                    
+                                                    <v-layout>
+                                                        <v-flex>
+                                                            <div class="arrow_box">
+                                                            <span>신규 서비스</span>
+                                                            <v-btn flat @click="fn_closePdfTooltip()" icon small dark><v-icon>close</v-icon></v-btn>
+                                                            </div>
+                                                        </v-flex>
+                                                        <v-flex class="arrow_flex"></v-flex>
+                                                    </v-layout>
+                                                </v-menu>
+                                            </div>
+                                        <!---말풍선 추가end---->
                                         </v-list-tile-avatar>
 
                                         <v-list-tile-content class="rm_con_h">
@@ -234,7 +252,9 @@
 
     </v-container>
 </template>
-
+<style scoped>
+.v-menu__content{box-shadow: none !important;}
+</style>
 
 <script>
 import ComIndexFixPopup     from "@/components/common/popup/ComIndexFixPopup.vue";
@@ -249,6 +269,8 @@ export default {
     },
     data() {
         return {
+            showPdfTooltip : true,
+            showFaver : true,
             toggleINav : false,
             toggleEtpPerformance : false,
             toggleEtpLpspread : false,
@@ -293,11 +315,18 @@ export default {
 
             if( vm.toggle.arrCustomizeColumn ) {
                 vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
-            }            
+            }
+                        
         }
 
         var tmp = this.$store.state.user.email;
         if(tmp.indexOf("test@") !== -1) this.testFlag = true;
+        
+
+        if( typeof Config.showPdfTooltip != "undefined" ) {
+console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdfTooltip );
+            vm.showPdfTooltip   =   Config.showPdfTooltip;
+        }
     },
     created: function() {},
     beforeDestory: function() {},
@@ -431,7 +460,13 @@ export default {
             var vm = this;
 
             vm.$emit( "showMessageBox", title, msg, option, gubun );
-        }        
+        }, 
+        fn_closePdfTooltip() {
+            var vm  =   this;
+
+            vm.showPdfTooltip = false; 
+            Config.showPdfTooltip = false;
+        }       
     }
 };
 </script>

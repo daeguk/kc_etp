@@ -999,7 +999,7 @@ input[type='file']{
 }
 .arrow_box:after {
 	left: 100%;
-	top: 18%;
+	top: 40%;
 	border: solid transparent;
 	content: " ";
 	height: 0;
@@ -1008,19 +1008,20 @@ input[type='file']{
 	pointer-events: none;
 	border-color: rgba(136, 183, 213, 0);
 	border-left-color: #85c406;
-	border-width: 8px;
-    margin-top: -8px;
+	border-width: 6px;
+    margin-top: -6px;
     box-sizing: content-box !important;
 }
 
-.arrow_box span{width:180px; display:inline-block;}
+.arrow_box span{width:80px; display:inline-block;}
 @media screen and (-webkit-min-device-pixel-ratio:0) {.arrow_box .v-btn{float:right;}}
-:-ms-fullscreen, :root .arrow_box .v-btn{vertical-align: top;}
-.arrow_box .v-btn--icon.v-btn--small{width:20px; height:20px;}
+:-ms-fullscreen, :root .arrow_box .v-btn{vertical-align: top; }
+.arrow_box .v-btn--icon.v-btn--small{width:10px; height:10px;}
+.arrow_box .v-btn{margin-top:2px !important;}
 .arrow_box .v-icon{font-size:16px !important;}
 .arrow_conw{display:block;}
 .arrow_menu.v-menu__content{box-shadow:none !important; display:block;}
-.arrow_flex{height: 100%;width:10px;}
+.arrow_flex{height: 100%;width:6px;}
 
 
 

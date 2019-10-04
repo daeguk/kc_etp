@@ -14,6 +14,7 @@
                                 <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
                             </h3>
                             <div class="right_btn">
+                                
                                 <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></span>
 
                                 <span class="toggle2">
@@ -30,7 +31,26 @@
                         </div>
                     </v-card-title>
                 </div>
-
+                      <!--말풍선 추가---->
+                                            <!--div class="text-xs-center">
+                                                <v-menu v-model="showPdfTooltip" :nudge-width="80" offset-x left class="arrow_menu">
+                                                    <template v-slot:activator="{ on }">
+                                                                <div style="display:none;">1</div>
+                                            </template-->
+                                                    <div>
+                                                    <v-layout>
+                                                        <v-flex>
+                                                            <div class="arrow_box">
+                                                            <span>신규 서비스</span>
+                                                            <v-btn flat @click="fn_closePdfTooltip()" icon small dark><v-icon>close</v-icon></v-btn>
+                                                            </div>
+                                                        </v-flex>
+                                                        <v-flex class="arrow_flex"></v-flex>
+                                                    </v-layout>
+                                                    </div>
+                                                <!--/v-menu>
+                                            <div-->
+                    <!---말풍선 추가end---->                  
                     <v-card flat>
                         <div v-show='stateInfo.pageState != "performance"' >
                             <table id="table01" class="tbl_type ver7"    style="width:100%"/>
@@ -120,7 +140,9 @@
     <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
     </v-container>
 </template>
-
+<style scoped>
+.v-menu__content{box-shadow: none !important;}
+</style>
 
 <script>
 import $      from 'jquery';
@@ -147,6 +169,8 @@ export default {
     },
     data() {
         return {
+            showPdfTooltip : true,
+            showFaver : true,
             text: "전종목",
             fmt_F12506 :   "",
 
