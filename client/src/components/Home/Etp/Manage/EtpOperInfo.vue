@@ -50,7 +50,7 @@
                                                     </div>
                                                 <!--/v-menu>
                                             <div-->
-                    <!---말풍선 추가end---->                  
+                                        <!---말풍선 추가end---->                  
                     <v-card flat>
                         <div v-show='stateInfo.pageState != "performance"' >
                             <table id="table01" class="tbl_type ver7"    style="width:100%"/>
@@ -1021,7 +1021,8 @@ export default {
                                     }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }else if( vm.stateInfo.pageState === 'lpspread' ) {
-                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
+                                // graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
+                                        graphContent    +=  '<div class="tooltip2"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext2" style="width:80px;">신규서비스<button id="btnEtpInfo" type="button" class="btn_icon v-icon material-icons dark">close</button></span></div>';
                                 }
                                 
                                 /* ETF 상세정보 */
