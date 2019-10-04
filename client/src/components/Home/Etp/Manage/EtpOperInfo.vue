@@ -1026,7 +1026,7 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                                     if( meta.row == 0 ) {
 
                                         if( vm.showLpSpreadTooltip1 ) {
-                                            graphContent    +=  '<div class="tooltip2"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button> <span class="tooltiptext2" style="width:80px;">신규서비스<button id="btnLpSpreadClose" type="button" class="btn_icon v-icon material-icons dark">close</button></span></div>';
+                                            graphContent    +=  '<div class="tooltip2"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button> <span class="tooltiptext2 arrow_box" style="width:80px;">신규서비스<button id="btnLpSpreadClose" type="button" class="btn_icon v-icon material-icons dark">close</button></span></div>';
                                         }else{
                                             graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
                                         }
