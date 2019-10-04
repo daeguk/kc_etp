@@ -31,26 +31,7 @@
                         </div>
                     </v-card-title>
                 </div>
-                      <!--말풍선 추가---->
-                                            <!--div class="text-xs-center">
-                                                <v-menu v-model="showPdfTooltip" :nudge-width="80" offset-x left class="arrow_menu">
-                                                    <template v-slot:activator="{ on }">
-                                                                <div style="display:none;">1</div>
-                                            </template-->
-                                                    <div>
-                                                    <v-layout>
-                                                        <v-flex>
-                                                            <div class="arrow_box">
-                                                            <span>신규 서비스</span>
-                                                            <v-btn flat @click="fn_closePdfTooltip()" icon small dark><v-icon>close</v-icon></v-btn>
-                                                            </div>
-                                                        </v-flex>
-                                                        <v-flex class="arrow_flex"></v-flex>
-                                                    </v-layout>
-                                                    </div>
-                                                <!--/v-menu>
-                                            <div-->
-                                        <!---말풍선 추가end---->                  
+
                     <v-card flat>
                         <div v-show='stateInfo.pageState != "performance"' >
                             <table id="table01" class="tbl_type ver7"    style="width:100%"/>
@@ -169,7 +150,7 @@ export default {
     },
     data() {
         return {
-            showPdfTooltip : true,
+            showLpSpreadTooltip1 : true,
             showFaver : true,
             text: "전종목",
             fmt_F12506 :   "",
@@ -207,6 +188,12 @@ export default {
             if( vm.toggle.arrCustomizeColumn && vm.toggle.arrCustomizeColumn.length > 0 ) {
                 vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
             }
+        }
+
+
+        if( typeof Config.showLpSpreadTooltip1 != "undefined" ) {
+console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.showLpSpreadTooltip1 );
+            vm.showLpSpreadTooltip1   =   Config.showLpSpreadTooltip1;
         }
 
 
@@ -305,7 +292,7 @@ export default {
 
             vm.fn_setTableInfo( vm.arrCustomizeColumn );
             vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
-        });
+        });   
     },
     created: function() {},
     beforeDestory: function() {
@@ -477,6 +464,7 @@ export default {
                     "stateSave": true,  //restore table state on page reload,
                     "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],
                     "scrollY": '760px',
+                    "aaSorting": [],
                     paging: false,
                     searching: false,
                     data : [],
@@ -508,7 +496,7 @@ export default {
 
 
             // 테이블별 이벤트
-            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnSpread],button[id=btnEtpInfo],button[id=btnPdf]', function () {
+            $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnSpread],button[id=btnEtpInfo],button[id=btnPdf],button[id=btnLpSpreadClose]', function () {
 
                 var table = $('#table01').DataTable();
                 var data = table.row($(this).parents('tr')).data();
@@ -555,6 +543,17 @@ export default {
                     case    'btnPdf'    :
                                 vm.$emit('fn_pageMove', btnId, data);
                                 break;
+                                
+                    case    'btnLpSpreadClose'  :
+
+                                $(`<span class="tooltiptext" style="width:70px;">LP차트</span>`).appendTo( $(this).parents("div") );
+                                $(this).closest("span.tooltiptext2").remove();
+                                
+                                vm.showLpSpreadTooltip1 = false;
+                                Config.showLpSpreadTooltip1 = false;
+
+                                break;
+
                 }
                 
                 console.log("########## EtpOperInfo.vue -> pageMove END ############");
@@ -1006,7 +1005,7 @@ export default {
 
                     /* 그래프 */
                     {       'name' : 'graph'   
-                        ,   "render": function ( data, type, row ) {
+                        ,   "render": function ( data, type, row, meta ) {
 
                                 var graphContent = "";
 
@@ -1021,8 +1020,19 @@ export default {
                                     }
 //                                    graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnInav", "btnContent" : "visibility", "btnSpanContent" : "투자지표" } );
                                 }else if( vm.stateInfo.pageState === 'lpspread' ) {
-                                // graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
-                                        graphContent    +=  '<div class="tooltip2"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext2" style="width:80px;">신규서비스<button id="btnEtpInfo" type="button" class="btn_icon v-icon material-icons dark">close</button></span></div>';
+
+                                    if( meta.row == 0 ) {
+
+                                        if( vm.showLpSpreadTooltip1 ) {
+                                            graphContent    +=  '<div class="tooltip2"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button> <span class="tooltiptext2" style="width:80px;">신규서비스<button id="btnLpSpreadClose" type="button" class="btn_icon v-icon material-icons dark">close</button></span></div>';
+                                        }else{
+                                            graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
+                                        }
+                                    }else{
+                                    
+                                        graphContent    +=  '<div class="tooltip"><button type="button" id="btnSpread" name="btnSpread" class="lpchart_icon"></button><span class="tooltiptext" style="width:70px;">LP차트</span></div>';
+                                    }
+                                        
                                 }
                                 
                                 /* ETF 상세정보 */
@@ -1324,7 +1334,7 @@ export default {
         },
         closeEtpLpModal: function() {
           this.EtpLpModalFlag = false;
-        },
+        }   
     }
 };
 </script>

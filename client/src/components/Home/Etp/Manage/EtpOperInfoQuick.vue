@@ -66,7 +66,7 @@
                                         <v-list-tile-avatar>
                                             <!--말풍선 추가---->
                                             <div class="text-xs-center">
-                                                <v-menu v-model="showPdfTooltip" :nudge-width="80" offset-x left class="arrow_menu">
+                                                <v-menu v-model="showLpSpreadTooltip" :nudge-width="80" offset-x left class="arrow_menu">
                                                     <template v-slot:activator="{ on }">
                                            <div :class="( toggleEtpLpspread ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon9"></span></div>
                                             </template>
@@ -257,6 +257,10 @@
 </style>
 
 <script>
+import util       from "@/js/util.js";
+import Config from '@/js/config.js';
+import Constant from "@/store/store_constant.js"
+
 import ComIndexFixPopup     from "@/components/common/popup/ComIndexFixPopup.vue";
 import ComEtpFavorItemSub   from "@/components/common/control/ComEtpFavorItemSub.vue"; 
 
@@ -269,7 +273,7 @@ export default {
     },
     data() {
         return {
-            showPdfTooltip : true,
+            showLpSpreadTooltip : true,
             showFaver : true,
             toggleINav : false,
             toggleEtpPerformance : false,
@@ -323,9 +327,9 @@ export default {
         if(tmp.indexOf("test@") !== -1) this.testFlag = true;
         
 
-        if( typeof Config.showPdfTooltip != "undefined" ) {
-console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdfTooltip );
-            vm.showPdfTooltip   =   Config.showPdfTooltip;
+        if( typeof Config.showLpSpreadTooltip != "undefined" ) {
+console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip=", Config.showLpSpreadTooltip );
+            vm.showLpSpreadTooltip   =   Config.showLpSpreadTooltip;
         }
     },
     created: function() {},
@@ -464,9 +468,9 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdf
         fn_closePdfTooltip() {
             var vm  =   this;
 
-            vm.showPdfTooltip = false; 
-            Config.showPdfTooltip = false;
-        }       
+            vm.showLpSpreadTooltip = false; 
+            Config.showLpSpreadTooltip = false;
+        }  
     }
 };
 </script>
