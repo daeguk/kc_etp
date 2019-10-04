@@ -647,6 +647,8 @@
                 )   td_etp_basic
 
          WHERE  1 =1
+         ORDER  BY      td_etp_basic.F16002
+                    ,   td_etp_basic.F16013
     </select>
 
 
