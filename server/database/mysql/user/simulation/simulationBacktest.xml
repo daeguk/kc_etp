@@ -475,31 +475,43 @@
                     ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
                     ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
 
-            FROM  (
-                        SELECT      tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
+                    ,   /* 
+                            유동주식수  = 0  이면   상장주식수 
+                            유동주식수 != 0   면    유동주식수 
+                        */
+                        CASE    WHEN    IFNULL( 
+                                                td_kspjong_hist.F18417      /* 유동주식수 */
+                                            ,   0
+                                        )   =   0
+                                THEN    td_kspjong_hist.F16143              /* 상장주식수*/
+                                ELSE    td_kspjong_hist.F18417              /* 유동주식수 */
+                        END                                                 AS  F18417                  /* 유동주식수 */
+
+          FROM  (
+                    SELECT          tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
                                 ,   (
                                         SELECT  tm_code_dtl.com_val02
-                                        FROM  tm_code_dtl
-                                        WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                        AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     MAX(tm_simul_mast.rebalance_cycle_cd) 
+                                          FROM  tm_code_dtl
+                                         WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                           AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     MAX(tm_simul_mast.rebalance_cycle_cd) 
                                                                                         ,   IFNULL( MAX(tm_simul_mast.rebalance_date_cd), '' )
                                                                                 )
                                         LIMIT  1
                                     )                                       AS  GUBUN                   /* 구분 */
 
-                        FROM  tm_simul_portfolio
-                        JOIN  tm_simul_mast
-                            ON  (
+                      FROM  tm_simul_portfolio
+                      JOIN  tm_simul_mast
+                        ON  (
                                             tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
                                     AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
-                                )
-                        WHERE  1 = 1
-                        AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
-                        AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
-                     GROUP BY  tm_simul_portfolio.F16013
+                            )
+                     WHERE  1 = 1
+                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
+                     GROUP  BY  tm_simul_portfolio.F16013
                     )     base
             JOIN  td_kspjong_hist
-                ON  (   
+              ON  (
                     <![CDATA[
                                 base.F16013                 =   td_kspjong_hist.F16013
     
