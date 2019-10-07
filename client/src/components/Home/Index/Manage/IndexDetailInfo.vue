@@ -181,21 +181,21 @@ export default {
     created: function() {
          var vm = this;
 
-        vm.$EventBus.$on('changeIndexInfo', data => {
-            vm.toggle_one = '1M';
-            vm.openSubIndexInfoTab = true;
-            vm.init(true);
-            vm.items = ["기본정보", "분석정보"];
-        });
+//         vm.$EventBus.$on('changeIndexInfo', data => {
+//             vm.toggle_one = '1M';
+// //            vm.openSubIndexInfoTab = true;
+//             vm.init(true);
+//             vm.items = ["기본정보", "분석정보"];
+//         });
     },
     beforeDestroy() {
-        this.$EventBus.$off('changeIndexInfo');
+        // this.$EventBus.$off('changeIndexInfo');
     },
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         var vm = this;
-        
+
         vm.init(false);  
 
         if (vm.showDialog) {
@@ -244,16 +244,16 @@ export default {
                     &&  vm.basicData.market_id
                 ) {
                     vm.getIndexBaseInfo();
-//                    vm.Indexchart();
+
                 }
 
-                if (event == true) {
-                    // // 분석정보 실행
-                    vm.$EventBus.$emit('changeIndexAnalysisInfo');
+                // if (event == true) {
+                //     // // 분석정보 실행
+                //     vm.$EventBus.$emit('changeIndexAnalysisInfo');
 
-                    // 분석정보 실행
-                    vm.$EventBus.$emit('changeIndexBasicInfo');
-                }
+                //     // 분석정보 실행
+                //     vm.$EventBus.$emit('changeIndexBasicInfo');
+                // }
             });   
             
             
@@ -298,7 +298,6 @@ export default {
                                 vm.results = items[0];
 
                                 vm.chartFlag = true;
-                                vm.openSubIndexInfoTab      =   true;
                                 //this.list_cnt = this.results.length;
 
                                 vm.getIndexInEtpInfo( vm.basicData );
@@ -338,9 +337,10 @@ export default {
                     vm.etpList = response.data.results;
                     vm.tabFlag = true;
 
-                    console.log("vm.etpList......................");
-                    console.log(vm.etpList);
+                    console.log("IndexDetailInfo.vue -> getIndexInEtpInfo vm.etpList", vm.etpList);
                 }
+
+                vm.openSubIndexInfoTab      =   true;
             });
         },
 

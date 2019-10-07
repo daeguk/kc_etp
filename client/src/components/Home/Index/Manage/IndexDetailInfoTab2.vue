@@ -282,13 +282,13 @@ export default {
     computed: {},
     created: function() {
         var vm = this;
-        vm.$EventBus.$on('changeIndexAnalysisInfo', data => {
-            vm.init();
-        });
+        // vm.$EventBus.$on('changeIndexAnalysisInfo', data => {
+        //     vm.init();
+        // });
 
     },
     beforeDestroy() {
-        this.$EventBus.$off('changeIndexAnalysisInfo')
+        // this.$EventBus.$off('changeIndexAnalysisInfo')
     },
 
     mounted: function() {        
@@ -302,7 +302,7 @@ export default {
 
         this.befDates = this.$store.state.befDates;
         this.getIndexAnal(this.basicData);
-        console.log("this.etpList.length : " + this.etpList.length);
+        console.log("IndexDetailInfoTab2.vue -> mounted  this.etpList.length : " + this.etpList.length);
 
         for(let i=0; i < this.etpList.length; i++) {
             // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));

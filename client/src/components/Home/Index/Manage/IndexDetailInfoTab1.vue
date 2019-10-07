@@ -111,13 +111,13 @@ export default {
     },
     created: function() {
         var vm = this;
-        vm.$EventBus.$on('changeIndexBasicInfo', data => {
-            vm.init();
-        });
+        // vm.$EventBus.$on('changeIndexBasicInfo', data => {
+        //     vm.init();
+        // });
 
     },
     beforeDestroy() {
-        this.$EventBus.$off('changeIndexBasicInfo')
+        // this.$EventBus.$off('changeIndexBasicInfo')
     },
     mounted: function() {
         this.type_cd = this.$store.state.user.type_cd;        

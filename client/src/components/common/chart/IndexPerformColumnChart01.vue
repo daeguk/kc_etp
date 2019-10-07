@@ -13,7 +13,7 @@ export default {
     return {
       canvas:{},
       ctx:{},
-      chartId:"PerformColumnChart",
+      chartId:"PerformColumnChart01",
 //      chart:{width:1000, height:180},
 //      crect:{x1:200, y1:20, x2:940, y2:160},
       chart:{width:1302, height:180},
