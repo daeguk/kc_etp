@@ -79,7 +79,7 @@
       <!--
       <LineIndexChart v-if="chartFlag" :indexBasic="indexBasic"></LineIndexChart>
       -->
-      <LineEtpLpChart :etpBasic="etpInfo"></LineEtpLpChart>
+      <div class="pad_gleft2"><LineEtpLpChart :etpBasic="etpInfo"></LineEtpLpChart></div>
       <EtpLpTable :etpInfo="etpInfo"></EtpLpTable>
     </v-card>
   </v-dialog>
