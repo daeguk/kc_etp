@@ -987,7 +987,7 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
             
-                                htm += util.formatNumber(data);
+                                htm += util.formatInt(data);
 
                                 return htm;
                             },
