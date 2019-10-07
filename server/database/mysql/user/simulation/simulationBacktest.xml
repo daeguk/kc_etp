@@ -472,7 +472,6 @@
 
                     ,   td_kspjong_hist.F30700                              AS  F30700                  /* 가중 수정 현재가 ( 당일 종가 ) - 종가 */
                     ,   td_kspjong_hist.F15007                              AS  F15007                  /* 기준가 ( 전일 종가 ) - 기준가 */
-                    ,   td_kspjong_hist.F16143                              AS  F16143                  /* 상장주식수*/
                     ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
 
                     ,   /* 
@@ -485,7 +484,7 @@
                                         )   =   0
                                 THEN    td_kspjong_hist.F16143              /* 상장주식수*/
                                 ELSE    td_kspjong_hist.F18417              /* 유동주식수 */
-                        END                                                 AS  F18417                  /* 유동주식수 */
+                        END                                                 AS  F16143                  /* 유동주식수 */
 
           FROM  (
                     SELECT          tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
