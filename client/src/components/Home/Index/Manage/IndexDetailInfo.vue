@@ -59,7 +59,41 @@
                     </div>
 -->
 
-                    <div class="pad_gleft1"><LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01></div>
+
+                    <div class="graph_01_w">
+                        <div class="sub_title_num">
+                            {{results.F15001}}
+                            <span>{{results.F15472}}({{results.F15004}})%</span>
+                            <p>Last Updated : {{results.F12506}}</p>
+                        </div>
+                        <div class="index_nums">
+                            <v-layout>
+                                <v-flex class="ver1">
+                                <ul>
+                                    <li>시가총액</li>
+                                    <li class="number"> {{formatInt(results.F15028/1000000000)}}십억</li>
+                                </ul>
+                                </v-flex>
+                                <v-flex class="ver2">
+                                <ul>
+                                    <li>거래량</li>
+                                    <li class="number">{{formatInt(results.F15015)}}주</li>
+                                </ul>
+                                </v-flex>
+                                <v-flex class="ver3">
+                                <ul>
+                                    <li>거래대금</li>
+                                    <li class="number">{{formatInt(results.F15023)}}천</li>
+                                </ul>
+                                </v-flex>
+                            </v-layout>
+                        </div>
+
+                        <div>
+                            <LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01>
+                        </div>                        
+                    </div>
+
 
                     <div class="tab2_w">
                         <v-layout row wrap>
@@ -312,7 +346,11 @@ export default {
 
         showMessageBox: function(title, msg, option, gubun) {
             this.$root.$confirm.open(title,msg, option, gubun);
-        }
+        },
+
+        formatInt:function(num) {
+            return util.formatInt(num);
+        },        
     } 
 
 };
