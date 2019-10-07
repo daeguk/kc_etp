@@ -12,7 +12,7 @@
                         <table class="tbl_type ver4">
                         <caption> 헤더 고정 테이블</caption>
                         <colgroup>
-                            <col width="19%">
+                            <col width="16%">
                             <col width="9%">
                             <col width="9%">
                             <col width="9%">
@@ -21,20 +21,20 @@
                             <col width="9%">
                             <col width="9%">
                             <col width="9%">
-                            <col width="7%">
+                            <col width="10%">
                         </colgroup>
                         <thead>
                             <tr>
-                            <th style="width:19%" class="txt_center"></th>
-                            <th @dblclick="sortTable(1)" style="width:9%" class="txt_center">Daily</th>
-                            <th @dblclick="sortTable(2)" style="width:9%" class="txt_center">1Week</th>
-                            <th @dblclick="sortTable(3)" style="width:9%" class="txt_center">1Month</th>
-                            <th @dblclick="sortTable(4)" style="width:9%" class="txt_center">YTD</th>
-                            <th @dblclick="sortTable(5)" style="width:9%" class="txt_center">1Year</th>
-                            <th @dblclick="sortTable(6)" style="width:9%" class="txt_center">3Year</th>
-                            <th @dblclick="sortTable(7)" style="width:9%" class="txt_center">5Year</th>
-                            <th @dblclick="sortTable(8)" style="width:9%" class="txt_center">10Year</th>
-                            <th style="width:7%" class="txt_center"></th>
+                            <th style="width:18%" class="txt_center"></th>
+                            <th @dblclick="sortTable(1)" style="width:9%" class="txt_right">Daily</th>
+                            <th @dblclick="sortTable(2)" style="width:9%" class="txt_right">1Week</th>
+                            <th @dblclick="sortTable(3)" style="width:9%" class="txt_right">1Month</th>
+                            <th @dblclick="sortTable(4)" style="width:9%" class="txt_right">YTD</th>
+                            <th @dblclick="sortTable(5)" style="width:9%" class="txt_right">1Year</th>
+                            <th @dblclick="sortTable(6)" style="width:9%" class="txt_right">3Year</th>
+                            <th @dblclick="sortTable(7)" style="width:9%" class="txt_right">5Year</th>
+                            <th @dblclick="sortTable(8)" style="width:9%" class="txt_right">10Year</th>
+                            <th style="width:10%" class="txt_center"></th>
                             </tr>
                         </thead>
                         <tbody>

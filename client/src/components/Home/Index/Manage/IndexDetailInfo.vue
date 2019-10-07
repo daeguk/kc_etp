@@ -59,7 +59,7 @@
                     </div>
 -->
 
-                    <LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01>
+                    <div class="pad_gleft1"><LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01></div>
 
                     <div class="tab2_w">
                         <v-layout row wrap>
