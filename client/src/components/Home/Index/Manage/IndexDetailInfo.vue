@@ -328,7 +328,7 @@ export default {
 
             axios.get(Config.base_url + "/user/index/getIndexInEtpInfo", {
                 params: {
-                    jisu_cd : rinfo.F16013,
+                    jisu_cd : rinfo.jisu_cd,
                     market_id : rinfo.market_id,
                 }
             }).then(response => { 
