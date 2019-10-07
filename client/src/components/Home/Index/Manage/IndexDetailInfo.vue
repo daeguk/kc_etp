@@ -89,7 +89,7 @@
                             </v-layout>
                         </div>
 
-                        <div>
+                        <div class="pad_gleft1">
                             <LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01>
                         </div>                        
                     </div>
