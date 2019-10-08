@@ -206,7 +206,7 @@ export default {
 
                         try{
 
-                            if( vm.$refs.progress2 ) {
+                            if( vm.$refs && vm.$refs.progress2 ) {
                                 util.processing(vm.$refs.progress2, false);
                             }
 
@@ -225,21 +225,27 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+
+                            if( vm.$refs && vm.$refs.progress2 ) {
+                                util.processing(vm.$refs.progress2, false);
+                            }
 
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }
                     }
                 ,   function(error) {
-                        resolve( { result : false } );
 
-                        if( vm.$refs.progress2 ) {
+                        if( vm.$refs && vm.$refs.progress2 ) {
                             util.processing(vm.$refs.progress2, false);
                         }
 
                         if( error ) {
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
+
+                        resolve( { result : false } );
                     }
             );
 

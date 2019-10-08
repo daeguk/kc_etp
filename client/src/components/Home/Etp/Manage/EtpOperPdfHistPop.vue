@@ -176,7 +176,7 @@ export default {
 
                         try{
 
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }
 
@@ -329,7 +329,7 @@ export default {
                             }
 
                         }catch(ex) {
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }                            
                             console.log( "error", ex );
@@ -337,7 +337,7 @@ export default {
                     }
                 ,   function(error) {
 
-                        if( vm.$refs.progress ) {
+                        if( vm.$refs && vm.$refs.progress ) {
                             util.processing(vm.$refs.progress, false);
                         }
 

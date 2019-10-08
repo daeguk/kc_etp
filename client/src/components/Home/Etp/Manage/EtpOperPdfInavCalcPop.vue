@@ -517,13 +517,13 @@ export default {
                                     });                        
                                 }
                             } else {
-                                if( vm.$refs.progress ) {
+                                if( vm.$refs && vm.$refs.progress ) {
                                     util.processing(vm.$refs.progress, false);
                                 }
                             }
 
                         }catch(ex) {
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }
                             console.log( "error", ex );
@@ -532,7 +532,7 @@ export default {
                 ,   function(error) {
                         console.log(error);
 
-                        if( vm.$refs.progress ) {
+                        if( vm.$refs && vm.$refs.progress ) {
                             util.processing(vm.$refs.progress, false);
                         }                        
 

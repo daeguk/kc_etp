@@ -344,13 +344,13 @@ export default {
                                 
                                 vm.indexInavCal();
                             }else{
-                                if( vm.$refs.progress ) {
+                                if( vm.$refs && vm.$refs.progress ) {
                                     util.processing(vm.$refs.progress, false);
                                 }
                             }
 
                         }catch(ex) {
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }
 
@@ -359,7 +359,7 @@ export default {
                     }
                 ,   function(error) {
 
-                        if( vm.$refs.progress ) {
+                        if( vm.$refs && vm.$refs.progress ) {
                             util.processing(vm.$refs.progress, false);
                         }
 
