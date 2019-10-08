@@ -490,7 +490,7 @@ export default {
         fn_setInavData( paramData, stateInfo ) {
             var vm = this;
 
-            if( paramData && paramData.toggleINav ) {
+            if( paramData && typeof paramData.toggleINav != "undefined" ) {
                 vm.toggle.toggleINav    =   paramData.toggleINav;
             }
 
@@ -508,7 +508,7 @@ export default {
         fn_setEtpPerformanceData( paramData, stateInfo ) {
             var vm = this;
 
-            if( paramData && paramData.toggleEtpPerformance ) {
+            if( paramData && typeof paramData.toggleEtpPerformance != "undefined" ) {
                 vm.toggle.toggleEtpPerformance    =   paramData.toggleEtpPerformance;
             }
 
@@ -526,7 +526,7 @@ export default {
         fn_setEtpLpspread( paramData, stateInfo ) {
             var vm = this;
 
-            if( paramData && paramData.toggleEtpLpspread ) {
+            if( paramData && typeof paramData.toggleEtpLpspread != "undefined" ) {
                 vm.toggle.toggleEtpLpspread    =   paramData.toggleEtpLpspread;
             }
 
@@ -538,14 +538,14 @@ export default {
             if( stateInfo ) {
                 vm.state.pageState  =   stateInfo.pageState;
                 vm.state.gubun  =   stateInfo.gubun;
-            }            
+            }
         },        
         
         fn_setCustomizeData( paramData, stateInfo ) {
             var vm = this;
 
             if( paramData ) {
-                if( paramData.toggleCustomize ) {
+                if( typeof paramData.toggleCustomize != "undefined" ) {
                     vm.toggle.toggleCustomize    =   paramData.toggleCustomize;
                 }
                 if( paramData.arrCustomizeColumn ) {
