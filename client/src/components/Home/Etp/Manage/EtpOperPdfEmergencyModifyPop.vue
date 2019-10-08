@@ -885,7 +885,9 @@ export default {
 
                             try{
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
 
                                 if (response.data) {
 
@@ -972,12 +974,18 @@ export default {
                                 }
 
                             }catch(ex) {
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
+
                                 console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
 
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
@@ -1014,7 +1022,9 @@ export default {
 
                                 try{
 
-                                    util.processing(vm.$refs.progress, false);
+                                    if( vm.$refs && vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }                                    
 
                                     if (response.data) {
 
@@ -1034,13 +1044,19 @@ export default {
                                     resolve(true);
 
                                 }catch(ex) {
-                                    resolve(false);
+                                    if( vm.$refs && vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }
+
                                     console.log( "error", ex );
+                                    resolve(false);
                                 }
                             }
                         ,   function(error) {
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }                                
 
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
 
@@ -1054,7 +1070,9 @@ export default {
             }).catch( function(e) {
                 console.log( e );
 
-                util.processing(vm.$refs.progress, false);
+                if( vm.$refs.progress ) {
+                    util.processing(vm.$refs.progress, false);
+                }
 
                 if ( vm.$refs.confirm2.open(
                         '확인',
@@ -1128,7 +1146,9 @@ export default {
 
                             try{
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }                                
 
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1161,6 +1181,10 @@ export default {
                                 }
 
                             }catch(ex) {
+
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }                                
                                 console.log( "error", ex );
 
                                 vm.jongmok_state    =   "";
@@ -1169,8 +1193,11 @@ export default {
                         }
                     ,   function(error) {
 
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             vm.jongmok_state    =   "";
-                            util.processing(vm.$refs.progress, false);
 
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
 
@@ -1210,7 +1237,9 @@ export default {
 
                             try{
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }                                
 
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1243,6 +1272,10 @@ export default {
                                 }
 
                             }catch(ex) {
+
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }                                
                                 console.log( "error", ex );
 
                                 vm.jongmok_state    =   "";
@@ -1251,8 +1284,11 @@ export default {
                         }
                     ,   function(error) {
 
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }                        
+
                             vm.jongmok_state    =   "";
-                            util.processing(vm.$refs.progress, false);
 
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
 
@@ -1687,7 +1723,9 @@ export default {
 
                         try{
 
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }                            
                             
                             // try{
                             //     tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
@@ -1723,11 +1761,20 @@ export default {
                             }
 
                         }catch(ex) {
+
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+                                                        
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-                        util.processing(vm.$refs.progress, false);
+
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
+
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -1751,7 +1798,9 @@ export default {
 
                         try{
 
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                             if (response.data) {
 
@@ -1911,11 +1960,18 @@ export default {
                             }
 
                         }catch(ex) {
+
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-                        util.processing(vm.$refs.progress, false);
+
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }                        
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );

@@ -475,11 +475,16 @@ export default {
                                         }
                                     }
 
-                                    util.processing(vm.$refs.progress, false);
+                                    if( vm.$refs && vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }
+
                                     resolve(true);
 
                                 }catch(ex) {
-                                    util.processing(vm.$refs.progress, false);
+                                    if( vm.$refs && vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }
                                     console.log( "error", ex );
 
                                     resolve(false);
@@ -487,7 +492,9 @@ export default {
                             }
                         ,   function(error) {
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
 
                                 if( error ) {
                                     vm.$emit("showMessageBox", '확인', msg,{},4);
@@ -502,7 +509,10 @@ export default {
             }).catch( function(e) {
                 console.log( e );
 
-                util.processing(vm.$refs.progress, false);
+                if( vm.$refs && vm.$refs.progress ) {
+                    util.processing(vm.$refs.progress, false);
+                }
+
                 vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
 
                 resolve(false);

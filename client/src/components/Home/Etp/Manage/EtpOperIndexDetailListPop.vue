@@ -184,16 +184,22 @@ export default {
                                 }
                             }
 
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                         }catch(ex) {
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
 
-                        util.processing(vm.$refs.progress, false);
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
                         
                         if( error ) {
                             vm.showMessageBox( '확인', error,{},4 );

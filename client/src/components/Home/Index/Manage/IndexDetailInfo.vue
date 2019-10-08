@@ -90,7 +90,7 @@
                         </div>
 
                         <div class="pad_gleft1">
-                            <LineIndexChart01 v-if="chartFlag" :indexBasic="results"></LineIndexChart01>
+                            <LineIndexChart01 :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart01>
                         </div>                        
                     </div>
 
@@ -166,7 +166,6 @@ export default {
             basicData : {},
             contentClass : 'content_margin',
 
-            chartFlag: false,
             etpList : []
         };
     },
@@ -265,7 +264,6 @@ export default {
 
         getIndexBaseInfo: function() {
             var vm = this;
-            console.log("getIndexBaseInfo");
 
 
             util.axiosCall(
@@ -297,7 +295,6 @@ export default {
                                 
                                 vm.results = items[0];
 
-                                vm.chartFlag = true;
                                 //this.list_cnt = this.results.length;
 
                                 vm.getIndexInEtpInfo( vm.basicData );
@@ -319,7 +316,6 @@ export default {
         },
 
         getIndexInEtpInfo: function(rinfo) {
-            console.log("getIndexInEtpInfo...............");
 
             var vm = this;
 
@@ -336,8 +332,6 @@ export default {
                 } else {
                     vm.etpList = response.data.results;
                     vm.tabFlag = true;
-
-                    console.log("IndexDetailInfo.vue -> getIndexInEtpInfo vm.etpList", vm.etpList);
                 }
 
                 vm.openSubIndexInfoTab      =   true;

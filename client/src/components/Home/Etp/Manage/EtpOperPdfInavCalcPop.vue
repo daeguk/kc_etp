@@ -517,17 +517,24 @@ export default {
                                     });                        
                                 }
                             } else {
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs && vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
                             }
 
                         }catch(ex) {
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
                         console.log(error);
-                        util.processing(vm.$refs.progress, false);   
+
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }                        
 
                         if( error ) {
                             vm.$emit("showMessageBox", '확인', error ,{},4);

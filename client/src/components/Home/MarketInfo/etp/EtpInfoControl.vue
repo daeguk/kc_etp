@@ -176,7 +176,9 @@ export default {
         },
 
         showProgress: function(visible) {
-            util.processing(this.$refs.progress, visible);
+            if( this.$refs && this.$refs.progress ) {
+                util.processing(this.$refs.progress, visible);
+            }
         },
 
         /*
