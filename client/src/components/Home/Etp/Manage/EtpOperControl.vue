@@ -374,7 +374,10 @@ export default {
             this.$root.$confirm.open(title,msg, option, gubun);
         },
         fn_showProgress: function(visible) {
-            util.processing(this.$refs.progress, visible);
+
+            if( this.$refs && this.$refs.progress ) {
+                util.processing(this.$refs.progress, visible);
+            }
         },      
                     
         async fn_showDetailIndex(gubun, paramData) {
