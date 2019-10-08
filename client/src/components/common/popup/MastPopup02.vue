@@ -203,7 +203,9 @@ export default {
 
                         try{
 
-                            util.processing(vm.$refs.progress2, false);
+                            if( vm.$refs.progress2 ) {
+                                util.processing(vm.$refs.progress2, false);
+                            }
 
                             if (response.data) {
                                 var results = response.data.results;
@@ -228,7 +230,9 @@ export default {
                 ,   function(error) {
                         resolve( { result : false } );
 
-                        util.processing(vm.$refs.progress2, false);
+                        if( vm.$refs.progress2 ) {
+                            util.processing(vm.$refs.progress2, false);
+                        }
 
                         if( error ) {
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}

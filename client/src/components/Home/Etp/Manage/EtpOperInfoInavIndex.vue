@@ -343,18 +343,25 @@ export default {
                                 vm.iNavRate = vm.formatNumber(0);    
                                 
                                 vm.indexInavCal();
-                            } else {
-                                util.processing(vm.$refs.progress, false);
+                            }else{
+                                if( vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
                             }
 
                         }catch(ex) {
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
 
-                        util.processing(vm.$refs.progress, false);
+                        if( vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
 
                         if( error ) {
                             vm.$emit("showMessageBox", '확인', error ,{},4);

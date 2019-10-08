@@ -475,11 +475,16 @@ export default {
                                         }
                                     }
 
-                                    util.processing(vm.$refs.progress, false);
+                                    if( vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }
+
                                     resolve(true);
 
                                 }catch(ex) {
-                                    util.processing(vm.$refs.progress, false);
+                                    if( vm.$refs.progress ) {
+                                        util.processing(vm.$refs.progress, false);
+                                    }
                                     console.log( "error", ex );
 
                                     resolve(false);
@@ -487,7 +492,9 @@ export default {
                             }
                         ,   function(error) {
 
-                                util.processing(vm.$refs.progress, false);
+                                if( vm.$refs.progress ) {
+                                    util.processing(vm.$refs.progress, false);
+                                }
 
                                 if( error ) {
                                     vm.$emit("showMessageBox", '확인', msg,{},4);

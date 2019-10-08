@@ -324,8 +324,9 @@ console.log( vm.pdfData );
                                 resolve({ result : true });
 
                             }catch(ex) {
-                                resolve({ result : false });
+                                vm.$emit( "fn_showProgress", false );
                                 console.log( "error", ex );
+                                resolve({ result : false });
                             }
                         }
                     ,   function(error) {

@@ -380,6 +380,7 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                             }
 
                         }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
                             console.log( "error", ex );
                         }
                     }

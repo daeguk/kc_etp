@@ -123,7 +123,10 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        util.processing(vm.$refs.progress, false);
+
+                        if( vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
 
                         try{
 
@@ -144,11 +147,18 @@ export default {
                             }
 
                         }catch(ex) {
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-                        util.processing(vm.$refs.progress, false);
+                        if( vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
+
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
