@@ -263,9 +263,30 @@ input[type="text"]:focus, input[type="number"]:focus{border-color:#1976d2;}
 
 
 
+/*  Tooltip container  */
+.tooltip2 {position: relative; display: inline-block;}
+ /* Tooltip text */
+  
+.tooltip2 .tooltiptext2 { display: inline-block; background-color:#85c406;color: #fff; 
+    text-align: left;padding: 5px 10px; border-radius: 0px; position: absolute; top:3px;left:-110px; z-index: 1; font-size:12px;letter-spacing: -1;
+    opacity: 1;
+ }
+.tooltip2:hover .tooltiptext2 {visibility: visible; transition: opacity 0.3s ease;
+    -ms-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    opacity: 1;}
+.tooltip2 .btn_icon{width: 10px; height: 10px; color: #ffffff; float: right; font-size: 16px !important;}
+
+
+
+
+
+
+
 .w100{width:100% !important;}
 
 .w50{width:50% !important;}
+
 
 .bg_W{background: #ffffff;}
 
@@ -567,6 +588,8 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 .index3pop2_con .v-list--two-line .v-list__tile{height:25px;padding-left:24px;}
 
 .list_boder .v-list-tile{border-bottom:1px solid #cbe2f0}
+.pad_gleft1{padding-left:15px;}
+.pad_gleft2{padding-left:38px;}
 
 
 /*summary*/
@@ -999,7 +1022,7 @@ input[type='file']{
 }
 .arrow_box:after {
 	left: 100%;
-	top: 18%;
+	top: 40%;
 	border: solid transparent;
 	content: " ";
 	height: 0;
@@ -1008,19 +1031,20 @@ input[type='file']{
 	pointer-events: none;
 	border-color: rgba(136, 183, 213, 0);
 	border-left-color: #85c406;
-	border-width: 8px;
-    margin-top: -8px;
+	border-width: 6px;
+    margin-top: -6px;
     box-sizing: content-box !important;
 }
 
-.arrow_box span{width:180px; display:inline-block;}
+.arrow_box span{width:80px; display:inline-block;}
 @media screen and (-webkit-min-device-pixel-ratio:0) {.arrow_box .v-btn{float:right;}}
-:-ms-fullscreen, :root .arrow_box .v-btn{vertical-align: top;}
-.arrow_box .v-btn--icon.v-btn--small{width:20px; height:20px;}
+:-ms-fullscreen, :root .arrow_box .v-btn{vertical-align: top; }
+.arrow_box .v-btn--icon.v-btn--small{width:10px; height:10px;}
+.arrow_box .v-btn{margin-top:2px !important;}
 .arrow_box .v-icon{font-size:16px !important;}
 .arrow_conw{display:block;}
 .arrow_menu.v-menu__content{box-shadow:none !important; display:block;}
-.arrow_flex{height: 100%;width:10px;}
+.arrow_flex{height: 100%;width:6px;}
 
 
 

@@ -380,6 +380,7 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                             }
 
                         }catch(ex) {
+                            vm.$emit( "fn_showProgress", false );
                             console.log( "error", ex );
                         }
                     }
@@ -987,7 +988,7 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.s
                         ,   "render": function ( data, type, row ) {
                                 let htm = ""
             
-                                htm += util.formatNumber(data);
+                                htm += util.formatInt(data);
 
                                 return htm;
                             },

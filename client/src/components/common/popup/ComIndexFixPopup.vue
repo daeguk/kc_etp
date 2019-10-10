@@ -154,7 +154,9 @@ export default {
 
                         try{
 
-                            util.processing(vm.$refs.progress, false);
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                             if (response && response.data) {
 
@@ -238,11 +240,18 @@ export default {
                             }
 
                         }catch(ex) {
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-                        util.processing(vm.$refs.progress, false);
+
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
 
                         if( error ) {
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}

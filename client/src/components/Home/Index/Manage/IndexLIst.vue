@@ -174,12 +174,17 @@ export default {
                             table.clear().draw();
                             table.rows.add(vm.results).draw();
                             
-                        }                    
-                        util.processing(vm.$refs.progress, false);
+                        }
+                                      
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
                     }
                 ,   function(error) {
 
-                        util.processing(vm.$refs.progress, false);
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
 
                         if( error ) {
                             vm.$refs.confirm.open('', error, {}, 1);

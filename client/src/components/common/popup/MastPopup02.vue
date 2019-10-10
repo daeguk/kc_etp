@@ -178,7 +178,10 @@ export default {
     *  2019-07-26  bkLove(촤병국)
     */
     fn_showProgress: function(visible) {
-        util.processing( this.$refs.progress2, visible );
+
+        if( this.$refs && this.$refs.progress2 ) {
+            util.processing( this.$refs.progress2, visible );
+        }
     },
 
     /*
@@ -203,7 +206,9 @@ export default {
 
                         try{
 
-                            util.processing(vm.$refs.progress2, false);
+                            if( vm.$refs && vm.$refs.progress2 ) {
+                                util.processing(vm.$refs.progress2, false);
+                            }
 
                             if (response.data) {
                                 var results = response.data.results;
@@ -220,19 +225,27 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+
+                            if( vm.$refs && vm.$refs.progress2 ) {
+                                util.processing(vm.$refs.progress2, false);
+                            }
 
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }
                     }
                 ,   function(error) {
-                        resolve( { result : false } );
 
-                        util.processing(vm.$refs.progress2, false);
+                        if( vm.$refs && vm.$refs.progress2 ) {
+                            util.processing(vm.$refs.progress2, false);
+                        }
 
                         if( error ) {
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
+
+                        resolve( { result : false } );
                     }
             );
 

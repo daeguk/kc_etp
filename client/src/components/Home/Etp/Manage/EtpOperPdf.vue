@@ -395,13 +395,15 @@ export default {
                                 resolve(true);
 
                             }catch(ex) {
-                                resolve(false);
+                                vm.$emit( "fn_showProgress", false );
                                 console.log( "error", ex );
+
+                                resolve(false);
                             }
                         }
                     ,   function(error) {
 
-                            vm.$emit( "fn_showProgress", false );
+                            
 
                             if( error ) {
                                 vm.$emit("showMessageBox", '확인', error ,{},4);

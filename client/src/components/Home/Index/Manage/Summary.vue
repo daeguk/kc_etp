@@ -217,10 +217,16 @@ export default {
                                 vm.$EventBus.$emit("getIndexSummaryHist", "loading");
                                 
                             }
-                            util.processing(vm.$refs.progress, false);
+
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                         }catch(ex) {
-                            util.processing(vm.$refs.progress, false);
+
+                            if( vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
 
                             console.log( "error", ex );
                         }

@@ -143,7 +143,10 @@ export default {
          *  2019-07-26  bkLove(촤병국)
          */
         fn_showProgress: function(visible) {
-            util.processing( this.$refs.progress2, visible );
+
+            if( this.$refs && this.$refs.progress2 ) {
+                util.processing( this.$refs.progress2, visible );
+            }
         },         
 
         /*

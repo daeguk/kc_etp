@@ -461,7 +461,7 @@ export default {
 
                         try{
 
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }
                             
@@ -477,12 +477,17 @@ export default {
                             }
 
                         }catch(ex) {
+
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
 
-                        if( vm.$refs.progress ) {
+                        if( vm.$refs && vm.$refs.progress ) {
                             util.processing(vm.$refs.progress, false);
                         }                    
 
@@ -513,7 +518,7 @@ export default {
 
                         try{
 
-                            if( vm.$refs.progress ) {
+                            if( vm.$refs && vm.$refs.progress ) {
                                 util.processing(vm.$refs.progress, false);
                             }
                             
@@ -530,12 +535,17 @@ export default {
                             }
 
                         }catch(ex) {
+                            
+                            if( vm.$refs && vm.$refs.progress ) {
+                                util.processing(vm.$refs.progress, false);
+                            }
+
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
 
-                        if( vm.$refs.progress ) {
+                        if( vm.$refs && vm.$refs.progress ) {
                             util.processing(vm.$refs.progress, false);
                         }                    
 

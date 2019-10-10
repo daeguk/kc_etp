@@ -396,12 +396,43 @@ export default {
         $('#table01 tbody').on('blur', "input[name='F16013'], input[name='importance']", function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
+            var v_F16013_obj    =   null;
 
             if( $(this).val() != '' ) {
+
                 vm.fn_resetErrorMessage();
 
                 /* 종목코드인 경우에만 코드 검색 */
                 if( $(this).attr("name") == "F16013" ) {
+
+                    v_F16013_obj    =   $(this);
+
+                    var  flag = true;
+                    table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                        var tr = $(this);
+
+                        var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                        var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
+
+                        /* 종목코드가 존재하는 경우 */
+                        if( typeof v_F16013.val() != "undefined" && v_F16013.val() != "" && rowIndex != tr.index() ) {
+
+                            /* 중복된 종목은 추가하지 않음. */
+                            if(  v_F16013.val() == v_F16013_obj.val() ) {
+                                vm.arr_show_error_message.push( v_text0.text() + " 종목코드(" + v_F16013.val() + ") 가 존재합니다." );
+                                v_F16013_obj.val("");
+                                flag = false;
+
+                                return  false;
+                            }
+                        }
+                    });
+
+                    if( !flag ) {
+                        return  false;
+                    }
+
+
                     /* 종목코드를 검색한다. */
                     vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
 
@@ -447,10 +478,38 @@ export default {
         $('#table01 tbody').on('keypress', "input[name='F16013']", function(e) {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
+            var v_F16013_obj    =   null;
 
             vm.fn_resetErrorMessage();
 
             if( e.which == 13 ) {
+
+                v_F16013_obj    =   $(this);
+
+                var  flag = true;
+                table01.find( "tbody tr" ).each( function( inx, rowItem ) {
+                    var tr = $(this);
+
+                    var v_text0         =   tr.find( "td:eq(0) .add_btn_span" );            /* 첫번째 컬럼 */
+                    var v_F16013        =   tr.find( "td input[name=F16013]" );             /* 종목코드 */
+
+                    /* 종목코드가 존재하는 경우 */
+                    if( typeof v_F16013.val() != "undefined" && v_F16013.val() != "" && rowIndex != tr.index() ) {
+
+                        /* 중복된 종목은 추가하지 않음. */
+                        if(  v_F16013.val() == v_F16013_obj.val() ) {
+                            vm.arr_show_error_message.push( v_text0.text() + " 종목코드(" + v_F16013.val() + ") 가 존재합니다." );
+                            v_F16013_obj.val("");
+                            flag = false;
+
+                            return  false;
+                        }
+                    }
+                });
+
+                if( !flag ) {
+                    return  false;
+                }
 
                 /* 종목코드를 검색한다. */
                 vm.fn_getJongmokData( rowIndex, $(this) ).then(function(e){
@@ -1555,7 +1614,6 @@ export default {
                 }
             }
 
-console.log( "######2" );
             /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( vm.importance_method_cd ).then( function(e1){
                 vm.fn_setTotalRecord();
@@ -2789,7 +2847,7 @@ console.log( "######2" );
 
                                 resolve( { result : true } );
                             }else{
-                                
+
                                 resolve( { result : false } );
                             }
                         });
