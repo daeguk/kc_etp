@@ -74,15 +74,17 @@ import IndexCodeModal from "@/components/Home/OperSupport/IndexCodeModal.vue";
 
 export default {
 
+    props : [ "org_data_list" ],
+
     data() {
         return {
                 dialog          :   false
             ,   search_name     :   ""
-            ,   org_data_list   :   []
             ,   show_data_list  :   []
         }
     
-    }, 
+    },
+    
     components: {
         IndexCodeModal : IndexCodeModal,
     },
@@ -94,8 +96,7 @@ export default {
     mounted() {
         var vm = this;
 
-        /* 지수구분코드를 조회한다. */
-        vm.fn_getIndexCode();
+        vm.show_data_list   =   vm.org_data_list;
     },
 
     methods: {
@@ -117,54 +118,6 @@ export default {
             var vm = this;
             vm.$emit( "fn_showMessageBox", title,msg, option, gubun);
         },        
-
-        /*
-         * 지수구분코드를 조회한다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_getIndexCode() {
-            var vm = this;
-
-            vm.fn_showProgress( true );
-
-            util.axiosCall(
-                    {
-                            "url"       :   Config.base_url + "/user/operSupport/getIndexCode"
-                        ,   "data"      :   {
-                                search_name :   vm.search_name
-                            }
-                        ,   "method"    :   "post"
-                    }
-                ,   function(response) {
-                        vm.fn_showProgress( false );
-
-                        try{
-
-                            if (response && response.data) {
-                                var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                if (!response.data.result) {
-                                    if( msg ) {
-                                        vm.fn_showMessageBox( '확인', msg, {}, 1 );
-                                    }
-                                }else{
-                                    vm.org_data_list    =   response.data.dataList;
-                                    vm.show_data_list   =   response.data.dataList;
-                                }
-                            }
-
-                        }catch(ex) {
-                            console.log( "error", ex );
-                        }
-                    }
-                ,   function(error) {
-                        vm.fn_showProgress( false );
-                        if ( error ) {
-                            vm.fn_showMessageBox( '확인', error, {}, 4 );
-                        }
-                    }
-            );
-        },
 
         /*
          * 조회된 내용에서 필터를 수행한다.

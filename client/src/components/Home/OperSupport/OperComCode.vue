@@ -57,10 +57,11 @@ var table01 = null;
 
 export default {
 
+    props : [ "org_data_list" ],
+
     data() {
         return {
-                org_data_list   :   []
-            ,   show_data_list  :   []
+                show_data_list  :   []
         }
     },
 
@@ -74,8 +75,7 @@ export default {
     mounted() {
         var vm = this;
 
-        /* 운용사 코드를 조회한다. */
-        vm.fn_getOperCode();        
+        vm.show_data_list   =   vm.org_data_list;
     },
 
     methods: {
@@ -96,55 +96,8 @@ export default {
         fn_showMessageBox: function(title, msg, option, gubun) {
             var vm = this;
             vm.$emit( "fn_showMessageBox", title,msg, option, gubun);
-        },        
+        },
 
-        /*
-         * 운용사 코드를 조회한다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_getOperCode() {
-            var vm = this;
-
-            vm.fn_showProgress( true );
-
-            util.axiosCall(
-                    {
-                            "url"       :   Config.base_url + "/user/operSupport/getOperCode"
-                        ,   "data"      :   {
-                            }
-                        ,   "method"    :   "post"
-                    }
-                ,   function(response) {
-                        vm.fn_showProgress( false );
-
-                        try{
-
-                            if (response && response.data) {
-                                var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                if (!response.data.result) {
-                                    if( msg ) {
-                                        vm.fn_showMessageBox( '확인', msg, {}, 1 );
-                                    }
-                                }else{
-                                    vm.org_data_list    =   response.data.dataList;
-                                    vm.show_data_list   =   response.data.dataList;
-                                }
-                            }
-
-                        }catch(ex) {
-                            console.log( "error", ex );
-                        }
-                    }
-                ,   function(error) {
-
-                        vm.fn_showProgress( false );
-                        if ( error ) {
-                            vm.fn_showMessageBox( '확인', error, {}, 4 );
-                        }
-                    }
-            );
-        },        
     }
 };
 </script>

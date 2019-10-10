@@ -11,6 +11,8 @@
       <v-tabs-items v-model="activeTab">
         <v-tab-item  >
             <IndexCode      v-if="activeTab==0" 
+
+                            :org_data_list="org_data_list"
                         
                             @fn_showMessageBox="fn_showMessageBox"
                             @fn_showProgress="fn_showProgress">
@@ -18,6 +20,8 @@
         </v-tab-item>
         <v-tab-item >
             <OperComCode    v-if="activeTab==1" 
+
+                            :org_data_list="org_data_list"
 
                             @fn_showMessageBox="fn_showMessageBox"
                             @fn_showProgress="fn_showProgress">
@@ -51,13 +55,17 @@ import OperComCode from "@/components/Home/OperSupport/OperComCode.vue";
 
 export default {
 
-  data() {
-    return {
-        activeTab: 0,
-        tabs: [
-            { id: 0, name: "지수구분코드"},
-            { id: 1, name: "운영사코드"},
-        ]
+    data() {
+        return {
+                activeTab: 0
+            ,   tabs: [
+                    { id: 0, name: "지수구분코드"},
+                    { id: 1, name: "운영사코드"},
+                ]
+
+            ,   org_index_list      :   []
+            ,   org_oper_list       :   []
+            ,   org_data_list       :   []
         };
     
     }, 
@@ -70,6 +78,32 @@ export default {
         ,   OperComCode
     }, 
 
+    created() {
+        var vm = this;
+    },
+
+    mounted() {
+        var vm = this;
+
+
+        /* 지수구분코드를 조회한다. */
+        vm.fn_getIndexCode().then( function(e) {
+            
+            vm.activeTab        =   -1;
+
+            if( e && e.result ) {
+
+                vm.org_data_list    =   vm.org_index_list;
+
+                /* 운용사 코드를 조회한다. */
+                return  vm.fn_getOperCode();
+            }
+        }).then( function(e) {
+            
+            vm.activeTab        =   0;
+        });
+    },    
+
     methods: {
 
         /*
@@ -78,6 +112,14 @@ export default {
          */
         fn_pageMove( tab_id ) {
             var vm = this;
+
+            vm.org_data_list        =   [];
+
+            if( tab_id == 0 ) {
+                vm.org_data_list    =   vm.org_index_list;
+            }else if( tab_id == 1 ) {
+                vm.org_data_list    =   vm.org_oper_list;
+            }            
 
             vm.activeTab            =   tab_id;
         },
@@ -99,7 +141,128 @@ export default {
             if( this.$refs && this.$refs.progress2 ) {
                 util.processing( this.$refs.progress2, visible );
             }
-        },        
+        },
+
+        /*
+         * 지수구분코드를 조회한다.
+         * 2019-10-11  bkLove(촤병국)
+         */
+        async fn_getIndexCode() {
+            var vm = this;
+
+
+            return  await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/operSupport/getIndexCode"
+                            ,   "data"      :   {}
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
+
+                            try{
+
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.fn_showMessageBox( '확인', msg, {}, 1 );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+                                        vm.org_index_list       =   response.data.dataList;
+
+                                        resolve( { result : true } );
+                                    }
+                                }
+
+                            }catch(ex) {
+                                console.log( "error", ex );
+
+                                resolve( { result : false } );
+                            }
+                        }
+                    ,   function(error) {
+                            vm.fn_showProgress( false );
+                            if ( error ) {
+                                vm.fn_showMessageBox( '확인', error, {}, 4 );
+                            }
+
+                            resolve( { result : false } );
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });                
+        },
+
+        /*
+         * 운용사 코드를 조회한다.
+         * 2019-10-11  bkLove(촤병국)
+         */
+        async fn_getOperCode() {
+            var vm = this;
+
+
+            return  await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/operSupport/getOperCode"
+                            ,   "data"      :   {}
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
+
+                            try{
+
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.fn_showMessageBox( '확인', msg, {}, 1 );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+                                        vm.org_oper_list    =   response.data.dataList;
+
+                                        resolve( { result : true } );
+                                    }
+                                }
+
+                            }catch(ex) {
+                                console.log( "error", ex );
+
+                                resolve( { result : false } );
+                            }
+                        }
+                    ,   function(error) {
+
+                            vm.fn_showProgress( false );
+                            if ( error ) {
+                                vm.fn_showMessageBox( '확인', error, {}, 4 );
+                            }
+
+                            resolve( { result : false } );
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });
+        },
     }
 } 
 </script>
