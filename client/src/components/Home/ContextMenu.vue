@@ -86,16 +86,17 @@ export default {
       this.menuList.push(this.allMenuList[3]);
     }else if(type_cd == '0004' || type_cd == '0005') {
       
-    }else if(type_cd == '9998') {
+    }else if(type_cd == '9998' || type_cd == '9999') {
       this.menuList.push(this.allMenuList[2]);
       this.menuList.push(this.allMenuList[3]);
       this.menuList.push(this.allMenuList[4]);
       this.menuList.push(this.allMenuList[5]);
+      this.menuList.push(this.allMenuList[6]);      //  운용 지원
     }else {
 
     }
     if(tmp.indexOf("test@") !== -1 || tmp.indexOf("test_etn@") !== -1) {
-      this.menuList.push(this.allMenuList[6]);
+      this.menuList.push(this.allMenuList[7]);      //  시뮬레이션
     }
 },
   methods: {
