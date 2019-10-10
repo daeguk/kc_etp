@@ -181,8 +181,14 @@ module.exports = {
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'              , method: 'uploadPortfolio'                 , session: 'check', type: 'post' },     // 포트폴리오 업로드
 
 
-        //풀 테스트 
 
+        /* 운용지원 관련 */
+        { file: './user/operSupport/operSupport'        , path: '/user/operSupport/getIndexCode'                , method: 'getIndexCode'                    , session: 'check', type: 'post' },     //  지수구분코드 조회
+        { file: './user/operSupport/operSupport'        , path: '/user/operSupport/getOperCode'                 , method: 'getOperCode'                     , session: 'check', type: 'post' },     //  운용사코드 조회
+
+
+
+        //풀 테스트 
         { file: './sample/bluebirdTest', path: '/sample/getBluelist', method: 'getBlueList', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/fileuploadSingle', method: 'fileuploadSingle', session: 'uncheck', type: 'post' },
         { file: './sample/fileupload', path: '/sample/fileuploadMulti', method: 'fileuploadMulti', session: 'uncheck', type: 'post' },

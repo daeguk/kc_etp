@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="operSupport">
+
+    <!--
+    *   지수구분코드를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getIndexCode">
+        SELECT      /* operSupport.getIndexCode 지수구분코드를 조회한다. */
+
+                    tm_index_code.large_code                                        AS  large_code          /* 대 */
+                ,   tm_index_code.middle_code                                       AS  middle_code         /* 중 */
+                ,   tm_index_code.small_code                                        AS  small_code          /* 소 */
+                ,   tm_index_code.index_name                                        AS  index_name          /* 지수명 */
+                        
+          FROM  tm_index_code
+         WHERE  1 = 1
+
+         ORDER  BY      tm_index_code.large_code
+                    ,   tm_index_code.middle_code
+                    ,   tm_index_code.small_code
+    </select>
+
+    <!--
+    *   운용사 코드를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getOperCode">
+        SELECT      /* operSupport.getOperCode 운용사 코드를 조회한다. */
+
+                    tm_user_domain.type_cd                                          AS  type_cd             /* 사용자 타입코드 */
+                ,   tm_user_domain.inst_cd                                          AS  inst_cd             /* 기관구분코드 */
+                ,   tm_user_domain.inst_name                                        AS  inst_name           /* 기관명 */
+                ,   tm_user_domain.krx_cd                                           AS  krx_cd              /* 거래소ETP발행사코드 */
+
+          FROM  tm_user_domain
+         WHERE  1 = 1
+
+         ORDER  BY      tm_user_domain.inst_cd
+
+    </select>
+
+</mapper>
