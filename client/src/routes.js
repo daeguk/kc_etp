@@ -40,6 +40,10 @@ import  Simulation          from '@/components/Home/Simulation/Simulation.vue'
 import  SimulationResult    from '@/components/Home/Simulation/SimulationResult.vue'
 
 
+// OperSupport
+import  OperSupportControl   from '@/components/Home/OperSupport/OperSupportControl.vue'
+
+
 // 관리자
 export const routes = [
   { path : '/',
@@ -192,6 +196,15 @@ export const routes = [
               requiresAuth: false,
             },
         },
+
+        //운용지원
+
+        {   path : 'OperSupport/OperSupportControl',
+            component: OperSupportControl,
+            meta: {
+                requiresAuth: false,
+            },
+        },       
 
     ]
   }
