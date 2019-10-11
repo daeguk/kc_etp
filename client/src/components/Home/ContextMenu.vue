@@ -36,12 +36,7 @@
   </v-list>
 </div>
 </template-->
-
-
-
-
 <script>
-
 export default {
   data() {
     return {
@@ -65,8 +60,8 @@ export default {
   beforeDestroy() {
   },    
   mounted: function() {
-    console.log("this : ");
-    console.log(this.$store.state.user);
+    // console.log("this : ");
+    // console.log(this.$store.state.user);
     var type_cd = this.$store.state.user.type_cd;
     var tmp = this.$store.state.user.email;
 /*

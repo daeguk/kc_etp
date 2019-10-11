@@ -72,7 +72,7 @@ export default {
       this.updateUser_flag = true;
     },
     outService: function() {
-      console.log("UserInfo.vue....... outService...");
+      // console.log("UserInfo.vue....... outService...");
       // Home.vue
       this.$EventBus.$emit("outService");
 

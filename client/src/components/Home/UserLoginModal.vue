@@ -88,8 +88,6 @@ export default {
       }
     },
     loginCheck: function() {
-
-      // console.log('loginCheck');
       var vm = this;
 
       axios.post(Config.base_url+'/user/member/userlogincheck', {
@@ -106,6 +104,10 @@ export default {
               }
            }
         }else {
+          var nDate = new Date();
+          localStorage.setItem('user', JSON.stringify(response.data.results[0]));
+          localStorage.setItem('loginDt', nDate.getTime());
+
           vm.$store.commit(Constant.ADD_USER, {
             email: response.data.results[0].email, 
             name: response.data.results[0].name, 

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-      <router-view></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -43,7 +43,7 @@ export default {
     },
     getEtpMast: function() {
       var vm = this;
-      console.log("App.vue : getEtpMast");
+      // console.log("App.vue : getEtpMast");
       
       axios.get(Config.base_url + "/user/marketinfo/getEtpMast", {
         params: {
@@ -59,7 +59,7 @@ export default {
     },   
     getIndexMast: function() {
       var vm = this;
-      console.log("App.vue : getIndexMast");
+      // console.log("App.vue : getIndexMast");
       
       axios.get(Config.base_url + "/user/marketinfo/getIndexMast", {
         params: {

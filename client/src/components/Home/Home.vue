@@ -27,13 +27,6 @@ import Config       from "@/js/config.js";
 import Constant     from '@/store/store_constant.js';
 
 export default {
-  data() {
-    return {
-      showModalFlag: false,
-      showFullFlag: true,
-      enterServiceFlag: false,
-    };
-  },
   components: {
     MainLanding: MainLanding,
     ToolBar: ToolBar,
@@ -43,6 +36,13 @@ export default {
     NoticeModal:NoticeModal,
     Footer: Footer,
   },
+  data() {
+    return {
+      showModalFlag: false,
+      showFullFlag: true,
+      enterServiceFlag: false,
+    };
+  },
   beforeCreate() {
       // this.$forceupdate;
   },
@@ -51,6 +51,21 @@ export default {
     this.$EventBus.$on('menuClick', this.menuClick);
     this.$EventBus.$on('enterService', this.enterService);
     this.$EventBus.$on('outService', this.outService);
+
+    let loginDt = localStorage.getItem('loginDt');
+    let nDate = new Date();
+    let nTerm = nDate.getTime() - Number(loginDt);
+    // console.log(nTerm);
+
+    if(loginDt !== null && nTerm < 600000) {
+      let user = JSON.parse(localStorage.getItem('user'));
+      if(user !== null) {
+        this.enterServiceFlag = true;
+        this.$store.commit(Constant.ADD_USER, user);
+      }        
+    }else {
+      localStorage.removeItem("finalPath");
+    }
   },
   beforeDestroy() {
     this.$EventBus.$off('popClose');
@@ -74,11 +89,10 @@ export default {
     outService: function() {
       // console.log('outService............');
       this.enterServiceFlag = false;
+      localStorage.clear();
       this.$store.commit(Constant.DELETE_USER);
 
-      this.$router.push({
-        path: Config.home_url
-      });
+      this.$router.push({path: Config.home_url});
     },
   }
 }

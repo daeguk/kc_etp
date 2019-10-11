@@ -1,31 +1,24 @@
 <template>
   <v-app>
     <v-card class="intro_bg">
-      <!--v-img
-        class="white--text"
-        height="100%"
-        src="/assets/img/main.jpg"
-        gradient="to top, rgba(0,0,0,0.5), rgba(0,0,0,0.5)"
-      -->
-
-          <v-layout row wrap>
-            <v-flex xs12 text-xs-center>
-              <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
-                  <p>Built to create, manage and analyze capital market <br> 
-                     Live simple, it's all in EMP</p>
-              </div>
-            </v-flex>
-            <v-flex xs12>
-              <div class="text-xs-center">
-                <v-btn outline color="#85c406" @click="doView">둘러보기</v-btn>
-                <v-btn depressed color="#85c406" dark @click="doLogin">LOG-IN</v-btn>
-              </div>
-            </v-flex>
-            
-          </v-layout>
-          <UserLoginModal v-if="login_flag" ></UserLoginModal>
-          <UserSignupModal v-if="signup_flag" ></UserSignupModal>
-          <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
+      <v-layout row wrap>
+        <v-flex xs12 text-xs-center>
+          <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
+              <p>Built to create, manage and analyze capital market <br> 
+                  Live simple, it's all in EMP</p>
+          </div>
+        </v-flex>
+        <v-flex xs12>
+          <div class="text-xs-center">
+            <v-btn outline color="#85c406" @click="doView">둘러보기</v-btn>
+            <v-btn depressed color="#85c406" dark @click="doLogin">LOG-IN</v-btn>
+          </div>
+        </v-flex>
+        
+      </v-layout>
+      <UserLoginModal v-if="login_flag" ></UserLoginModal>
+      <UserSignupModal v-if="signup_flag" ></UserSignupModal>
+      <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
     </v-card>
   </v-app>
 </template> 
@@ -84,8 +77,8 @@ export default {
         this.findpwd_flag = false;
       },
       userLoginCheck: function(success) {
-        console.log('userLoginCheck');
-        console.log("email : " + this.$store.state.user.email);
+        // console.log('userLoginCheck');
+        // console.log("email : " + this.$store.state.user.email);
         this.login_flag = false;
         if(success == true) {
           this.$EventBus.$emit("enterService");

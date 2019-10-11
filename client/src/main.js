@@ -19,9 +19,6 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(Vuetify);
 
-// Vue.component('icon', Icon);
-
-
 const router = new VueRouter({
     routes,
     // get rid of #
@@ -43,27 +40,34 @@ new Vue({
 router.beforeEach((to, _from, next) => {
   // console.log("test store.........");
   // console.log(store);
-    var type_cd = store.state.user.type_cd;
+  var type_cd = store.state.user.type_cd;
 
-    if(to.meta.requiresAuth) {
-      console.log("type_cd : " + type_cd);
-      // console.log(record.meta.requiresType);
-      if(type_cd == "") {
-        alert("접근할 수 없는 페이지 입니다.");
-        next(_from);
-      }else if(type_cd == "9998" || type_cd == "9999") {
+  if(to.path !== '/') {
+    localStorage.setItem("finalPath", to.path);
+    localStorage.setItem("loginDt", new Date());
+  }
+  if(to.meta.requiresAuth) {
+    // console.log("type_cd : " + type_cd);
+    // console.log(record.meta.requiresType);
+    if(type_cd == "") {
+      localStorage.removeItem("finalPath");
+      alert("접근할 수 없는 페이지 입니다.");
+      next(_from);
+    }else if(type_cd == "9998" || type_cd == "9999") {
+      next();
+    }else {
+      // console.log("to.meta.requiresType...........");
+      // console.log(to.meta.requiresType);
+      if(to.meta.requiresType.includes(type_cd)) {
+        localStorage.setItem("finalPath", to);
         next();
       }else {
-        console.log("to.meta.requiresType...........");
-        console.log(to.meta.requiresType);
-        if(to.meta.requiresType.includes(type_cd)) {
-          next();
-        }else {
-          alert("접근할 수 없는 페이지 입니다.");
-          next(_from);
-        }
+        localStorage.removeItem("finalPath");
+        alert("접근할 수 없는 페이지 입니다.");
+        next(_from);
       }
-    } else {
-      next();
     }
+  } else {
+    next();
+  }
 })
