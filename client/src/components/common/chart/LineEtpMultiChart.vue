@@ -31,7 +31,7 @@ export default {
       itemNum: 0,
       valHeight: 0.0,
       term:['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
-      dmode:2,
+      dmode:0,
       dterm:5,
       wlen: 0,
       hlen: 0,
@@ -57,8 +57,9 @@ export default {
     'dmode': function(newDmode) {
       // console.log("watch.........dmode: " + newDmode);
       this.drawMode(newDmode);
-      if(this.dterm == 0 || this.dterm == 1) this.draw_intra(newDmode);
-      else this.draw_hist(newDmode);
+      // if(this.dterm == 0 || this.dterm == 1) this.draw_intra(newDmode);
+      // else this.draw_hist(newDmode);
+      this.dataInit();
     },
     'dterm': function(newDterm) {
       // console.log("watch.........dterm: " + newDterm);
@@ -110,10 +111,78 @@ export default {
         this.init_chart_image = c.getImageData(this.crect.x1-1, this.crect.y1-2, this.crect.x2+1, this.crect.y2);
       },
 
+      drawInitReplace: function() {
+        var c = this.ctx;
+
+        // console.log("drawInitReplace............");
+        c.putImageData(this.init_chart_image, this.crect.x1-1, this.crect.y1-2);
+        this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
+      },
+
       dataInit: function() {
-          var vm = this;
-          if(this.dterm == 0 || this.dterm == 1) this.getEtpMultiIntra(this.etpBasic, this.term[this.dterm]);
-          else this.getEtpMultiHist(this.etpBasic, this.term[this.dterm]);
+          this.drawInitReplace();
+          if(this.dterm == 0 || this.dterm == 1) {
+            if(this.dmode == 0) {
+              this.getEtpSingleIntra(this.etpBasic, this.term[this.dterm]);
+            }else if(this.dmode == 1) {
+              this.getIndexSingleIntra(this.etpBasic, this.term[this.dterm]);
+            }else {
+              this.getEtpMultiIntra(this.etpBasic, this.term[this.dterm]);
+            }
+          }else{
+            this.getEtpMultiHist(this.etpBasic, this.term[this.dterm]);
+          } 
+      },
+      getEtpSingleIntra: function(etpInfo, term) {
+        // console.log("getEtpSingleIntra : " + etpInfo.F16013);
+        var vm = this;
+
+        etpInfo.term = term;
+
+        axios.get(Config.base_url + "/user/marketinfo/getEtpIntra", {
+          params: etpInfo
+        }).then(function(response) {
+          // console.log("getEtpSingleIntra.....................");
+          // console.log(response);
+          if (response.data.success == false) {
+             alert("해당 ETP의 데이터가 없습니다");
+          } else {
+              if(response.data.results.length > 0) {
+                vm.intra_data = response.data.results.reverse();
+                vm.draw_intra(vm.dmode);
+              }else {
+                alert("해당 ETP의 데이터가 없습니다");
+              }
+          }
+        });
+      },
+      getIndexSingleIntra: function(etpInfo, term) {
+        // console.log("getIndexSingleIntra : " + etpInfo.F16013);
+        var vm = this;
+
+        etpInfo.term = term;
+        etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
+
+        axios.get(Config.base_url + "/user/marketinfo/getIndexIntra1", {
+          params: {
+            term: etpInfo.term,
+            market_id: etpInfo.market_id,
+            F16013: etpInfo.F16257,
+          }
+        }).then(function(response) {
+          // console.log("getIndexSingleIntra.....................");
+          // console.log(response);
+          if (response.data.success == false) {
+             alert("해당 INDEX의 데이터가 없습니다");
+          } else {
+              if(response.data.results.length > 0) {
+                vm.intra_data = response.data.results.reverse();
+                vm.draw_intra(vm.dmode);
+              }else {
+                alert("해당 INDEX의 데이터가 없습니다");
+              }
+          }
+        });
       },
       getEtpMultiIntra: function(etpInfo, term) {
         // console.log("getEtpMultiIntra : " + etpInfo.F16013);
@@ -125,16 +194,67 @@ export default {
         axios.get(Config.base_url + "/user/marketinfo/getEtpMultiIntra", {
           params: etpInfo
         }).then(function(response) {
-          console.log("getEtpMultiIntra.....................");
-          console.log(response);
+          // console.log("getEtpMultiIntra.....................");
+          // console.log(response);
           if (response.data.success == false) {
-//              alert("해당 ETP의 데이터가 없습니다");
+             alert("해당 ETP의 데이터가 없습니다");
           } else {
               if(response.data.results.length > 0) {
                 vm.intra_data = response.data.results.reverse();
                 vm.draw_intra(vm.dmode);
               }else {
-//                alert("해당 ETP의 데이터가 없습니다");
+                vm.intra_data = [];
+                alert("해당 ETP의 데이터가 없습니다");
+              }
+          }
+        });
+      },
+      getEtpSingleHist: function(etpInfo, term) {
+        // console.log("getEtpSingleHist : " + etpInfo.F16013);
+        var vm = this;
+
+        etpInfo.term = term;
+        etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
+
+        axios.get(Config.base_url + "/user/marketinfo/getEtpHist", {
+          params: etpInfo
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+             alert("해당 ETP의 데이터가 없습니다");
+          } else {
+              if(response.data.results.length > 0) {
+                vm.hist_data = [];
+                vm.hist_data = response.data.results.reverse();
+                vm.draw_hist(vm.dmode);
+              }else {
+               alert("해당 ETP의 데이터가 없습니다");
+              }
+          }
+        });
+      },
+      getIndexSingleHist: function(etpInfo, term) {
+        // console.log("getEtpMultiHist : " + etpInfo.F16013);
+        var vm = this;
+
+        etpInfo.term = term;
+        etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
+
+        axios.get(Config.base_url + "/user/marketinfo/getIndexHist1", {
+            term: etpInfo.term,
+            market_id: etpInfo.market_id,
+            F16013: etpInfo.F16257,
+        }).then(function(response) {
+          // console.log(response);
+          if (response.data.success == false) {
+             alert("해당 INDEX의 데이터가 없습니다");
+          } else {
+              if(response.data.results.length > 0) {
+                vm.hist_data = [];
+                vm.hist_data = response.data.results.reverse();
+                vm.draw_hist(vm.dmode);
+              }else {
+               alert("해당 INDEX의 데이터가 없습니다");
               }
           }
         });
@@ -151,14 +271,14 @@ export default {
         }).then(function(response) {
           // console.log(response);
           if (response.data.success == false) {
-//              alert("해당 ETP의 데이터가 없습니다");
+             alert("해당 ETP의 데이터가 없습니다");
           } else {
               if(response.data.results.length > 0) {
                 vm.hist_data = [];
                 vm.hist_data = response.data.results.reverse();
                 vm.draw_hist(vm.dmode);
               }else {
-//                alert("해당 ETP의 데이터가 없습니다");
+               alert("해당 ETP의 데이터가 없습니다");
               }
           }
         });
@@ -185,11 +305,7 @@ export default {
         this.sArr = [];
         idata.forEach(function(item, index) {
           var sdata = {};
-
-          if(dmode == 0) val = item.F20008;
-          else val = item.iF20008;
-
-          val = Number(val);
+          val = Number(item.F20008);
           if(index == 0) {
             maxVal = val;
             minVal = val;
@@ -280,9 +396,7 @@ export default {
           c.fillText(vm.xAxisDd[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+10);
           c.fillText(vm.xAxisTt[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+25);
         }
-
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
-
       },
       draw_shist: function (dmode, idata){
         var c = this.ctx;
@@ -404,6 +518,7 @@ export default {
         var stepRate = 0.0;
         var _wpos = 0, _hpos = 0;
 
+        console.log("draw_mintra..........");
         this.sArr = [];
         idata.forEach(function(item, index) {
           var sdata = {};

@@ -239,7 +239,14 @@
 		       ,F20008, F20041, F40544, F40545, F33294, F15301, F15302, F15303, F30818
         FROM td_etp_intra
         WHERE F16013 = #{F16013}
-        ORDER BY F20044 desc, F20004 desc LIMIT 100
+        <choose>
+          <when test="limit != null and limit != '0'">
+            ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
+          </when>
+          <otherwise>
+            ORDER BY F20044 desc, F20004 desc LIMIT 100
+          </otherwise>
+        </choose>
     </select>
 
     <select id="getEtpIntraToday">
@@ -273,6 +280,21 @@
         AND A.F20044 = B.F20044
         AND A.F20004 = B.F20004
         ORDER BY F20044 desc, F20004 desc LIMIT ${limit}
+    </select>
+
+    <select id="getEtpHist">
+        SELECT DATE_FORMAT(F12506, "%Y.%m.%d") as F12506
+		       ,F15001, F15318 as iF15001
+        FROM td_etp_hist
+        WHERE F16013 = #{F16013}
+        <choose>
+          <when test="limit != null and limit != '0'">
+            ORDER BY F12506 desc LIMIT ${limit}
+          </when>
+          <otherwise>
+            ORDER BY F12506 desc
+          </otherwise>
+        </choose>
     </select>
 
     <!--

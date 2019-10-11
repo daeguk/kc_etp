@@ -459,6 +459,8 @@ var getEtpIntra = function(req, res) {
   var options = {
     F16013 : req.query.F16013,
   };
+  if(req.query.term == '1D') options.limit = 100;
+  else options.limit = 300;
 try {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
@@ -593,6 +595,37 @@ try {
     res.end();
 }
 };
+var getEtpHist = function(req, res) {
+  log.debug('marketInfo 모듈 안에 있는 getEtpHist 호출됨.');
+
+  var options = {
+    F16013 : req.query.F16013,
+  };
+
+  if(req.query.term == '1M') options.limit = 30;
+  else if(req.query.term == '3M') options.limit = 90;
+  else if(req.query.term == '6M') options.limit = 180;
+  else if(req.query.term == '1Y') options.limit = 300;
+  else options.limit = 10000;
+
+  try {
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var stmt = mapper.getStatement('common.item', 'getEtpHist', options, {language:'sql', indent: '  '});
+    log.debug(stmt);
+
+    Promise.using(pool.connect(), conn => {
+      conn.queryAsync(stmt).then(rows => {
+        res.json({success: true, results: rows});
+        res.end();
+      });
+    });
+  } catch(exception) {
+    log.error("err=>", exception);
+    res.json({success: false, message: "Error while performing Query."});
+    res.end();
+  }
+};
 /*
 * ETP Multi HIST 조회
   장전에 F15318 이 메모리 값이 0가 됨. 그래서, 당일 데이터 0가 됨.
@@ -620,19 +653,13 @@ var getEtpMultiHist = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        res.json({
-            success: true,
-            results: rows
-        });
+        res.json({success: true, results: rows});
         res.end();
       });
     });
   } catch(exception) {
     log.error("err=>", exception);
-    res.json({
-      success: false,
-      message: "Error while performing Query.",
-    });
+    res.json({success: false, message: "Error while performing Query."});
     res.end();
   }
 };
@@ -659,19 +686,13 @@ var getEtpMultiHist1 = function(req, res) {
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {
-        res.json({
-            success: true,
-            results: rows
-        });
+        res.json({success: true, results: rows});
         res.end();
       });
     });
   } catch(exception) {
     log.error("err=>", exception);
-    res.json({
-      success: false,
-      message: "Error while performing Query.",
-    });
+    res.json({success: false, message: "Error while performing Query."});
     res.end();
   }
 };
@@ -1409,6 +1430,7 @@ module.exports.getEtpIntra = getEtpIntra;
 module.exports.getEtpIntraToday = getEtpIntraToday;
 module.exports.getEtpHogaIntraToday = getEtpHogaIntraToday;
 module.exports.getEtpMultiIntra = getEtpMultiIntra;
+module.exports.getEtpHist = getEtpHist;
 module.exports.getEtpMultiHist = getEtpMultiHist;
 module.exports.getEtpMultiHist1 = getEtpMultiHist1;
 module.exports.getEtpGigsWeight = getEtpGigsWeight;
