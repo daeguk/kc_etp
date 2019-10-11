@@ -43,8 +43,12 @@ router.beforeEach((to, _from, next) => {
   var type_cd = store.state.user.type_cd;
 
   if(to.path !== '/') {
+    let nDate = new Date();
     localStorage.setItem("finalPath", to.path);
-    localStorage.setItem("loginDt", new Date());
+    localStorage.setItem("loginDt", nDate.getTime());
+console.log("main.js........")    ;
+console.log(localStorage.getItem("finalPath"));
+console.log(localStorage.getItem("loginDt"));
   }
   if(to.meta.requiresAuth) {
     // console.log("type_cd : " + type_cd);
@@ -59,7 +63,6 @@ router.beforeEach((to, _from, next) => {
       // console.log("to.meta.requiresType...........");
       // console.log(to.meta.requiresType);
       if(to.meta.requiresType.includes(type_cd)) {
-        localStorage.setItem("finalPath", to);
         next();
       }else {
         localStorage.removeItem("finalPath");

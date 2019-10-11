@@ -107,7 +107,7 @@ export default {
         this.menuTitle = menu.title;
     },
     moveHome: function() {
-      localStorage.setItem("finalPath", "");
+      localStorage.removeItem("finalPath");
       location.reload();
     },
 

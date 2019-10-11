@@ -130,7 +130,13 @@ export default {
               this.getEtpMultiIntra(this.etpBasic, this.term[this.dterm]);
             }
           }else{
-            this.getEtpMultiHist(this.etpBasic, this.term[this.dterm]);
+            if(this.dmode == 0) {
+              this.getEtpSingleHist(this.etpBasic, this.term[this.dterm]);
+            }else if(this.dmode == 1) {
+              this.getIndexSingleHist(this.etpBasic, this.term[this.dterm]);
+            }else {
+              this.getEtpMultiHist(this.etpBasic, this.term[this.dterm]);
+            }
           } 
       },
       getEtpSingleIntra: function(etpInfo, term) {

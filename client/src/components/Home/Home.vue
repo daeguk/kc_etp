@@ -55,10 +55,13 @@ export default {
     let loginDt = localStorage.getItem('loginDt');
     let nDate = new Date();
     let nTerm = nDate.getTime() - Number(loginDt);
-    // console.log(nTerm);
+    console.log("Home.vue.............");
+    console.log("loginDt : " + loginDt + " nDate : " + nDate + "nTerm : " + nTerm);
 
     if(loginDt !== null && nTerm < 600000) {
       let user = JSON.parse(localStorage.getItem('user'));
+console.log("user.........");
+console.log(user);
       if(user !== null) {
         this.enterServiceFlag = true;
         this.$store.commit(Constant.ADD_USER, user);
