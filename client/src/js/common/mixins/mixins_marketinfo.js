@@ -150,10 +150,14 @@ export  const  market_common =   {
                                     ]
                             }); 
 
-                            // ETP 갯수와 기준일 바인딩 
+                            // ETP 갯수와 기준일 바인딩                             
                             if (items) {
                                 $("#" + vm.table_name + "_count"+ ctgCodeItem.ctg_code).html(items.length);
-                                $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].F12506);
+                                if(items.length > 0) {
+                                    $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 :"+items[0].F12506);
+                                } else {
+                                    $("#" + vm.table_name + "_date" + ctgCodeItem.ctg_code).html("기준일 : N/A");
+                                }
                             }
 
                             // 테이블별 이벤트
