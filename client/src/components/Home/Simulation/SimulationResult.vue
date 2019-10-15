@@ -34,9 +34,53 @@
 
 
             <!-- 그래프 영역-->
-                <div class="simul_graph"></div>
 
 
+                <table style="width:100%">
+                    <colgroup>
+                        <col width="80%" />
+                        <col width="20%" />
+                    </colgroup>
+
+                    <tbody>
+
+                        <tr>
+                            <td>
+                            <!-- <div class="simul_graph"> -->
+                                <LineSimulationChart    v-if="chartFlag" 
+                                
+                                                        :arr_result_daily="arr_result_daily"
+                                                        :simul_result_mast="simul_result_mast"
+                                                        
+                                                        @fn_showMessageBox="fn_showMessageBox">
+                                </LineSimulationChart>
+                            <!-- </div> -->
+                            </td>
+
+                            <td>
+
+                                <table style="width:100%">
+                                    <colgroup>
+                                        <col width="25%"/>
+                                        <col width="75%"/>
+                                    </colgroup>
+
+                                    <tbody>
+                                        <tr v-for="( row, index ) in  arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
+                                            <td class="txt_left">
+                                                {{ row.anal_title          /* 분석지표 */ }}
+                                            </td>
+                                            <td class="txt_right">
+                                                {{ row.backtest           /* 백테스트 */ }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
 
                 <v-tabs v-model="activeTab" centered light>
@@ -250,6 +294,7 @@ import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import _ from "lodash";
 
+import LineSimulationChart  from "@/components/common/chart/LineSimulationChart.vue";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 export default {
@@ -278,14 +323,18 @@ export default {
             ,   arr_analyze_org             :   []      /* 분석정보 원본 */
             ,   arr_analyze_temp            :   []      /* 분석정보#1 */
             ,   arr_analyze                 :   []      /* 분석정보#1 */
+            ,   arr_analyze_main            :   []      /* 초기화면 */
             ,   inputData                   :   []
             ,   jsonFileName                :   ""
+
+            ,   chartFlag                   :   false
 
         };
     },
 
     components: {
         ConfirmDialog,
+        LineSimulationChart,
     },
 
     created() {
@@ -324,6 +373,8 @@ export default {
     mounted() {
         var vm = this;
 
+
+        vm.chartFlag   =   false;
 
         /* 초기 설정 데이터를 조회한다. */
         vm.fn_initData().then( async function(e) {
@@ -418,6 +469,8 @@ export default {
                             vm.arr_result_daily.push( item );
                         });
 
+                        vm.chartFlag   =   true;
+
 
                         vm.inputData            =   vm.paramData.inputData;
                         vm.jsonFileName         =   vm.paramData.jsonFileName;
@@ -449,7 +502,18 @@ export default {
         fn_showProgress: function( visible ) {
             var vm = this;
             vm.$emit("fn_showProgress", visible );
-        },        
+        },
+
+        /*
+         *  메시지 팝업창을 노출한다.
+         *  2019-07-26  bkLove(촤병국)
+         */
+        fn_showMessageBox: function(title, msg, option, gubun) {
+
+            if( this.$refs && this.$refs.confirm2 ) {
+                this.$refs.confirm2.open( title,msg, option, gubun );
+            }
+        },
 
         /*
          * 백테스트 결과를 조회한다.
@@ -557,6 +621,8 @@ export default {
 
                                             vm.arr_result_daily.push( item );
                                         });
+
+                                        vm.chartFlag   =   true;
 
 
                                     /*************************************************************************************************************
@@ -1106,7 +1172,8 @@ export default {
 
             var vm = this;
 
-            vm.arr_analyze  =   [];
+            vm.arr_analyze      =   [];
+            vm.arr_analyze_main =   [];
 
             if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
                 var v_anal      =   {};
@@ -1125,6 +1192,7 @@ export default {
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
+                vm.arr_analyze_main.push( v_anal );
 
                 /*  수익률 ( 연도 )
                     %처리. 100곱한후 소수점 6째자리에서 반올림 
@@ -1153,6 +1221,7 @@ export default {
                     :   "N/A"
                 );
                 vm.arr_analyze.push( v_anal );
+                vm.arr_analyze_main.push( v_anal );
 
                 /*  수익률 ( 연도 )
                     %처리. 100곱한후 소수점 6째자리에서 반올림 
@@ -1179,6 +1248,7 @@ export default {
                     :   "N/A" 
                 );
                 vm.arr_analyze.push( v_anal );
+                vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "mdd" );
@@ -1186,6 +1256,7 @@ export default {
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
+                vm.arr_analyze_main.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "sharpe_rto" );
