@@ -273,12 +273,15 @@ try {
 * INDEX HIST TERM 조회
 */
 var getIndexHist1 = function(req, res) {
-  // console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
+  console.log('marketInfo 모듈 안에 있는 getIndexHist1 호출됨.');
 
+  console.log(req.query);
   var options = {
     F16013 : req.query.F16013,
     market_id : req.query.market_id,
   };
+
+  console.log(options);
   if(req.query.term == '1M') options.limit = 30;
   else if(req.query.term == '3M') options.limit = 90;
   else if(req.query.term == '6M') options.limit = 180;
@@ -289,6 +292,7 @@ try {
     var mapper = req.app.get("mapper");
     var stmt = mapper.getStatement('common.item', 'getIndexHist1', options, {language:'sql', indent: '  '});
     log.debug(stmt);
+    console.log(stmt);
 
     Promise.using(pool.connect(), conn => {
       conn.queryAsync(stmt).then(rows => {

@@ -240,18 +240,21 @@ export default {
         });
       },
       getIndexSingleHist: function(etpInfo, term) {
-        // console.log("getEtpMultiHist : " + etpInfo.F16013);
+        // console.log("getIndexSingleHist : ");
+        // console.log(etpInfo);
         var vm = this;
 
         etpInfo.term = term;
         etpInfo.market_id = "M" + util.pad(etpInfo.F34239, 3);
 
         axios.get(Config.base_url + "/user/marketinfo/getIndexHist1", {
+          params: {
             term: etpInfo.term,
             market_id: etpInfo.market_id,
             F16013: etpInfo.F16257,
+          }
         }).then(function(response) {
-          // console.log(response);
+          console.log(response);
           if (response.data.success == false) {
              alert("해당 INDEX의 데이터가 없습니다");
           } else {
@@ -417,10 +420,7 @@ export default {
         idata.forEach(function(item, index) {
           var sdata = {};
 
-          if(dmode == 0) val = item.F15001;
-          else val = item.iF15001;
-
-          val = Number(val);
+          val = Number(item.F15001);
           if(index == 0) {
             maxVal = val;
             minVal = val;

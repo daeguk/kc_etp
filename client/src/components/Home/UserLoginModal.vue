@@ -40,8 +40,6 @@
             </v-flex>
             <v-flex xs4>
             </v-flex>
-
-            
             </v-layout>
         </v-card>
       </v-container>
