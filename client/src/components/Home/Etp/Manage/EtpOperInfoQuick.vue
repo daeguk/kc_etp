@@ -52,6 +52,7 @@
                         :class="( toggleEtpLpspread ? 'border_b select' : 'border_b' )"
                         @click="fn_setEtpLpspread"
                         v-model="toggleEtpLpspread">
+                        <!--
                         <v-list-tile-avatar>
                           <div class="text-xs-center">
                             <v-menu v-model="showLpSpreadTooltip" :nudge-width="80" offset-x left class="arrow_menu">
@@ -70,6 +71,10 @@
                             </v-menu>
                           </div>
                         </v-list-tile-avatar>
+                        -->
+                      <v-list-tile-avatar>
+                        <div :class="( toggleEtpLpspread ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon9"></span></div>
+                      </v-list-tile-avatar>
                         <v-list-tile-content class="rm_con_h">
                           <v-list-tile-title>LP spread</v-list-tile-title>
                         </v-list-tile-content>
