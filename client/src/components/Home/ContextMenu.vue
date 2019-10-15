@@ -47,8 +47,8 @@ export default {
         {path: '/index/register', imagePath:'/assets/img/icons/icons8-login-rounded.svg', title: '지수 등록', stitle: '지수 등록 정보 조회'},
         {path: '/etp/manage', imagePath:'/assets/img/icons/icons8-investment-portfolio.svg', title: 'ETP 운용 관리', stitle: 'TP 운용 정보 조회'},
         {path: '/etp/register', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: 'ETP 신규 등록', stitle: 'ETP 신규 정보 조회'},
-        {path: '/OperSupport/OperSupportControl', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: '운용 지원', stitle: '지수 코드정보 및 기타 지원용 데이터 조회'},
         {path: '/simulation/simulationControl', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: '시뮬레이션', stitle: '시뮬레이션 등록'},
+        {path: '/OperSupport/OperSupportControl', imagePath:'/assets/img/icons/icons8-agreement-new-filled.svg', title: '운용 지원', stitle: '지수 코드정보 및 기타 지원용 데이터 조회'},
       ],
       menuList: [],
     };
