@@ -123,59 +123,6 @@ export default {
 
           this.hist_data      =   [];
           this.hist_data      =   [ ...this.arr_result_daily ];
-        //   this.hist_data      =   this.hist_data.reverse();
-
-        //   var   v_F12506        =   this.hist_data[0].F12506;
-        //   var   v_F12506_date   =   new Date( Date.UTC( v_F12506.substr(0,4), v_F12506.substr(4,2)-1, v_F12506.substr(6,2) ) );
-        //   var   v_start_date    =   new Date();
-        //   var   v_start_dt      =   v_F12506_date.toISOString().slice(0,10).replace(/-/g, '');
-
-
-        //   switch( this.term[this.dterm] ) {
-
-        //       case  '1W'    :
-        //                 v_start_date.setDate( v_F12506_date.getDate() -7 );
-        //                 break;
-
-        //       case  '1M'    :
-        //                 v_start_date.setMonth( v_F12506_date.getMonth() -1 );
-        //                 break;
-
-        //       case  '3M'    :
-        //                 v_start_date.setMonth( v_F12506_date.getMonth() -3 );
-        //                 break;
-
-        //       case  '6M'    :
-        //                 v_start_date.setMonth( v_F12506_date.getMonth() -6 );
-        //                 break;
-
-        //       case  '1Y'    :
-        //                 v_start_date.setFullYear( v_F12506_date.getFullYear() -1 );
-        //                 break;
-        //   }
-
-
-        //   if( this.term[this.dterm] != "ALL" ) {
-        //     v_start_dt  =   v_start_date.toISOString().slice(0,10).replace(/-/g, '');
-
-        //     var tempData = [];
-
-        //     for( var i=0; i < this.hist_data.length; i++ ) {
-        //         var row = this.hist_data[i];
-
-        //         tempData.push( row );
-
-        //         if( Number( row.F12506 ) <= Number( v_start_dt ) ) {
-        //             break;
-        //         }
-        //     }
-
-        //     if( tempData && tempData.length > 0 ) {
-        //         this.hist_data  =   tempData;
-        //     }
-        //   }
-
-        //   this.hist_data    =   this.hist_data.reverse();
 
           this.draw_hist( vm.dmode );
       },      
@@ -316,6 +263,7 @@ export default {
         var diffRate = 0.0;
         var stepRate = 0.0;
         var _wpos = 0, _hpos = 0;
+        var maxVal = 0, minVal = 0, diffVal = 0, stepVal = 0;;
 
         this.sArr = [];
         idata.forEach(function(item, index) {
@@ -331,7 +279,36 @@ export default {
             baseVal = val; baseVal1 = val1;
             curRate = 0.0; curRate1 = 0.0;
             maxRate = 0.0; minRate = 0.0;
+
+            if( val < val1 ) {
+                minVal = val;
+                maxVal = val1;
+            }else{
+                minVal = val1;
+                maxVal = val;
+            }
+
           }else {
+
+            if( val < val1 ) {
+
+                if( minVal > val ) {
+                    minVal = val;
+                }
+
+                if( maxVal < val1 ) {
+                    maxVal = val1;
+                }
+            }else{
+
+                if( minVal > val1 ) {
+                    minVal = val1;
+                }
+
+                if( maxVal < val ) {
+                    maxVal = val;
+                }                
+            }              
             
             if( baseVal == 0 ) {
                 curRate =   0;
@@ -371,6 +348,10 @@ export default {
           sdata.irate = curRate1;
           vm.sArr.push(sdata);
         });
+
+        diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
+        stepVal = diffVal / 6;
+
         diffRate = maxRate - minRate;
         stepRate = diffRate / 6;
 
@@ -380,12 +361,12 @@ export default {
 // console.log("stepRate : " + stepRate);
 
         // Y Axis 데이터 
-        vm.yAxisVal[0] = minRate;
+        vm.yAxisVal[0] = minVal;
         for(var i=1; i < 6; i++) {
-          vm.yAxisVal[i] = minRate + stepRate * i;
+          vm.yAxisVal[i] = minVal + stepVal * i;
           // console.log("yAxis : " + vm.yAxisVal[i]);
         }
-        vm.yAxisVal[5] = maxRate;
+        vm.yAxisVal[5] = maxVal;
         for(var i=0; i < 6; i++) {
           vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
         }
@@ -409,10 +390,13 @@ export default {
         c.setLineDash([]);
         c.strokeStyle = grd ;
 
+        vm.chartDataPosArr = [];
+        vm.chartDataHPosArr = [];        
+
         vm.sArr.forEach(function(item, index) {
           // _dnum - 1 : 오른쪽 마지막 픽셀 표현
           _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.rate - minRate) / diffRate * vm.hlen)) ;
+          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
           vm.chartDataPosArr[index] = _wpos;
           vm.chartDataHPosArr[index] = _hpos;
 
@@ -436,7 +420,7 @@ export default {
           // console.log(item);
           // _dnum - 1 : 오른쪽 마지막 픽셀 표현
           _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.irate - minRate) / diffRate * vm.hlen)) ;
+          _hpos = vm.crect.y1 + (vm.hlen - ((item.ivv - minVal) / diffVal * vm.hlen)) ;
           vm.chartDataPosArr1[index] = _wpos;
           vm.chartDataHPosArr1[index] = _hpos;
 
@@ -455,7 +439,7 @@ export default {
         c.font = '12px Roboto, sans-serif, Noto-Sans';
         for(var i=0; i < 6; i++) {
           // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[5-i]+"%", 65, vm.crect.y1 + 50 * i);
+          c.fillText(vm.yAxisVal[5-i] , 65, vm.crect.y1 + 50 * i);
         }
         //X-Axis 그리기
         c.fillStyle = "#424242";
