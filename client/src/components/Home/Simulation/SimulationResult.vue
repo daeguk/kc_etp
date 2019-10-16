@@ -402,7 +402,7 @@ export default {
 
             var v_toggle_background     =   [ "", "background:#e7f2f7" ];
             var v_prev_F12506           =   "";
-            var v_now_background        =   "";
+            var v_now_background        =   "background:#e7f2f7";
             for( var i=0; i < vm.arr_result_rebalance.length; i++ ) {
                 var v_row   =   vm.arr_result_rebalance[i];
 
