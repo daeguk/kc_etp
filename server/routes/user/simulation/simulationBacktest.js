@@ -1820,26 +1820,26 @@ var	fn_get_simulation_data  =   function(
                                 }
 
                             /* 종목편입 되지 않은 종목 */
-                                if( not_jongmok && not_jongmok.length > 0 ) {
+                                // if( not_jongmok && not_jongmok.length > 0 ) {
 
-                                    var not_jongmok_obj =   {};
-                                    for( var k=0; k < not_jongmok.length; k++ ) {
-                                        var   v_key   =   not_jongmok[k];
+                                //     var not_jongmok_obj =   {};
+                                //     for( var k=0; k < not_jongmok.length; k++ ) {
+                                //         var   v_key   =   not_jongmok[k];
 
-                                        if( typeof v_item.org_jongmok[ v_key ] != "undefined" ) {
-                                            if( j==0 ) {
-                                                v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
-                                            }
+                                //         if( typeof v_item.org_jongmok[ v_key ] != "undefined" ) {
+                                //             if( j==0 ) {
+                                //                 v_item.org_jongmok[ v_key ].BEFORE_IMPORTANCE   =   "-1";
+                                //             }
 
-                                            not_jongmok_obj[ v_key ]    =   v_item.org_jongmok[ v_key ];
-                                            not_jongmok_obj[ v_key ].rebalance_import_yn    =   "0";
-                                        }
-                                    }
+                                //             not_jongmok_obj[ v_key ]    =   v_item.org_jongmok[ v_key ];
+                                //             not_jongmok_obj[ v_key ].rebalance_import_yn    =   "0";
+                                //         }
+                                //     }
 
-                                    if( Object.keys( not_jongmok_obj ).length > 0 ) {
-                                        v_arr_rebalance.push( not_jongmok_obj );
-                                    }
-                                }                            
+                                //     if( Object.keys( not_jongmok_obj ).length > 0 ) {
+                                //         v_arr_rebalance.push( not_jongmok_obj );
+                                //     }
+                                // }                            
                             }
                         }
                         
