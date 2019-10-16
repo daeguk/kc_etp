@@ -1113,9 +1113,10 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .font_b{font-weight:600; vertical-align: middle;}
 
 
-.simul_g_w{margin:0 10px; display:inline-block; width: 100%;}
+.simul_g_w{ display:inline-block; width: 100%;}
 .simul_g_w .simul_g_l{float: left; }
-.simul_g_w .simul_g_r{float: right; width:350px; margin-top:33px;}
+.simul_g_w .simul_g_r{float: right; width:330px; margin-top:33px; margin-right: 20px;}
+.simul_g_w .simul_g_r .ver11{width: 100%;}
 
 
 

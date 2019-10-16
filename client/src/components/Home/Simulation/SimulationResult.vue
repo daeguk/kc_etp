@@ -51,16 +51,16 @@
                                 <div class="simul_g_r">
                                 <table class="tbl_type ver11">
                                     <colgroup>
-                                        <col width="25%"/>
-                                        <col width="75%"/>
+                                        <col width="40%"/>
+                                        <col width="60%"/>
                                     </colgroup>
 
                                     <tbody>
                                         <tr v-for="( row, index ) in  arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <th class="txt_left">
+                                            <th class="txt_left" width="40%">
                                                 {{ row.anal_title          /* 분석지표 */ }}
                                             </th>
-                                            <td class="txt_right">
+                                            <td class="txt_right" width="60%">
                                                 {{ row.backtest           /* 백테스트 */ }}
                                             </td>
                                         </tr>
@@ -507,7 +507,22 @@ export default {
                     }
                 }
 
-            }         
+            }
+
+            vm.arr_analyze_main.push({
+                    "anal_title"    :  "final_balance"
+                ,   "backtest"      :   "0.1111%"
+            });
+
+            vm.arr_analyze_main.push({
+                    "anal_title"    :  "cagr"
+                ,   "backtest"      :   "0.22%"
+            });
+
+            vm.arr_analyze_main.push({
+                    "anal_title"    :  "Best Year "
+                ,   "backtest"      :   "0.34567(2019)"
+            });            
         });
     },
 
@@ -1191,6 +1206,7 @@ export default {
             var vm = this;
 
             vm.arr_analyze      =   [];
+            vm.arr_analyze_main =   [];
 
             if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
                 var v_anal      =   {};
