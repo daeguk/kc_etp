@@ -536,47 +536,6 @@ export default {
                         vm.fn_setAnal01();
                     }
                 }
-
-                vm.arr_analyze_main =   [];
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "CAGR"
-                    ,   "backtest"      :   "-6.80935 %"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Vol (annualized)"
-                    ,   "backtest"      :   "13.48135 %"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Sharpe Ratio"
-                    ,   "backtest"      :   "-0.57220"
-                });     
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Beta(vs market)"
-                    ,   "backtest"      :   "0.78272"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Beta(vs benchmark)"
-                    ,   "backtest"      :   "N/A"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Alpha(vs market, annualized)"
-                    ,   "backtest"      :   "-7.77029 %"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "Alpha(vs benchmark, annualized)"
-                    ,   "backtest"      :   "N/A"
-                });
-
-                vm.arr_analyze_main.push({
-                        "anal_title"    :   "MDD"
-                    ,   "backtest"      :   "-30.36347 %"
-                });
             }
         });
     },
