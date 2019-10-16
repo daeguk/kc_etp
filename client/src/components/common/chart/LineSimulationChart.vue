@@ -20,7 +20,7 @@ export default {
       chart:{width:1050, height:340},
       grad:{},
       mrect:{},
-      crect:{x1:80, y1:50, x2:1000, y2:300},
+      crect:{x1:80, y1:40, x2:1000, y2:300},
       dataArr: [],
       chartDataPosArr: [],
       chartDataHPosArr: [],
@@ -70,6 +70,7 @@ export default {
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
     this.mrect = $( "#" + this.chartId ).offset();
+    //this.mrect = this.canvas.getBoundingClientRect();
     this.wlen = this.crect.x2 - this.crect.x1;
     // -10 : 하단 라인 침범 수정
     this.hlen = this.crect.y2 - this.crect.y1 - 10;
@@ -349,7 +350,7 @@ export default {
         });
 
         diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
-        stepVal = diffVal / 6;
+        stepVal = diffVal / 5;
 
         diffRate = maxRate - minRate;
         stepRate = diffRate / 6;
@@ -414,7 +415,7 @@ export default {
         grd.addColorStop(0, "#b8b8b8");
         grd.addColorStop(1, "#8c8c8c");
         c.strokeStyle = grd ;
-        vm.sArr.forEach(function(item, index) {
+        vm.sArr.forEach(function(item, index) {        
           // console.log("draw_mintra... : " + index);
           // console.log(item);
           // _dnum - 1 : 오른쪽 마지막 픽셀 표현
