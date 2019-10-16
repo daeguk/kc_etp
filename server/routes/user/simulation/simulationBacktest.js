@@ -1992,11 +1992,12 @@ var fn_set_rebalanceDate_history = function(
                     }
                 }
             }
-        }                                        
+        }
 
 
         /* 리밸런싱 변경정보 기준으로 검색 */
-        for( var j=0; j < Object.keys( v_rebalanceObj.chg_jongmok ).length; j++ ) {
+        for( var j=Object.keys( v_rebalanceObj.chg_jongmok ).length-1; j >= 0; j-- ) {
+
             var v_key       =   Object.keys( v_rebalanceObj.chg_jongmok )[j];
             var v_tempItem  =   Object.assign( {}, v_rebalanceObj.chg_jongmok[ v_key ] );
 
