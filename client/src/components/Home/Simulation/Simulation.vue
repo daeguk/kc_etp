@@ -196,19 +196,19 @@
                             <table class="tbl_type ver10" id="table01">
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
-                                <col width="10%" />
+                                <col width="15%" />
                                 <col width="25%" />
-                                <col width="15%" />
-                                <col width="15%" />
+                                <col width="20%" />
+                                <col width="20%" />
                                 <col width="20%" />
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>종목코드</th>
-                                    <th class="txt_left">종목명</th>
-                                    <th class="txt_right">시가총액</th>
-                                    <th class="txt_right">비중</th>
+                                    <th width="15%"></th>
+                                    <th width="25%">종목코드</th>
+                                    <th width="20%" class="txt_left">종목명</th>
+                                    <th width="20%" class="txt_right">시가총액</th>
+                                    <th width="20%" class="txt_right">비중</th>
                                 </tr>
                             </thead>
                             <tbody>

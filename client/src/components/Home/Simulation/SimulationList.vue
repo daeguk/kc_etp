@@ -36,18 +36,18 @@
                     <caption></caption>
                     
                     <colgroup>
-                        <col width="28%" />
-                        <col width="24%" />
-                        <col width="36%" />
-                        <col width="12%" />
+                        <col width="30%" />
+                        <col width="30%" />
+                        <col width="25%" />
+                        <col width="15%" />
                     </colgroup>
 
                     <thead>
                         <tr>
-                            <th class="txt_left">Name</th>
-                            <th class="txt_right">Index</th>
-                            <th class="txt_right">Last modifired</th>
-                            <th class="txt_right"></th>
+                            <th width="30%" class="txt_left">Name</th>
+                            <th width="30%"  class="txt_right">Index</th>
+                            <th width="25%"  class="txt_right">Last modifired</th>
+                            <th width="15%" ></th>
                         </tr>
                     </thead>
 
@@ -86,13 +86,13 @@
                             </td>
 
                             <!-- Last modified -->
-                            <td>
+                            <td  class="txt_right">
                                 {{ item.fmt_upd_time }}
                                 <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn } )" />
                             </td>
 
                             <!-- 버튼 영역 -->
-                            <td class="txt_left">
+                            <td>
                                 <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
                                 <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" >equalizer</button>
 

@@ -20,8 +20,8 @@
                     </span>
                 </div>
 
-                <h4>
-                    테스트 결과
+                <h4>unnamed-1
+                    <span class="sub_t">테스트 결과</span>
                     <span class="excel_btn">
                         <button type="button" class="exceldown_btn"></button>
                     </span>
@@ -36,16 +36,8 @@
             <!-- 그래프 영역-->
 
 
-                <table style="width:100%">
-                    <colgroup>
-                        <col width="80%" />
-                        <col width="20%" />
-                    </colgroup>
-
-                    <tbody>
-
-                        <tr>
-                            <td>
+                            <div class="simul_g_w">
+                                <div class="simul_g_l">
                             <!-- <div class="simul_graph"> -->
                                 <LineSimulationChart    v-if="chartFlag" 
                                 
@@ -55,11 +47,9 @@
                                                         @fn_showMessageBox="fn_showMessageBox">
                                 </LineSimulationChart>
                             <!-- </div> -->
-                            </td>
-
-                            <td>
-
-                                <table style="width:100%">
+                                </div>
+                                <div class="simul_g_r">
+                                <table class="tbl_type ver11">
                                     <colgroup>
                                         <col width="25%"/>
                                         <col width="75%"/>
@@ -67,21 +57,17 @@
 
                                     <tbody>
                                         <tr v-for="( row, index ) in  arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <td class="txt_left">
+                                            <th class="txt_left">
                                                 {{ row.anal_title          /* 분석지표 */ }}
-                                            </td>
+                                            </th>
                                             <td class="txt_right">
                                                 {{ row.backtest           /* 백테스트 */ }}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
+                                </div>
+                            </div>
 
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
@@ -151,28 +137,30 @@
                                                 <caption></caption>
 
                                                 <colgroup>
-                                                    <col width="14%" />
-                                                    <col width="14%" />
-                                                    <col width="14%" />
-                                                    <col width="14%" />
-                                                    <col width="14%" />
+                                                    <col width="20%" />
+                                                    <col width="20%" />
+                                                    <col width="20%" />
+                                                    <col width="20%" />
+                                                    <col width="20%" />
                                                 </colgroup>
 
                                                 <thead>
                                                                    
                                                     <tr>
-                                                        <th class="txt_left">일자</th>
-                                                        <th>Event</th>
-                                                        <th class="txt_left">종목</th>
-                                                        <th class="txt_right">변경전</th>
-                                                        <th class="txt_right">변경후</th>
+                                                        <th width="20%" class="txt_left">일자</th>
+                                                        <th width="20%">Event</th>
+                                                        <th width="20%" class="txt_left">종목</th>
+                                                        <th width="20%" class="txt_right">변경전</th>
+                                                        <th width="20%" class="txt_right">변경후</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
     
-                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)">
+                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)" style="background:#e7f2f7">
                                                         <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
-                                                        <td>{{ row.fmt_EVENT_FLAG                           /* EVENT */ }}</td>
+                                                        <td><!--비중조절 div class="grav_icon"></div--> 
+                                                            <!--종목편출 div class="extr_icon"></div--> 
+                                                            <div class="trans_icon"></div>{{ row.fmt_EVENT_FLAG /* EVENT */ }}</td>
                                                         <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
@@ -189,7 +177,37 @@
 
             <!--시뮬레이션 설정 탭3-->
                     <v-tab-item>
-                        <div class="simul_setup">
+                        <div class="table-box">
+                                <table class="tbl_type ver11">
+                                    <caption>헤더 고정 테이블</caption>
+                                    <colgroup>
+                                        <col width="35%" />
+                                        <col width="65%" />
+                                    </colgroup>
+                                        <tr>
+                                            <th style="width:35%">시작년도</th>
+                                            <td style="width:65%">{{  simul_result_mast.start_year  }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>리밸런싱주기</th>
+                                            <td>{{ simul_result_mast.fmt_rebalance }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>초기투자금액(KRW)</th>
+                                            <td>1000000.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>벤치마크 설정</th>
+                                            <td>설정안함</td>
+                                        </tr>
+                                        <tr>
+                                            <th>비중설정방식</th>
+                                            <td>동일가중</td>
+                                        </tr>
+                                        
+                                </table>
+                            </div>
+                        <!--div class="simul_setup">
                             <h6>
                                 <span class="bullet"></span>리밸런싱
                             </h6>
@@ -216,7 +234,7 @@
                                 <v-flex xs2>거래량</v-flex>
                                 <v-flex xs3></v-flex>
                             </v-layout>
-                        </div>
+                        </div-->
                     </v-tab-item>
 
 
@@ -489,7 +507,7 @@ export default {
                     }
                 }
 
-            }
+            }         
         });
     },
 
@@ -1173,7 +1191,6 @@ export default {
             var vm = this;
 
             vm.arr_analyze      =   [];
-            vm.arr_analyze_main =   [];
 
             if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
                 var v_anal      =   {};
