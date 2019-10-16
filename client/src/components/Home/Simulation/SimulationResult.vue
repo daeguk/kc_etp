@@ -20,7 +20,8 @@
                     </span>
                 </div>
 
-                <h4>unnamed-1
+                <h4>
+                    {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
                     <span class="excel_btn">
                         <button type="button" class="exceldown_btn"></button>
@@ -51,16 +52,16 @@
                                 <div class="simul_g_r">
                                 <table class="tbl_type ver11">
                                     <colgroup>
-                                        <col width="40%"/>
-                                        <col width="60%"/>
+                                        <col width="50%"/>
+                                        <col width="50%"/>
                                     </colgroup>
 
                                     <tbody>
-                                        <tr v-for="( row, index ) in  arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <th class="txt_left" width="40%">
+                                        <tr v-for="( row, index ) in  fn_sort_arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
+                                            <th class="txt_left" width="50%">
                                                 {{ row.anal_title          /* 분석지표 */ }}
                                             </th>
-                                            <td class="txt_right" width="60%">
+                                            <td class="txt_right" width="50%">
                                                 {{ row.backtest           /* 백테스트 */ }}
                                             </td>
                                         </tr>
@@ -156,11 +157,13 @@
                                                 </thead>
                                                 <tbody>
     
-                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)" style="background:#e7f2f7">
+                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)" :style="row.style_background">
                                                         <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
                                                         <td><!--비중조절 div class="grav_icon"></div--> 
                                                             <!--종목편출 div class="extr_icon"></div--> 
-                                                            <div class="trans_icon"></div>{{ row.fmt_EVENT_FLAG /* EVENT */ }}</td>
+                                                            <div :class='row.EVENT_FLAG == "20" ? "trans_icon" : ( row.EVENT_FLAG == "10" ? "grav_icon" : "extr_icon"  ) '></div>
+                                                            {{ row.fmt_EVENT_FLAG /* EVENT */ }}
+                                                        </td>
                                                         <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
                                                         <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
@@ -194,15 +197,15 @@
                                         </tr>
                                         <tr>
                                             <th>초기투자금액(KRW)</th>
-                                            <td>1000000.00</td>
+                                            <td>{{ simul_result_mast.fmt_init_invest_money }}</td>
                                         </tr>
                                         <tr>
                                             <th>벤치마크 설정</th>
-                                            <td>설정안함</td>
+                                            <td>{{ simul_result_mast.fmt_bench_mark_cd }}</td>
                                         </tr>
                                         <tr>
                                             <th>비중설정방식</th>
-                                            <td>동일가중</td>
+                                            <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
                                         </tr>
                                         
                                 </table>
@@ -373,6 +376,14 @@ export default {
             ], ["desc"]);
         },
 
+        fn_sort_arr_analyze_main : function() {
+            var vm = this;
+
+            return _.orderBy( vm.arr_analyze_main, [
+                "order_no"
+            ], ["asc"]);
+        },
+
         /*
          * 리밸런싱 내역을 정렬한다.
          * 2019-07-26  bkLove(촤병국)
@@ -380,11 +391,30 @@ export default {
         fn_sort_arr_result_rebalance : function() {
             var vm = this;
 
-            return _.orderBy( vm.arr_result_rebalance, [
+            vm.arr_result_rebalance = _.orderBy( vm.arr_result_rebalance, [
                 "F12506",
                 "rebalance_import_yn",
-                "F16013",
+                function(e) {
+                    return  ( e.EVENT_FLAG == "20" ? 1 : e.EVENT_FLAG == "10" ? 2 : 3 );
+                },
             ], ["desc", "desc", "asc"]);
+
+
+            var v_toggle_background     =   [ "", "background:#e7f2f7" ];
+            var v_prev_F12506           =   "";
+            var v_now_background        =   "";
+            for( var i=0; i < vm.arr_result_rebalance.length; i++ ) {
+                var v_row   =   vm.arr_result_rebalance[i];
+
+                if( v_prev_F12506 != v_row.F12506 ) {
+                    v_now_background    =   _.xor( v_toggle_background, [ v_now_background ] )[0];
+                    v_prev_F12506       =   v_row.F12506;
+                }
+
+                v_row.style_background  =   v_now_background;
+            }
+
+            return  vm.arr_result_rebalance;
         }
     },
 
@@ -507,22 +537,7 @@ export default {
                     }
                 }
 
-            }
-
-            vm.arr_analyze_main.push({
-                    "anal_title"    :  "final_balance"
-                ,   "backtest"      :   "0.1111%"
-            });
-
-            vm.arr_analyze_main.push({
-                    "anal_title"    :  "cagr"
-                ,   "backtest"      :   "0.22%"
-            });
-
-            vm.arr_analyze_main.push({
-                    "anal_title"    :  "Best Year "
-                ,   "backtest"      :   "0.34567(2019)"
-            });            
+            }  
         });
     },
 
@@ -831,9 +846,11 @@ export default {
         async fn_initData() {
             var vm = this;
 
+            /* COM008 - 벤치마크 */
+            /* COM009 - 비중설정방식 */
             /* COM011 - 이벤트 타입 ( 10-비중조절, 20- 종목편입 ) */
             /* COM012 - 리밸런싱코드 기준 tm_date_manage 테이블 mapping */
-            var arrComMstCd = [ "COM011", "COM012" ];
+            var arrComMstCd = [ "COM008", "COM009", "COM011", "COM012" ];
 
             vm.arr_show_error_message   =   [];
 
@@ -1166,6 +1183,15 @@ export default {
                             /* 리밸런싱 주기 */
                             p_item_obj.fmt_rebalance            =   vm.fn_getCodeName( "COM012", p_item_obj.rebalance_cycle_cd + p_item_obj.rebalance_date_cd );
 
+                            /* 초기 투자금액 */
+                            p_item_obj.fmt_init_invest_money    =   util.formatInt( p_item_obj.init_invest_money );
+
+                            /* 벤치마크 설정 */
+                            p_item_obj.fmt_bench_mark_cd        =   vm.fn_getCodeName( "COM008", p_item_obj.bench_mark_cd );
+
+                            /* 비중설정 방식 */
+                            p_item_obj.fmt_rebalance_date_cd    =   vm.fn_getCodeName( "COM009", p_item_obj.rebalance_date_cd );
+
                             if( p_item_obj.bench_mark_cd == "0" ) {
                                 p_item_obj.bench_index_nm       =   "BM (N/A)";
                             }else{
@@ -1225,6 +1251,9 @@ export default {
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
+
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.order_no         =   1;
                 vm.arr_analyze_main.push( v_anal );
 
                 /*  수익률 ( 연도 )
@@ -1254,7 +1283,6 @@ export default {
                     :   "N/A"
                 );
                 vm.arr_analyze.push( v_anal );
-                vm.arr_analyze_main.push( v_anal );
 
                 /*  수익률 ( 연도 )
                     %처리. 100곱한후 소수점 6째자리에서 반올림 
@@ -1281,7 +1309,6 @@ export default {
                     :   "N/A" 
                 );
                 vm.arr_analyze.push( v_anal );
-                vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "mdd" );
@@ -1289,6 +1316,9 @@ export default {
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
+
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.order_no         =   8;
                 vm.arr_analyze_main.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
@@ -1297,6 +1327,10 @@ export default {
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(5) : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(5) : "N/A" );
                 vm.arr_analyze.push( v_anal );
+
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.order_no         =   3;
+                vm.arr_analyze_main.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "sortino_rto" );
@@ -1354,6 +1388,11 @@ export default {
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.anal_title       =   "Vol (annualized)";
+                v_anal.order_no         =   2;
+                vm.arr_analyze_main.push( v_anal );
+
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "down_dev" );
                 v_anal.anal_title       =   "Downside Deviation (daily)";
@@ -1368,12 +1407,22 @@ export default {
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(5) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.anal_title       =   "Beta(vs market)";
+                v_anal.order_no         =   4;
+                vm.arr_analyze_main.push( v_anal );
+
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs market, annualized)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
+
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.anal_title       =   "Alpha(vs market, annualized)";
+                v_anal.order_no         =   6;
+                vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "r2" );
@@ -1389,12 +1438,23 @@ export default {
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(5) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.anal_title       =   "Beta(vs benchmark)";
+                v_anal.order_no         =   5;
+                vm.arr_analyze_main.push( v_anal );
+
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %": "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %": "N/A" );
                 vm.arr_analyze.push( v_anal );
+
+                v_anal                  =   Object.assign( {}, v_anal );
+                v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
+                v_anal.order_no         =   7;
+                vm.arr_analyze_main.push( v_anal );
+
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "r2" );
