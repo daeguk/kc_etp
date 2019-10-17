@@ -3173,16 +3173,17 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+
             if( !vm.start_year ) {
                 vm.arr_show_error_message.push( "[조건설정] 시작년도를 선택해 주세요." );
             }
 
             if( !vm.rebalance_cycle_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱주기를 선택해 주세요." );
+                vm.rebalance_cycle_cd       =   "1";    /* 리밸런싱 주기가 없을시 1-매주 디폴트 설정  */
             }
 
             if( !vm.rebalance_date_cd ) {
-                vm.arr_show_error_message.push( "[조건설정] 리밸런싱 일자를 선택해 주세요." );
+                vm.rebalance_date_cd        =   "1";    /* 리밸런싱 일자가 없을시 1-첫영업일 디폴트 설정  */
             }           
 
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
