@@ -35,7 +35,7 @@ route_loader.sessionCheckRegister = function(app) {
                     세션 정보 처리[개발시 사용];
                     ============================
                 */
-               req.session.user_id = "test@samsung.com";
+               req.session.user_id = "test@koscom.co.kr";
                req.session.inst_cd = "03890";
                req.session.type_cd = "0001";
                req.session.large_type = "FNGUIDE";
