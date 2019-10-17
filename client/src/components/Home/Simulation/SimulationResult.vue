@@ -56,9 +56,9 @@
                                 <div class="simul_g_r">
                                 <table class="tbl_type ver11 v2">
                                     <colgroup>
-                                        <col width="30%"/>
-                                        <col width="35%"/>
-                                        <col width="35%"/>
+                                        <col width="38%"/>
+                                        <col width="31%"/>
+                                        <col width="31%"/>
                                     </colgroup>
                                     <thead>
                                         <th></th>
@@ -68,13 +68,13 @@
 
                                     <tbody>
                                         <tr v-for="( row, index ) in  fn_sort_arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <th class="txt_left" width="50%">
+                                            <th class="txt_left"  width="38%">
                                                 {{ row.anal_title          /* 분석지표 */ }}
                                             </th>
-                                            <td class="txt_right" width="50%">
+                                            <td class="txt_right" width="31%">
                                                 {{ row.backtest           /* Senario */ }}
                                             </td>
-                                            <td class="txt_right">
+                                            <td class="txt_right" width="31%">
                                                 {{ row.benchmark          /* BM */ }}
                                             </td>
                                         </tr>
