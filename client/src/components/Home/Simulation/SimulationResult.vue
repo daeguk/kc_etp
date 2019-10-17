@@ -1187,7 +1187,7 @@ export default {
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
-                v_anal.anal_title       =   "Beta(코스피 기준)";
+                v_anal.anal_title       =   "Beta(vs market)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(5) : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(5) : "N/A" );
                 vm.arr_analyze.push( v_anal );
@@ -1199,7 +1199,7 @@ export default {
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
-                v_anal.anal_title       =   "Alpha(코스피 기준)";
+                v_anal.anal_title       =   "Alpha(vs market, annualized)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
