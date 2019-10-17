@@ -1601,7 +1601,7 @@ export default {
                                     }
                                 }
                                 else if( [ "INDEX_RATE", "RETURN_VAL", "F15028_S", "F15028_C"  ].includes(o) ){
-                                    tempObj[o]  =   Number( dataRow[o] ).toFixed(17);
+                                    tempObj[o]  =   String( dataRow[o] );
                                 }
                                 else{
                                     tempObj[o]  =   dataRow[o];
