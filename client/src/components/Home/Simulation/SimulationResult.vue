@@ -47,14 +47,23 @@
                                                         
                                                         @fn_showMessageBox="fn_showMessageBox">
                                 </LineSimulationChart>
+                                <ul>
+                                    <li><span class="rcolor1">●</span> Kospi 200</li>
+                                    <li><span class="rcolor2">●</span> Result</li>
+                                </ul>
                             <!-- </div> -->
                                 </div>
                                 <div class="simul_g_r">
-                                <table class="tbl_type ver11">
+                                <table class="tbl_type ver11 v2">
                                     <colgroup>
                                         <col width="50%"/>
                                         <col width="50%"/>
                                     </colgroup>
+                                    <thead>
+                                        <th></th>
+                                        <th>Senario</th>
+                                        <th>BM(KOSPI200)</th>
+                                    </thead>
 
                                     <tbody>
                                         <tr v-for="( row, index ) in  fn_sort_arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
@@ -64,6 +73,7 @@
                                             <td class="txt_right" width="50%">
                                                 {{ row.backtest           /* 백테스트 */ }}
                                             </td>
+                                            <td class="txt_right">-99.9999%</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1161,7 +1171,7 @@ export default {
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.anal_title       =   "Vol (annualized)";
+                v_anal.anal_title       =   "Vol(annualized)";
                 v_anal.order_no         =   2;
                 vm.arr_analyze_main.push( v_anal );
 
@@ -1174,25 +1184,25 @@ export default {
 
                 /* 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
-                v_anal.anal_title       =   "Beta(vs market)";
+                v_anal.anal_title       =   "Beta(코스피 기준)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  ).toFixed(5) : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) ).toFixed(5) : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.anal_title       =   "Beta(vs market)";
+                v_anal.anal_title       =   "Beta(코스피 기준)";
                 v_anal.order_no         =   4;
                 vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
-                v_anal.anal_title       =   "Alpha(vs market, annualized)";
+                v_anal.anal_title       =   "Alpha(코스피 기준)";
                 v_anal.backtest         =   ( v_anal.backtest       != "N/A"    ?   ( Number( v_anal.backtest )  * 100 ).toFixed(5) + " %" : "N/A" );
                 v_anal.benchmark        =   ( v_anal.benchmark      != "N/A"    ?   ( Number( v_anal.benchmark ) * 100 ).toFixed(5) + " %" : "N/A" );
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.anal_title       =   "Alpha(vs market, annualized)";
+                v_anal.anal_title       =   "Alpha(코스피 기준)";
                 v_anal.order_no         =   6;
                 vm.arr_analyze_main.push( v_anal );
 

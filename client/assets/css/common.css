@@ -1113,10 +1113,15 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .font_b{font-weight:600; vertical-align: middle;}
 
 
-.simul_g_w{ display:inline-block; width: 100%;}
-.simul_g_w .simul_g_l{float: left; }
-.simul_g_w .simul_g_r{float: right; width:330px; margin-top:33px; margin-right: 20px;}
-.simul_g_w .simul_g_r .ver11{width: 100%;}
+.simul_g_w{ display:inline-block; width: 100%; margin-bottom:20px;}
+.simul_g_w .simul_g_l{float: left; text-align: center;}
+.simul_g_w .simul_g_l ul li{display: inline-block; padding-right: 10px;}
+.simul_g_w .simul_g_l ul li span.rcolor1{ color:#85c406;}
+.simul_g_w .simul_g_l ul li span.rcolor2{ color:#8c8c8c;}
+.simul_g_w .simul_g_r{float: right; width:400px;  margin-right: 20px;}
+.simul_g_w .simul_g_r .ver11.v2{width: 100%; border-top:none;}
+.simul_g_w .simul_g_r .ver11.v2 thead th{border-top:none !important; border-bottom:1px solid #bbbbbb !important; background:#ffffff !important; color:#263147;}
+
 
 
 

@@ -64,6 +64,7 @@
                                         @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
                                         
                                         v-model="start_year"
+                                        :disabled="rebalance_cycle_cd == ''"
 
                                         outline>
                             </v-select>
@@ -324,7 +325,7 @@ export default {
             ,   rebalance_cycle_cd          :   "1"         /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
             ,   rebalance_date_cd           :   ""          /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
             ,   init_invest_money           :   1000000     /* 초기투자금액 */
-            ,   bench_mark_cd               :   "0"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+            ,   bench_mark_cd               :   "1"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   importance_method_cd        :   "1"         /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
             ,   bench_index_cd01            :   ""          /* 벤치마크 인덱스 코드 ( F16013 ) */
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
@@ -654,7 +655,7 @@ export default {
 					vm.rebalance_cycle_cd          	=  	"1";        /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
 					vm.rebalance_date_cd           	=   "1";        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 					vm.init_invest_money           	=   1000000;    /* 초기투자금액 */
-					vm.bench_mark_cd               	=   "0";        /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
+					vm.bench_mark_cd               	=   "1";        /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
 					vm.importance_method_cd        	=   "1";        /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 					vm.bench_index_cd01            	=   "";         /* 벤치마크 인덱스 코드 ( F16013 ) */
 					vm.bench_index_cd02            	=   "";         /* 벤치마크 인덱스 코드 ( large_type ) */
@@ -1967,6 +1968,7 @@ export default {
                                         vm.bench_mark_cd            =   mastInfo.bench_mark_cd;         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
                                         vm.importance_method_cd     =   mastInfo.importance_method_cd;  /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
 
+                                        vm.bench_mark_cd            =   ( vm.bench_mark_cd == 0 ? "1" : vm.bench_mark_cd );
                                         vm.change_rebalance_yn      =   "1";                            /* 수정인 경우 리밸런싱 일자 콤보박스는 보이도록 수정 */
 
                                         /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
@@ -1974,7 +1976,7 @@ export default {
 
                                             vm.p_rebalance_file_yn      =   "1";
 
-                                            vm.rebalance_date_cd    =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
+                                            vm.rebalance_date_cd        =   mastInfo.rebalance_date_cd;     /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
 
                                             vm.old_start_year           =   mastInfo.start_year;
                                             vm.old_rebalance_cycle_cd   =   mastInfo.rebalance_cycle_cd;
