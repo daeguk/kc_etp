@@ -274,11 +274,11 @@ var uploadPortfolio = function(req, res) {
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
 
                 if( !v_param.p_record_check ) {
-                    for (var i = 0; i < dataLists.length-1; i++) {
+                    for (var i = 0; i < dataLists.length; i++) {
                         var data = dataLists[i];
 
                         /* 오류가 존재하는 경우 */
-                        if( !data.result ) {
+                        if( typeof data.result != "undefined" && typeof data.msg != "undefined" && !data.result ) {
                             resultMsg.errorList.push( data );
 
                             /* 10 개 까지만 결과정보에 보관한다. */
@@ -886,77 +886,90 @@ var uploadPortfolio = function(req, res) {
 
 function    fn_excel_record_check( p_param={ p_column_check : true, p_record_check : true, p_rebalance_file_yn : "0", p_index : 0, p_startIndex : 0 }, p_record_data={} ){
 
-    if( p_record_data && Object.keys( p_record_data ).length > 0 ) {
+    try{
 
-        /* 리밸런싱 파일이 아닌 경우 */
-        if( p_param.p_rebalance_file_yn == "0" ) {
+        if( p_record_data && Object.keys( p_record_data ).length > 0 ) {
 
-
-            /* CODE 체크 */
-            p_param.p_column                =   "CODE";
-            p_param.p_data                  =   p_record_data.col01;
-            fn_excel_column_check( p_param, p_record_data );
-
-            if( !p_param.p_column_check ) {
-                p_param.p_record_check      =   false;
-            }else{
-
-                /* ALLOCATION 체크 */
-                p_param.p_column            =   "ALLOCATION";
-                p_param.p_data              =   p_record_data.col02;
-                fn_excel_column_check( p_param, p_record_data );                
-
-                if( !p_param.p_column_check ) {
-                    p_param.p_record_check      =   false;
-                }
-            }
-
-            if( p_param.p_column_check ) {
-                p_record_data.code          =   String( p_record_data.col01 );
-                p_record_data.allocation    =   String( p_record_data.col02 );
-            }
-
-        }
-        /* 리밸런싱 파일인 경우 */
-        else{
-
-            /* DATE 체크 */
-            p_param.p_column                =   "DATE";
-            p_param.p_data                  =   p_record_data.col01;
-            fn_excel_column_check( p_param, p_record_data );
-
-            if( !p_param.p_column_check ) {
-                p_param.p_record_check      =   false;
-            }else{
+            /* 리밸런싱 파일이 아닌 경우 */
+            if( p_param.p_rebalance_file_yn == "0" ) {
 
                 /* CODE 체크 */
-                p_param.p_column            =   "CODE";
-                p_param.p_data              =   p_record_data.col02;
+                p_param.p_column                =   "CODE";
+                p_param.p_data                  =   p_record_data.col01;
                 fn_excel_column_check( p_param, p_record_data );
 
                 if( !p_param.p_column_check ) {
                     p_param.p_record_check      =   false;
                 }else{
 
+                    /* ALLOCATION 값이 비이 있을시 0으로 디폴트값 설정 */
+                    if( typeof p_record_data.col02 == "undefined" || p_record_data.col02 == "" ) {
+                        p_record_data.col02 =   "0";
+                    }
+
                     /* ALLOCATION 체크 */
                     p_param.p_column            =   "ALLOCATION";
-                    p_param.p_data              =   p_record_data.col03;
+                    p_param.p_data              =   p_record_data.col02;
                     fn_excel_column_check( p_param, p_record_data );
 
                     if( !p_param.p_column_check ) {
                         p_param.p_record_check      =   false;
-                    }                    
+                    }
+                }
+
+                if( p_param.p_column_check ) {
+                    p_record_data.code          =   String( p_record_data.col01 );
+                    p_record_data.allocation    =   String( p_record_data.col02 );
+                }
+
+            }
+            /* 리밸런싱 파일인 경우 */
+            else{
+
+                /* DATE 체크 */
+                p_param.p_column                =   "DATE";
+                p_param.p_data                  =   p_record_data.col01;
+                fn_excel_column_check( p_param, p_record_data );
+
+                if( !p_param.p_column_check ) {
+                    p_param.p_record_check      =   false;
+                }else{
+
+                    /* CODE 체크 */
+                    p_param.p_column            =   "CODE";
+                    p_param.p_data              =   p_record_data.col02;
+                    fn_excel_column_check( p_param, p_record_data );
+
+                    if( !p_param.p_column_check ) {
+                        p_param.p_record_check      =   false;
+                    }else{
+
+                        /* ALLOCATION 값이 비이 있을시 0으로 디폴트값 설정 */
+                        if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
+                            p_record_data.col03 =   "0";
+                        }
+
+                        /* ALLOCATION 체크 */
+                        p_param.p_column            =   "ALLOCATION";
+                        p_param.p_data              =   p_record_data.col03;
+                        fn_excel_column_check( p_param, p_record_data );
+
+                        if( !p_param.p_column_check ) {
+                            p_param.p_record_check      =   false;
+                        }                    
+                    }
+                }
+
+                if( p_param.p_column_check ) {
+                    p_record_data.date          =   String( p_record_data.col01 );
+                    p_record_data.code          =   String( p_record_data.col02 );
+                    p_record_data.allocation    =   Number( p_record_data.col03 );
                 }
             }
-
-            if( p_param.p_column_check ) {
-                p_record_data.date          =   String( p_record_data.col01 );
-                p_record_data.code          =   String( p_record_data.col02 );
-                p_record_data.allocation    =   Number( p_record_data.col03 );
-            }
         }
+    }catch(e){
+        log.error( e );        
     }
-
 }
 
 /*
@@ -966,106 +979,111 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
 
 function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "", p_rebalance_file_yn : "0", p_data : "", p_index : 0, p_startIndex : 0 }, p_record_data={} ){
 
-    if( p_param.p_column != "" ) {
+    try{
+        if( p_param.p_column != "" ) {
 
-        switch( p_param.p_column ) {
+            switch( p_param.p_column ) {
 
-            case    "CODE"  :
+                case    "CODE"  :
 
-                    if (typeof p_param.p_data == "undefined") {
-                        p_param.p_column_check          =   false;
-
-                        p_record_data.result            =   false;
-                        p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼이 존재하지 않습니다.";
-
-                    } else if ( !( String( p_param.p_data ).length == 6 || String( p_param.p_data ).length == 12 ) ) {
-                        p_param.p_column_check          =   false;
-
-                        p_record_data.result            =   false;
-                        p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼은 6자리 또는 12자리만 가능합니다.";
-                    }
-
-                    break;
-
-            case    "ALLOCATION"  :
-
-                    if (typeof p_param.p_data == "undefined") {
-                        p_param.p_column_check          =   false;
-
-                        p_record_data.result            =   false;
-                        p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼이 존재하지 않습니다.";
-
-                    }else{
-                    
-                        try{
-                            var temp = Number( p_param.p_data );
-
-                            if( isNaN( temp ) ) {
-                                p_param.p_column_check          =   false;
-
-                                p_record_data.result            =   false;
-                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 숫자형만 입력해 주세요.";                                
-                            }
-                        }catch(e) {
+                        if (typeof p_param.p_data == "undefined") {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 숫자형만 입력해 주세요.";
-                        }
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼이 존재하지 않습니다.";
 
-                        if( p_param.p_column_check ) {
-                            if ( Number( p_param.p_data ) < 0 || Number( p_param.p_data ) > 100 ) {
-                                p_param.p_column_check          =   false;
-
-                                p_record_data.result            =   false;
-                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 0 ~ 100 사이만 입력해 주세요.";
-                            }
-                        }
-                    }
-
-                    break;
-
-            case    "DATE"  :
-
-                    if (typeof p_param.p_data == "undefined") {
-                        p_param.p_column_check          =   false;
-
-                        p_record_data.result    =   false;
-                        p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 존재하지 않습니다.";
-
-                    }else if( String( p_param.p_data ).length != 8 ) {
-                        p_param.p_column_check          =   false;
-
-                        p_record_data.result    =   false;
-                        p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 8자리만 입력가능합니다.";   
-
-                    }else{
-
-                        try{
-                            var year    =   Number( new String( p_param.p_data ).substring(0, 4));
-                            var month   =   Number( new String( p_param.p_data ).substring(4, 6));
-                            var day     =   Number( new String( p_param.p_data ).substring(6, 8));
-
-                            var date    =   new Date( year, month-1, day );
-
-                            if( p_param.p_data != date.getFullYear() + util.padZero( ( date.getMonth() + 1 ), 2 ) + util.padZero( date.getDate(), 2 ) ) {
-                                p_param.p_column_check          =   false;
-
-                                p_record_data.result            =   false;
-                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼의 날짜가 정확한지 확인해 주세요.";
-                            }
-                        }catch(e) {
-
+                        } else if ( !( String( p_param.p_data ).length == 6 || String( p_param.p_data ).length == 12 ) ) {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 날짜유형인지 확인해 주세요.";
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼은 6자리 또는 12자리만 가능합니다.";
                         }
-                    }
 
-                    break;            
+                        break;
 
+                case    "ALLOCATION"  :
+
+                        if (typeof p_param.p_data == "undefined") {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼이 존재하지 않습니다.";
+
+                        }else{
+                        
+                            try{
+                                var temp = Number( p_param.p_data );
+
+                                if( isNaN( temp ) ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 숫자형만 입력해 주세요.";                                
+                                }
+                            }catch(e) {
+                                p_param.p_column_check          =   false;
+
+                                p_record_data.result            =   false;
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 숫자형만 입력해 주세요.";
+                            }
+
+                            if( p_param.p_column_check ) {
+                                if ( Number( p_param.p_data ) < 0 || Number( p_param.p_data ) > 100 ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] ALLOCATION 컬럼은 0 ~ 100 사이만 입력해 주세요.";
+                                }
+                            }
+                        }
+
+                        break;
+
+                case    "DATE"  :
+
+                        if (typeof p_param.p_data == "undefined") {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result    =   false;
+                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 존재하지 않습니다.";
+
+                        }else if( String( p_param.p_data ).length != 8 ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result    =   false;
+                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 8자리만 입력가능합니다.";   
+
+                        }else{
+
+                            try{
+                                var year    =   Number( new String( p_param.p_data ).substring(0, 4));
+                                var month   =   Number( new String( p_param.p_data ).substring(4, 6));
+                                var day     =   Number( new String( p_param.p_data ).substring(6, 8));
+
+                                var date    =   new Date( year, month-1, day );
+
+                                if( p_param.p_data != date.getFullYear() + util.padZero( ( date.getMonth() + 1 ), 2 ) + util.padZero( date.getDate(), 2 ) ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼의 날짜가 정확한지 확인해 주세요.";
+                                }
+                            }catch(e) {
+
+                                p_param.p_column_check          =   false;
+
+                                p_record_data.result            =   false;
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 날짜유형인지 확인해 주세요.";
+                            }
+                        }
+
+                        break;            
+
+            }
         }
+
+    }catch(e){
+        log.error( e );
     }
 }
 
