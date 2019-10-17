@@ -48,8 +48,8 @@
                                                         @fn_showMessageBox="fn_showMessageBox">
                                 </LineSimulationChart>
                                 <ul>
-                                    <li><span class="rcolor1">●</span> Kospi 200</li>
-                                    <li><span class="rcolor2">●</span> Result</li>
+                                    <li><span class="rcolor1">●</span> Scenario </li>
+                                    <li><span class="rcolor2">●</span> {{ simul_result_mast.bench_index_nm2 }}</li>
                                 </ul>
                             <!-- </div> -->
                                 </div>
@@ -62,8 +62,8 @@
                                     </colgroup>
                                     <thead>
                                         <th></th>
-                                        <th>Senario</th>
-                                        <th>BM(KOSPI200)</th>
+                                        <th>Scenario</th>
+                                        <th>{{ simul_result_mast.bench_index_nm2 }}</th>
                                     </thead>
 
                                     <tbody>
@@ -977,8 +977,10 @@ export default {
                             p_item_obj.fmt_rebalance_date_cd    =   vm.fn_getCodeName( "COM009", p_item_obj.rebalance_date_cd );
 
                             if( p_item_obj.bench_mark_cd == "0" ) {
-                                p_item_obj.bench_index_nm       =   "BM (N/A)";
+                                p_item_obj.bench_index_nm       =   "BM (N/A)";                                
+                                p_item_obj.bench_index_nm2       =  "BM (N/A)";
                             }else{
+                                p_item_obj.bench_index_nm2       =   p_item_obj.bench_index_nm;
                                 p_item_obj.bench_index_nm       =   "BM (" + p_item_obj.bench_index_nm + ")";
                             }                        
 
@@ -1196,7 +1198,7 @@ export default {
                 v_anal.anal_title       =   "Beta(코스피 기준)";
                 v_anal.order_no         =   4;
                 vm.arr_analyze_main.push( v_anal );
-
+ㅎ
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs market, annualized)";
