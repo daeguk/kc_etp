@@ -149,6 +149,7 @@ var runBacktest = async function(req, res, paramData) {
                                 msg = {};
                             }
 
+                          
                             stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
                             log.debug(stmt);
 
@@ -192,6 +193,13 @@ var runBacktest = async function(req, res, paramData) {
                                     });
                                 }
 
+                                /* 엑셀 업로드시 시뮬레이션 시작일을 첫 리밸런싱일로 세팅 */
+                                if (msg.v_simul_mast.rebalance_date_cd == "" && msg.v_simul_mast.rebalance_cycle_cd == "") {
+                                    paramData.first_date = firstRebalenceDate;
+                                } else {
+                                    paramData.first_date = msg.v_simul_mast.start_year + "0101";
+                                }
+
                                 msg.v_arrRebalanceDate      =   rows;
                                 msg.v_simulPortfolioList    =   v_simulPortfolioList;
                                 msg.v_simulPortfolio        =   v_simulPortfolioList[firstRebalenceDate];   //  첫 리밸런싱 까지 포트 폴리오로 사용
@@ -220,6 +228,8 @@ var runBacktest = async function(req, res, paramData) {
                                 msg = {};
                             }
 
+                           
+
                             stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd', paramData, format);
                             log.debug(stmt);
 
@@ -241,7 +251,8 @@ var runBacktest = async function(req, res, paramData) {
                                     return callback(resultMsg);
                                 } else {
 
-                                    paramData.first_date = rows[0].F12506;
+                                    //paramData.first_date = rows[0].F12506;
+
                                     temp_kspjong_hist = rows;
                                     
 
