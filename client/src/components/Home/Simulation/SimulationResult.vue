@@ -56,8 +56,9 @@
                                 <div class="simul_g_r">
                                 <table class="tbl_type ver11 v2">
                                     <colgroup>
-                                        <col width="50%"/>
-                                        <col width="50%"/>
+                                        <col width="30%"/>
+                                        <col width="35%"/>
+                                        <col width="35%"/>
                                     </colgroup>
                                     <thead>
                                         <th></th>
@@ -71,9 +72,11 @@
                                                 {{ row.anal_title          /* 분석지표 */ }}
                                             </th>
                                             <td class="txt_right" width="50%">
-                                                {{ row.backtest           /* 백테스트 */ }}
+                                                {{ row.backtest           /* Senario */ }}
                                             </td>
-                                            <td class="txt_right">-99.9999%</td>
+                                            <td class="txt_right">
+                                                {{ row.benchmark          /* BM */ }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1203,7 +1206,7 @@ export default {
 
                 v_anal                  =   Object.assign( {}, v_anal );
                 v_anal.anal_title       =   "Alpha(코스피 기준)";
-                v_anal.order_no         =   6;
+                v_anal.order_no         =   5;
                 vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
@@ -1222,8 +1225,6 @@ export default {
 
                 v_anal                  =   Object.assign( {}, v_anal );
                 v_anal.anal_title       =   "Beta(vs benchmark)";
-                v_anal.order_no         =   5;
-                vm.arr_analyze_main.push( v_anal );
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
@@ -1234,8 +1235,6 @@ export default {
 
                 v_anal                  =   Object.assign( {}, v_anal );
                 v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
-                v_anal.order_no         =   7;
-                vm.arr_analyze_main.push( v_anal );
 
 
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
