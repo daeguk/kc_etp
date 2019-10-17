@@ -180,7 +180,7 @@
                                 <span>
 
                                 <!-- 엑셀 업로드 -->
-                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();" v-if='p_rebalance_file_yn == "0"'></button>
+                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button>
 
                                     <input type="file" name="portfolioFile" ref="portfolioFile" style="display:none;">
                                 </span>
