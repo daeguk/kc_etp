@@ -1423,13 +1423,13 @@ export default {
 
 
                 excelInfo.arrHeaderKey      =   [       
-                        "fmt_F12506", "fmt_INDEX_RATE", "fmt_balance", "fmt_RETURN_VAL", "fmt_bm_data01"
+                        "fmt_F12506", "INDEX_RATE", "fmt_balance", "RETURN_VAL", "fmt_bm_data01"
                     ,   "fmt_bm_1000_data", "fmt_bm_return_data", "F15028_S", "F15028_C", "fmt_rebalancing_yn"
                 ];
 
                 excelInfo.arrColsInfo       =   [       
-                        {width : 15}, {width : 15}, {width : 15}, {width : 15}, {width : 15}
-                    ,   {width : 15}, {width : 15}, {width : 20}, {width : 20}, {width : 15} 
+                        {width : 15}, {width : 30}, {width : 15}, {width : 30}, {width : 15}
+                    ,   {width : 15}, {width : 15}, {width : 30}, {width : 30}, {width : 15} 
                 ];
 
                 excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.fn_sort_arr_result_daily, excelInfo.arrHeaderKey );
@@ -1592,18 +1592,18 @@ export default {
                             if ( typeof dataRow[o] != "undefined" ) {
 
                                 if( 
-                                    [       
-                                            "fmt_INDEX_RATE", "fmt_balance",  "fmt_bm_data01", "fmt_bm_1000_data", "F15028_S"
-                                        ,   "F15028_C" 
-                                    ].includes( o ) 
+                                    [  "fmt_balance",  "bm_data01", "bm_1000_data" ].includes( o ) 
                                 ) {
-
                                     if( typeof dataRow[o] == "string" ) {
                                         tempObj[o]  =   Number( util.NumtoStr( dataRow[o] ) );
                                     }else{
                                         tempObj[o]  =   Number( dataRow[o] );
                                     }
-                                }else{
+                                }
+                                else if( [ "INDEX_RATE", "RETURN_VAL", "F15028_S", "F15028_C"  ].includes(o) ){
+                                    tempObj[o]  =   Number( dataRow[o] ).toFixed(17);
+                                }
+                                else{
                                     tempObj[o]  =   dataRow[o];
                                 }
                             }
