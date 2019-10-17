@@ -1105,7 +1105,7 @@ export default {
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.order_no         =   8;
+                v_anal.order_no         =   6;
                 vm.arr_analyze_main.push( v_anal );
 
                 /* 소수점 6째자리에서 반올림 */
@@ -1195,10 +1195,10 @@ export default {
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.anal_title       =   "Beta(코스피 기준)";
+                v_anal.anal_title       =   "Beta(KOSPI 기준)";
                 v_anal.order_no         =   4;
                 vm.arr_analyze_main.push( v_anal );
-ㅎ
+
                 /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
                 v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
                 v_anal.anal_title       =   "Alpha(vs market, annualized)";
@@ -1207,7 +1207,7 @@ export default {
                 vm.arr_analyze.push( v_anal );
 
                 v_anal                  =   Object.assign( {}, v_anal );
-                v_anal.anal_title       =   "Alpha(코스피 기준)";
+                v_anal.anal_title       =   "Alpha(KOSPI 기준)";
                 v_anal.order_no         =   5;
                 vm.arr_analyze_main.push( v_anal );
 
