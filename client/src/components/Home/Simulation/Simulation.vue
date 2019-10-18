@@ -546,9 +546,9 @@ export default {
             /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
             vm.importance_method_cd =   "1";
 
-            if( v_importance.val() ) {
-                v_importance.val( util.formatNumber( v_importance.val() ) );
-            }
+            // if( v_importance.val() ) {
+            //     v_importance.val( util.formatNumber( v_importance.val() ) );
+            // }
 
 
             /* html에 입력된 정보를 p_gubun 에 맞게 일자별 포트폴리오에 등록시킨다. */
@@ -839,7 +839,7 @@ export default {
                                     "F16013"        :   v_F16013.val()                                                      /* 종목코드 */
                                 ,   "F16002"        :   v_F16002.text()                                                     /* 종목명 */
                                 ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                    /* 시가총액 */
-                                ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )  /* 비중 */
+                                ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(5) )  /* 비중 */
                                 ,   "order_no"      :   0                                                                   /* 정렬순번 */
                                 ,   "trIndex"       :   tr.index()                                                          /* 테이블 레코드 순번 */
                             };
@@ -891,8 +891,16 @@ export default {
 
                                         if( typeof v_F16013.val() != "undefined" ) {
                                             if( v_F16013.val() != "" ) {
-                                                v_importance.val( result[v_inx].importance );                       /* 비중 */
-                                                v_inx++;
+
+                                                var existCheck = _.find( result, function(o) {
+                                                    if ( v_F16013.val() == o.F16013 ) {
+                                                        return  o;
+                                                    }
+                                                });
+
+                                                if( existCheck && Object.keys( existCheck ).length > 0 ) {
+                                                    v_importance.val( Number( existCheck.importance ).toFixed(5) ); /* 비중 */
+                                                }
                                             }
                                         }
                                     });
@@ -976,7 +984,7 @@ export default {
 
                                     totalObj[ v_key ].F15028            =   Number( totalObj[ v_key ].F15028 )  +  Number( v_sub_item.F15028 );     /* (합계) 시가총액 */
                                     totalObj[ v_key ].importance        =   Number (
-                                        ( Number( totalObj[ v_key ].importance ) + Number( v_sub_item.importance ) ).toFixed(2)
+                                        ( Number( totalObj[ v_key ].importance ) + Number( v_sub_item.importance ) ).toFixed(5)
                                     );                                                                                                              /* (합계) 비중 */
 
 
@@ -1008,7 +1016,7 @@ export default {
                                     totalObj[ v_key ].importance		=	0;
 
                                     same_rate           =   (
-                                        Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100 ) / 100
+                                        Math.floor( ( Number( totalObj[ v_key ].same_rate_sum ) / Number( totalObj[ v_key ].length ) ) * 100000 ) / 100000
                                     );                                                                                      /* 동일 가중 비율 */
                                     v_temp_importance   =   0;
                                     v_inx               =   0;
@@ -1025,12 +1033,12 @@ export default {
                                         /* 시총비중인 경우 */
                                         else if( p_importance_method_cd == "3" ) {
                                             v_temp_importance       =   Number(
-                                                Math.floor( ( Number( v_sub_item.F15028 ) / Number( totalObj[ v_key ].F15028 ) ) * 10000 ) / 100
+                                                Math.floor( ( Number( v_sub_item.F15028 ) / Number( totalObj[ v_key ].F15028 ) ) * 10000000 ) / 100000
                                             );
                                         }
 
                                         totalObj[ v_key ].importance                =   Number( 
-                                            ( Number( totalObj[ v_key ].importance ) +   Number( v_temp_importance ) ).toFixed(2)
+                                            ( Number( totalObj[ v_key ].importance ) +   Number( v_temp_importance ) ).toFixed(5)
                                         );                                                                                  /* (합계) 비중 */
 
                                         resultListObj[ v_key ][v_inx].F16013        =   v_sub_item.F16013;                  /* 종목코드 */
@@ -1051,17 +1059,17 @@ export default {
                                 }
 
 
-                                /* 비중 합계가 100 이  아닌 경우 0.01 값을 더해 100 이 되면 중단 */
-                                if( Number( ( Number( totalObj[ v_key ].same_rate_sum ) - Number( totalObj[ v_key ].importance ) ).toFixed(2) ) != 0 ) {
+                                /* 비중 합계가 100 이  아닌 경우 0.00001 값을 더해 100 이 되면 중단 */
+                                if( Number( ( Number( totalObj[ v_key ].same_rate_sum ) - Number( totalObj[ v_key ].importance ) ).toFixed(5) ) != 0 ) {
 
                                     for( var j in resultListObj[ v_key ] ) {
 
                                         totalObj[ v_key ].importance    =   Number(
-                                            ( Number( totalObj[ v_key ].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                            ( Number( totalObj[ v_key ].importance ) +  Number( 0.00001 ) ).toFixed(5)
                                         );
 
                                         resultListObj[ v_key ][j].importance   =   Number( 
-                                            ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.01 ) ).toFixed(2)
+                                            ( Number( resultListObj[ v_key ][j].importance ) +  Number( 0.00001 ) ).toFixed(5)
                                         );
 
 
@@ -1434,6 +1442,8 @@ export default {
 
                         if( dataList.length > 0 && i-1 <= dataList.length-1 ) {
                             rowData =   dataList[ i-1 ];
+
+                            rowData.importance  =   Number( rowData.importance ).toFixed(5);
                         }
 
 
@@ -1536,8 +1546,8 @@ export default {
                             total.F15028            =   Number( total.F15028 )  +  Number( util.NumtoStr( v_F15028.text() ) );                                          /* (합계) 시가총액 */
                             total.importance        =   Number(
                                                             Number(
-                                                                Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
-                                                            ).toFixed(2)
+                                                                Number( Number( total.importance ).toFixed(5) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(5) )
+                                                            ).toFixed(5)
                                                         );                                                                                                              /* (합계) 비중 */
                         }
                     }
@@ -1776,12 +1786,12 @@ export default {
                             var v_sub_key2  =   arrKey[j];
                             var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
                             
-                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(5);
 
                             v_importance   	=   Number(
                                 Number(
-                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
-                                ).toFixed(2)
+                                    Number( Number( v_importance ).toFixed(5) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(5)
                             );                     /* (합계) 비중 */
 
                             v_sub_item2.order_no    =   ++v_order_no;
@@ -1795,12 +1805,12 @@ export default {
                             var v_sub_key2  =   Object.keys( v_sub_item )[j];
                             var v_sub_item2 =   v_sub_item[ v_sub_key2 ];
                             
-                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(2);
+                            v_sub_item2.importance	=	Number( v_sub_item2.importance ).toFixed(5);
 
                             v_importance   	=   Number(
                                 Number(
-                                    Number( Number( v_importance ).toFixed(2) )  +  Number( v_sub_item2.importance )
-                                ).toFixed(2)
+                                    Number( Number( v_importance ).toFixed(5) )  +  Number( v_sub_item2.importance )
+                                ).toFixed(5)
                             );                     /* (합계) 비중 */
 
                             v_sub_item2.order_no    =   ++v_order_no;
@@ -3014,15 +3024,15 @@ export default {
 
                                 total.importance        =   Number(
                                     Number(
-                                        Number( Number( total.importance ).toFixed(2) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )
-                                    ).toFixed(2)
+                                        Number( Number( total.importance ).toFixed(5) )  +  Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(5) )
+                                    ).toFixed(5)
                                 );                     /* (합계) 비중 */
 
                                 v_portfolio.push({
                                         "F16013"        :   v_F16013.val()                                                          /* 종목코드 */
                                     ,   "F16002"        :   v_F16013_nm.text()                                                      /* 종목명 */
                                     ,   "F15028"        :   util.NumtoStr( v_F15028.text() )                                        /* 시가총액 */                                
-                                    ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(2) )      /* 비중 */
+                                    ,   "importance"    :   Number( Number( util.NumtoStr( v_importance.val() ) ).toFixed(5) )      /* 비중 */
                                     ,   "order_no"      :   rowIndex++                                                              /* 정렬 순번 */
                                     ,   "trIndex"       :   inx                                                                     /* 테이블 레코드 순번 */
                                 });
