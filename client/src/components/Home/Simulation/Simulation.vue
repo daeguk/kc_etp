@@ -161,7 +161,19 @@
                                                 @click.stop="fn_setImportanceMethodCdEvent( item.com_dtl_cd )"
                                         >{{ item.com_dtl_name }}</v-btn>
                                     </v-btn-toggle>
-
+                                </span>
+                                <span class="inselect">
+                                    <v-select
+                                    :items="items"
+                                    label="발행주식수"
+                                    value="발행주식수"
+                                    outline
+                                    ></v-select>
+                                </span>
+                                <span class="inselect v2">
+                                   <span class="intxt">CAP비율:</span>  
+                                   <v-text-field   outline    maxlength="50"></v-text-field> 
+                                   <span class="intxt"> %</span>
                                 </span>
                             </div>
                             <div  class="right_w">
@@ -274,6 +286,7 @@ export default {
 
     data() {
         return {
+                items: ['발행주식수', '발행주식수+CAP적용', '유동주식수', '유동주식수+CAP적용'],
                 toggle_one: 0
             ,   items3: ["설정안함", "KOSPI200", "KOSDAQ150", "KOSPI", "KOSDAQ"]
             ,   item: [

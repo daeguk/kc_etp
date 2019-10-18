@@ -1089,10 +1089,12 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
-.register_wrap .left_w span.inradio{ padding-left:25px; display:inline-block; vertical-align: middle}
-.register_wrap .left_w span.inradio .v-input--selection-controls{margin: 0; padding: 0;}
-.register_wrap .left_w span.inradio .v-input--selection-controls .v-input__slot{margin:0;}
-.register_wrap .left_w span.inradio .v-input--selection-controls .v-messages{display: none;}
+.register_wrap .left_w span.inselect{ padding-left:25px; display:inline-block; vertical-align: middle; width: 250px; height: 33px; line-height: 33px;}
+.register_wrap .left_w span.inselect .v-messages{display: none;}
+.register_wrap .left_w span.inselect .v-text-field__details{display: none;}
+.register_wrap .left_w span.inselect.v2 .v-text-field{width:100px; display:inline-block;text-align: right;}
+.register_wrap .left_w span.inselect.v2 .v-text-field input{text-align: right;}
+:-ms-fullscreen, :root .register_wrap .left_w span.inselect.v2 span.intxt{vertical-align: top; display:inline-block;}
 .register_wrap .right_w{float: right;}
 .register_wrap .right_w span{float:left;}
 .register_wrap .right_w span.intext{padding-top:5px; padding-right:5px;}
