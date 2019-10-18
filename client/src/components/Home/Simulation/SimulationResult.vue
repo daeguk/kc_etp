@@ -1396,7 +1396,7 @@ export default {
             };
 
             var excelInfo = {
-                    excelFileNm     :   "시뮬레이션 결과"
+                    excelFileNm     :   vm.simul_result_mast.scen_name.replace( /(\\)|(")|(\/)|(:)|(\*)|(\?)|(<)|(>)|(\|)/g, "" )
                 ,   sheetNm         :   ""
                 ,   dataInfo        :   []
 
