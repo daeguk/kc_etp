@@ -1098,6 +1098,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .register_wrap .right_w{float: right;}
 .register_wrap .right_w span{float:left;}
 .register_wrap .right_w span.intext{padding-top:5px; padding-right:5px;}
+.register_wrap .right_w span .v-btn{margin-top:2px;}
 .register_wrap .right_w .v-text-field{width:160px;}
 .register_wrap .right_w .v-text-field .v-messages{display:none;}
 .register_wrap .right_w .v-text-field .v-text-field__details{display: none;}

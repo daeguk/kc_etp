@@ -193,7 +193,9 @@
                                 <span>
 
                                 <!-- 엑셀 업로드 -->
-                                    <button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button>
+                                    <!--button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button-->
+                                    <v-btn depressed outline small color="primary" @click.stop="fn_fileClick();">포트폴리오 업로드</v-btn>
+
 
                                     <input type="file" name="portfolioFile" ref="portfolioFile" style="display:none;">
                                 </span>
