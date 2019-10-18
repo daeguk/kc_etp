@@ -170,11 +170,13 @@
                                     outline
                                     ></v-select>
                                 </span>
+<!-- 
                                 <span class="inselect v2">
                                    <span class="intxt">CAP비율:</span>  
                                    <v-text-field   outline    maxlength="50"></v-text-field> 
                                    <span class="intxt"> %</span>
                                 </span>
+-->
                             </div>
                             <div  class="right_w">
                                 <span class="intext" v-if="change_rebalance_yn == '1'">리밸런싱 날짜:</span>
