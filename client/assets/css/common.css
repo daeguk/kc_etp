@@ -368,6 +368,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver10 td.td_in_input button{vertical-align: middle;}
 .tbl_type.ver11{border-top:1px solid #bbbbbb; width: 80%; margin:0 auto; margin-top:15px; margin-bottom:15px; }
 .tbl_type.ver11 th{background:#f2f2f2; font-size: 14px; text-align: right; }
+.tbl_type.ver12{width:1380px; margin:0 10px; margin-bottom:20px;}
 
 /*테이블 header고정*/
 caption {
@@ -1088,6 +1089,10 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
+.register_wrap .left_w span.inradio{ padding-left:25px; display:inline-block; vertical-align: middle}
+.register_wrap .left_w span.inradio .v-input--selection-controls{margin: 0; padding: 0;}
+.register_wrap .left_w span.inradio .v-input--selection-controls .v-input__slot{margin:0;}
+.register_wrap .left_w span.inradio .v-input--selection-controls .v-messages{display: none;}
 .register_wrap .right_w{float: right;}
 .register_wrap .right_w span{float:left;}
 .register_wrap .right_w span.intext{padding-top:5px; padding-right:5px;}
@@ -1119,10 +1124,27 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_g_w .simul_g_l ul li span.rcolor1{ color:#85c406;}
 .simul_g_w .simul_g_l ul li span.rcolor2{ color:#8c8c8c;}
 .simul_g_w .simul_g_r{float: right; width:400px;  margin-right: 20px;}
+.simul_g_w .simul_g_r.v2{width: 270px;}
 .simul_g_w .simul_g_r .ver11.v2{width: 100%; border-top:none;}
 .simul_g_w .simul_g_r .ver11.v2 thead th{border-top:none !important; border-bottom:1px solid #bbbbbb !important; background:#ffffff !important; color:#263147;}
 
 
+.simul_g_w .simul_g_r ul{margin-top:33px; padding-left: 15px;}
+.simul_g_w .simul_g_r ul li{padding:5px;}
+.simul_g_w .simul_g_r ul li span.checkbox{float: right; vertical-align: top;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-input--selection-controls{margin:0; padding:0;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-input__slot{margin-bottom:0;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-messages{display:none;}
+.simul_g_w ul li span.rcolor01{ color:#b9e0f7;}
+.simul_g_w ul li span.rcolor02{ color:#72cdf4;}
+.simul_g_w ul li span.rcolor03{ color:#1e99e8;}
+.simul_g_w ul li span.rcolor04{ color:#0076be;}
+.simul_g_w ul li span.rcolor05{ color:#dcddde;}
+.simul_g_w ul li span.rcolor06{ color:#B6B8BA;}
+.simul_g_w ul li span.rcolor07{ color:#7E8083;}
+.simul_g_w ul li span.rcolor08{ color:#FBB040;}
+.simul_g_w ul li span.rcolor09{ color:#F58025;}
+.simul_g_w ul li span.rcolor010{ color:#EDED8A;}
 
 
 
@@ -1133,3 +1155,5 @@ h4 span.excel_btn{float:right; margin-right:25px;}
   .incode_pop{padding-left:24px;padding-right: 24px;}
   .incode_pop .point_txt{color:#5e870b;}
   .incode_pop .table-box-wrap{margin:0;}
+
+
