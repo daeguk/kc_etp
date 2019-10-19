@@ -108,6 +108,7 @@ h3 span.btn_r .v-btn:before{opacity: 0 !important;}
 h3 span.btn_r .v-icon:hover{color:#85c406 !important;}
 h4{font-size:18px; padding:15px 0 5px 24px; color:#717182;}
 h4 span{font-size:12px; font-weight: 400;}
+h4 span.sub_t{font-size: 16px; padding-left:10px;}
 h4 .btn_r{margin-right: 5px;float: right;display: block;width:40px;}
 h4 span.btn_r .v-icon{font-size: 26px !important; color:#9e9e9e !important;}
 h4 span.btn_r .v-btn{margin:0 !important;}
@@ -365,6 +366,9 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver10 td span.add_btn_span{display:inline-block; height:30px; vertical-align: middle}
 .tbl_type.ver10 td.td_in_input input{vertical-align: middle;}
 .tbl_type.ver10 td.td_in_input button{vertical-align: middle;}
+.tbl_type.ver11{border-top:1px solid #bbbbbb; width: 80%; margin:0 auto; margin-top:15px; margin-bottom:15px; }
+.tbl_type.ver11 th{background:#f2f2f2; font-size: 14px; text-align: right; }
+.tbl_type.ver12{width:1380px; margin:0 10px; margin-bottom:20px;}
 
 /*테이블 header고정*/
 caption {
@@ -907,6 +911,10 @@ input[type='file']{
 .lpchart_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 2px -445px; display:inline-block;}
 .lpchart_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -48px -445px; display:inline-block;}
 
+.grav_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -499px; display:inline-block; margin-right: 5px; vertical-align: middle;}
+.extr_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -549px; display:inline-block; margin-right: 5px; vertical-align: middle;}
+.trans_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -599px; display:inline-block; margin-right: 5px; vertical-align: middle;}
+
 
 
 .ETPInavpop1 .theme--light.v-list{background: #fff;}
@@ -1081,9 +1089,16 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
+.register_wrap .left_w span.inselect{ padding-left:25px; display:inline-block; vertical-align: middle; width: 250px; height: 33px; line-height: 33px;}
+.register_wrap .left_w span.inselect .v-messages{display: none;}
+.register_wrap .left_w span.inselect .v-text-field__details{display: none;}
+.register_wrap .left_w span.inselect.v2 .v-text-field{width:100px; display:inline-block;text-align: right;}
+.register_wrap .left_w span.inselect.v2 .v-text-field input{text-align: right;}
+:-ms-fullscreen, :root .register_wrap .left_w span.inselect.v2 span.intxt{vertical-align: top; display:inline-block;}
 .register_wrap .right_w{float: right;}
 .register_wrap .right_w span{float:left;}
 .register_wrap .right_w span.intext{padding-top:5px; padding-right:5px;}
+.register_wrap .right_w span .v-btn{margin-top:2px;}
 .register_wrap .right_w .v-text-field{width:160px;}
 .register_wrap .right_w .v-text-field .v-messages{display:none;}
 .register_wrap .right_w .v-text-field .v-text-field__details{display: none;}
@@ -1106,6 +1121,35 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .font_b{font-weight:600; vertical-align: middle;}
 
 
+.simul_g_w{ display:inline-block; width: 100%; margin-bottom:20px;}
+.simul_g_w .simul_g_l{float: left; text-align: center;}
+.simul_g_w .simul_g_l ul li{display: inline-block; padding-right: 10px;}
+.simul_g_w .simul_g_l ul li span.rcolor1{ color:#85c406;}
+.simul_g_w .simul_g_l ul li span.rcolor2{ color:#8c8c8c;}
+.simul_g_w .simul_g_r{float: right; width:400px;  margin-right: 20px;}
+.simul_g_w .simul_g_r.v2{width: 270px;}
+.simul_g_w .simul_g_r .ver11.v2{width: 100%; border-top:none;}
+.simul_g_w .simul_g_r .ver11.v2 thead th{border-top:none !important; border-bottom:1px solid #bbbbbb !important; background:#ffffff !important; color:#263147;}
+
+
+.simul_g_w .simul_g_r ul{margin-top:33px; padding-left: 15px;}
+.simul_g_w .simul_g_r ul li{padding:5px;}
+.simul_g_w .simul_g_r ul li span.checkbox{float: right; vertical-align: top;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-input--selection-controls{margin:0; padding:0;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-input__slot{margin-bottom:0;}
+.simul_g_w .simul_g_r ul li span.checkbox .v-messages{display:none;}
+.simul_g_w ul li span.rcolor01{ color:#b9e0f7;}
+.simul_g_w ul li span.rcolor02{ color:#72cdf4;}
+.simul_g_w ul li span.rcolor03{ color:#1e99e8;}
+.simul_g_w ul li span.rcolor04{ color:#0076be;}
+.simul_g_w ul li span.rcolor05{ color:#dcddde;}
+.simul_g_w ul li span.rcolor06{ color:#B6B8BA;}
+.simul_g_w ul li span.rcolor07{ color:#7E8083;}
+.simul_g_w ul li span.rcolor08{ color:#FBB040;}
+.simul_g_w ul li span.rcolor09{ color:#F58025;}
+.simul_g_w ul li span.rcolor010{ color:#EDED8A;}
+
+
 
   /*지수구분코드*/
 
@@ -1114,3 +1158,5 @@ h4 span.excel_btn{float:right; margin-right:25px;}
   .incode_pop{padding-left:24px;padding-right: 24px;}
   .incode_pop .point_txt{color:#5e870b;}
   .incode_pop .table-box-wrap{margin:0;}
+
+
