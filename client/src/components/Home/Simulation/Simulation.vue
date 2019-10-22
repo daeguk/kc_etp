@@ -1492,7 +1492,7 @@ export default {
 
                                             /* 비중 */
                         trHtml      +=  `    <td class="txt_right">`;
-                        trHtml      +=  `        <input type="text"     name="importance"   class="txt_right wid100"  maxlength="5" value="` + rowData.importance + `" /> %`;
+                        trHtml      +=  `        <input type="text"     name="importance"   class="txt_right wid100"  maxlength="9" value="` + rowData.importance + `" /> %`;
                         trHtml      +=  `    </td>`;
 
                         trHtml      +=  `</tr>`;
