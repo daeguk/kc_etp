@@ -78,9 +78,9 @@
                                 {{ fn_formatNumber( item.INDEX_RATE ) }}
                                 <br />
                                 <div  v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'>
-                                    <span :class='Number( fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) ) > 0 ? "text_S text_red" : "text_S text_blue" '>
-                                        {{ fn_formatNumber( 1000 - Number( item.INDEX_RATE ) ) }} 
-                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) + " %" }} )
+                                    <span :class='( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 > 0 ? "text_S text_red" : "text_S text_blue" '>
+                                        {{ fn_formatNumber( Number( item.INDEX_RATE ) - 1000 ) }} 
+                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 ) + " %" }} )
                                     </span>
                                 </div>
                             </td>
