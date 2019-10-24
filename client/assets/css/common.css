@@ -313,7 +313,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type,.tbl_type th,.tbl_type td{border:0}
 .tbl_type{border-bottom:1px solid #eeeeee;font-size:14px;text-align:center}
 .tbl_type caption{display:none}
-.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #eeeeee;border-bottom:1px solid #eeeeee; color:#878793; font-size:12px; font-weight:400; line-height:12px;background:#ffffff;}
+.tbl_type th{padding:8px 17px 8px 12px; border-top:1px solid #eeeeee;border-bottom:1px solid #eeeeee; color:#6f6f77; font-size:12px; font-weight:400; line-height:12px;background:#ffffff;}
 .tbl_type th.th_line{border-top:none;}
 .tbl_type th.txt_left{text-align: left;}
 .tbl_type th.txt_right{text-align: right;}
@@ -361,6 +361,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver8 td{font-size:14px !important; font-weight: 400 !important;}
 .tbl_type.ver9 td{font-size:12px !important; font-weight: 600 !important;}
 .tbl_type.ver10{width:100% !important;}
+.tbl_type.ver10 th{background-color:#f3f3f3; border-top:1px solid #eaeaea !important; border-bottom:1px solid #d9d9d9 !important;}
 .tbl_type.ver10 tr.sum{background-color:#fcf4f1;}
 .tbl_type.ver10 td input{background:#ffffff;}
 .tbl_type.ver10 td span.add_btn_span{display:inline-block; height:30px; vertical-align: middle}
@@ -368,7 +369,7 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver10 td.td_in_input button{vertical-align: middle;}
 .tbl_type.ver11{border-top:1px solid #bbbbbb; width: 80%; margin:0 auto; margin-top:15px; margin-bottom:15px; }
 .tbl_type.ver11 th{background:#f2f2f2; font-size: 14px; text-align: right; }
-.tbl_type.ver12{width:1380px; margin:0 10px; margin-bottom:20px;}
+.tbl_type.ver12{width:1380px; margin:0 10px;}
 
 /*테이블 header고정*/
 caption {
@@ -911,11 +912,19 @@ input[type='file']{
 .lpchart_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 2px -445px; display:inline-block;}
 .lpchart_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -48px -445px; display:inline-block;}
 
+
 .grav_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -499px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 .extr_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -549px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 .trans_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -599px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 
+.simul_icon1{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 0px -646px; display:inline-block;}
+.simul_icon1:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -51px -646px; display:inline-block;}
 
+.simul_icon2{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 4px -694px; display:inline-block;}
+.simul_icon2:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -47px -694px; display:inline-block;}
+
+.simul_icon1.disable{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 0px -745px; display:inline-block; cursor: unset; }
+.simul_icon2.disable{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -46px -745px; display:inline-block; cursor: unset;}
 
 .ETPInavpop1 .theme--light.v-list{background: #fff;}
 .ETPInavpop1 .v-list__tile__title{width:180px;}
@@ -1077,7 +1086,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .mar15{margin-top:15px !important;}
 
 .btn_only_r{width: 100%; height: 25px;}
-.btn_only_r .btn_rr{ display:inline-block; float: right; margin-right: 15px;}
+.btn_only_r .btn_rr{ display:block; float: right; margin-right: 15px;}
 
 
 /*.simul_port_w .insize{width:160px;}
@@ -1085,7 +1094,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_port_w .insize .v-messages{display:none;}
 .simul_port_w .insize .v-text-field__details{display: none;}*/
 
-.simul_del_btn{line-height: 19px !important; color:#9797ac !important; font-size: 24px !important;}
+.simul_more_btn{line-height: 19px !important; color:#9797ac !important; font-size: 24px !important;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}

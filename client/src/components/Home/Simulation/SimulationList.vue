@@ -78,9 +78,9 @@
                                 {{ fn_formatNumber( item.INDEX_RATE ) }}
                                 <br />
                                 <div  v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'>
-                                    <span :class='Number( fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) ) > 0 ? "text_S text_red" : "text_S text_blue" '>
-                                        {{ fn_formatNumber( 1000 - Number( item.INDEX_RATE ) ) }} 
-                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) / 1000 ) - 1 ) * 100 ) + " %" }} )
+                                    <span :class='( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 > 0 ? "text_S text_red" : "text_S text_blue" '>
+                                        {{ fn_formatNumber( Number( item.INDEX_RATE ) - 1000 ) }} 
+                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 ) + " %" }} )
                                     </span>
                                 </div>
                             </td>
@@ -93,17 +93,19 @@
 
                             <!-- 버튼 영역 -->
                             <td>
-                                <button name="btn1" class="btn_icon v-icon material-icons"  >inbox</button>
-                                <button name="btn2" class="btn_icon v-icon material-icons"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" >equalizer</button>
+                                <button name="btn1" class="simul_icon1"></button>
+                                <button name="btn2" class="simul_icon2 disable"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" ></button>
 
                                 <v-menu bottom left v-if="item.grp_yn == '0'" >
                                     <template v-slot:activator="{ on }">
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
                                     <ul class="more_menu_w">
-                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_del_btn">delete_forever</v-icon>삭제</li>
-                                        <!--li @click="">menu2</li>
-                                        <li @click="">menu3</li-->
+                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
+                                        <li @click=""><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
+                                        <li @click=""><v-icon class="simul_more_btn">restore_page</v-icon> 그룹변경</li>
+                                        <li @click=""><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
+                                        <li @click=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
                                     </ul>
                                 </v-menu>             
                             </td>
