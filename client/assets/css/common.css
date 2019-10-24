@@ -912,11 +912,19 @@ input[type='file']{
 .lpchart_icon{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 2px -445px; display:inline-block;}
 .lpchart_icon:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -48px -445px; display:inline-block;}
 
+
 .grav_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -499px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 .extr_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -549px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 .trans_icon{width:20px; height:25px; background: url(../img/oper_list_icon.png) no-repeat 0px -599px; display:inline-block; margin-right: 5px; vertical-align: middle;}
 
+.simul_icon1{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 0px -646px; display:inline-block;}
+.simul_icon1:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -51px -646px; display:inline-block;}
 
+.simul_icon2{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 4px -694px; display:inline-block;}
+.simul_icon2:hover{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -47px -694px; display:inline-block;}
+
+.simul_icon1.disable{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat 0px -745px; display:inline-block; cursor: unset; }
+.simul_icon2.disable{width:30px; height:30px; background: url(../img/oper_list_icon.png) no-repeat -46px -745px; display:inline-block; cursor: unset;}
 
 .ETPInavpop1 .theme--light.v-list{background: #fff;}
 .ETPInavpop1 .v-list__tile__title{width:180px;}
@@ -1086,7 +1094,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_port_w .insize .v-messages{display:none;}
 .simul_port_w .insize .v-text-field__details{display: none;}*/
 
-.simul_del_btn{line-height: 19px !important; color:#9797ac !important; font-size: 24px !important;}
+.simul_more_btn{line-height: 19px !important; color:#9797ac !important; font-size: 24px !important;}
 .simu_btn_r{float: right;}
 .register_wrap .left_w{float: left;}
 .register_wrap .left_w span.intext{ padding-right:5px; display:inline-block; vertical-align: middle}
