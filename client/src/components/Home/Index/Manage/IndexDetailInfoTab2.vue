@@ -5,11 +5,12 @@
                     <h4 class="mb-0">Performance</h4>
 
                     <div class="graph_02_w">
-                        <IndexPerformColumnChart01 :itemLists="indexLists"></IndexPerformColumnChart01>
+                        <IndexPerformColumnChart01 v-if="chartFlag==1"  :itemLists="indexLists"></IndexPerformColumnChart01>
+                        <IndexPerformColumnChart v-if="chartFlag==2"  :itemLists="indexLists"></IndexPerformColumnChart>
                     </div>
 
                     <v-card flat>
-                        <table class="tbl_type ver4">
+                        <table class="tbl_type ver5" v-if="chartFlag==1">
                         <caption> 헤더 고정 테이블</caption>
                         <colgroup>
                             <col width="16%">
@@ -58,6 +59,56 @@
                             </tr>
                         </tbody>
                         </table>
+
+                        <table class="tbl_type ver5" v-if="chartFlag==2">
+                        <caption> 헤더 고정 테이블</caption>
+                        <colgroup>
+                            <col width="19%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                            <col width="9%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                            <th style="width:19%" class="txt_center"></th>
+                            <th @dblclick="sortTable(1)" style="width:9%" class="txt_right">Daily</th>
+                            <th @dblclick="sortTable(2)" style="width:9%" class="txt_right">1Week</th>
+                            <th @dblclick="sortTable(3)" style="width:9%" class="txt_right">1Month</th>
+                            <th @dblclick="sortTable(4)" style="width:9%" class="txt_right">YTD</th>
+                            <th @dblclick="sortTable(5)" style="width:9%" class="txt_right">1Year</th>
+                            <th @dblclick="sortTable(6)" style="width:9%" class="txt_right">3Year</th>
+                            <th @dblclick="sortTable(7)" style="width:9%" class="txt_right">5Year</th>
+                            <th @dblclick="sortTable(8)" style="width:9%" class="txt_right">10Year</th>
+                            <th style="width:7%" class="txt_center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in indexLists" :key="index">
+                            <td class="txt_left"><img :src="barImgPath[index]"><span :style="item.nStyle"> {{item.F16002}}</span></td>
+                            <td class="txt_right" :style="item.dStyle">{{item.F15004}}%</td>
+                            <td class="txt_right" :style="item.wStyle">{{item.weekRate}}%</td>
+                            <td class="txt_right" :style="item.mStyle">{{item.monthRate}}%</td>
+                            <td class="txt_right" :style="item.ytdStyle">{{item.ytdRate}}%</td>
+                            <td class="txt_right" :style="item.yStyle">{{item.yearRate}}%</td>
+                            <td class="txt_right" :style="item.y3Style">{{item.year3Rate}}%</td>
+                            <td class="txt_right" :style="item.y5Style">{{item.year5Rate}}%</td>
+                            <td class="txt_right" :style="item.y10Style">{{item.year10Rate}}%</td>
+                            <td class="txt_center">
+                                <div class='tooltip'>
+                                <button class='btn_icon v-icon material-icons' @click="deleteItem(item, index)">delete
+                                </button>
+                                <span class='tooltiptext' style='width:80px;'>지수정보</span>
+                                </div>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>                        
                     </v-card>
                     <v-layout row>
                         <v-btn outline small color="primary" dark v-on:click="openMastModal">
@@ -238,6 +289,7 @@ import util       from "@/js/util.js";
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'
 import IndexPerformColumnChart01 from "@/components/common/chart/IndexPerformColumnChart01";
+import IndexPerformColumnChart from "@/components/common/chart/IndexPerformColumnChart";
 import MastPopup from "@/components/common/popup/MastPopup";
 
 var perf_table = null;
@@ -271,12 +323,33 @@ export default {
                 'perform_bar03.png', 
                 'perform_bar04.png', 
                 'perform_bar05.png'],
-            barImgPath: [],            
+            barImgPath: [],     
+            chartFlag: 0,       
         };
     },
+  watch: {
+    'basicData.F16013': function() {
+      // console.log("watch.........etpBasic.F16013: ");
+      // console.log(this.etpBasic);
+      this.indexLists = [];
+
+
+      this.getIndexAnal(this.basicData);
+      console.log("IndexDetailInfoTab2.vue -> mounted  this.etpList.length : " + this.etpList.length);
+
+      for(let i=0; i < this.etpList.length; i++) {
+        // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
+        // this.indexLists.push(tmp1);
+        this.getEtpAnal(this.etpList[i]);
+      }  
+
+      this.getIndexImportanceList( this.basicData );
+    },
+  },    
     components: {
         jongmokPopup: jongmokPopup,
         IndexPerformColumnChart01 : IndexPerformColumnChart01,
+        IndexPerformColumnChart : IndexPerformColumnChart,
         MastPopup : MastPopup,
     },
     computed: {},
@@ -294,6 +367,14 @@ export default {
     mounted: function() {        
 //        this.init();
 
+        var vm = this;
+
+        if( vm.showView ) {
+            vm.chartFlag = 2;
+        }else{
+            vm.chartFlag = 1;
+        }
+
         // console.log("IndexInfoTab2 mount...............");
         for(let i=0; i < 5; i++) {
             this.barImgPath[i] = "/assets/img/" + this.barImg[i];
@@ -308,7 +389,9 @@ export default {
             // let tmp1 = JSON.parse(JSON.stringify(this.etpList[i]));
             // this.indexLists.push(tmp1);
             this.getEtpAnal(this.etpList[i]);
-        }      
+        }
+
+        vm.getIndexImportanceList( this.basicData );
     },
     methods: {
         init: function() {
@@ -517,12 +600,12 @@ export default {
                     var items = response.data.results;
                     console.log("response=" + JSON.stringify(items));
                     
-                    perf_table.clear().draw();
-                    perf_table.rows.add(items).draw();
+                    // perf_table.clear().draw();
+                    // perf_table.rows.add(items).draw();
 
                     // 그래프 실행
                     
-                    vm.performance_chart();
+//                    vm.performance_chart();
                 }
                    
             });
@@ -595,7 +678,7 @@ export default {
                                                 Year10 : items.Year10,
                                             } ).draw(false); 
                                             
-                                            vm.performance_chart();
+//                                            vm.performance_chart();
                                         }
 
                                     }catch(e) {
@@ -650,7 +733,7 @@ export default {
                         this.importance_cnt = this.results.length;
 
                         // 차트 호출
-                        this.importance_chart(items);
+//                        this.importance_chart(items);
                         
                         if (importance_grid) {
                             importance_grid.destroy()

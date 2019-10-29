@@ -138,7 +138,7 @@ export default {
           vm.eitem[gubun] = mRes[0];
           vm.sitem[gubun] = mRes[resLen-1];
           tmp = mRes.findIndex(x => x.F16013 === vm.etpBasic.F16013);
-          vm.citem[gubun] = mRes[tmp];
+          vm.citem[gubun] = ( typeof mRes[tmp] == "undefined" ? { FLOW: "" } : mRes[tmp] );
           vm.rank[gubun] = tmp + 1;
           vm.num[gubun] = resLen;
           // console.log(vm.sitem[gubun]);

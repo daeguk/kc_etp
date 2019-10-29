@@ -90,7 +90,8 @@
                         </div>
 
                         <div class="pad_gleft1">
-                            <LineIndexChart01 :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart01>
+                            <LineIndexChart01 v-if="chartFlag==1" :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart01>
+                            <LineIndexChart02 v-if="chartFlag==2" :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart02>
                         </div>                        
                     </div>
 
@@ -136,6 +137,7 @@ import IndexDetailInfoTab1 from "./IndexDetailInfoTab1.vue";
 import IndexDetailInfoTab2 from "./IndexDetailInfoTab2.vue";
 import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import LineIndexChart02   from  '@/components/common/chart/LineIndexChart02.vue';
 import LineIndexChart01   from  '@/components/common/chart/LineIndexChart01.vue';
 
 import Config from "@/js/config.js";
@@ -166,7 +168,8 @@ export default {
             basicData : {},
             contentClass : 'content_margin',
 
-            etpList : []
+            etpList : [],
+            chartFlag: 0,
         };
     },
     components: {
@@ -175,25 +178,39 @@ export default {
         IndexDetailInfoTab2: IndexDetailInfoTab2,
         IndexDetailInfoTab3: IndexDetailInfoTab3,
         LineIndexChart01 :     LineIndexChart01,
+        LineIndexChart02 :     LineIndexChart02,
     }, 
     computed: {},
     created: function() {
          var vm = this;
 
-//         vm.$EventBus.$on('changeIndexInfo', data => {
-//             vm.toggle_one = '1M';
-// //            vm.openSubIndexInfoTab = true;
-//             vm.init(true);
-//             vm.items = ["기본정보", "분석정보"];
-//         });
+        vm.$EventBus.$on('changeIndexInfo', data => {
+            vm.toggle_one = '1M';
+            vm.openSubIndexInfoTab = true;
+
+            if( vm.showView ) {
+                vm.chartFlag = 2;
+            }else{
+                vm.chartFlag = 1;
+            }
+
+            vm.init(true);
+            vm.items = ["기본정보", "분석정보"];
+        });
     },
     beforeDestroy() {
-        // this.$EventBus.$off('changeIndexInfo');
+        this.$EventBus.$off('changeIndexInfo');
     },
     mounted: function() {
         // 메시지 박스 참조
         this.$root.$confirm = this.$refs.confirm;
         var vm = this;
+
+        if( vm.showView ) {
+            vm.chartFlag = 2;
+        }else{
+            vm.chartFlag = 1;
+        }        
 
         vm.init(false);  
 
@@ -207,35 +224,37 @@ export default {
         init: function(event) {
             var vm = this;
 
-            if(     vm.paramData 
-                &&  vm.paramData.F16257
-                &&  vm.paramData.LARGE_TYPE
-                &&  vm.paramData.MARKET_ID
-            ) {
-                vm.basicData.jisu_cd      =   vm.paramData.F16257;
-                vm.basicData.large_type   =   vm.paramData.LARGE_TYPE;
-                vm.basicData.market_id    =   vm.paramData.MARKET_ID;
-                vm.basicData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
-                vm.basicData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
-                vm.basicData.chart_size  = '960'; /* performanc 차트 사이즈 */
-                vm.contentClass = '';
-            }
-            else if(
-                    vm.$route.query.jisu_cd  
-                &&  vm.$route.query.large_type  
-                &&  vm.$route.query.market_id  
-            ) {
-                vm.basicData.jisu_cd      =   vm.$route.query.jisu_cd;
-                vm.basicData.large_type   =   vm.$route.query.large_type;
-                vm.basicData.market_id    =   vm.$route.query.market_id;
-                vm.basicData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
-                vm.basicData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
-                vm.basicData.chart_size  = '1180'; /* performanc 차트 사이즈 */
-                vm.contentClass = 'content_margin';
-            }
-
-
             vm.$nextTick().then(() => {
+
+                if(     vm.paramData 
+                    &&  vm.paramData.F16257
+                    &&  vm.paramData.LARGE_TYPE
+                    &&  vm.paramData.MARKET_ID
+                ) {
+                    vm.basicData.jisu_cd      =   vm.paramData.F16257;
+                    vm.basicData.large_type   =   vm.paramData.LARGE_TYPE;
+                    vm.basicData.market_id    =   vm.paramData.MARKET_ID;
+                    vm.basicData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '960'; /* performanc 차트 사이즈 */
+                    vm.contentClass = '';
+                }
+                else if(
+                        vm.$route.query.jisu_cd  
+                    &&  vm.$route.query.large_type  
+                    &&  vm.$route.query.market_id  
+                ) {
+                    vm.basicData.jisu_cd      =   vm.$route.query.jisu_cd;
+                    vm.basicData.large_type   =   vm.$route.query.large_type;
+                    vm.basicData.market_id    =   vm.$route.query.market_id;
+                    vm.basicData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
+                    vm.basicData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
+                    vm.basicData.chart_size  = '1180'; /* performanc 차트 사이즈 */
+                    vm.contentClass = 'content_margin';
+                }
+
+
+            
 
                 if(     vm.basicData
                     &&  vm.basicData.jisu_cd
@@ -246,13 +265,13 @@ export default {
 
                 }
 
-                // if (event == true) {
-                //     // // 분석정보 실행
-                //     vm.$EventBus.$emit('changeIndexAnalysisInfo');
+                if (event == true) {
+                    // // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexAnalysisInfo');
 
-                //     // 분석정보 실행
-                //     vm.$EventBus.$emit('changeIndexBasicInfo');
-                // }
+                    // 분석정보 실행
+                    vm.$EventBus.$emit('changeIndexBasicInfo');
+                }
             });   
             
             
@@ -292,9 +311,9 @@ export default {
                                 if( items[0].LARGE_TYPE ) {
                                     items[0].large_type  =   items[0].LARGE_TYPE;
                                 }
-                                
-                                vm.results = items[0];
 
+                                vm.results = items[0];
+                            
                                 //this.list_cnt = this.results.length;
 
                                 vm.getIndexInEtpInfo( vm.basicData );
