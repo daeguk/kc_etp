@@ -689,7 +689,7 @@ var getSimulAnal02InGrpCd = function(req, res) {
                             });
 
                             if( typeof arr_result_anal_bm[ index ] == "undefined" ) {
-                                arr_result_anal_bm[ index ] =   "";
+                                item[ "bm" ]    =   "N/A";
                             }else{
                                 item[ "bm" ]    =   arr_result_anal_bm[ index ];
                             }
