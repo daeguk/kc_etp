@@ -259,8 +259,6 @@ var	fn_set_dayilyJongmok =	function(
                     v_portItem.rebalancing              =   "0";
                     p_jongmok[ v_portKey ]              =   Object.assign( {},  v_portItem );
                 }
-
-//                    console.log( "p_jongmok[ v_portKey ].rebalance_F12506", p_jongmok[ v_portKey ].rebalance_F12506 );
             }
             else{
 
@@ -335,10 +333,6 @@ var	fn_set_dayilyJongmok =	function(
                         } 
                 )
             );
-
-// if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_portKey, "F30700", p_jongmok[ v_portKey ].F30700, "F15007", p_jongmok[ v_portKey ].F15007, "F16143", p_jongmok[ v_portKey ].F16143, "p_jongmok[ v_portKey ].F15028_1", p_jongmok[ v_portKey ].F15028_1,"p_jongmok[ v_portKey ].F15028_2", p_jongmok[ v_portKey ].F15028_2, "\n" );    
-// }            
 
             p_jongmok[ v_portKey ].BEFORE_IMPORTANCE    =   0;
             p_jongmok[ v_portKey ].AFTER_IMPORTANCE     =   0;
@@ -461,12 +455,6 @@ var	fn_set_dayilyJongmok =	function(
 
 
         Object.assign( p_dailyObj[ p_param.F12506 ], totalInfo );
-
-
-// if( [ "20171228", "20180102", "20180103" ].includes( p_param.F12506 )  ) {
-//     console.log( "F12506", p_param.F12506, "totalInfo", totalInfo );
-// }            
-            
 
     }catch(e) {
         log.error( "simulModule.fn_set_dayilyJongmok", e );
@@ -637,12 +625,6 @@ var	fn_set_today_rate =	function(
             }
 
 
-// if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey, "case_gubun", p_param.case_gubun, "F15007", v_dataItem.F15007, "F16143", v_dataItem.F16143, "TODAY_RATE", v_dataItem.TODAY_RATE, "F30700", v_dataItem.F30700, "\n" );
-//     console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey, "importance", v_dataItem.importance, "F15028", v_dataItem.F15028, "p_daily.tot_F15028_1", p_daily.tot_F15028_1, "TODAY_RATE", v_dataItem.TODAY_RATE, "\n" );    
-// }
-
-
             if( p_prev_jongmok[ v_dataKey ] ) {
                 v_dataItem.BEFORE_RATE          =   p_prev_jongmok[ v_dataKey ].TODAY_RATE;
             }else{
@@ -792,11 +774,6 @@ var	fn_set_today_rate =	function(
             );
    
 
-// if( [ "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "v_dataItem.F15007", v_dataItem.F15007, "v_dataItem.F16143", v_dataItem.F16143, "v_dataItem.TODAY_RATE", v_dataItem.TODAY_RATE, "v_dataItem.F15028_S", v_dataItem.F15028_S );
-// }       
-
-
             /* 종가 * 상장주식수 * 시가총액 총합 */
             if( typeof p_daily.tot_F15028_1_TODAY_RATE == "undefined" ) {
                 p_daily.tot_F15028_1_TODAY_RATE =   0;
@@ -885,13 +862,6 @@ var	fn_set_today_rate =	function(
                 );                
             } 
 
-// if( [ "20180126", "20180702" ].includes( p_param.F12506 ) ) {
-//     console.log( "prev p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey,  "prev.F15028_1_TODAY_RATE", p_prev_jongmok[ v_dataKey ].F15028_1_TODAY_RATE, "prev.tot_F15028_1_TODAY_RATE", p_prev_daily.tot_F15028_1_TODAY_RATE, "v_dataItem.BEFORE_IMPORTANCE", v_dataItem.BEFORE_IMPORTANCE, "\n"  );
-// }
-
-// if( [ "20180102"].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "v_dataKey", v_dataKey,  "v_dataItem.AFTER_IMPORTANCE", v_dataItem.AFTER_IMPORTANCE, "v_dataItem.BEFORE_IMPORTANCE", v_dataItem.BEFORE_IMPORTANCE  );
-// } 
 
             /* 리밸런싱인 경우 원본 종목정보를 보관한다. */
             if( p_daily.rebalancing == "1" ) {
@@ -905,16 +875,8 @@ var	fn_set_today_rate =	function(
         }
 
 
-// if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "p_daily.tot_F15028_S", p_daily.tot_F15028_S, "p_daily.tot_F15028_C", p_daily.tot_F15028_C,  );
-// }
-
         if( p_daily.rebalancing  !=  "1" && p_param.v_change_yn == "N" ) {
             p_daily.tot_F15028_S            =   p_prev_daily.tot_F15028_S;
-
-// if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "p_daily.rebalancing", p_daily.rebalancing, "p_param.v_change_yn", p_param.v_change_yn, "tot_F15028_S", p_daily.tot_F15028_S );
-// }
 
         }else{
 
@@ -930,10 +892,6 @@ var	fn_set_today_rate =	function(
                         }
                 )
             );
-
-// if( [ "20171228", "20180102" ].includes( p_param.F12506 ) ) {
-//     console.log( "p_param.F12506", p_param.F12506, "p_daily.rebalancing", p_daily.rebalancing, "p_param.v_change_yn", p_param.v_change_yn, "tot_F15028_S", p_daily.tot_F15028_S_TODAY_RATE, "p_prev_daily.tot_F15028_S", p_prev_daily.tot_F15028_S, "p_prev_daily.tot_F15028_C", p_prev_daily.tot_F15028_C, "p_daily.tot_F15028_S", p_daily.tot_F15028_S );
-// }
 
         }
 

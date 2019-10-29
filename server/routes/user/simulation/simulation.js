@@ -258,6 +258,7 @@ var getInitData = function(req, res) {
         resultMsg.arr_rebalance_date_cd         =   [];     /* 초기설정 리밸런싱일자 array */
         resultMsg.arr_bench_mark_cd             =   [];     /* 초기설정 벤치마크 array */
         resultMsg.arr_importance_method_cd      =   [];     /* 초기설정 비중설정방식 array */
+        resultMsg.arr_stock_gubun               =   [];     /* 초기설정 주식수구분 array */
 
         resultMsg.arrMsg                        =   [];
 
@@ -314,6 +315,11 @@ var getInitData = function(req, res) {
                                     case    "COM009":
                                                 resultMsg.arr_importance_method_cd.push( rows[i] );
                                                 break;
+
+                                    /* COM013 - 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                                    case    "COM013":
+                                                resultMsg.arr_stock_gubun.push( rows[i] );
+                                                break;                                                
                                 }
                             }                          
                         }
@@ -354,6 +360,13 @@ var getInitData = function(req, res) {
                         resultMsg.msg = "초기 데이터 [비중설정방식] 값이 존재하지 않습니다.";
                         resultMsg.arrMsg.push( resultMsg.msg );
                     }
+
+                    /* 초기설정 주식수구분 array */
+                    if( resultMsg.arr_stock_gubun.length == 0 ) {
+                        resultMsg.result = false;
+                        resultMsg.msg = "초기 데이터 [주식수 구분] 값이 존재하지 않습니다.";
+                        resultMsg.arrMsg.push( resultMsg.msg );
+                    }                    
                     
 
                     if(     resultMsg.arr_start_year.length             >   0
@@ -361,6 +374,7 @@ var getInitData = function(req, res) {
                         &&  resultMsg.arr_rebalance_date_cd.length      >   0
                         &&  resultMsg.arr_bench_mark_cd.length          >   0
                         &&  resultMsg.arr_importance_method_cd.length   >   0
+                        &&  resultMsg.arr_stock_gubun.length            >   0
                     ) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
@@ -395,6 +409,7 @@ var getInitData = function(req, res) {
         resultMsg.arr_rebalance_date_cd         =   [];     /* 초기설정 리밸런싱일자 array */
         resultMsg.arr_bench_mark_cd             =   [];     /* 초기설정 벤치마크 array */
         resultMsg.arr_importance_method_cd      =   [];     /* 초기설정 비중설정방식 array */
+        resultMsg.arr_stock_gubun               =   [];     /* 초기설정 주식수 구분 array */
 
         res.json(resultMsg);
         res.end();

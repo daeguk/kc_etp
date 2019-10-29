@@ -9,38 +9,40 @@
             </v-tab>
         </v-tabs>
 
-        <v-tabs-items v-model="activeTab" v-if="showSimulationId != 2">
-            <v-tab-item >
-                <!-- 시뮬레이션 목록화면 -->
-                <SimulationList     v-if="activeTab==0" 
 
-                                    @fn_showProgress="fn_showProgress"
-                                    @fn_showSimulation="fn_showSimulation">
-                </SimulationList>
-            </v-tab-item>
+        <!-- 시뮬레이션 목록화면 -->
+        <SimulationList         v-if="[ 0, 1 ].includes( showSimulationId ) && activeTab==0" 
 
-            <v-tab-item >
-                <!-- 시뮬레이션 수정화면 -->
-                <Simulation         v-if="activeTab==1"
+                                @fn_showProgress="fn_showProgress"
+                                @fn_showSimulation="fn_showSimulation">
+        </SimulationList>
 
-                                    :paramData  =   "paramData"
+        <!-- 시뮬레이션 수정화면 -->
+        <Simulation             v-if="[ 0, 1 ].includes( showSimulationId ) && activeTab==1"
 
-                                    @fn_showProgress="fn_showProgress"
-                                    @fn_showSimulation="fn_showSimulation">
-                </Simulation>
-            </v-tab-item>
+                                :paramData  =   "paramData"
 
-        </v-tabs-items>
+                                @fn_showProgress="fn_showProgress"
+                                @fn_showSimulation="fn_showSimulation">
+        </Simulation>
 
         <!-- 시뮬레이션 결과화면 -->
-        <SimulationResult   v-if="showSimulationId == 2"
+        <SimulationResult       v-if="showSimulationId == 2"
 
-                            :paramData  =   "paramData"
+                                :paramData  =   "paramData"
 
-                            @fn_showProgress="fn_showProgress"
-                            @fn_showSimulation="fn_showSimulation">
-        </SimulationResult>        
+                                @fn_showProgress="fn_showProgress"
+                                @fn_showSimulation="fn_showSimulation">
+        </SimulationResult>
 
+        <!-- 시뮬레이션 그룹 화면 -->
+        <SimulationResultGroup   v-if="showSimulationId == 3"
+
+                                :paramData  =   "paramData"
+
+                                @fn_showProgress="fn_showProgress"
+                                @fn_showSimulation="fn_showSimulation">
+        </SimulationResultGroup>
 
         <v-flex>
             <ProgressBar ref="progress2"></ProgressBar>
@@ -65,6 +67,7 @@ import ProgressBar from "@/components/common/ProgressBar.vue";
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import SimulationList from "@/components/Home/Simulation/SimulationList.vue";
 import SimulationResult from "@/components/Home/Simulation/SimulationResult.vue";
+import SimulationResultGroup from "@/components/Home/Simulation/SimulationResultGroup.vue";
 
 
 var table01 = null;
@@ -91,6 +94,7 @@ export default {
         ,   Simulation
         ,   SimulationList
         ,   SimulationResult
+        ,   SimulationResultGroup
     },
     
     created() {
@@ -164,6 +168,7 @@ export default {
                 ,   arr_daily           :   []
                 ,   arr_rebalance       :   []
                 ,   analyzeList         :   []
+                ,   arr_scen_in_grp     :   []
             } 
         ) {
             var vm = this;
@@ -189,6 +194,12 @@ export default {
                         vm.activeTab            =   1;
                         vm.showSimulationId     =   2;
                         break;
+
+                        /* 시뮬레이션 그룹 결과 */
+                case    3:
+                        vm.activeTab            =   3;
+                        vm.showSimulationId     =   3;
+                        break;                        
             }
         }
     }

@@ -416,8 +416,13 @@ var runBacktest = async function(req, res, paramData) {
                         /* 일자별 지수에 balance 정보를 설정한다. */
                         fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
 
-                        resultMsg.arr_daily         =   [ ...v_resultSimulData.arr_daily];
-                        resultMsg.arr_rebalance     =   [ ...v_resultSimulData.arr_rebalance];
+                        resultMsg.arr_daily             =   [ ...v_resultSimulData.arr_daily];
+                        resultMsg.arr_rebalance         =   [ ...v_resultSimulData.arr_rebalance];
+
+                        if( paramData.moduleId && paramData.moduleId == "saveBacktestResult2" ) {
+                            resultMsg.dailyJongmokObj   =   v_resultSimulData.dailyJongmokObj;
+                            resultMsg.dailyObj          =   v_resultSimulData.dailyObj;
+                        }
 
                         resultMsg.err           =   null;
 
@@ -520,6 +525,8 @@ var saveBacktestResult = function(req, res) {
         var v_resultSimulData           =   {
                 arr_daily       :   []
             ,   arr_rebalance   :   {}
+            ,   dailyJongmokObj :   {}
+            ,   dailyObj        :   {}
         };
 
         Promise.using(pool.connect(), conn => {
@@ -560,15 +567,27 @@ var saveBacktestResult = function(req, res) {
                                         resultMsg.msg           =   e.resultMsg.msg;
                                         resultMsg.simul_mast    =   e.resultMsg.simul_mast;
 
-                                        v_resultSimulData.arr_daily     =   [];
+                                        v_resultSimulData.arr_daily             =   [];
                                         if( e.resultMsg.arr_daily && e.resultMsg.arr_daily.length > 0 ) {
-                                            v_resultSimulData.arr_daily =   [ ...e.resultMsg.arr_daily ];
+                                            v_resultSimulData.arr_daily         =   [ ...e.resultMsg.arr_daily ];
                                         }
 
-                                        v_resultSimulData.arr_rebalance =   {};
+                                        v_resultSimulData.arr_rebalance         =   {};
                                         if( e.resultMsg.arr_rebalance && Object.keys( e.resultMsg.arr_rebalance ).length > 0 ) {
-                                            v_resultSimulData.arr_rebalance =   e.resultMsg.arr_rebalance;
+                                            v_resultSimulData.arr_rebalance     =   e.resultMsg.arr_rebalance;
                                         }
+
+                                        v_resultSimulData.dailyJongmokObj       =   {};
+                                        if( e.resultMsg.dailyJongmokObj && Object.keys( e.resultMsg.dailyJongmokObj ).length > 0 ) {
+                                            v_resultSimulData.dailyJongmokObj   =   e.resultMsg.dailyJongmokObj;
+                                        }
+
+                                        v_resultSimulData.dailyObj              =   {};
+                                        if( e.resultMsg.dailyObj && Object.keys( e.resultMsg.dailyObj ).length > 0 ) {
+                                            v_resultSimulData.dailyObj          =   e.resultMsg.dailyObj;
+                                        }
+                                        
+
 
                                         if( resultMsg.simul_mast && resultMsg.simul_mast.serial_no != null ) {
                                             paramData.serial_no     =   resultMsg.simul_mast.serial_no;
@@ -693,9 +712,168 @@ var saveBacktestResult = function(req, res) {
 
                             callback(resultMsg);
                         }
+                    },
+
+                    /* 4. (백테스트) tm_simul_result 결과를 삭제한다. */
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. (백테스트) 시뮬레이션 결과를 저장한다. */
+                    function(msg, callback) {
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        var arrInsertDtl    =   [];
+
+                        /* tm_simul_result 테이블에 저장하기 위한 변수 설정 */
+                        if (    v_resultSimulData 
+                            &&  v_resultSimulData.dailyJongmokObj 
+                            &&  Object.keys( v_resultSimulData.dailyJongmokObj ).length > 0 
+                        ) {
+
+                            for( var i=0; i < Object.keys( v_resultSimulData.dailyJongmokObj ).length; i++ ) {
+                                var v_F12506        =   Object.keys( v_resultSimulData.dailyJongmokObj )[i];
+                                var v_subItem       =   v_resultSimulData.dailyJongmokObj[ v_F12506 ];
+                                var v_mastItem      =   v_resultSimulData.dailyObj[ v_F12506 ];
+
+                                for( var j=0; j < Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
+                                    var v_dataKey       =   Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] )[j];
+                                    var v_dataItem      =   v_resultSimulData.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
+
+                                    Object.assign( v_dataItem, v_mastItem );
+                                    arrInsertDtl.push( v_dataItem  );
+                                }
+                            }
+                        }
+
+
+                        /* 등록건이 존재하는 경우 */
+                        if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(sub_msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
+                                            try {
+                                                paramData.dataLists =   divideList;
+                                                stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResult', paramData, format);
+//                                                log.debug(stmt);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = config.MSG.error01;
+                                                        resultMsg.err = err;
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return innerCallback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+
+                                log.debug( "############ simulationBacktest.saveTmSimulResult #############" );
+
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                delete  v_resultSimulData.dailyJongmokObj;
+                                delete  v_resultSimulData.dailyObj;
+                                arrInsertDtl    =   [];
+
+                                callback(null, msg);
+                            });
+
+                        }else{
+                            callback(null, msg);
+                        }
+
                     },                    
 
-                    /* 4. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
+                    /* 6. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
                     function(msg, callback) {
 
                         try {
@@ -732,7 +910,7 @@ var saveBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 5. (백테스트) tm_simul_result_daily 결과를 저장한다. */
+                    /* 7. (백테스트) tm_simul_result_daily 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -827,7 +1005,7 @@ var saveBacktestResult = function(req, res) {
 
                     },
 
-                    /* 6. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
+                    /* 8. (백테스트) tm_simul_result_rebalance 결과를 삭제한다. */
                     function(msg, callback) {
 
                         try {
@@ -864,7 +1042,7 @@ var saveBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 7. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
+                    /* 9. (백테스트) tm_simul_result_rebalance 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
@@ -961,6 +1139,135 @@ var saveBacktestResult = function(req, res) {
                                 delete  v_resultSimulData.arr_rebalance;
                                 arr_result_rebalance    =   [];
 
+                                callback(null, msg);
+                            });
+
+                        }else{
+                            callback(null, msg);
+                        }
+
+                    },
+
+                    /* 10. (백테스트) tm_simul_result_anal 분석정보를 삭제한다. */
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultAnal', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. (백테스트) tm_simul_result_anal 분석정보를 저장한다. */
+                    function(msg, callback) {
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        if( paramData.arr_analyze && paramData.arr_analyze.length > 0 ) {
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( paramData.arr_analyze, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+                                        subList.show_order_no   =   i;
+                                        divideList.push( subList );
+                                        
+                                        innerCallback(null, paramData);
+                                    },
+
+                                    function(sub_msg, innerCallback) {
+
+                                        var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == paramData.arr_analyze.length-1 ) ) {
+                                            try {
+                                                paramData.dataLists =   divideList;
+                                                stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultAnal', paramData, format);
+
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = config.MSG.error01;
+                                                        resultMsg.err = err;
+
+                                                        return callback(resultMsg);
+                                                    }
+
+                                                    innerCallback(null);
+                                                });
+
+                                                divideList  =   [];
+
+                                            } catch (err) {
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return callback(resultMsg);
+                                            }
+
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
+
+                                ], function(err) {
+
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    innerCallback(null);
+                                });                                            
+
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
+
+                                log.debug("simulationBacktest.saveTmSimulResultAnal");
+                                paramData.arr_analyze    =   [];
+
                                 callback(null);
                             });
 
@@ -968,7 +1275,7 @@ var saveBacktestResult = function(req, res) {
                             callback(null);
                         }
 
-                    },                    
+                    },
 
                 ], function(err) {
 
@@ -1062,6 +1369,8 @@ var getBacktestResult = function(req, res) {
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
         resultMsg.inputData             =   [];
+        resultMsg.arr_analyze           =   [];
+        resultMsg.arr_analyze_main      =   [];        
 
         Promise.using(pool.connect(), conn => {
 
@@ -1237,6 +1546,66 @@ var getBacktestResult = function(req, res) {
                             callback(resultMsg);
                         }
                     },
+
+                    /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+                            stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultAnal', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length > 0 ) {
+
+                                    var v_arr_analyze_main  =   [];
+                                    for( var i=0; i < rows.length; i++ ) {
+                                        var rowData     =   rows[i];
+
+                                        var analJson    =   {};
+
+                                        analJson.anal_title     =   rowData.anal_title;
+
+                                        analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
+                                        if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
+                                            analJson.backtest   +=   " (" + rowData.backtest_year + ")";
+                                        }
+
+                                        analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
+                                        if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
+                                            analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
+                                        }
+
+                                        resultMsg.arr_analyze.push(analJson);
+
+                                        if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
+                                            v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
+                                        }
+                                    }
+
+                                    resultMsg.arr_analyze_main  =   _.orderBy( v_arr_analyze_main, [ "order_no"], ["asc"] );
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
                     
 
                     /* 5. 파이선을 통해 분석정보를 가져온다.*/
@@ -1323,7 +1692,10 @@ var getBacktestResult = function(req, res) {
         resultMsg.simul_result_mast     =   {};
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
-        resultMsg.inputData             =   [];        
+        resultMsg.inputData             =   [];
+
+        resultMsg.arr_analyze           =   [];
+        resultMsg.arr_analyze_main      =   [];
 
         res.json(resultMsg);
         res.end();

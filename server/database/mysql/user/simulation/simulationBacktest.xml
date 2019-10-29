@@ -125,11 +125,7 @@
             ,   F16143	                    /* 상장주식수 */
             ,   BEFORE_RATE                 /* (직전)지수적용비율 */
             ,   TODAY_RATE                  /* (당일)지수적용비율 */
-            ,   F15028_S	                /* 기준시총 */
-            ,   F15028_C	                /* 비교시총 */
-            ,   INDEX_RATE                  /* 지수 */
-            ,   RETURN_VAL                  /* 결과 */
-            ,   EVENT_FLAG                  /* 이벤트(비중조절, 종목편입) */
+            ,   TODAY_IMPORTANCE            /* (당일)시가총액비중 */
 
             ,   reg_id	                    /* 등록자 ID */
             ,   reg_time	                /* 등록시간 */
@@ -153,11 +149,7 @@
             ,   #{data.F16143}	            /* 상장주식수 */
             ,   #{data.BEFORE_RATE}         /* (직전)지수적용비율 */
             ,   #{data.TODAY_RATE}          /* (당일)지수적용비율 */
-            ,   #{data.F15028_S}	        /* 기준시총 */
-            ,   #{data.F15028_C}	        /* 비교시총 */
-            ,   #{data.INDEX_RATE}          /* 지수 */
-            ,   #{data.RETURN_VAL}          /* 결과 */
-            ,   #{data.EVENT_FLAG}          /* 이벤트(비중조절, 종목편입) */
+            ,   #{data.TODAY_IMPORTANCE}    /* (당일)시가총액비중 */
 
             ,   #{user_id}	                /* 등록자 ID */
             ,   now()	                    /* 등록시간 */
@@ -475,50 +467,68 @@
                     ,   td_kspjong_hist.F15001                              AS  F15001                  /* 현재가 */
 
                     ,   /* 
-                            유동주식수  = 0  이면   상장주식수 
-                            유동주식수 != 0   면    유동주식수 
-                        */
-                        CASE    WHEN    IFNULL( 
-                                                td_kspjong_hist.F18417      /* 유동주식수 */
-                                            ,   0
-                                        )   =   0
-                                THEN    td_kspjong_hist.F16143              /* 상장주식수*/
-                                ELSE    td_kspjong_hist.F18417              /* 유동주식수 */
-                        END                                                 AS  F16143                  /* 유동주식수 */
+                            tm_simul_mast.stock_gubun   값이 없으면      유동주식수
+                            tm_simul_mast.stock_gubun   =   1   이면    유동주식수
+                            tm_simul_mast.stock_gubun   =   2   이면    상장주식수
+                        */                        
+                        CASE    WHEN    IFNULL(
+                                                base.stock_gubun
+                                            ,   '1'
+                                        )       =   '1'
+                                THEN    
+                                        /*
+                                            유동주식수  = 0  이면   상장주식수 
+                                            유동주식수 != 0   면    유동주식수 
+                                        */
+                                        CASE    WHEN    IFNULL( 
+                                                                td_kspjong_hist.F18417                  /* 유동주식수 */
+                                                            ,   0
+                                                        )   =   0
+                                                THEN    td_kspjong_hist.F16143                          /* 상장주식수*/
+                                                ELSE    td_kspjong_hist.F18417                          /* 유동주식수 */
+                                        END                                                             /* 유동주식수 */
+
+                                WHEN    IFNULL(
+                                                base.stock_gubun
+                                            ,   '1'
+                                        )       =   '2'                                
+                                THEN    td_kspjong_hist.F16143                                          /* 상장주식수*/
+                        END                                                 AS  F16143
 
           FROM  (
-                    SELECT          tm_simul_portfolio.F16013               AS  F16013                  /* 종목코드 */
-                                ,   (
-                                        SELECT  tm_code_dtl.com_val02
-                                          FROM  tm_code_dtl
-                                         WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
-                                           AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     MAX(tm_simul_mast.rebalance_cycle_cd) 
-                                                                                        ,   IFNULL( MAX(tm_simul_mast.rebalance_date_cd), '' )
-                                                                                )
-                                        LIMIT  1
-                                    )                                       AS  GUBUN                   /* 구분 */
+                    SELECT      tm_simul_mast.stock_gubun                   AS  stock_gubun             /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                            ,   tm_simul_portfolio.F16013                   AS  F16013                  /* 종목코드 */
+                            ,   (
+                                    SELECT  tm_code_dtl.com_val02
+                                      FROM  tm_code_dtl
+                                     WHERE  tm_code_dtl.com_mst_cd      =   'COM012'
+                                       AND  tm_code_dtl.com_dtl_cd      =   CONCAT(     MAX(tm_simul_mast.rebalance_cycle_cd) 
+                                                                                    ,   IFNULL( MAX(tm_simul_mast.rebalance_date_cd), '' )
+                                                                            )
+                                     LIMIT  1
+                                )                                           AS  GUBUN                   /* 구분 */
 
                       FROM  tm_simul_portfolio
                       JOIN  tm_simul_mast
                         ON  (
-                                            tm_simul_portfolio.grp_cd   =   tm_simul_mast.grp_cd
-                                    AND     tm_simul_portfolio.scen_cd  =   tm_simul_mast.scen_cd
+                                            tm_simul_portfolio.grp_cd       =   tm_simul_mast.grp_cd
+                                    AND     tm_simul_portfolio.scen_cd      =   tm_simul_mast.scen_cd
                             )
                      WHERE  1 = 1
-                       AND  tm_simul_portfolio.grp_cd   =   #{grp_cd}
-                       AND  tm_simul_portfolio.scen_cd  =   #{scen_cd}
+                       AND  tm_simul_portfolio.grp_cd       =   #{grp_cd}
+                       AND  tm_simul_portfolio.scen_cd      =   #{scen_cd}
+
                      GROUP  BY  tm_simul_portfolio.F16013
-                    )     base
-            JOIN  td_kspjong_hist
-              ON  (
+
+                )     base
+
+          JOIN  td_kspjong_hist
+            ON  (
                     <![CDATA[
                                 base.F16013                 =   td_kspjong_hist.F16013
-    
                         AND     td_kspjong_hist.F12506      >= #{first_date}
-                                          
                     ]]>
-                    )        
-          
+                )
             
          ORDER  BY      td_kspjong_hist.F12506          /* 입회일자 */
                     ,   td_kspjong_hist.F16013          /* 단축코드 */
@@ -592,6 +602,111 @@
            AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
     ]]>
-    </update>    
+    </update>
+
+
+    <!--
+    * [tm_simul_result_anal] 테이블에 저장한다.
+    * 2019-10-22  bkLove(촤병국)
+    -->
+    <insert     id="saveTmSimulResultAnal">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulationBacktest.saveTmSimulResultAnal      [tm_simul_result_anal] 테이블에 저장한다. */
+        tm_simul_result_anal
+        (
+                grp_cd                          /* 그룹코드(상위코드) */
+            ,   scen_cd                         /* 시나리오코드 */
+            ,   anal_id                         /* 분석지표 */
+
+            ,   backtest                        /* 백테스트 */
+            ,   backtest_year                   /* 백테스트_년도 */
+            ,   backtest_percent_yn             /* 백테스트_퍼센트 유무(1-Y, 0-N)*/
+
+            ,   benchmark                       /* 벤치마크 */
+            ,   benchmark_year                  /* 벤치마크_년도 */
+            ,   benchmark_percent_yn            /* 벤치마크_퍼센트 유무(1-Y, 0-N)*/
+
+            ,   show_order_no                   /* 화면에 노출할 순번 */
+            ,   title_anal_id                   /* 타이틀 분석지표 */
+            ,   title_order_no                  /* 타이틀 노출할 순번 */
+
+            ,   upd_id                          /* 수정자 ID */
+            ,   upd_time                        /* 수정시간 */
+        )
+        VALUES
+    ]]>
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[  
+        (                
+                #{grp_cd}                       /* 그룹코드(상위코드) */
+            ,   #{scen_cd}                      /* 시나리오코드 */
+            ,   #{data.anal_title}              /* 분석지표 */
+
+            ,   #{data.backtest}                /* 백테스트 */
+            ,   #{data.backtest_year}           /* 백테스트_년도 */
+            ,   #{data.backtest_percent_yn}     /* 백테스트_퍼센트 유무(1-Y, 0-N)*/
+
+            ,   #{data.benchmark}               /* 벤치마크 */
+            ,   #{data.benchmark_year}          /* 벤치마크_년도 */
+            ,   #{data.benchmark_percent_yn}    /* 벤치마크_퍼센트 유무(1-Y, 0-N)*/
+
+            ,   #{data.show_order_no}           /* 노출할 정렬 순번 */
+            ,   #{data.title_anal_id}           /* 타이틀 분석지표 */
+            ,   #{data.title_order_no}          /* 타이틀 노출할 순번 */
+
+            ,   #{user_id}                      /* 수정자 ID */
+            ,   now()                           /* 수정시간 */
+        )
+    ]]>
+        </foreach>            
+
+    </insert>
+
+    <!--
+    * [tm_simul_result_anal] 테이블을 삭제한다.
+    * 2019-10-22  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmSimulResultAnal">
+        DELETE  /* simulationBacktest.deleteTmSimulResultAnal      [tm_simul_result_anal] 테이블을 삭제한다. */
+          FROM  tm_simul_result_anal
+         WHERE  1 = 1
+           AND  tm_simul_result_anal.grp_cd             =   #{grp_cd}       /* 그룹코드(상위코드) */
+           AND  tm_simul_result_anal.scen_cd            =   #{scen_cd}      /* 시나리오코드 */
+    </delete>
+
+    <!--
+    *   tm_simul_result_anal 정보를 조회한다.
+    *   2019-10-22  bkLove(촤병국)
+    -->
+    <select id="getTmSimulResultAnal">
+
+        SELECT      /* simulationBacktest.getTmSimulResultAnal  tm_simul_result_anal 정보를 조회한다. */
+
+                    tm_simul_result_anal.grp_cd                                         AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   tm_simul_result_anal.scen_cd                                        AS  scen_cd                 /* 시나리오코드 */
+                ,   tm_simul_result_anal.anal_id                                        AS  anal_title              /* 분석지표 */
+
+                ,   tm_simul_result_anal.backtest                                       AS  backtest                /* 백테스트 */
+                ,   tm_simul_result_anal.backtest_year                                  AS  backtest_year           /* 백테스트_년도 */
+                ,   tm_simul_result_anal.backtest_percent_yn                            AS  backtest_percent_yn     /* 백테스트_퍼센트 유무(1-Y, 0-N)*/
+
+                ,   tm_simul_result_anal.benchmark                                      AS  benchmark               /* 벤치마크 */
+                ,   tm_simul_result_anal.benchmark_year                                 AS  benchmark_year          /* 벤치마크_년도 */
+                ,   tm_simul_result_anal.benchmark_percent_yn                           AS  benchmark_percent_yn    /* 벤치마크_퍼센트 유무(1-Y, 0-N)*/
+
+                ,   tm_simul_result_anal.show_order_no                                  AS  show_order_no           /* 화면에 노출할 순번 */
+                ,   tm_simul_result_anal.title_anal_id                                  AS  title_anal_id           /* 타이틀 분석지표 */
+                ,   tm_simul_result_anal.title_order_no                                 AS  title_order_no          /* 타이틀 노출할 순번 */
+
+          FROM  tm_simul_result_anal
+         WHERE  1 = 1
+
+           AND  tm_simul_result_anal.grp_cd         =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_anal.scen_cd        =   #{scen_cd}          /* 시나리오코드 */
+
+         ORDER  BY      tm_simul_result_anal.show_order_no
+
+    </select>    
 
 </mapper>

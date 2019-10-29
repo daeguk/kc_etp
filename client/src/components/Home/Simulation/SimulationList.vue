@@ -107,7 +107,18 @@
                                         <li @click=""><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
                                         <li @click=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
                                     </ul>
-                                </v-menu>             
+                                </v-menu>
+
+                                <v-menu bottom left v-if="item.grp_yn == '1'" >
+                                    <template v-slot:activator="{ on }">
+                                        <button name="btn4" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
+                                    </template>
+                                    <ul class="more_menu_w">
+                                        <li @click="fn_getScenInGrpCd( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_del_btn">delete_forever</v-icon>비교</li>
+                                        <!--li @click="">menu2</li>
+                                        <li @click="">menu3</li-->
+                                    </ul>
+                                </v-menu>
                             </td>
                         </tr>
 
@@ -658,48 +669,86 @@ export default {
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
+        },
 
-            // axios.post(Config.base_url + "/user/simulation/deleteAllSimul", {
-            //     data: p_param
-            // }).then( async function(response) {
+        /*
+         * 그룹코드에 속한 시나리오를 조회한다.
+         * 2019-10-24  bkLove(촤병국)
+         */
+        async fn_getScenInGrpCd( p_param ) {
 
-            //     vm.fn_showProgress( false );
+            var vm = this;
 
-            //     if (response && response.data) {
-            //         var msg = ( response.data.msg ? response.data.msg : "" );
+            vm.arr_show_error_message   =   [];
 
-            //         if (!response.data.result) {
-            //             if( msg ) {
-            //                 vm.arr_show_error_message.push( msg );
-            //             }
-            //         }else{
 
-            //             if( msg ) {
-            //                 if ( vm.$refs.confirm2.open(
-            //                         '확인',
-            //                         msg,
-            //                         {}
-            //                         ,1
-            //                     )
-            //                 ) {
-            //                     /* 시뮬레이션 목록정보를 조회한다. */
-            //                     vm.fn_getSimulList();
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }).catch(error => {
+            if( !p_param.scen_cd  ) {
+                vm.arr_show_error_message.push( "그룹코드가 존재하지 않습니다." );
+                return  false;
+            }
 
-            //     vm.fn_showProgress( false );
-            //     if ( vm.$refs.confirm2.open(
-            //             '확인',
-            //             '서버로 부터 응답을 받지 못하였습니다.',
-            //             {}
-            //             ,4
-            //         )
-            //     ) {
-            //     }
-            // });
+            p_param.grp_cd      =   p_param.scen_cd;     
+
+            vm.fn_showProgress( true );
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getScenInGrpCd"
+                        ,   "data"      :   p_param
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
+                        vm.fn_showProgress( false );
+
+                        try{
+
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+
+                                    return  false;
+                                }
+
+                                if( msg ) {
+                                    if ( await vm.$refs.confirm2.open(
+                                            '확인',
+                                            msg,
+                                            {}
+                                            ,1
+                                        )
+                                    ) {
+                                        /* 그룹 내 시나리오 결과 조회 */
+                                        vm.$emit( "fn_showSimulation", { 
+                                                "showSimulationId"  :   3
+                                            ,   "simul_mast"        :   response.data.simul_mast
+                                            ,   "arr_scen_in_grp"   :   response.data.dataList
+                                        });
+
+                                        return  false;
+                                    }
+                                }
+
+                                /* 그룹 내 시나리오 결과 조회 */
+                                vm.$emit( "fn_showSimulation", { 
+                                        "showSimulationId"  :   3
+                                    ,   "simul_mast"        :   response.data.simul_mast
+                                    ,   "arr_scen_in_grp"   :   response.data.dataList
+                                });                                
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
         }
 
     }    

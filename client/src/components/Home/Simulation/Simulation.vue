@@ -162,15 +162,24 @@
                                         >{{ item.com_dtl_name }}</v-btn>
                                     </v-btn-toggle>
                                 </span>
+
                                 <span class="inselect">
-                                    <v-select
-                                    :items="items"
-                                    label="발행주식수"
-                                    value="발행주식수"
-                                    outline
-                                    ></v-select>
+
+                                    <v-select   :items="arr_stock_gubun" 
+                                                
+                                                item-text="com_dtl_name" 
+                                                item-value="com_dtl_cd"
+                                                
+                                                v-model="stock_gubun" 
+                                                outline  
+
+                                                :disabled="[ '1', '2' ].includes(importance_method_cd)"
+                                                
+                                                @change="fn_resetErrorMessage();">
+                                    </v-select>
+
                                 </span>
-<!-- 
+<!--
                                 <span class="inselect v2">
                                    <span class="intxt">CAP비율:</span>  
                                    <v-text-field   outline    maxlength="50"></v-text-field> 
@@ -330,6 +339,7 @@ export default {
             ,   arr_rebalance_date_cd       :   []          /* 초기설정 리밸런싱일자 array */
             ,   arr_bench_mark_cd           :   []          /* 초기설정 벤치마크 array */
             ,   arr_importance_method_cd    :   []          /* 초기설정 비중설정방식 array */
+            ,   arr_stock_gubun             :   []          /* 초기설정 주식수 구분 array */
 
             ,   prev_grp_cd                 :   ""          /* 그룹 코드 (변경전) */
             ,   prev_scen_cd                :   ""          /* 시나리오 코드 */
@@ -350,6 +360,7 @@ export default {
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
             ,   p_rebalance_file_yn         :   "0"         /* 리밸런싱 일자가 포함된 샘플파일 유무 */
             ,   excel_start_year            :   ""          /* 리밸런싱 파일인 경우 넘겨받은 엑셀 start_year */
+            ,   stock_gubun                 :   "1"         /* 주식수 구분 */
 
             ,   arr_portfolio               :   []          /* 포트폴리오 설정 정보 */
             ,   arr_rebalance_date          :   []          /* 리밸런싱 일자 */
@@ -562,6 +573,7 @@ export default {
 
             /* 비중을 변경하는 경우 [직접입력] 으로 강제 설정 */
             vm.importance_method_cd =   "1";
+            vm.fn_setImportanceMethodCdEvent( vm.importance_method_cd );
 
             // if( v_importance.val() ) {
             //     v_importance.val( util.formatNumber( v_importance.val() ) );
@@ -807,6 +819,8 @@ export default {
          */
         fn_setImportanceMethodCdEvent: function( importance_method_cd ) {
             var vm = this;
+
+            vm.stock_gubun  =   "1";
 
             /* 비중설정방식 선택시 테이블의 비중정보를 설정한다. */
             vm.fn_setImportanceMethodCd( importance_method_cd ).then( function(e1){
@@ -1343,11 +1357,14 @@ export default {
         fn_initData() {
             var vm = this;
 
-            /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
-            /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
-            /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
-            /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
-            var arrComMstCd = [ "COM006", "COM007", "COM008", "COM009" ];            
+            /* 
+                COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 )
+                COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 )
+                COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ )
+                COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 )
+                COM013 - 주식수 구분 ( 1-유동주식수, 2-상장주식수 )
+            */
+            var arrComMstCd = [ "COM006", "COM007", "COM008", "COM009", "COM013" ];            
 
             vm.arr_show_error_message   =   [];
 
@@ -1400,6 +1417,11 @@ export default {
                                         if( response.data.arr_importance_method_cd && response.data.arr_importance_method_cd.length > 0 ) {
                                             vm.arr_importance_method_cd   =   response.data.arr_importance_method_cd;
                                         }
+
+                                        /* 초기설정 주식수구분 array */
+                                        if( response.data.arr_stock_gubun && response.data.arr_stock_gubun.length > 0 ) {
+                                            vm.arr_stock_gubun          =   response.data.arr_stock_gubun;
+                                        }                                        
 
                                         resolve( { result : true } );
                                     }
@@ -1891,6 +1913,7 @@ export default {
                                 ,   "bench_index_cd03"      :   vm.bench_index_cd03         /* 벤치마크 인덱스 코드 ( middle_type ) */
                                 ,   "bench_index_nm"        :   vm.bench_index_nm           /* 벤치마크 인덱스 코드명 */
                                 ,   "importance_method_cd"  :   vm.importance_method_cd     /* COM009 - 비중설정방식( 1-직접입력, 2. 동일가중, 3.시총비중 ) */
+                                ,   "stock_gubun"           :   vm.stock_gubun              /* 주식수 구분 */
 
                                 ,   "rebalancePortfolioObj" :   vm.rebalancePortfolioObj    /* 포트폴리오 설정 정보 */
                             }
@@ -1997,6 +2020,15 @@ export default {
 
                                         vm.bench_mark_cd            =   ( vm.bench_mark_cd == 0 ? "1" : vm.bench_mark_cd );
                                         vm.change_rebalance_yn      =   "1";                            /* 수정인 경우 리밸런싱 일자 콤보박스는 보이도록 수정 */
+
+                                        /* 주식수 구분 */
+                                        vm.stock_gubun              =   (
+                                                typeof mastInfo.stock_gubun ==  "undefined" 
+                                            ||  mastInfo.stock_gubun        ==  null 
+                                            ||  mastInfo.stock_gubun        ==  ""
+
+                                            ?   "1"     :   mastInfo.stock_gubun
+                                        );
 
                                         /* 리밸런싱 주기가 없는 경우 - 리밸런싱 일자가 포함된 샘플파일 유무를 1 로 간주 */
                                         if( vm.rebalance_cycle_cd == "" ) {
