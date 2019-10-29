@@ -27,6 +27,9 @@
                         <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modifyGroup( 'delete' )">삭제</v-btn>
                     </span>
                 </div>
+                <span class="btn_r">
+                    <v-btn depressed color="primary" @click="">비교하기</v-btn>
+                </span>
             </v-card>
 
             <v-card flat>
@@ -36,6 +39,7 @@
                     <caption></caption>
                     
                     <colgroup>
+                        <col width="4%">
                         <col width="30%" />
                         <col width="30%" />
                         <col width="25%" />
@@ -44,6 +48,7 @@
 
                     <thead>
                         <tr>
+                            <th width="4%"></th>
                             <th width="30%" class="txt_left">Name</th>
                             <th width="30%"  class="txt_right">Index</th>
                             <th width="25%"  class="txt_right">Last modifired</th>
@@ -55,6 +60,7 @@
 
                         <tr v-for="( item, index ) in arr_simul_list"    :key="'simul_' + index" >
 
+                            <td><v-checkbox  color="primary"></v-checkbox></td>
                             <!-- Name -->
                             <td class="txt_left">
                                 <!-- 시나리오 그룹 인 경우 -->
@@ -104,8 +110,155 @@
                                         <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
                                         <li @click=""><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
                                         <li @click=""><v-icon class="simul_more_btn">restore_page</v-icon> 그룹변경</li>
+                                        <!--그룹명 팝업창---->
+                                            <!--v-card>
+                                                <ul class="simul_group_modi_pop">
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DeepSearch_혼합50</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DeepSearch_혼합50</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                    <li @click="">DEEPSEARCH_동일가중</li>
+                                                </ul>
+
+                                            </v-card>
+                                        <!--그룹명 팝업창end--->
                                         <li @click=""><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
                                         <li @click=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
+                                        <!--공유하기 팝업창--->
+                                            <!--v-card style="width:500px;">
+                                                <h5>
+                                                    <v-card-title>공유하기<span class="pl-0"></span>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn icon @click="dialog = false">
+                                                    <v-icon>close</v-icon>
+                                                </v-btn>
+                                                     </v-card-title>
+                                                 </h5>
+                                                 <!--1table-->
+                    <!--div class="incode_pop">
+                        <h6>공유자 선택</h6>
+                        <div class="table-box-wrap" >
+                            <div class="table-box" style="max-height:200px;">
+                                <table class="tbl_type ver8 v2">
+                                    <caption>헤더 고정 테이블</caption>
+                                    <colgroup>
+                                        <col width="10%" />
+                                        <col width="30%" />
+                                        <col width="60%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:10%"></th>
+                                            <th style="width:30%" class="txt_left">이름</th>
+                                            <th style="width:60%" class="txt_left">이메일</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left"><v-checkbox  color="primary"></v-checkbox></td>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                        <div class="text-xs-center">
+                            <v-btn depressed small color="primary" @click="">공유하기</v-btn>
+                            </div>
+                    </div>
+
+
+                    <!--2table-->
+                    <!--div  class="incode_pop pt-3" >
+                        <h6 class="pb-1">공유자 선택해제</h6>
+                        <div class="table-box-wrap">
+                            <div class="table-box" style="max-height:200px;">
+                                <table class="tbl_type ver8 v2">
+                                    <caption>헤더 고정 테이블</caption>
+                                    <colgroup>
+                                        <col width="20%" />
+                                        <col width="50%" />
+                                        <col width="30%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20%">이름</th>
+                                            <th style="width:50%" class="txt_left">이메일</th>
+                                            <th style="width:30%" class="txt_left"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="txt_left">홍길동</td>
+                                            <td class="txt_left">honggildong@naver.com</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="">공유해제</v-btn></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                                            </v-card>
+                                        <!--공유하기 팝업창 end--->
                                     </ul>
                                 </v-menu>
 
@@ -158,6 +311,8 @@ export default {
 
     data() {
         return {
+                dialog: false,
+        
                 activeTab: 0
             ,   tabs: [
                     { id: 0, name: "관리목록"       },
