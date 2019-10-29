@@ -1763,14 +1763,6 @@ var getSimulJongmoForExcel = function(req, res) {
                                 return callback(resultMsg);
                             }
 
-                            if ( !rows || rows.length == 0) {
-                                resultMsg.result = false;
-                                resultMsg.msg   = "시뮬레이션 종목정보 헤더 데이터가 존재하지 않습니다.";
-                                resultMsg.err   = "시뮬레이션 종목정보 헤더 데이터가 존재하지 않습니다.";
-
-                                return callback(resultMsg);
-                            }
-
                             if( rows && rows.length > 0 ) {
                                 msg.arr_excel_jongmok_header  =   rows;
                             }
@@ -1795,7 +1787,6 @@ var getSimulJongmoForExcel = function(req, res) {
                 function(msg, callback) {      
 
                     try{
-                        paramData.grp_cd    =   msg.grp_cd;
                         stmt = mapper.getStatement('simulationBacktest', 'getSimulJongmokDataForExcel', paramData, format);
                         log.debug(stmt);
 
@@ -1805,14 +1796,6 @@ var getSimulJongmoForExcel = function(req, res) {
                                 resultMsg.result = false;
                                 resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
-
-                                return callback(resultMsg);
-                            }
-
-                            if ( !rows || rows.length == 0) {
-                                resultMsg.result = false;
-                                resultMsg.msg   = "시뮬레이션 종목정보 데이터가 존재하지 않습니다.";
-                                resultMsg.err   = "시뮬레이션 종목정보 데이터가 존재하지 않습니다.";
 
                                 return callback(resultMsg);
                             }

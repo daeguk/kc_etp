@@ -1833,13 +1833,19 @@ export default {
                         return  step3();
                     }
                 }).then( function(e2) {
-                    step4();
+                    if( e2 && e2.result ) {
+                        return  step4();
+                    }
+                }).then( function(e3) {
+                    step5();
                 })
                 
                 /* 일자별 지수 */
                 function    step1() {
 
                     return  new Promise(function(resolve, reject) {
+
+                        vm.fn_showProgress( true );
 
                         try{
                             excelInfo.sheetNm           =   "일자별 지수";
@@ -1870,8 +1876,10 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+                            vm.fn_showProgress( false );
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }
                     });
 
@@ -1906,8 +1914,10 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+                            vm.fn_showProgress( false );
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }                                    
                     });
 
@@ -1943,25 +1953,81 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+                            vm.fn_showProgress( false );
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }
                     });
                 }
 
-                /* 엑셀에 저장 */
+                /* 종목 정보 */
                 function    step4() {
+
+                    return  new Promise(function(resolve, reject) {
+
+                        try{
+
+                            util.axiosCall(
+                                    {
+                                            "url"       :   Config.base_url + "/user/simulation/getSimulJongmoForExcel"
+                                        ,   "data"      :   {
+                                                    "grp_cd"    :   vm.simul_result_mast.grp_cd
+                                                ,   "scen_cd"   :   vm.simul_result_mast.scen_cd
+                                            }
+                                        ,   "method"    :   "post"
+                                    }
+                                ,   function(response) {
+                                        try{
+
+                                            if (response && response.data) {
+                                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                                if (!response.data.result) {
+                                                    if( msg ) {
+                                                        vm.fn_showProgress( false );
+                                                        resolve( { result : false } );
+                                                    }
+                                                }else{
+                                                    resolve( { result : true } );
+                                                }
+                                            }
+
+                                        }catch(ex) {
+                                            console.log( "error", ex );
+                                        }
+                                    }
+                                ,   function(error) {
+                                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                    }
+                            );
+
+                        }catch(ex) {
+                            vm.fn_showProgress( false );
+                            console.log( "error", ex );
+                            
+                            resolve( { result : false } );
+                        }
+                    });
+                }                
+
+                /* 엑셀에 저장 */
+                function    step5() {
 
                     return  new Promise(function(resolve, reject) {
 
                         try{                
                             excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
 
+                            vm.fn_showProgress( false );
+
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            resolve( { result : false } );
+                            vm.fn_showProgress( false );
                             console.log( "error", ex );
+
+                            resolve( { result : false } );
                         }
                     });
                 }
