@@ -693,11 +693,11 @@ export default {
             { 'name' : 'F34763'             , 'data': 'F34763'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '총보수'},
             { 'name' : 'F15015'             , 'data': 'F15015'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '거래량'},
             { 'name' : 'F15023'             , 'data': 'F15023'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '거래대금'},
-            { 'name' : 'F16058'             , 'data': 'F16058'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '발행주식수'},
+            { 'name' : 'F16143'             , 'data': 'F16143'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '발행주식수'},
             { 'name' : 'F16499'             , 'data': 'F16499'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '1CU주식수'},
             { 'name' : 'F33835'             , 'data': 'F33835'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '설정주식수(전일)'},
             { 'name' : 'F33836'             , 'data': 'F33836'           ,  'width' : '80',  'orderable' : true  , 'className': 'txt_right', 'title' : '환매주식수(전일)'},
-
+            { 'name' : 'F33833'             , 'data': 'F33833'           ,  'width' : '130',  'orderable' : true  , 'className': 'txt_left', 'title' : '과세구분'},
             { 'name' : 'graph'              , 'data': null               ,  'width' : '120', 'orderable' : false  },
           ];        
 
@@ -896,7 +896,7 @@ export default {
                           },
                   },
                   /* 발행주식수 */
-                  {       'name' : 'F16058'   
+                  {       'name' : 'F16143'   
                       ,   "render": function ( data, type, row ) {
                               let htm = ""
                               htm += util.formatInt(data);
@@ -939,7 +939,26 @@ export default {
                   {       'name' : 'F34763'   
                       ,   "render": function ( data, type, row ) {
                               let htm = ""
-                              htm += util.formatInt(data) + '%';
+                              htm += data + '%';
+                              return htm;
+                          },
+                  },
+                  /* 과세구분 과세유형코드(0:해당없음,1:비과세,2:배당소득세(보유기간과세),3:증권거래세(회사형ETF),4:배당소득세(해외주식투자전용ETF))*/
+                  {       'name' : 'F33833'   
+                      ,   "render": function ( data, type, row ) {
+                              let htm = "";
+                              if (data == 0) {
+                                  htm += "해당없음";      
+                              } else if (data == 1) {
+                                  htm += "비과세";     
+                              } else if (data == 2) {
+                                  htm += "배당소득세(보유기간과세)";     
+                              } else if (data == 3) {
+                                  htm += "증권거래세(회사형ETF)";     
+                              } else if (data == 4) {
+                                  htm += "배당소득세(해외주식투자전용ETF)";     
+                              }
+
                               return htm;
                           },
                   },
