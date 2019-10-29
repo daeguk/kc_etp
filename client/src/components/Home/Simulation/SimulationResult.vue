@@ -1841,9 +1841,9 @@ export default {
                 })
                 
                 /* 일자별 지수 */
-                function    step1() {
+                async function    step1() {
 
-                    return  new Promise(function(resolve, reject) {
+                    return  await new Promise(function(resolve, reject) {
 
                         vm.fn_showProgress( true );
 
@@ -1886,8 +1886,8 @@ export default {
                 }
                 
                 /* 리밸런싱 내역 */
-                function    step2() {
-                    return  new Promise(function(resolve, reject) {
+                async function    step2() {
+                    return  await new Promise(function(resolve, reject) {
 
                         try{
                             excelInfo.sheetNm           =   "리밸런싱 내역";
@@ -1924,8 +1924,8 @@ export default {
                 }
                 
                 /* 분석정보 */
-                function    step3() {
-                    return  new Promise(function(resolve, reject) {
+                async function    step3() {
+                    return  await new Promise(function(resolve, reject) {
 
                         try{
                             excelInfo.sheetNm           =   "분석정보";
@@ -1962,9 +1962,9 @@ export default {
                 }
 
                 /* 종목 정보 */
-                function    step4() {
+                async function    step4() {
 
-                    return  new Promise(function(resolve, reject) {
+                    return  await new Promise(function(resolve, reject) {
 
                         try{
 
@@ -1994,11 +1994,18 @@ export default {
                                             }
 
                                         }catch(ex) {
+                                            vm.fn_showProgress( false );
                                             console.log( "error", ex );
+
+                                            resolve( { result : false } );
                                         }
                                     }
                                 ,   function(error) {
+                                        vm.fn_showProgress( false );
+                                        console.log( "error", ex );
+
                                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                        resolve( { result : false } );
                                     }
                             );
 
@@ -2011,10 +2018,10 @@ export default {
                     });
                 }                
 
-                /* 엑셀에 저장 */
-                function    step5() {
+                /* 파일 저장 */
+                async function    step5() {
 
-                    return  new Promise(function(resolve, reject) {
+                    return  await new Promise(function(resolve, reject) {
 
                         try{                
                             excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
