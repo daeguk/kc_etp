@@ -4,24 +4,59 @@
         <v-flex grow xs12>
             <v-card flat>
                 <v-card-title primary-title class="pb-0">
+
                     <h3 class="headline w100">
-                        <div class="incode_search">
-                            <v-text-field   v-model="search_name" 
-                                            append-icon="search" 
-                                            label="지수명 검색" 
-                                            single-line 
-                                            hide-details
 
-                                            v-on:keyup="fn_filterAllData()"
-                            >
-                             </v-text-field>
-                        </div>
+                        <v-layout row>
+                            <v-flex xs2>
+                                <v-select   :items="arr_large_code" 
+                        
+                                    item-text="text" 
+                                    item-value="value"  
 
-                        <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel()"></button></span>
+                                    @change="fn_filterAllData()"
+                                    
+                                    v-model="search_large_code" 
+                                    outline>
+                                </v-select>
+                            </v-flex>
 
-                        <span class="btn_r ver2">
-                           <IndexCodeModal></IndexCodeModal>
-                        </span>
+                            <v-flex xs2>
+                                <v-select   :items="arr_middle_code" 
+                        
+                                    item-text="text" 
+                                    item-value="value"  
+
+                                    @change="fn_filterAllData()"
+                                    
+                                    v-model="search_middle_code" 
+                                    outline>
+                                </v-select>
+                            </v-flex>                            
+
+                            <v-flex>                              
+
+                                <div class="incode_search">
+                                    
+                                    <v-text-field   v-model="search_name" 
+                                                    append-icon="search" 
+                                                    label="지수명 검색" 
+                                                    single-line 
+                                                    hide-details
+
+                                                    v-on:keyup="fn_filterAllData()"
+                                    >
+                                    </v-text-field>
+                                </div>
+
+                                <span><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel()"></button></span>
+
+                                <span class="btn_r ver2">
+                                <IndexCodeModal></IndexCodeModal>
+                                </span>
+
+                            </v-flex>
+                        </v-layout>                             
                     </h3>
                 </v-card-title>
             </v-card>
@@ -31,25 +66,31 @@
                         <table class="tbl_type" >
                             <caption>헤더 고정 테이블</caption>
                             <colgroup>
+                                <col width="5%" />
+                                <col width="5%" />
+                                <col width="10%" />
+                                <col width="50%" />
                                 <col width="15%" />
                                 <col width="15%" />
-                                <col width="15%" />
-                                <col width="55%" />
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th width="15%">대</th>
-                                    <th width="15%">중</th>
-                                    <th width="15%">소</th>
-                                    <th width="55%" class="txt_left">지수명</th>
+                                    <th width="5%">대</th>
+                                    <th width="5%">중</th>
+                                    <th width="10%">소</th>
+                                    <th width="50%" class="txt_left">지수명</th>
+                                    <th width="15%" class="txt_left">업데이트 일자</th>
+                                    <th width="15%" class="txt_left">비고</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="( item, index ) in show_data_list"    :key="'index_' + index" >
-                                    <td>{{ item.large_code }}</td>
-                                    <td>{{ item.middle_code }}</td>
-                                    <td>{{ item.small_code }}</td>
-                                    <td class="txt_left">{{ item.index_name }}</td>
+                                    <td>{{ item.large_code      /* 대 */    }}</td>
+                                    <td>{{ item.middle_code     /* 중 */    }}</td>
+                                    <td>{{ item.small_code      /* 소 */    }}</td>
+                                    <td class="txt_left">{{ item.index_name     /* 지수명 */ }}</td>
+                                    <td class="txt_left">{{ item.fmt_upd_time   /* 업데이트 일자 */ }}</td>
+                                    <td class="txt_left">{{ item.remark         /* 비고 */ }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -78,9 +119,32 @@ export default {
 
     data() {
         return {
-                dialog          :   false
-            ,   search_name     :   ""
-            ,   show_data_list  :   []
+                dialog              :   false
+
+            ,   arr_large_code      :   [ 
+                        {   text  :   '전체'          ,   value   :   ''  }
+                    ,   {   text  :   'K: 코스피'     ,   value   :   'K'  }   
+                    ,   {   text  :   'Q: 코스닥'     ,   value   :   'Q'  } 
+                    ,   {   text  :   'M: FnGuide'    ,   value   :   'M' }
+                    ,   {   text  :   'F: 해외지수'   ,   value    :   'F' }
+                    ,   {   text  :   'D: 파생상품'   ,   value    :   'D' }
+                    ,   {   text  :   'B: 채권'       ,  value     :  'B' }
+                    ,   {   text  :   'C: 상품'       ,  value     :  'C' }
+                    ,   {   text  :  'W: WISEfn'     ,  value      :  'W' }
+                ]
+            ,   arr_middle_code     :   [ 
+                        {   text  :  '전체'         ,   value   :   ''  }
+                    ,   {   text  :  '1'            ,   value   :   '1' }
+                    ,   {   text  :  '2'            ,   value   :   '2' }
+                    ,   {   text  :  '3'            ,   value   :   '3' }
+                    ,   {   text  :  '4'            ,   value   :   '4' }
+                ]
+
+            ,   search_large_code   :   ""
+            ,   search_middle_code  :   ""
+            ,   search_name         :   ""
+
+            ,   show_data_list      :   []
         }
     
     },
@@ -142,9 +206,19 @@ export default {
                 vm.show_data_list   =   [];
                 var filterData = _.filter( vm.org_data_list, function(o) { 
 
-                    var nmIdx = o.index_name ? o.index_name.toUpperCase().indexOf(vm.search_name) : -1;       /* 지수명 */
+                    var nmIdx           =   o.index_name    ?   o.index_name.toUpperCase().indexOf(vm.search_name) : -1;       /* 지수명 */
+                    var v_large_code    =   0;
+                    var v_middle_code   =   0;
 
-                    if ( nmIdx > -1 ) {
+                    if( vm.search_large_code != "" ) {
+                        v_large_code    =   ( ( o.large_code == vm.search_large_code )      ? 1 : -1 );
+                    }
+
+                    if( vm.search_middle_code != "" ) {
+                        v_middle_code   =   ( ( o.middle_code == vm.search_middle_code )    ? 1 : -1 );
+                    }                    
+
+                    if ( nmIdx > -1 && v_large_code > -1 && v_middle_code > -1 ) {
                         return true; 
                     } else {
                         return false;

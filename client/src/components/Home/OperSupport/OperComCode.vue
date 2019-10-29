@@ -5,7 +5,7 @@
             <v-card flat>
                 <v-card-title primary-title >
                     <h3 class="headline w100" pb-0 >
-                        운용사 코드
+                        발행사 코드
                     </h3>
                 </v-card-title>
             </v-card>
@@ -20,8 +20,8 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th width="20%" class="txt_left">운용사코드</th>
-                                    <th width="80%" class="txt_left">운용사 한글약명</th>
+                                    <th width="20%" class="txt_left">발행사코드</th>
+                                    <th width="80%" class="txt_left">발행사 한글약명</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -14,6 +14,8 @@
                 ,   tm_index_code.middle_code                                       AS  middle_code         /* 중 */
                 ,   tm_index_code.small_code                                        AS  small_code          /* 소 */
                 ,   tm_index_code.index_name                                        AS  index_name          /* 지수명 */
+                ,   tm_index_code.remark                                            AS  remark              /* 비고 */
+                ,   DATE_FORMAT( tm_index_code.upd_time, '%Y.%m.%d' )               AS  fmt_upd_time        /* 수정일 */
                         
           FROM  tm_index_code
          WHERE  1 = 1

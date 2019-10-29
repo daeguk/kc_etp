@@ -60,7 +60,7 @@ export default {
                 activeTab: 0
             ,   tabs: [
                     { id: 0, name: "지수구분코드"},
-                    { id: 1, name: "운영사코드"},
+                    { id: 1, name: "발행사코드"},
                 ]
 
             ,   org_index_list      :   []
@@ -95,7 +95,7 @@ export default {
 
                 vm.org_data_list    =   vm.org_index_list;
 
-                /* 운용사 코드를 조회한다. */
+                /* 발행사 코드를 조회한다. */
                 return  vm.fn_getOperCode();
             }
         }).then( function(e) {
@@ -204,7 +204,7 @@ export default {
         },
 
         /*
-         * 운용사 코드를 조회한다.
+         * 발행사 코드를 조회한다.
          * 2019-10-11  bkLove(촤병국)
          */
         async fn_getOperCode() {
