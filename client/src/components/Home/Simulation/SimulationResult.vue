@@ -1823,84 +1823,148 @@ export default {
 
                 var dataWS;
                 var wb = excel.utils.book_new();
+
+                step1().then( function(e){
+                    if( e && e.result ) {
+                        return  step2();
+                    }
+                }).then( function(e1) {
+                    if( e1 && e1.result ) {
+                        return  step3();
+                    }
+                }).then( function(e2) {
+                    step4();
+                })
                 
+                /* 일자별 지수 */
+                function    step1() {
 
-        /* 일자별 지수 */
-                excelInfo.sheetNm           =   "일자별 지수";
+                    return  new Promise(function(resolve, reject) {
 
-                excelInfo.arrHeaderNm       =   [       
-                        "일자", "Index", "Balance", "Return", vm.simul_result_mast.bench_index_nm
-                    ,   "BM(1000환산)", "BM return", "기준시총", "비교시총", "리밸런싱일 여부"
-                ];
+                        try{
+                            excelInfo.sheetNm           =   "일자별 지수";
 
-
-                excelInfo.arrHeaderKey      =   [       
-                        "fmt_F12506", "INDEX_RATE", "fmt_balance", "RETURN_VAL", "fmt_bm_data01"
-                    ,   "fmt_bm_1000_data", "fmt_bm_return_data", "F15028_S", "F15028_C", "fmt_rebalancing_yn"
-                ];
-
-                excelInfo.arrColsInfo       =   [       
-                        {width : 15}, {width : 30}, {width : 15}, {width : 30}, {width : 15}
-                    ,   {width : 15}, {width : 15}, {width : 30}, {width : 30}, {width : 15} 
-                ];
-
-                excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.fn_sort_arr_result_daily, excelInfo.arrHeaderKey );
-                dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
-                options             =   Object.assign( options, excelInfo.options );
-                vm.fn_setSheetInfo( dataWS, options, excelInfo );
-                excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
-                excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+                            excelInfo.arrHeaderNm       =   [       
+                                    "일자", "Index", "Balance", "Return", vm.simul_result_mast.bench_index_nm
+                                ,   "BM(1000환산)", "BM return", "기준시총", "비교시총", "리밸런싱일 여부"
+                            ];
 
 
-        /* 리밸런싱 내역 */
-                excelInfo.sheetNm           =   "리밸런싱 내역";
+                            excelInfo.arrHeaderKey      =   [       
+                                    "fmt_F12506", "INDEX_RATE", "fmt_balance", "RETURN_VAL", "fmt_bm_data01"
+                                ,   "fmt_bm_1000_data", "fmt_bm_return_data", "F15028_S", "F15028_C", "fmt_rebalancing_yn"
+                            ];
 
-                excelInfo.arrHeaderNm       =   [       
-                    "일자", "Event", "종목", "변경전", "변경후"
-                ];
+                            excelInfo.arrColsInfo       =   [       
+                                    {width : 15}, {width : 30}, {width : 15}, {width : 30}, {width : 15}
+                                ,   {width : 15}, {width : 15}, {width : 30}, {width : 30}, {width : 15} 
+                            ];
 
-                excelInfo.arrHeaderKey      =   [       
-                    "fmt_F12506", "fmt_EVENT_FLAG", "fmt_F16002", "fmt_BEFORE_IMPORTANCE", "fmt_AFTER_IMPORTANCE"
-                ];
+                            excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.fn_sort_arr_result_daily, excelInfo.arrHeaderKey );
+                            dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
+                            options             =   Object.assign( options, excelInfo.options );
+                            vm.fn_setSheetInfo( dataWS, options, excelInfo );
+                            excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
 
-                excelInfo.arrColsInfo       =   [       
-                    {width : 15}, {width : 15}, {width : 40}, {width : 15}, {width : 15}
-                ];
+                            resolve( { result : true } );
 
-                excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.fn_sort_arr_result_rebalance, excelInfo.arrHeaderKey );
-                dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
-                options             =   Object.assign( options, excelInfo.options );
-                vm.fn_setSheetInfo( dataWS, options, excelInfo );
-                excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
-                excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+                        }catch(ex) {
+                            resolve( { result : false } );
+                            console.log( "error", ex );
+                        }
+                    });
+
+                }
+                
+                /* 리밸런싱 내역 */
+                function    step2() {
+                    return  new Promise(function(resolve, reject) {
+
+                        try{
+                            excelInfo.sheetNm           =   "리밸런싱 내역";
+
+                            excelInfo.arrHeaderNm       =   [       
+                                "일자", "Event", "종목", "변경전", "변경후"
+                            ];
+
+                            excelInfo.arrHeaderKey      =   [       
+                                "fmt_F12506", "fmt_EVENT_FLAG", "fmt_F16002", "fmt_BEFORE_IMPORTANCE", "fmt_AFTER_IMPORTANCE"
+                            ];
+
+                            excelInfo.arrColsInfo       =   [       
+                                {width : 15}, {width : 15}, {width : 40}, {width : 15}, {width : 15}
+                            ];
+
+                            excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.fn_sort_arr_result_rebalance, excelInfo.arrHeaderKey );
+                            dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
+                            options             =   Object.assign( options, excelInfo.options );
+                            vm.fn_setSheetInfo( dataWS, options, excelInfo );
+                            excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            resolve( { result : false } );
+                            console.log( "error", ex );
+                        }                                    
+                    });
+
+                }
+                
+                /* 분석정보 */
+                function    step3() {
+                    return  new Promise(function(resolve, reject) {
+
+                        try{
+                            excelInfo.sheetNm           =   "분석정보";
+
+                            excelInfo.arrHeaderNm       =   [       
+                                "분석지표", "백테스트", vm.simul_result_mast.bench_index_nm
+                            ];
+
+                            excelInfo.arrHeaderKey      =   [       
+                                "anal_title", "backtest", "benchmark"
+                            ];
 
 
-        /* 분석정보 */
-                excelInfo.sheetNm           =   "분석정보";
+                            excelInfo.arrColsInfo       =   [       
+                                {width : 45}, {width : 20}, {width : 20}
+                            ];
 
-                excelInfo.arrHeaderNm       =   [       
-                    "분석지표", "백테스트", vm.simul_result_mast.bench_index_nm
-                ];
+                            excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.arr_analyze, excelInfo.arrHeaderKey );
+                            dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
+                            options             =   Object.assign( options, excelInfo.options );
+                            vm.fn_setSheetInfo( dataWS, options, excelInfo );
+                            excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );                
 
-                excelInfo.arrHeaderKey      =   [       
-                    "anal_title", "backtest", "benchmark"
-                ];
+                            resolve( { result : true } );
 
+                        }catch(ex) {
+                            resolve( { result : false } );
+                            console.log( "error", ex );
+                        }
+                    });
+                }
 
-                excelInfo.arrColsInfo       =   [       
-                    {width : 45}, {width : 20}, {width : 20}
-                ];
+                /* 엑셀에 저장 */
+                function    step4() {
 
-                excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.arr_analyze, excelInfo.arrHeaderKey );
-                dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
-                options             =   Object.assign( options, excelInfo.options );
-                vm.fn_setSheetInfo( dataWS, options, excelInfo );
-                excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
-                excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );                
+                    return  new Promise(function(resolve, reject) {
 
+                        try{                
+                            excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
 
+                            resolve( { result : true } );
 
-                excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
+                        }catch(ex) {
+                            resolve( { result : false } );
+                            console.log( "error", ex );
+                        }
+                    });
+                }
 
             }catch(e){
                 console.log( "[error] SimulationResult.vue -> fn_excelDown", e );

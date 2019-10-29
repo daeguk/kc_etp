@@ -707,6 +707,67 @@
 
          ORDER  BY      tm_simul_result_anal.show_order_no
 
-    </select>    
+    </select>
+
+    <!--
+    *   엑셀 다운로드용 시뮬레이션 종목정보 헤더 데이터를 조회한다.
+    *   2019-10-31  bkLove(촤병국)
+    -->
+    <select id="getSimulJongmokHeaderForExcel">
+
+        SELECT      /* simulationBacktest.getSimulJongmokHeaderForExcel     엑셀 다운로드용 시뮬레이션 종목정보 헤더 데이터를 조회한다. */
+
+                    tm_simul_portfolio.grp_cd                                           AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   tm_simul_portfolio.scen_cd                                          AS  scen_cd                 /* 시나리오코드 */
+                ,   tm_simul_portfolio.F16013                                           AS  F16013                  /* 단축 코드(현금은 KRW로 처리) */
+                ,   (
+                        SELECT  td_kspjong_basic.F16002
+                          FROM  td_kspjong_basic
+                         WHERE  1 = 1
+                           AND  td_kspjong_basic.F16013     =   tm_simul_portfolio.F16013
+                    )                                                                   AS  F16002                  /* 종목명 */                
+                
+          FROM  tm_simul_portfolio
+         WHERE  1 = 1
+           AND  tm_simul_portfolio.grp_cd           =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_portfolio.scen_cd          =   #{scen_cd}          /* 시나리오코드 */
+
+         GROUP  BY      tm_simul_portfolio.grp_cd
+                    ,   tm_simul_portfolio.scen_cd
+                    ,   tm_simul_portfolio.F16013
+
+         ORDER  BY  MAX( tm_simul_portfolio.order_no )
+
+    </select>
+
+    <!--
+    *   엑셀 다운로드용 시뮬레이션 종목정보 데이터를 조회한다.
+    *   2019-10-31  bkLove(촤병국)
+    -->
+    <select id="getSimulJongmokDataForExcel">
+
+        SELECT      /* simulationBacktest.getSimulJongmokDataForExcel  엑셀 다운로드용 시뮬레이션 종목정보 데이터를 조회한다. */
+
+                    tm_simul_result.grp_cd                                              AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   tm_simul_result.scen_cd                                             AS  scen_cd                 /* 시나리오코드 */
+                ,   tm_simul_result.F12506                                              AS  F12506                  /* 입회일자 */
+                ,   tm_simul_result.F16013                                              AS  F16013                  /* 단축 코드(현금은 KRW로 처리) */
+                
+                ,   tm_simul_result.F15007                                              AS  F15007                  /* 기준가 */
+                ,   tm_simul_result.F30700                                              AS  F30700                  /* 종가 */
+                ,   tm_simul_result.F16143                                              AS  F16143                  /* 상장주식수 */
+                ,   tm_simul_result.TODAY_RATE                                          AS  TODAY_RATE              /* (당일)지수적용비율 */
+                ,   tm_simul_result.TODAY_IMPORTANCE                                    AS  TODAY_IMPORTANCE        /* (당일)시가총액비중 */
+
+          FROM  tm_simul_result
+         WHERE  1 = 1
+           AND  tm_simul_result.grp_cd              =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result.scen_cd             =   #{scen_cd}          /* 시나리오코드 */
+
+         ORDER  BY      tm_simul_result.grp_cd
+                    ,   tm_simul_result.scen_cd
+                    ,   tm_simul_result.F12506
+
+    </select>
 
 </mapper>

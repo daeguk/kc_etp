@@ -1702,6 +1702,177 @@ var getBacktestResult = function(req, res) {
     }
 }
 
+
+/*
+ * 엑셀 다운로드용 시뮬레이션 종목정보를 조회한다.
+ * 2019-10-31  bkLove(촤병국)
+ */
+var getSimulJongmoForExcel = function(req, res) {
+    try {
+        log.debug('simulationBacktest.getSimulJongmoForExcel 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulationBacktest.getSimulJongmoForExcel  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.arr_excel_jongmok_header      =   [];
+        resultMsg.arr_excel_jongmok_data        =   [];
+
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. 엑셀 다운로드용 시뮬레이션 종목정보 헤더 데이터를 조회한다. */
+                function(callback) {      
+
+                    try{
+                        var msg = {};
+
+                        stmt = mapper.getStatement('simulationBacktest', 'getSimulJongmokHeaderForExcel', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0) {
+                                resultMsg.result = false;
+                                resultMsg.msg   = "시뮬레이션 종목정보 헤더 데이터가 존재하지 않습니다.";
+                                resultMsg.err   = "시뮬레이션 종목정보 헤더 데이터가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 ) {
+                                msg.arr_excel_jongmok_header  =   rows;
+                            }
+
+                            callback(null, msg);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
+                    }
+                },                
+
+                /* 2. 엑셀 다운로드용 시뮬레이션 종목정보 데이터를 조회한다. */
+                function(msg, callback) {      
+
+                    try{
+                        paramData.grp_cd    =   msg.grp_cd;
+                        stmt = mapper.getStatement('simulationBacktest', 'getSimulJongmokDataForExcel', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0) {
+                                resultMsg.result = false;
+                                resultMsg.msg   = "시뮬레이션 종목정보 데이터가 존재하지 않습니다.";
+                                resultMsg.err   = "시뮬레이션 종목정보 데이터가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 ) {
+                                resultMsg.arr_excel_jongmok_header  =   msg.arr_excel_jongmok_header;
+                                resultMsg.arr_excel_jongmok_data    =   rows;
+                            }                            
+
+
+                            callback(null);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
+                    }
+                }
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+                    resultMsg.result = true;
+                    resultMsg.err = null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_excel_jongmok_header  =   [];
+        resultMsg.arr_excel_jongmok_data    =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+
 /*
 *   일자별 지수에 balance 정보를 설정한다.
 *   2019-08-14  bkLove(촤병국)
@@ -2409,3 +2580,4 @@ var fn_set_rebalanceDate_history = function(
 module.exports.runBacktest = runBacktest;
 module.exports.saveBacktestResult = saveBacktestResult;
 module.exports.getBacktestResult = getBacktestResult;
+module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
