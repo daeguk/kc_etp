@@ -8,7 +8,7 @@
                     <h3 class="headline w100">
 
                         <v-layout row>
-                            <v-flex xs2>
+                            <v-flex class="incode_w01">
                                 <v-select   :items="arr_large_code" 
                         
                                     item-text="text" 
@@ -17,7 +17,8 @@
                                     @change="fn_filterAllData()"
                                     
                                     v-model="search_large_code" 
-                                    outline>
+                                    outline
+                                    class="select01">
                                 </v-select>
                             </v-flex>
 
@@ -30,11 +31,12 @@
                                     @change="fn_filterAllData()"
                                     
                                     v-model="search_middle_code" 
-                                    outline>
+                                    outline
+                                    class="select01">
                                 </v-select>
                             </v-flex>                            
 
-                            <v-flex>                              
+                            <v-flex  class="incode_w02">                              
 
                                 <div class="incode_search">
                                     
