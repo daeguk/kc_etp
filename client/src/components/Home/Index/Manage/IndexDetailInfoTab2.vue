@@ -10,7 +10,7 @@
                     </div>
 
                     <v-card flat>
-                        <table class="tbl_type ver5" v-if="chartFlag==1">
+                        <table class="tbl_type ver4" v-if="chartFlag==1">
                         <caption> 헤더 고정 테이블</caption>
                         <colgroup>
                             <col width="16%">
@@ -733,7 +733,7 @@ export default {
                         this.importance_cnt = this.results.length;
 
                         // 차트 호출
-//                        this.importance_chart(items);
+                        this.importance_chart(items);
                         
                         if (importance_grid) {
                             importance_grid.destroy()
