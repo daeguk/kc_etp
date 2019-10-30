@@ -92,6 +92,7 @@ export default {
         "email" : vm.email,
         "password" : vm.password,
       }).then(async function(response) {
+        localStorage.clear();
         // console.log(response);
         if(response.data.success == false){
            vm.status = 1;
@@ -104,11 +105,11 @@ export default {
         }else {
           let nDate = new Date();
           localStorage.setItem('user', JSON.stringify(response.data.results[0]));
-          localStorage.setItem('loginDt', nDate.getTime());
+          localStorage.setItem('loginDt', nDate.getTime());          
+//console.log("UserLoginModal..........");
+//console.log(JSON.parse(localStorage.getItem('user')));
+//console.log(localStorage.getItem('loginDt'));
 
-console.log("UserLoginModal..........");
-console.log(JSON.parse(localStorage.getItem('user')));
-console.log(localStorage.getItem('loginDt'));
           vm.$store.commit(Constant.ADD_USER, {
             email: response.data.results[0].email, 
             name: response.data.results[0].name, 
