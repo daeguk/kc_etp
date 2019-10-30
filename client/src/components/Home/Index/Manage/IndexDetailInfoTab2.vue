@@ -267,6 +267,7 @@
 
                         </v-flex>
                         <v-flex xs6>
+                            <PieEtpWeightChart v-if="WeightFlag" :etpWeight="weightResults"></PieEtpWeightChart>
                             <div class="graph_02_w"  id="importance_chart"></div>
                         </v-flex>
                     </v-layout>
@@ -290,6 +291,7 @@ import select from 'datatables.net-select'
 import Config from '@/js/config.js'
 import IndexPerformColumnChart01 from "@/components/common/chart/IndexPerformColumnChart01";
 import IndexPerformColumnChart from "@/components/common/chart/IndexPerformColumnChart";
+import PieEtpWeightChart from "@/components/common/chart/PieEtpWeightChart";
 import MastPopup from "@/components/common/popup/MastPopup";
 
 var perf_table = null;
@@ -325,6 +327,8 @@ export default {
                 'perform_bar05.png'],
             barImgPath: [],     
             chartFlag: 0,       
+            WeightFlag: false,
+            weightResults: [],
         };
     },
   watch: {
@@ -351,6 +355,7 @@ export default {
         IndexPerformColumnChart01 : IndexPerformColumnChart01,
         IndexPerformColumnChart : IndexPerformColumnChart,
         MastPopup : MastPopup,
+        PieEtpWeightChart: PieEtpWeightChart
     },
     computed: {},
     created: function() {
@@ -731,7 +736,8 @@ export default {
                         //console.log("response=" + JSON.stringify(items));
                         this.results = items;
                         this.importance_cnt = this.results.length;
-
+                        this.weightResults = response.data.results;
+                        this.WeightFlag = true;
                         // 차트 호출
 //                        this.importance_chart(items);
                         
