@@ -733,7 +733,7 @@ export default {
                         this.importance_cnt = this.results.length;
 
                         // 차트 호출
-                        this.importance_chart(items);
+//                        this.importance_chart(items);
                         
                         if (importance_grid) {
                             importance_grid.destroy()
