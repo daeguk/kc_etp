@@ -1,10 +1,10 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="800px">
     <v-card flat ma-3>
-      <div class="title01_w">
+      <div class="title01_w case2">
         <v-card-title primary-title>
           <div class="title_wrap01">
-            <h3 class="headline mb-0">
+            <h3 class="headline">
               {{title}}
             </h3>
             <div class="right_btn">
@@ -22,26 +22,26 @@
         </v-card-title>
       </div>
       <div class="table-box-wrap">
-        <div ref="table1" class="table-box" style="max-height:800px;">
+        <div ref="table1" class="table-box" style="max-height:700px;">
         <table class="tbl_type ver8">
           <colgroup>
-            <col width="10%">
-            <col width="40%">
+            <col width="15%">
+            <col width="35%">
             <col width="20%">
             <col width="30%">
           </colgroup>
           <thead>
             <tr>
-              <th style="width:10%" class="txt_center">순위</th>
-              <th style="width:40%" class="txt_center">종목명</th>
-              <th style="width:20%" class="txt_center">종목코드</th>
-              <th style="width:30%" class="txt_center">자금유출입</th>
+              <th style="width:15%">순위</th>
+              <th style="width:35%" class="txt_left">종목명</th>
+              <th style="width:20%" class="txt_right">종목코드</th>
+              <th style="width:30%" class="txt_right">자금유출입</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in itemList" :key="index">
-              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{index+1}}</span></td>
-              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16002}}</span></td>
+              <td ><span :class="{text_hightlight:(item.F16013==curCode)}">{{index+1}}</span></td>
+              <td class="txt_left"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16002}}</span></td>
               <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16013}}</span></td>
               <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{formatInt(Math.floor(item.FLOW))}}</span></td>
             </tr>
