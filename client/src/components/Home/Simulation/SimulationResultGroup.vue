@@ -140,7 +140,6 @@
 
 
 <script>
-
 import $ from "jquery";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
@@ -364,7 +363,7 @@ export default {
                         tbl_result_daily = $("#tbl_result_daily").DataTable(tableObj_daily);
                         tbl_result_daily.rows.add( vm.fn_sort_arr_result_daily01 ).draw();
 
-//                      vm.chartFlag   =   true;
+                        vm.chartFlag   =   true;
                     }
                 });
 
@@ -644,6 +643,7 @@ export default {
                                         vm.arr_result_daily01           =   response.data.arr_result_daily01;
                                         vm.arr_result_daily01_header    =   response.data.arr_result_daily01_header;
 
+                                        vm.chartFlag = true;
                                         resolve( { result : true } );
                                     }
                                 }else{
