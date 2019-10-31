@@ -23,11 +23,7 @@
                 <h4>
                     {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
-<!-- 
-                        <span class="excel_btn">
-                        <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
-                    </span> 
--->
+
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
@@ -44,8 +40,10 @@
                             <!-- <div class="simul_graph"> -->
                                 <LineSimulationChartG    v-if="chartFlag" 
                                 
-                                                        :arr_result_daily="arr_result_daily"
-                                                        :simul_result_mast="simul_result_mast"
+                                                        :arr_result_data    =   "arr_result_daily01"
+                                                        :arr_result_header  =   "arr_result_daily01_header"
+                                                        :arr_checked        =   "arr_checked"
+                                                        :bm_header          =   "bm_header"
                                                         
                                                         @fn_showMessageBox="fn_showMessageBox">
                                 </LineSimulationChartG>
@@ -53,7 +51,25 @@
                                 </div>
                                 <div class="simul_g_r v2" >
                                  <ul>
-                                    <li><span class="rcolor01">●</span> Kospi 200<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
+                                    <li>
+                                        <span class="rcolor01">●</span> 
+                                        {{ bm_header }}
+                                        <span class="checkbox">
+                                            <v-checkbox v-model="arr_checked"  value="bm"></v-checkbox>
+                                        </span>
+                                    </li>
+
+                                    <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
+                                        <span :class="'rcolor' + ( index < 10 ? '0'+index : index ) ">●</span> 
+
+                                        {{ item.scen_name }}
+
+                                        <span class="checkbox">
+                                            <v-checkbox v-model="arr_checked" :value="item.scen_cd"></v-checkbox>
+                                        </span>
+                                    </li>                                    
+
+<!-- 
                                     <li><span class="rcolor02">●</span> Scenario#1<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
                                     <li><span class="rcolor03">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
                                     <li><span class="rcolor04">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
@@ -62,7 +78,8 @@
                                     <li><span class="rcolor07">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
                                     <li><span class="rcolor08">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
                                     <li><span class="rcolor09">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor010">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
+                                    <li><span class="rcolor010">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li> 
+-->
                                 </ul>
                                 </div>
 
@@ -157,11 +174,10 @@ export default {
             ,   simul_result_mast           :   {}
             ,   arr_scen_in_grp             :   []      /* 그룹 내 시나리오 정보 */
 
-            ,   arr_result_daily            :   []
-
                 /* 결과 정보 */
             ,   arr_result_daily01          :   []      /* array 일자별 지수 */
             ,   arr_result_daily01_header   :   []      /* array 일자별 지수 헤더 */
+            ,   arr_checked                 :   []      /* array 체크된 정보 */
 
             ,   arr_result_anal01           :   []      /* array 분석정보 */
             ,   arr_result_anal01_header    :   []      /* array 분석정보 헤더 */
@@ -183,7 +199,7 @@ export default {
 
     created() {
         var vm = this;
-    },
+    },   
 
     computed: {
 
@@ -197,7 +213,12 @@ export default {
             return _.orderBy( vm.arr_result_daily01, [
                 "F12506"
             ], ["desc"]);
-        },
+        },       
+
+        fn_getClass : function( index  ){
+            console.log( "index", index );
+            return 'rcolor' + _.padStart( index+2, 2, '0' );
+        }             
     },
 
     mounted() {
@@ -342,6 +363,8 @@ export default {
 
                         tbl_result_daily = $("#tbl_result_daily").DataTable(tableObj_daily);
                         tbl_result_daily.rows.add( vm.fn_sort_arr_result_daily01 ).draw();
+
+//                      vm.chartFlag   =   true;
                     }
                 });
 
@@ -775,7 +798,11 @@ export default {
                 console.log( e1 );
             });
         },
-    }
+
+        fn_goSimulMod() {
+
+        }        
+    },
     
 };
 </script>

@@ -11,7 +11,7 @@ import Config       from "@/js/config.js"
 import util from "@/js/util.js";
 
 export default {
-  props:[ 'simul_result_mast', 'arr_result_daily'],
+  props:[ 'simul_result_mast', 'arr_result_daily', 'arr_result_data', 'arr_result_header', 'arr_checked', 'bm_header' ],
   data() {
     return {
       canvas:{},
@@ -51,21 +51,15 @@ export default {
     };
   },    
   watch: {
+    'arr_checked': function() {
 
-//     'dmode': function(newDmode) {
-//       // console.log("watch.........dmode: " + newDmode);
-// //      this.drawMode(newDmode);
-//       this.draw_hist(newDmode);
-//     },      
-//     'dterm': function(newDterm) {
-//       // console.log("watch.........dterm: " + newDterm);
-//       this.drawTerm(newDterm);
-//       this.dataInit();
-//     }
-  },
+    }
+  }, 
   created: function() {
   },
   mounted: function() {
+    var vm = this;
+
     // console.log("LineIndexChart..........");
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');

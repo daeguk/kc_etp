@@ -1911,6 +1911,104 @@ var getSimulJongmoForExcel = function(req, res) {
 }
 
 
+/*
+ * 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.
+ * 2019-10-24  bkLove(촤병국)
+ */
+var getSimulResultSaveYn = function(req, res) {
+    try {
+        log.debug('simulationBacktest.getSimulResultSaveYn 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulationBacktest.getSimulResultSaveYn  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.result_save_yn            =   "N";
+
+
+        Promise.using(pool.connect(), conn => {
+
+            try{
+
+                /* 그룹에 속한 시뮬레이션을 조회한다. */
+                stmt = mapper.getStatement('simulationBacktest', 'getSimulResultSaveYn', paramData, format);
+                log.debug(stmt);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        res.json(resultMsg);
+                        res.end();
+
+                        return  false;
+                    }
+
+                    if( rows && rows.length == 1 ) {
+
+                        resultMsg.result            =   true;
+                        resultMsg.result_save_yn    =   rows[0].result_save_yn;
+
+                        res.json(resultMsg);
+                        res.end();
+                    }
+                });
+
+            } catch (err) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+
+                if( !resultMsg.err ) {
+                    resultMsg.err = err;
+                }
+
+                res.json(resultMsg);
+                res.end();
+            }
+
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.result_save_yn            =   "N";
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
 
 /*
 *   일자별 지수에 balance 정보를 설정한다.
@@ -2620,3 +2718,4 @@ module.exports.runBacktest = runBacktest;
 module.exports.saveBacktestResult = saveBacktestResult;
 module.exports.getBacktestResult = getBacktestResult;
 module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
+module.exports.getSimulResultSaveYn = getSimulResultSaveYn;

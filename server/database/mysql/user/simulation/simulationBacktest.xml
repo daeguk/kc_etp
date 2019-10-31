@@ -778,4 +778,44 @@
 
     </select>
 
+
+    <!--
+    *   시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.
+    *   2019-10-31  bkLove(촤병국)
+    -->
+    <select id="getSimulResultSaveYn">
+
+        SELECT      /* simulationBacktest.getSimulResultSaveYn  시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+
+                    CASE    WHEN            /* [시뮬레이션 결과] 테이블 존재 여부 */
+                                            COUNT(
+                                                (
+                                                    SELECT  tm_simul_result.grp_cd
+                                                      FROM  tm_simul_result
+                                                     WHERE  1 = 1
+                                                       AND  tm_simul_result.grp_cd          =   #{grp_cd}           /* 그룹코드(상위코드) */
+                                                       AND  tm_simul_result.scen_cd         =   #{scen_cd}          /* 시나리오코드 */
+                                                     LIMIT  1
+                                                )
+                                            )   =   1
+
+                                    AND     /* [시뮬레이션 일자별 결과] 테이블 존재 여부 */
+                                            COUNT(
+                                                (
+                                                    SELECT  tm_simul_result_daily.grp_cd
+                                                      FROM  tm_simul_result_daily
+                                                     WHERE  1 = 1
+                                                       AND  tm_simul_result_daily.grp_cd    =   #{grp_cd}           /* 그룹코드(상위코드) */
+                                                       AND  tm_simul_result_daily.scen_cd   =   #{scen_cd}          /* 시나리오코드 */
+                                                     LIMIT  1
+                                                )
+                                            )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  result_save_yn
+
+          FROM  DUAL
+
+    </select>
+
 </mapper>
