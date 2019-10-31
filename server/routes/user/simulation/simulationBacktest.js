@@ -1971,6 +1971,7 @@ var getSimulResultSaveYn = function(req, res) {
                     if( rows && rows.length == 1 ) {
 
                         resultMsg.result            =   true;
+                        resultMsg.msg               =   "";
                         resultMsg.result_save_yn    =   rows[0].result_save_yn;
 
                         res.json(resultMsg);

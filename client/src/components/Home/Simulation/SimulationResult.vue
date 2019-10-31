@@ -364,6 +364,7 @@ export default {
             ,   jsonFileName                :   ""
 
             ,   chartFlag                   :   false
+            ,   result_save_yn              :   "N"     /* 결과정보 저장유무 */
 
         };
     },
@@ -449,6 +450,14 @@ export default {
 
                     /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
                     if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+
+                        /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+                        vm.fn_getSimulResultSaveYn( { 
+                                "grp_cd"    :   vm.paramData.grp_cd
+                            ,   "scen_cd"   :   vm.paramData.scen_cd
+                        });
+
+                        /* 백테스트 결과를 조회한다. */
                         vm.fn_getBacktestResult( vm.paramData );
                     }
                     /* 화면으로 부터 결과정보를 받은 경우 */
@@ -459,7 +468,13 @@ export default {
                         ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
                         ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
                         ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
-                    ){                        
+                    ){
+
+                        /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+                        vm.fn_getSimulResultSaveYn( { 
+                                "grp_cd"    :   vm.paramData.simul_mast.grp_cd
+                            ,   "scen_cd"   :   vm.paramData.simul_mast.scen_cd
+                        });                                          
 
                     /*************************************************************************************************************
                     *   array 리밸런스 정보
@@ -2307,7 +2322,76 @@ export default {
             }
 
             vm.$emit( "fn_showSimulation", p_param );
-        }            
+        },
+
+
+        /*
+         * 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.
+         * 2019-10-31  bkLove(촤병국)
+         */
+        async fn_getSimulResultSaveYn( p_param ) {
+            var vm = this;
+
+
+            if( !p_param || !p_param.grp_cd || !p_param.scen_cd ) {
+                console.log( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            return await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getSimulResultSaveYn"
+                            ,   "data"      :   p_param
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
+
+                            try{
+
+                                if (response && response.data) {
+                                    var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
+
+                                    if (!response.data.result) {
+                                        if( arrMsg.length > 0 ) {
+                                            vm.arr_show_error_message.push( ...arrMsg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+
+                                        vm.result_save_yn   =   response.data.result_save_yn;
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },
+
     }
     
 };
