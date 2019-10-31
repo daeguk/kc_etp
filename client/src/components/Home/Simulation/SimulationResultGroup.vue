@@ -25,7 +25,7 @@
                     <span class="sub_t">테스트 결과</span>
 
                     <span class="btn_r">
-                        <v-btn small flat icon v-on:click="fn_goSimulMod()">
+                        <v-btn small flat icon v-on:click="fn_goSimulBack()">
                             <v-icon>reply</v-icon>
                         </v-btn>
                     </span>
@@ -799,9 +799,15 @@ export default {
             });
         },
 
-        fn_goSimulMod() {
+        /*
+         * 시뮬레이션 목록화면으로 이동한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_goSimulBack: function() {
+            var vm = this;
 
-        }        
+            vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
+        }                 
     },
     
 };
