@@ -275,7 +275,11 @@ export default {
                         v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
                         v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
 
+                        vm.arr_checked.push( "bm" );
                         vm.arr_result_daily01_header.forEach(function(item, index, array){
+
+                            vm.arr_checked.push( item.scen_cd );
+
                             v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + item.scen_name + '</th>';
 
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
@@ -308,7 +312,7 @@ export default {
                                         return htm;
                                     }
                                 ,   "targets": ( 2*index ) + 2
-                            });                            
+                            });
                         });
 
 
@@ -383,7 +387,6 @@ export default {
                             info: false, // control table information display field
                             stateSave: true, //restore table state on page reload,
                             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-//                            "scrollY": '680px',
                             paging: false,
                             searching: false,
                             data: [],
