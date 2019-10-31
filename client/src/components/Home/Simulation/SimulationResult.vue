@@ -1948,7 +1948,7 @@ export default {
                             options             =   Object.assign( options, excelInfo.options );
                             vm.fn_setSheetInfo( dataWS, options, excelInfo );
                             excel.utils.sheet_add_json( dataWS, excelInfo.dataInfo, { header: excelInfo.arrHeaderKey , skipHeader : options.skipHeader, origin : options.origin });
-                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );                
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
 
                             resolve( { result : true } );
 
@@ -1980,28 +1980,136 @@ export default {
                                 ,   function(response) {
                                         try{
 
+                                            excelInfo.sheetNm           =   "종목정보";
+
                                             if (response && response.data) {
                                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                                 if (!response.data.result) {
                                                     if( msg ) {
-                                                        vm.fn_showProgress( false );
                                                         resolve( { result : false } );
                                                     }
                                                 }else{
+
+                                                    var arr_excel_jongmok_header    =   response.data.arr_excel_jongmok_header;
+                                                    var arr_excel_jongmok_data      =   response.data.arr_excel_jongmok_data;
+
+                                                    if( !arr_excel_jongmok_header || typeof arr_excel_jongmok_header == "undefined" ) {
+                                                        arr_excel_jongmok_header    =   [];
+                                                    }
+
+                                                    if( !arr_excel_jongmok_data || typeof arr_excel_jongmok_data == "undefined" ) {
+                                                        arr_excel_jongmok_data      =   [];
+                                                    }
+
+
+                                                    var arr_row2    =   [ 
+                                                            {   "col_id"    :   "F15007"            ,   "width" :   12  ,   "title" :   "기준가"        }
+                                                        ,   {   "col_id"    :   "F30700"            ,   "width" :   12  ,   "title" :   "종가"          }
+                                                        ,   {   "col_id"    :   "F16143"            ,   "width" :   12  ,   "title" :   "상장주식수"    }
+                                                        ,   {   "col_id"    :   "TODAY_RATE"        ,   "width" :   25  ,   "title" :   "지수적용비율"  }
+                                                        ,   {   "col_id"    :   "TODAY_IMPORTANCE"  ,   "width" :   25  ,   "title" :   "비중"          }
+                                                    ];
+
+                                                    var v_excel_row_data    =   [];
+
+                                                    if( arr_excel_jongmok_data.length > 0 ) {
+
+                                                        if( arr_excel_jongmok_header.length > 0 ) {
+
+                                                            v_excel_row_data.push( [] );
+                                                            v_excel_row_data.push( [] );
+
+                                                            var v_row_data  =   [];
+                                                            arr_excel_jongmok_data.forEach( function( item, index, array ) {
+                                                                v_row_data  =   [];
+
+                                                                v_row_data.push( item.fmt_F12506 );
+                                                                arr_excel_jongmok_header.forEach( function( item1, index1, array1 ) {
+
+                                                                    if( item1.F16013 && typeof item1.F16013 != "undefined" ) {
+
+                                                                        arr_row2.forEach( function( item2, index2, array2 ) {
+
+                                                                            if( item2.col_id && typeof item2.col_id != "undefined" ) {
+
+                                                                                if( item[ item1.F16013 + "_" + item2.col_id ] && typeof item[ item1.F16013 + "_" + item2.col_id ] != "undefined" ) {
+
+                                                                                    if( [ "F15007", "F30700", "F16143" ].includes( item2.col_id ) ) {
+                                                                                        v_row_data.push( Number( item[ item1.F16013 + "_" + item2.col_id ] ) );
+                                                                                    }else{
+                                                                                        v_row_data.push( item[ item1.F16013 + "_" + item2.col_id ] );
+                                                                                    }
+                                                                                }else{
+                                                                                    v_row_data.push( item[ item1.F16013 + "_" + item2.col_id ] );
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+
+                                                                v_excel_row_data.push( v_row_data );
+                                                            })
+
+                                                        }
+                                                    }
+
+                                                    dataWS = excel.utils.aoa_to_sheet( v_excel_row_data );
+
+
+                                                    var v_arr_cols          =   [];
+                                                    var v_arr_merge_cell    =   [];
+                                                    if( arr_excel_jongmok_header.length > 0 ) {
+                                                        
+                                                        dataWS[ excel.utils.encode_cell( { r : 0, c: 0 } ) ]              =   { t:'s', v: "일자" };
+                                                        v_arr_merge_cell.push({
+                                                                s : { r: 0 , c: 0 }
+                                                            ,   e : { r: 1 , c: 0 }
+                                                        });
+                                                        v_arr_cols.push( { hidden : false, width : 12 } );
+                                                                                                                    
+                                                        for( var i=0; i < arr_excel_jongmok_header.length; i++ ) {
+                                                            var v_header    =   arr_excel_jongmok_header[i];
+
+                                                            dataWS[ excel.utils.encode_cell( { r : 0, c: ( i * arr_row2.length ) + 1 } ) ]          =   { t:'s', v: v_header.F16002 };
+                                                            for( var j=0; j < arr_row2.length; j++ ) {
+                                                                var v_rows2     =   arr_row2[j];
+
+                                                                dataWS[ excel.utils.encode_cell( { r : 1 , c: (i * arr_row2.length) + j + 1 } ) ]   =   { t:'s', v: v_rows2.title };
+
+                                                                v_arr_cols.push( { hidden : false, width : v_rows2.width } );
+                                                            }
+
+                                                            v_arr_merge_cell.push({
+                                                                    s : { r: 0 , c: ( i * arr_row2.length ) + 1 }
+                                                                ,   e : { r: 0 , c: ( i * arr_row2.length ) + arr_row2.length }
+                                                            });
+                                                        }
+
+                                                        dataWS['!merges']   =   v_arr_merge_cell;
+                                                        dataWS['!cols']     =   v_arr_cols;
+                                                    }
+
+
+                                                    dataWS['!ref'] = excel.utils.encode_range({
+                                                        s: { c: 0, r: 0 },
+                                                        e: { c: ( arr_row2.length * arr_excel_jongmok_header.length ), r: v_excel_row_data.length + 2 }
+                                                    });                                                    
+
+
+                                                    excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+
                                                     resolve( { result : true } );
                                                 }
                                             }
 
                                         }catch(ex) {
-                                            vm.fn_showProgress( false );
                                             console.log( "error", ex );
 
                                             resolve( { result : false } );
                                         }
                                     }
                                 ,   function(error) {
-                                        vm.fn_showProgress( false );
                                         console.log( "error", ex );
 
                                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
@@ -2010,7 +2118,6 @@ export default {
                             );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
                             
                             resolve( { result : false } );

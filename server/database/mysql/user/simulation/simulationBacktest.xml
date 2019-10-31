@@ -194,6 +194,8 @@
             ,   F15028_C                        /*비교시총 */
             ,   INDEX_RATE                      /*지수 */
             ,   RETURN_VAL                      /*결과 */
+            ,   BM_RATE                         /*벤치마크 지수 */
+            ,   BM_RETURN                       /*벤치마크 결과 */
 
             ,   reg_id                          /*등록자 ID */
             ,   reg_time                        /*등록시간 */
@@ -214,6 +216,8 @@
             ,   #{data.F15028_C}                /*비교시총 */
             ,   #{data.INDEX_RATE}              /*지수 */
             ,   #{data.RETURN_VAL}              /*결과 */
+            ,   #{data.bm_data01}               /*벤치마크 지수 */
+            ,   #{data.bm_return_data}          /*벤치마크 결과 */
 
             ,   #{user_id}                      /*등록자 ID */
             ,   now()                           /*등록시간 */
@@ -751,6 +755,10 @@
                     tm_simul_result.grp_cd                                              AS  grp_cd                  /* 그룹코드(상위코드) */
                 ,   tm_simul_result.scen_cd                                             AS  scen_cd                 /* 시나리오코드 */
                 ,   tm_simul_result.F12506                                              AS  F12506                  /* 입회일자 */
+                ,   DATE_FORMAT( 
+                            tm_simul_result.F12506
+                        ,   '%Y.%m.%d' 
+                    )                                                                   AS  fmt_F12506              /* 입회일자 */
                 ,   tm_simul_result.F16013                                              AS  F16013                  /* 단축 코드(현금은 KRW로 처리) */
                 
                 ,   tm_simul_result.F15007                                              AS  F15007                  /* 기준가 */

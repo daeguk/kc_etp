@@ -1800,11 +1800,67 @@ var getSimulJongmoForExcel = function(req, res) {
                                 return callback(resultMsg);
                             }
 
-                            if( rows && rows.length > 0 ) {
-                                resultMsg.arr_excel_jongmok_header  =   msg.arr_excel_jongmok_header;
-                                resultMsg.arr_excel_jongmok_data    =   rows;
-                            }                            
 
+                            var arr_result_data     =   [];
+                            if( rows && rows.length > 0 ) {
+
+                                arr_result_data     =   _.uniqBy( rows, "F12506" ).map( function(o) {
+                                    return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
+                                });
+
+
+                                if( msg.arr_excel_jongmok_header && msg.arr_excel_jongmok_header.length > 0 ) {
+
+                                    for( var i=0; i < rows.length; i++ ) {
+                                        var v_header            =   _.findIndex( msg.arr_excel_jongmok_header, { "F16013" : rows[i].F16013  });
+
+                                        if( v_header > -1 ) {
+                                            var v_index         =   _.findIndex( arr_result_data, { "F12506" : rows[i].F12506  });
+                                        }
+
+                                        if( v_index > -1 ) {
+                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F15007" ]             =   rows[i].F15007;             /* 기준가 */
+                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F30700" ]             =   rows[i].F30700;             /* 종가 */
+                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F16143" ]             =   rows[i].F16143;             /* 상장주식수 */
+                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_RATE" ]         =   rows[i].TODAY_RATE;         /* 지수적용비율 */
+                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_IMPORTANCE" ]   =   rows[i].TODAY_IMPORTANCE;   /* 비중 */
+                                        }
+                                    }
+                                }
+
+                                arr_result_data.forEach( function( item, index, array ) {
+                                    msg.arr_excel_jongmok_header.forEach( function( item1, index1, array1 ){
+
+                                        /* 기준가 */
+                                        if( typeof item[ item1.F16013 + "_F15007" ] == "undefined" ) {
+                                            item[ item1.F16013 + "_F15007" ]            =   "";
+                                        }
+
+                                        /* 종가 */
+                                        if( typeof item[ item1.F16013 + "_F30700" ] == "undefined" ) {
+                                            item[ item1.F16013 + "_F30700" ]            =   "";
+                                        }
+
+                                        /* 상장주식수 */
+                                        if( typeof item[ item1.F16013 + "_F16143" ] == "undefined" ) {
+                                            item[ item1.F16013 + "_F16143" ]            =   "";
+                                        }
+
+                                        /* 지수적용비율 */
+                                        if( typeof item[ item1.F16013 + "_TODAY_RATE" ] == "undefined" ) {
+                                            item[ item1.F16013 + "_TODAY_RATE" ]        =   "";
+                                        }
+
+                                        /* 비중 */
+                                        if( typeof item[ item1.F16013 + "_TODAY_IMPORTANCE" ] == "undefined" ) {
+                                            item[ item1.F16013 + "_TODAY_IMPORTANCE" ]  =   "";
+                                        }                                                                                                                                                                
+                                    });
+                                });
+                            }
+
+                            resultMsg.arr_excel_jongmok_header  =   msg.arr_excel_jongmok_header;
+                            resultMsg.arr_excel_jongmok_data    =   arr_result_data;
 
                             callback(null);
                         });

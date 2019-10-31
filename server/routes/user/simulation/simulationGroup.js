@@ -286,6 +286,7 @@ var getSimulDailyInGrpCd = function(req, res) {
 
         resultMsg.arr_result_daily01            =   [];
         resultMsg.arr_result_daily01_header     =   [];
+        resultMsg.bm_header                     =   "BM (N/A)";
 
 
         Promise.using(pool.connect(), conn => {
@@ -332,15 +333,28 @@ var getSimulDailyInGrpCd = function(req, res) {
                         });
 
 
+                        var v_bm_index  =   -1;
                         for( var i=0; i < rows.length; i++ ) {
                             var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd  });
 
                             if( v_header > -1 ) {
                                 var v_index     =   _.findIndex( arr_result_daily, { "F12506" : rows[i].F12506  });
 
+                                if( i==0 ) {
+                                    if(rows[i].bench_index_nm != null ) {
+                                        resultMsg.bm_header =  "BM (" + rows[i].bench_index_nm + ")";
+                                        v_bm_index  =   v_header;
+                                    }
+                                }
+
                                 if( v_index > -1 ) {
                                     arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_INDEX_RATE" ]    =   rows[i].INDEX_RATE;
                                     arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_RETURN_VAL" ]    =   rows[i].RETURN_VAL;
+
+                                    if( v_bm_index == v_header ) {
+                                        arr_result_daily[ v_index ][ "BM_RATE"   ]  =   rows[i].BM_RATE;
+                                        arr_result_daily[ v_index ][ "BM_RETURN" ]  =   rows[i].BM_RETURN;
+                                    }
                                 }
                             }
                         }
@@ -355,6 +369,14 @@ var getSimulDailyInGrpCd = function(req, res) {
                                     item[ item1.scen_cd + "_RETURN_VAL" ]   =   "";
                                 }                                
                             });
+
+                            if( typeof item[ "BM_RATE" ] == "undefined" ) {
+                                item[ "BM_RATE" ]    =   "";
+                            }
+
+                            if( typeof item[ "BM_RETURN" ] == "undefined" ) {
+                                item[ "BM_RETURN" ] =   "";
+                            }                            
                         });
 
                         resultMsg.result                        =   true;
@@ -391,6 +413,7 @@ var getSimulDailyInGrpCd = function(req, res) {
 
         resultMsg.arr_result_daily01            =   [];
         resultMsg.arr_result_daily01_header     =   [];
+        resultMsg.bm_header                     =   "BM (N/A)";
 
         res.json(resultMsg);
         res.end();
@@ -582,7 +605,7 @@ var getSimulAnal02InGrpCd = function(req, res) {
         resultMsg.arr_result_anal           =   [];
         resultMsg.arr_result_anal_header    =   [];
 
-        resultMsg.bm_header                 =   "";
+        resultMsg.bm_header                 =   "BM (N/A)";
 
         var arr_result_anal                 =   [];
         var arr_result_anal_header          =   [];
@@ -626,8 +649,6 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
 
                         var v_bm_index  =   -1;
-
-                        resultMsg.bm_header         =   "BM (N/A)";
                         for( var i=0; i < rows.length; i++ ) {
                             var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd  });
 

@@ -23,9 +23,11 @@
                 <h4>
                     {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
-                    <span class="excel_btn">
+<!-- 
+                        <span class="excel_btn">
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
-                    </span>
+                    </span> 
+-->
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
@@ -288,6 +290,43 @@ export default {
                             });                            
                         });
 
+
+                        v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + vm.bm_header + '</th>';
+
+                        v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
+                        v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
+
+                        v_arr_show_column.push( { "data":  "BM_RATE"    , "orderable": false, 'className': 'dt-body-right' } );
+                        v_arr_show_column.push( { "data":  "BM_RETURN"  , "orderable": false, 'className': 'dt-body-right' } );
+
+                        v_arr_show_columnDef.push({  
+                                "render": function ( data, type, row ) {
+                                    let htm = ""
+                                
+                                    if( typeof data != "undefined" && data != null && data != "" ) {
+                                        htm += "<div>" + util.formatNumber(data) + "</div>";
+                                    }
+
+                                    return htm;
+                                }
+                            ,   "targets": v_arr_show_column.length-2
+                        });
+
+                        v_arr_show_columnDef.push({  
+                                "render": function ( data, type, row ) {
+                                    let htm = ""
+                                
+                                    if( typeof data != "undefined" && data != null && data != "" ) {
+                                        htm += "<div>" + util.formatNumber(data * 100) + " %</div>";
+                                    }
+
+                                    return htm;
+                                }
+                            ,   "targets": v_arr_show_column.length-1
+                        });                        
+
+                        v_daily_tr01.html( v_daily_tr01_html );                        
+
                         v_daily_tr01.html( v_daily_tr01_html );
                         v_daily_tr02.html( v_daily_tr02_html );
 
@@ -295,7 +334,6 @@ export default {
                             $("#tbl_result_daily").attr( "style", "width: 1500px; table-layout: fixed;" );
                             tableObj_daily.scrollX = true;
                         } else {
-//                            $("#tbl_result_daily").attr("style", "width: 100%; ");
                             tableObj_daily.scrollX = "100%";
                         }
 
@@ -379,7 +417,6 @@ export default {
                                 $("#tbl_result_anal01").attr( "style", "width: 1500px; table-layout: fixed;" );
                                 tableObj_anal01.scrollX = true;
                             } else {
-//                              $("#tbl_result_anal01").attr("style", "width: 100%; ");
                                 tableObj_anal01.scrollX = "100%";
                             }
 
@@ -482,7 +519,6 @@ export default {
                                 $("#tbl_result_anal02").attr( "style", "width: 1500px; table-layout: fixed;" );
                                 tableObj_anal02.scrollX = true;
                             } else {
-//                                $("#tbl_result_anal02").attr("style", "width: 100%; ");
                                 tableObj_anal02.scrollX = "100%";
                             }
 
