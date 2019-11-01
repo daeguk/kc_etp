@@ -50,7 +50,24 @@
                             <!-- </div> -->
                                 </div>
                                 <div class="simul_g_r v2" >
-                                 <ul>
+
+
+                                 <ul v-if="bm_header=='BM (N/A)'" >
+
+                                    <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
+                                        <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
+
+                                        {{ item.scen_name }}
+
+                                        <span class="checkbox">
+                                            <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
+                                        </span>
+                                    </li>
+
+                                </ul>
+
+                                 <ul v-if="bm_header!='BM (N/A)'" >
+
                                     <li>
                                         <span class="rcolor01">●</span> 
                                         {{ bm_header }}
@@ -67,19 +84,8 @@
                                         <span class="checkbox">
                                             <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
                                         </span>
-                                    </li>                                    
-
-<!-- 
-                                    <li><span class="rcolor02">●</span> Scenario#1<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor03">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor04">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor05">●</span> Kospi 200<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor06">●</span> Scenario#1<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor07">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor08">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor09">●</span> My Test scenario<span class="checkbox"><v-checkbox value></v-checkbox></span></li>
-                                    <li><span class="rcolor010">●</span> Scenario#2<span class="checkbox"><v-checkbox value></v-checkbox></span></li> 
--->
+                                    </li>
+                                    
                                 </ul>
                                 </div>
 
@@ -274,7 +280,10 @@ export default {
                         v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
                         v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
 
-                        vm.arr_checked.push( true );
+                        if( vm.bm_header != 'BM (N/A)' ) {
+                            vm.arr_checked.push( true );
+                        }
+
                         vm.arr_result_daily01_header.forEach(function(item, index, array){
 
                             vm.arr_checked.push( true );
@@ -646,7 +655,7 @@ export default {
                                         vm.arr_result_daily01           =   response.data.arr_result_daily01;
                                         vm.arr_result_daily01_header    =   response.data.arr_result_daily01_header;
 
-                                        vm.chartFlag = true;
+//                                        vm.chartFlag = true;
                                         resolve( { result : true } );
                                     }
                                 }else{
