@@ -294,8 +294,8 @@ export default {
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
 
-                            v_arr_show_column.push( { "data": item.scen_cd + "_INDEX_RATE"  , "orderable": false, 'className': 'dt-body-right' } );
-                            v_arr_show_column.push( { "data": item.scen_cd + "_RETURN_VAL"  , "orderable": false, 'className': 'dt-body-right' } );
+                            v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_INDEX_RATE"  , "orderable": false, 'className': 'dt-body-right' } );
+                            v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_RETURN_VAL"  , "orderable": false, 'className': 'dt-body-right' } );
 
                             v_arr_show_columnDef.push({  
                                     "render": function ( data, type, row ) {
@@ -515,7 +515,7 @@ export default {
 
                             vm.arr_result_anal02_header.forEach(function(item, index, array){
                                 v_daily_tr01_html   +=  '<th class="txt_right" width="120">' + item.scen_name + '</th>';
-                                v_arr_show_column.push( { "data": item.scen_cd, "orderable": false, 'className': 'dt-body-right' } );
+                                v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd, "orderable": false, 'className': 'dt-body-right' } );
                                 v_arr_show_columnDef.push({  
                                         "render": function ( data, type, row ) {
                                             let htm = ""
