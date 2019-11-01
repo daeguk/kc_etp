@@ -60,7 +60,7 @@
                                     </li>
 
                                     <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                        <span :class="'rcolor' + ( index < 10 ? '0'+index : index ) ">●</span> 
+                                        <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
 
                                         {{ item.scen_name }}
 
