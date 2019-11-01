@@ -382,7 +382,7 @@ export default {
         // 툴팁 박스 그리기
         if(wpos + tt_wlen >= this.crect.x2) twpos -= (tt_wlen + 20);
         c.fillStyle = "#FFFDE7";
-
+        
         c.fillRect(twpos+100, hpos+20, tt_wlen, tt_hlen-10 + (this.arr_checked.length * 12));
 
         // 툴팁 텍스트 그리기
