@@ -652,6 +652,7 @@ export default {
                                         resolve( { result : false } );
                                     }else{
 
+                                        vm.bm_header                    =   response.data.bm_header;
                                         vm.arr_result_daily01           =   response.data.arr_result_daily01;
                                         vm.arr_result_daily01_header    =   response.data.arr_result_daily01_header;
 
