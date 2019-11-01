@@ -147,13 +147,13 @@ export default {
         //   val = item.F15001;
         //   val1 = item.iF15001;
 
-          if (vm.bm_header != "BM (N/A)") {
-            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? 1000 : _.get(item, 'BM_RATE')));
+          if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
+            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? '-' : _.get(item, 'BM_RATE')));
           }
           vm.arr_result_header.forEach(function(scen, x) {
             let scen_cd = scen.scen_cd;
             
-            let val =_.get(item, scen.scen_cd + '_INDEX_RATE') == '' ? 1000 : _.get(item, scen.scen_cd + '_INDEX_RATE');
+            let val =_.get(item, scen.scen_cd + '_INDEX_RATE') == '' ? '-' : _.get(item, scen.scen_cd + '_INDEX_RATE');
 
             arr_val.push(Number(val));
            
@@ -248,15 +248,17 @@ export default {
 
             vm.sArr.forEach(function(item, index) {
               // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-              _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-              _hpos = vm.crect.y1 + (vm.hlen - ((item.vv[idx] - minVal) / diffVal * vm.hlen)) ;
-              vm.chartDataPosArr[index] = _wpos;
-              vm.chartDataHPosArr[index] = _hpos;
+              if (item.vv[idx] != "-") {
+                _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+                _hpos = vm.crect.y1 + (vm.hlen - ((item.vv[idx] - minVal) / diffVal * vm.hlen)) ;
+                vm.chartDataPosArr[index] = _wpos;
+                vm.chartDataHPosArr[index] = _hpos;
 
-              if(index == 0) {
-                c.moveTo(_wpos, _hpos);
-              }else {
-                c.lineTo(_wpos, _hpos);
+                if(index == 0) {
+                  c.moveTo(_wpos, _hpos);
+                }else {
+                  c.lineTo(_wpos, _hpos);
+                }
               }
             });             
             c.stroke();
@@ -397,7 +399,7 @@ export default {
         var cal_hpos = hpos+43;
         vm.arr_checked.forEach(function(check_array, idx) {
           if (check_array) {
-            if (vm.bm_header != "BM (N/A)") {
+            if (vm.bm_header != "BM (N/A)" || vm.bm_header != "") {
               if (idx == 0) {              
                 c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
               } else {
