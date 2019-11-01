@@ -153,7 +153,7 @@ export default {
           vm.arr_result_header.forEach(function(scen, x) {
             let scen_cd = scen.scen_cd;
             
-            let val =_.get(item, scen.scen_cd + '_INDEX_RATE') == '' ? '-' : _.get(item, scen.scen_cd + '_INDEX_RATE');
+            let val =_.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE') == '' ? '-' : _.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE');
 
             arr_val.push(Number(val));
            
