@@ -77,10 +77,14 @@
                                     </li>
 
                                     <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
+                                       
                                         <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
-
-                                        {{ fn_cutByte( item.scen_name, 28 ) }}
-
+                                        <!--툴팁추가 v-tooltip bottom>
+                                            <template v-slot:activator="{ on }">
+                                            <span dark v-on="on"-->{{ fn_cutByte( item.scen_name, 28 ) }}<!--/span>
+                                            </template>
+                                             <span>DeepSearch_혼합50_동일가중동일가중testtesttesttest</span>
+                                        </v-tooltip-->
                                         <span class="checkbox">
                                             <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
                                         </span>
