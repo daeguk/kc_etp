@@ -328,7 +328,7 @@ var getSimulDailyInGrpCd = function(req, res) {
                             return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
                         });
 
-                        var arr_result_daily_header     =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                        var arr_result_daily_header     =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
                             return  { "grp_cd" : o.grp_cd , "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
@@ -497,7 +497,7 @@ var getSimulAnal01InGrpCd = function(req, res) {
 
                     if( rows && rows.length > 0 ) {
 
-                        arr_result_anal             =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                        arr_result_anal             =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
                             return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
@@ -654,7 +654,7 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
                         arr_result_anal         =   _.orderBy( arr_result_anal, [ "show_order_no" ], [ "asc" ] );
 
-                        arr_result_anal_header  =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                        arr_result_anal_header  =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
                             return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
