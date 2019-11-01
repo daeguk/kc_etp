@@ -328,14 +328,14 @@ var getSimulDailyInGrpCd = function(req, res) {
                             return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
                         });
 
-                        var arr_result_daily_header     =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        var arr_result_daily_header     =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd , "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
 
                         var v_bm_index  =   -1;
                         for( var i=0; i < rows.length; i++ ) {
-                            var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd  });
+                            var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd  });
 
                             if( v_header > -1 ) {
                                 var v_index     =   _.findIndex( arr_result_daily, { "F12506" : rows[i].F12506  });
@@ -348,8 +348,20 @@ var getSimulDailyInGrpCd = function(req, res) {
                                 }
 
                                 if( v_index > -1 ) {
-                                    arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_INDEX_RATE" ]    =   rows[i].INDEX_RATE;
-                                    arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_RETURN_VAL" ]    =   rows[i].RETURN_VAL;
+
+                                    arr_result_daily[ v_index ][ 
+                                            arr_result_daily_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_daily_header[v_header].scen_cd 
+                                        +   "_INDEX_RATE" 
+                                    ]    =   rows[i].INDEX_RATE;
+
+                                    arr_result_daily[ v_index ][ 
+                                            arr_result_daily_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_daily_header[v_header].scen_cd 
+                                        +   "_RETURN_VAL" 
+                                    ]    =   rows[i].RETURN_VAL;
 
                                     if( v_bm_index == v_header ) {
                                         arr_result_daily[ v_index ][ "BM_RATE"   ]  =   rows[i].BM_RATE;
@@ -361,20 +373,20 @@ var getSimulDailyInGrpCd = function(req, res) {
 
                         arr_result_daily.forEach( function( item, index, array ) {
                             arr_result_daily_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
-                                    item[ item1.scen_cd + "_INDEX_RATE" ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ]   =   "";
                                 }
 
-                                if( typeof item[ item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
-                                    item[ item1.scen_cd + "_RETURN_VAL" ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ]   =   "";
                                 }                                
                             });
 
-                            if( typeof item[ "BM_RATE" ] == "undefined" ) {
+                            if( typeof item[ "BM_RATE" ] == "undefined" || item[ "BM_RATE" ] == 0 ) {
                                 item[ "BM_RATE" ]    =   "";
                             }
 
-                            if( typeof item[ "BM_RETURN" ] == "undefined" ) {
+                            if( typeof item[ "BM_RETURN" ] == "undefined" || item[ "BM_RETURN" ] == 0 ) {
                                 item[ "BM_RETURN" ] =   "";
                             }                            
                         });
@@ -485,8 +497,8 @@ var getSimulAnal01InGrpCd = function(req, res) {
 
                     if( rows && rows.length > 0 ) {
 
-                        arr_result_anal             =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        arr_result_anal             =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
                         arr_result_anal_header      =   _.uniqBy( rows, "title_anal_id" ).map( function(o) {
@@ -500,7 +512,7 @@ var getSimulAnal01InGrpCd = function(req, res) {
                             var v_header            =   _.findIndex( arr_result_anal_header, { "anal_id" : rows[i].title_anal_id  });
 
                             if( v_header > -1 ) {
-                                var v_index         =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd  });
+                                var v_index         =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
 
                                 var analData        =   "";
 
@@ -642,15 +654,15 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
                         arr_result_anal         =   _.orderBy( arr_result_anal, [ "show_order_no" ], [ "asc" ] );
 
-                        arr_result_anal_header  =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        arr_result_anal_header  =   _.uniqBy( rows, "scen_cd", "scen_name", "grp_cd" ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
 
 
                         var v_bm_index  =   -1;
                         for( var i=0; i < rows.length; i++ ) {
-                            var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd  });
+                            var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
 
                             if( v_header > -1 ) {
                                 var v_index         =   _.findIndex( arr_result_anal, { "anal_id" : rows[i].anal_id  });
@@ -693,7 +705,11 @@ var getSimulAnal02InGrpCd = function(req, res) {
                                 }                                
 
                                 if( v_index > -1 ) {
-                                    arr_result_anal[ v_index ][ arr_result_anal_header[v_header].scen_cd ]      =   analData;
+                                    arr_result_anal[ v_index ][ 
+                                            arr_result_anal_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_anal_header[v_header].scen_cd 
+                                    ]      =   analData;
 
                                     if( v_bm_index == v_header ) {
                                         arr_result_anal_bm[ v_index ]       =   v_bm_data;
@@ -704,8 +720,8 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
                         arr_result_anal.forEach( function( item, index, array ) {
                             arr_result_anal_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.scen_cd ] == "undefined" ) {
-                                    item[ item1.scen_cd ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd ]   =   "";
                                 }
                             });
 
