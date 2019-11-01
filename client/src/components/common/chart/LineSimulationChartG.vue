@@ -49,11 +49,14 @@ export default {
       yAxisVal:[],
       xAxisDd:[],
       xAxisTt:[],
+      lineColor1:["#becbd2", "#97cbe1", "#36adfa", "#186391", "#b8b8b8", "#7b92a9", "#313f55", "#ffca7c", "#c0783f", "#f8ca3d", "#C5E1A5"],
+      lineColor2:["#b9e0f7", "#72cdf4", "#1e99e8", "#0076be", "#dcddde", "#B6B8BA", "#7E8083", "#FBB040", "#F58025", "#EDED8A", "#85c406"],
     };
   },    
   watch: {
-    'arr_checked': function() {
 
+    'arr_checked': function() {
+      this.draw_hist( this.dmode );
     }
   }, 
   created: function() {
@@ -72,7 +75,6 @@ export default {
 //    this.ydifflen = (this.crect.y2 - this.crect.y1) / 6;
     // console.log("ydifflen : " + this.ydifflen);
 
-    
     this.drawInit();
     this.dataInit();
   },
@@ -145,25 +147,21 @@ export default {
         //   val = item.F15001;
         //   val1 = item.iF15001;
 
-
+          if (vm.bm_header != "BM (N/A)") {
+            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? 1000 : _.get(item, 'BM_RATE')));
+          }
           vm.arr_result_header.forEach(function(scen, x) {
             let scen_cd = scen.scen_cd;
             
-            let val =_.get(item, scen.scen_cd + '_INDEX_RATE') == '' ? 0 : _.get(item, scen.scen_cd + '_INDEX_RATE');
+            let val =_.get(item, scen.scen_cd + '_INDEX_RATE') == '' ? 1000 : _.get(item, scen.scen_cd + '_INDEX_RATE');
 
             arr_val.push(Number(val));
            
           });
 
-
-          arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? 0 : _.get(item, 'BM_RATE')));
-
-         
           if(index == 0) {
             arr_baseVal = [...arr_val];
 
-            //baseVal = val; baseVal1 = val1;
-            //curRate = 0.0; curRate1 = 0.0;
             maxRate = 0.0; minRate = 0.0;
 
 
@@ -193,14 +191,10 @@ export default {
             minRate = _.min(arr_curRate) > minRate ? minRate : _.min(arr_curRate);       
           }
       
-//          sdata.dd = item.F12506;
           sdata.dd = item.fmt_F12506;
-          //sdata.vv = [...arr_val];          
-          //sdata.ivv = [...arr_val];         
-          sdata.vv = arr_val[0];          
-          sdata.ivv = arr_val[1];          
-          sdata.rate = arr_curRate[0];
-          sdata.irate = arr_curRate[1];
+          sdata.vv = [...arr_val];
+          sdata.rate = [...arr_curRate];
+
           vm.sArr.push(sdata);
         });
 
@@ -212,10 +206,6 @@ export default {
         diffRate = maxRate - minRate;
         stepRate = diffRate / 6;
 
-// console.log("maxRate : " + maxRate);
-// console.log("minRate : " + minRate);
-// console.log("diffRate : " + diffRate);
-// console.log("stepRate : " + stepRate);
 
 
         // Y Axis 데이터 
@@ -237,58 +227,41 @@ export default {
         }
 
         c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);   
 
-        // ETP 차트 그리기
-        c.beginPath();
-        var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#C5E1A5");
-        grd.addColorStop(1, "#85c406");
+        
+        // 시나리오 차트 그리기
+        vm.arr_checked.forEach(function(check_array, idx) {
 
-        c.lineWidth = 1;
-        c.setLineDash([]);
-        c.strokeStyle = grd ;
+          if (check_array) {
+            c.beginPath();
+            var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
+            grd.addColorStop(0, vm.lineColor1[idx]);
+            grd.addColorStop(1, vm.lineColor2[idx]);
 
-        vm.chartDataPosArr = [];
-        vm.chartDataHPosArr = [];        
+            c.lineWidth = 1;
+            c.setLineDash([]);
+            c.strokeStyle = grd ;
 
-        vm.sArr.forEach(function(item, index) {
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr[index] = _wpos;
-          vm.chartDataHPosArr[index] = _hpos;
+            vm.chartDataPosArr = [];
+            vm.chartDataHPosArr = [];        
 
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
+            vm.sArr.forEach(function(item, index) {
+              // _dnum - 1 : 오른쪽 마지막 픽셀 표현
+              _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+              _hpos = vm.crect.y1 + (vm.hlen - ((item.vv[idx] - minVal) / diffVal * vm.hlen)) ;
+              vm.chartDataPosArr[index] = _wpos;
+              vm.chartDataHPosArr[index] = _hpos;
+
+              if(index == 0) {
+                c.moveTo(_wpos, _hpos);
+              }else {
+                c.lineTo(_wpos, _hpos);
+              }
+            });             
+            c.stroke();
           }
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
-        c.stroke();
-
-        // INDEX 차트 그리기
-        c.beginPath();
-        grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#b8b8b8");
-        grd.addColorStop(1, "#8c8c8c");
-        c.strokeStyle = grd ;
-        vm.sArr.forEach(function(item, index) {        
-          // console.log("draw_mintra... : " + index);
-          // console.log(item);
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.ivv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr1[index] = _wpos;
-          vm.chartDataHPosArr1[index] = _hpos;
-
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
-          }
-        });
-        c.stroke();
 
         //Y-Axis 그리기
         c.fillStyle = "#424242";
@@ -313,12 +286,6 @@ export default {
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
 
       },
-
-
-
-
-
-
 
 
 
@@ -390,7 +357,7 @@ export default {
         c.font = '11px san-serif';
 
         c.fillText(item.dd, twpos+tt_wlen, hpos+31);
-        c.fillText( util.formatNumber( item.vv ), twpos+tt_wlen, hpos+43);
+        c.fillText( util.formatNumber( item.vv[0] ), twpos+tt_wlen, hpos+43);
 
         // 포인트 원 그리기
         if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지
@@ -405,8 +372,9 @@ export default {
       // Multi Chart Tool Tip
       drawMToolTip: function(wpos, hpos) {
         var c = this.ctx;
+        var vm = this;
         var twpos = wpos;
-        var tt_wlen = 100;
+        var tt_wlen = 200;
         var tt_hlen = 50;
         var item = {};
         var dhpos = 0;
@@ -414,8 +382,8 @@ export default {
         // 툴팁 박스 그리기
         if(wpos + tt_wlen >= this.crect.x2) twpos -= (tt_wlen + 20);
         c.fillStyle = "#FFFDE7";
-
-        c.fillRect(twpos+10, hpos+20, tt_wlen, tt_hlen-10);
+        
+        c.fillRect(twpos+100, hpos+20, tt_wlen, tt_hlen-10 + (this.arr_checked.length * 12));
 
         // 툴팁 텍스트 그리기
         item = this.getDataByPos(wpos);
@@ -425,8 +393,24 @@ export default {
         c.font = '11px Roboto, sans-serif, Noto-Sans';
 
         c.fillText(item.dd, twpos+tt_wlen, hpos+31);
-        c.fillText("Index : " + util.formatNumber( item.vv ), twpos+tt_wlen, hpos+43);
-        c.fillText("BM : " + util.formatNumber( item.ivv ), twpos+tt_wlen, hpos+55);
+
+        var cal_hpos = hpos+43;
+        vm.arr_checked.forEach(function(check_array, idx) {
+          if (check_array) {
+            if (vm.bm_header != "BM (N/A)") {
+              if (idx == 0) {              
+                c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              } else {
+                
+                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + ".."+[idx]+": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              }
+            } else {
+              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + ".."+[idx]+": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+            }
+            
+            cal_hpos += 12;
+          }
+        });
 
         // 포인트 원 그리기
         if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지
