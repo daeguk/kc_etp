@@ -185,9 +185,9 @@ module.exports = {
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'              , method: 'uploadPortfolio'                 , session: 'check', type: 'post' },     // 포트폴리오 업로드
 
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getScenInGrpCd'               , method: 'getScenInGrpCd'                  , session: 'check', type: 'post' },     // 그룹코드에 속한 시나리오 조회
-        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulDailyInGrpCd'         , method: 'getSimulDailyInGrpCd'            , session: 'check', type: 'post' },     // 그룹코드에 속한 일자별지수 조회
-        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal01InGrpCd'        , method: 'getSimulAnal01InGrpCd'           , session: 'check', type: 'post' },     // 그룹코드에 속한 분석정보 01 조회
-        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal02InGrpCd'        , method: 'getSimulAnal02InGrpCd'           , session: 'check', type: 'post' },     // 그룹코드에 속한 분석정보 02 조회
+        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulDailyInArrCd'         , method: 'getSimulDailyInArrCd'            , session: 'check', type: 'post' },     // 코드에 속한 일자별지수 조회
+        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal01InArrCd'        , method: 'getSimulAnal01InArrCd'           , session: 'check', type: 'post' },     // 코드에 속한 분석정보 01 조회
+        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal02InArrCd'        , method: 'getSimulAnal02InArrCd'           , session: 'check', type: 'post' },     // 코드에 속한 분석정보 02 조회
 
 
 

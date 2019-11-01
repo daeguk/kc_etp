@@ -261,14 +261,13 @@ export default {
         });
 
 
-        /* 그룹코드에 속한 일자별 지수를 조회한다. */
+        /* 코드에 속한 일자별 지수를 조회한다. */
         async function step1() {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_getSimulDailyInGrpCd({ 
-                        "grp_cd"            :   vm.simul_result_mast.scen_cd
-                    ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp 
+                vm.fn_getSimulDailyInArrCd({ 
+                    "arr_scen_in_grp"   :   vm.arr_scen_in_grp
                 }).then(function(e1){
 
                     if( e1 && e1.result ) {
@@ -425,14 +424,13 @@ export default {
             });
         }
 
-        /* 그룹코드에 속한 분석정보 01 을 조회한다. */
+        /* 코드에 속한 분석정보 01 을 조회한다. */
         async function step2() {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_getSimulAnal01InGrpCd({
-                        "grp_cd"            :   vm.simul_result_mast.scen_cd
-                    ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp
+                vm.fn_getSimulAnal01InArrCd({
+                    "arr_scen_in_grp"   :   vm.arr_scen_in_grp
                 }).then(function(e1){
 
                     if( e1 && e1.result ) {
@@ -529,14 +527,13 @@ export default {
         }
 
 
-        /* 그룹코드에 속한 분석정보 02 를 조회한다. */
+        /* 코드에 속한 분석정보 02 를 조회한다. */
         async function  step3() {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_getSimulAnal02InGrpCd({ 
-                        "grp_cd"            :   vm.simul_result_mast.scen_cd
-                    ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp 
+                vm.fn_getSimulAnal02InArrCd({ 
+                    "arr_scen_in_grp"   :   vm.arr_scen_in_grp 
                 }).then(function(e1){
 
                     if( e1 && e1.result ) {
@@ -699,10 +696,10 @@ export default {
         },
 
         /*
-         * 그룹코드에 속한 일자별 지수를 조회한다.
+         * 코드에 속한 일자별 지수를 조회한다.
          * 2019-08-14  bkLove(촤병국)
          */
-        async fn_getSimulDailyInGrpCd( p_param={ grp_cd : "", arr_scen_in_grp : [] }  ) {
+        async fn_getSimulDailyInArrCd( p_param={ grp_cd : "", arr_scen_in_grp : [] }  ) {
             var vm = this;
 
             vm.arr_show_error_message       =   [];
@@ -716,7 +713,7 @@ export default {
 
                 util.axiosCall(
                         {
-                                "url"       :   Config.base_url + "/user/simulation/getSimulDailyInGrpCd"
+                                "url"       :   Config.base_url + "/user/simulation/getSimulDailyInArrCd"
                             ,   "data"      :   p_param
                             ,   "method"    :   "post"
                         }
@@ -766,10 +763,10 @@ export default {
         },
 
         /*
-         * 그룹코드에 속한 분석정보 01 을 조회한다.
+         * 코드에 속한 분석정보 01 을 조회한다.
          * 2019-08-14  bkLove(촤병국)
          */
-        async fn_getSimulAnal01InGrpCd( p_param={ grp_cd : "", arr_scen_in_grp : [] } ) {
+        async fn_getSimulAnal01InArrCd( p_param={ grp_cd : "", arr_scen_in_grp : [] } ) {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
@@ -780,7 +777,7 @@ export default {
 
                 util.axiosCall(
                         {
-                                "url"       :   Config.base_url + "/user/simulation/getSimulAnal01InGrpCd"
+                                "url"       :   Config.base_url + "/user/simulation/getSimulAnal01InArrCd"
                             ,   "data"      :   p_param
                             ,   "method"    :   "post"
                         }
@@ -831,10 +828,10 @@ export default {
         },
 
         /*
-         * 그룹코드에 속한 분석정보 02 를 조회한다.
+         * 코드에 속한 분석정보 02 를 조회한다.
          * 2019-08-14  bkLove(촤병국)
          */
-        async fn_getSimulAnal02InGrpCd( p_param={ grp_cd : "", arr_scen_in_grp : [] } ) {
+        async fn_getSimulAnal02InArrCd( p_param={ grp_cd : "", arr_scen_in_grp : [] } ) {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
@@ -845,7 +842,7 @@ export default {
 
                 util.axiosCall(
                         {
-                                "url"       :   Config.base_url + "/user/simulation/getSimulAnal02InGrpCd"
+                                "url"       :   Config.base_url + "/user/simulation/getSimulAnal02InArrCd"
                             ,   "data"      :   p_param
                             ,   "method"    :   "post"
                         }
