@@ -57,7 +57,7 @@
                                     <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
                                         <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
 
-                                        {{ item.scen_name }}
+                                        {{ fn_cutByte( item.scen_name, 28 ) }}
 
                                         <span class="checkbox">
                                             <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
@@ -79,7 +79,7 @@
                                     <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
                                         <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
 
-                                        {{ item.scen_name }}
+                                        {{ fn_cutByte( item.scen_name, 28 ) }}
 
                                         <span class="checkbox">
                                             <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
@@ -819,7 +819,33 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
-        }                 
+        },
+
+        /*
+         * 문자열을 길이만큼 자른다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_cutByte( str, len) {
+
+            var count = 0;
+            
+            for(var i = 0; i < str.length; i++) {
+                if(escape(str.charAt(i)).length >= 4)
+                    count += 2;
+                else
+                    if(escape(str.charAt(i)) != "%0D")
+                        count++;
+
+                if(count >  len) {
+                    if(escape(str.charAt(i)) == "%0A")
+                        i--;
+                    break;		
+                }
+            }
+            
+            return str.substring(0, i);
+
+        }
     },
     
 };
