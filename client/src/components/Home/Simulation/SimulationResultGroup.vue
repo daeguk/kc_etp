@@ -55,7 +55,7 @@
                                         <span class="rcolor01">●</span> 
                                         {{ bm_header }}
                                         <span class="checkbox">
-                                            <v-checkbox v-model="arr_checked"  value="bm"></v-checkbox>
+                                            <v-checkbox v-model="arr_checked[0]" key="bm"  checked="true" unchecked="false"></v-checkbox>
                                         </span>
                                     </li>
 
@@ -65,7 +65,7 @@
                                         {{ item.scen_name }}
 
                                         <span class="checkbox">
-                                            <v-checkbox v-model="arr_checked" :value="item.scen_cd"></v-checkbox>
+                                            <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
                                         </span>
                                     </li>                                    
 
@@ -274,10 +274,10 @@ export default {
                         v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
                         v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
 
-                        vm.arr_checked.push( "bm" );
+                        vm.arr_checked.push( true );
                         vm.arr_result_daily01_header.forEach(function(item, index, array){
 
-                            vm.arr_checked.push( item.scen_cd );
+                            vm.arr_checked.push( true );
 
                             v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + item.scen_name + '</th>';
 
