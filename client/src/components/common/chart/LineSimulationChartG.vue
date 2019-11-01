@@ -248,7 +248,7 @@ export default {
 
             vm.sArr.forEach(function(item, index) {
               // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-              if (item.vv[idx] != "-") {
+              if (!isNaN(item.vv[idx])) {
                 _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
                 _hpos = vm.crect.y1 + (vm.hlen - ((item.vv[idx] - minVal) / diffVal * vm.hlen)) ;
                 vm.chartDataPosArr[index] = _wpos;
@@ -385,7 +385,7 @@ export default {
         if(wpos + tt_wlen >= this.crect.x2) twpos -= (tt_wlen + 20);
         c.fillStyle = "#FFFDE7";
         
-        c.fillRect(twpos+100, hpos+20, tt_wlen, tt_hlen-10 + (this.arr_checked.length * 12));
+        c.fillRect(twpos+10, hpos+20, tt_wlen, tt_hlen-10 + (this.arr_checked.length * 12));
 
         // 툴팁 텍스트 그리기
         item = this.getDataByPos(wpos);
@@ -402,13 +402,13 @@ export default {
             
             if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
               if (idx == 0) {              
-                c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+                c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
               } else {
                 
-                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + "_("+idx+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + "_("+idx+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
               }
             } else {
-              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + "_("+(idx+1)+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + "_("+(idx+1)+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
             }
             
             cal_hpos += 12;
