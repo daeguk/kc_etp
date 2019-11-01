@@ -49,48 +49,59 @@
                                 </LineSimulationChartG>
                             <!-- </div> -->
                                 </div>
+
                                 <div class="simul_g_r v2" >
 
+                                    <ul v-if="bm_daily_header=='BM (N/A)'" >
+                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
+                                            <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
 
-                                 <ul v-if="bm_daily_header=='BM (N/A)'" >
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on }">
+                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                                </template>
+                                                <span>{{ item.scen_name }}</span>
+                                            </v-tooltip>
 
-                                    <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                        <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
+                                            <span class="checkbox">
+                                                <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
+                                            </span>
+                                        </li>
+                                    </ul>
 
-                                        {{ fn_cutByte( item.scen_name, 28 ) }}
 
-                                        <span class="checkbox">
-                                            <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                        </span>
-                                    </li>
+                                    <ul v-if="bm_daily_header!='BM (N/A)'" >
+                                        <li>
+                                            <span class="rcolor01">●</span> 
 
-                                </ul>
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on }">
+                                                    <span dark v-on="on">{{ fn_cutByte( bm_daily_header, 28 ) }}</span>
+                                                </template>
+                                                <span>{{ bm_daily_header }}</span>
+                                            </v-tooltip>
 
-                                 <ul v-if="bm_daily_header!='BM (N/A)'" >
+                                            <span class="checkbox">
+                                                <v-checkbox v-model="arr_checked[0]" key="bm"  checked="true" unchecked="false"></v-checkbox>
+                                            </span>
+                                        </li>
 
-                                    <li>
-                                        <span class="rcolor01">●</span> 
-                                        {{ bm_daily_header }}
-                                        <span class="checkbox">
-                                            <v-checkbox v-model="arr_checked[0]" key="bm"  checked="true" unchecked="false"></v-checkbox>
-                                        </span>
-                                    </li>
 
-                                    <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                       
-                                        <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
-                                        <!--툴팁추가 v-tooltip bottom>
-                                            <template v-slot:activator="{ on }">
-                                            <span dark v-on="on"-->{{ fn_cutByte( item.scen_name, 28 ) }}<!--/span>
-                                            </template>
-                                             <span>DeepSearch_혼합50_동일가중동일가중testtesttesttest</span>
-                                        </v-tooltip-->
-                                        <span class="checkbox">
-                                            <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                        </span>
-                                    </li>
-                                    
-                                </ul>
+                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
+                                            <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
+
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on }">
+                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                                </template>
+                                                <span>{{ item.scen_name }}</span>
+                                            </v-tooltip>
+
+                                            <span class="checkbox">
+                                                <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
+                                            </span>
+                                        </li>
+                                    </ul>
                                 </div>
 
                                 <table id="tbl_result_anal01" class="tbl_type ver12 pt-3">
