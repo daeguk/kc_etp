@@ -232,13 +232,25 @@ export default {
 
         vm.chartFlag   =   false;
 
+        vm.fn_showProgress( true );
 
         /* 초기 데이터를 설정한다. */
         vm.fn_init().then(function(e){
+            return step1();
+        }).then(function(e){
+            return step2();
+        }).then(function(e) {
+            return step3();
+        }).then(function(e){
+            vm.fn_showProgress( false );
+        });
 
-            if( e && e.result ) {
 
-                /* 그룹코드에 속한 일자별 지수를 조회한다. */
+        /* 그룹코드에 속한 일자별 지수를 조회한다. */
+        async function step1() {
+
+            return  await new Promise(function(resolve, reject) {
+
                 vm.fn_getSimulDailyInGrpCd({ 
                         "grp_cd"            :   vm.simul_result_mast.scen_cd
                     ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp 
@@ -246,56 +258,93 @@ export default {
 
                     if( e1 && e1.result ) {
 
-                        var tableObj_daily = {
-                            serverSide: false,
-                            ordering: false,
-                            info: false, // control table information display field
-                            stateSave: true, //restore table state on page reload,
-                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            "scrollY": '680px',
-                            paging: false,
-                            searching: false,
-                            data: [],
-                            autoWidth: false,
+                        try{
+                            var tableObj_daily = {
+                                serverSide: false,
+                                ordering: false,
+                                info: false, // control table information display field
+                                stateSave: true, //restore table state on page reload,
+                                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                "scrollY": '680px',
+                                paging: false,
+                                searching: false,
+                                data: [],
+                                autoWidth: false,
 
-                            fixedColumns:   {
-                                leftColumns: 1,
-                            }                            
-                        };
+                                fixedColumns:   {
+                                    leftColumns: 1,
+                                }                            
+                            };
 
-                        if ($.fn.DataTable.isDataTable("#tbl_result_daily")) {
-                            $("#tbl_result_daily").DataTable().destroy();
-                            $("#tbl_result_daily").empty();
-                        }
+                            if ($.fn.DataTable.isDataTable("#tbl_result_daily")) {
+                                $("#tbl_result_daily").DataTable().destroy();
+                                $("#tbl_result_daily").empty();
+                            }
 
-                        var v_daily_tr01            =   $("#tbl_result_daily thead tr[id='tr01']");
-                        var v_daily_tr02            =   $("#tbl_result_daily thead tr[id='tr02']");
+                            var v_daily_tr01            =   $("#tbl_result_daily thead tr[id='tr01']");
+                            var v_daily_tr02            =   $("#tbl_result_daily thead tr[id='tr02']");
 
-                        var v_daily_tr01_html       =   "";
-                        var v_daily_tr02_html       =   "";
+                            var v_daily_tr01_html       =   "";
+                            var v_daily_tr02_html       =   "";
 
-                        var v_arr_show_column       =   [];
-                        var v_arr_show_columnDef    =   [];
+                            var v_arr_show_column       =   [];
+                            var v_arr_show_columnDef    =   [];
 
 
-                        v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
-                        v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
+                            v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
+                            v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
 
-                        if( vm.bm_daily_header != 'BM (N/A)' ) {
-                            vm.arr_checked.push( true );
-                        }
+                            if( vm.bm_daily_header != 'BM (N/A)' ) {
+                                vm.arr_checked.push( true );
+                            }
 
-                        vm.arr_result_daily01_header.forEach(function(item, index, array){
+                            vm.arr_result_daily01_header.forEach(function(item, index, array){
 
-                            vm.arr_checked.push( true );
+                                vm.arr_checked.push( true );
 
-                            v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + item.scen_name + '</th>';
+                                v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + item.scen_name + '</th>';
+
+                                v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
+                                v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
+
+                                v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_INDEX_RATE"  , "orderable": false, 'className': 'dt-body-right' } );
+                                v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_RETURN_VAL"  , "orderable": false, 'className': 'dt-body-right' } );
+
+                                v_arr_show_columnDef.push({  
+                                        "render": function ( data, type, row ) {
+                                            let htm = ""
+                                        
+                                            if( typeof data != "undefined" && data != null && data != "" ) {
+                                                htm += "<div>" + util.formatNumber(data) + "</div>";
+                                            }
+
+                                            return htm;
+                                        }
+                                    ,   "targets": ( 2*index ) + 1
+                                });
+
+                                v_arr_show_columnDef.push({  
+                                        "render": function ( data, type, row ) {
+                                            let htm = ""
+
+                                            if( typeof data != "undefined" && data != null && data != "" ) {
+                                                htm += "<div>" + util.formatNumber(data * 100) + " %</div>";
+                                            }
+
+                                            return htm;
+                                        }
+                                    ,   "targets": ( 2*index ) + 2
+                                });
+                            });
+
+
+                            v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + vm.bm_daily_header + '</th>';
 
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
 
-                            v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_INDEX_RATE"  , "orderable": false, 'className': 'dt-body-right' } );
-                            v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd + "_RETURN_VAL"  , "orderable": false, 'className': 'dt-body-right' } );
+                            v_arr_show_column.push( { "data":  "BM_RATE"    , "orderable": false, 'className': 'dt-body-right' } );
+                            v_arr_show_column.push( { "data":  "BM_RETURN"  , "orderable": false, 'className': 'dt-body-right' } );
 
                             v_arr_show_columnDef.push({  
                                     "render": function ( data, type, row ) {
@@ -307,82 +356,65 @@ export default {
 
                                         return htm;
                                     }
-                                ,   "targets": ( 2*index ) + 1
+                                ,   "targets": v_arr_show_column.length-2
                             });
 
                             v_arr_show_columnDef.push({  
                                     "render": function ( data, type, row ) {
                                         let htm = ""
-
+                                    
                                         if( typeof data != "undefined" && data != null && data != "" ) {
                                             htm += "<div>" + util.formatNumber(data * 100) + " %</div>";
                                         }
 
                                         return htm;
                                     }
-                                ,   "targets": ( 2*index ) + 2
-                            });
-                        });
+                                ,   "targets": v_arr_show_column.length-1
+                            });                        
 
+                            v_daily_tr01.html( v_daily_tr01_html );                        
 
-                        v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + vm.bm_daily_header + '</th>';
+                            v_daily_tr01.html( v_daily_tr01_html );
+                            v_daily_tr02.html( v_daily_tr02_html );
 
-                        v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
-                        v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
+                            if ( vm.arr_result_daily01_header.length > 5 ) {
+                                $("#tbl_result_daily").attr( "style", "width: 1500px; table-layout: fixed;" );
+                                tableObj_daily.scrollX = true;
+                            } else {
+                                tableObj_daily.scrollX = "100%";
+                            }
 
-                        v_arr_show_column.push( { "data":  "BM_RATE"    , "orderable": false, 'className': 'dt-body-right' } );
-                        v_arr_show_column.push( { "data":  "BM_RETURN"  , "orderable": false, 'className': 'dt-body-right' } );
+                            tableObj_daily.columns    =   v_arr_show_column;
+                            tableObj_daily.columnDefs =   v_arr_show_columnDef;
 
-                        v_arr_show_columnDef.push({  
-                                "render": function ( data, type, row ) {
-                                    let htm = ""
-                                
-                                    if( typeof data != "undefined" && data != null && data != "" ) {
-                                        htm += "<div>" + util.formatNumber(data) + "</div>";
-                                    }
+                            tbl_result_daily = $("#tbl_result_daily").DataTable(tableObj_daily);
+                            tbl_result_daily.rows.add( vm.fn_sort_arr_result_daily01 ).draw();
 
-                                    return htm;
-                                }
-                            ,   "targets": v_arr_show_column.length-2
-                        });
+                            vm.chartFlag   =   true;
 
-                        v_arr_show_columnDef.push({  
-                                "render": function ( data, type, row ) {
-                                    let htm = ""
-                                
-                                    if( typeof data != "undefined" && data != null && data != "" ) {
-                                        htm += "<div>" + util.formatNumber(data * 100) + " %</div>";
-                                    }
+                            resolve( { result : true } );
 
-                                    return htm;
-                                }
-                            ,   "targets": v_arr_show_column.length-1
-                        });                        
-
-                        v_daily_tr01.html( v_daily_tr01_html );                        
-
-                        v_daily_tr01.html( v_daily_tr01_html );
-                        v_daily_tr02.html( v_daily_tr02_html );
-
-                        if ( vm.arr_result_daily01_header.length > 5 ) {
-                            $("#tbl_result_daily").attr( "style", "width: 1500px; table-layout: fixed;" );
-                            tableObj_daily.scrollX = true;
-                        } else {
-                            tableObj_daily.scrollX = "100%";
+                        }catch(ex) {
+                            console.log( "error", ex );
+                            resolve( { result : false } );
                         }
 
-                        tableObj_daily.columns    =   v_arr_show_column;
-                        tableObj_daily.columnDefs =   v_arr_show_columnDef;
-
-                        tbl_result_daily = $("#tbl_result_daily").DataTable(tableObj_daily);
-                        tbl_result_daily.rows.add( vm.fn_sort_arr_result_daily01 ).draw();
-
-                        vm.chartFlag   =   true;
+                    }else{
+                        resolve( { result : false } );
                     }
                 });
 
+            }).catch( function(e1) {
+                console.log( e1 );
+                vm.fn_showProgress( false );
+            });
+        }
 
-                /* 그룹코드에 속한 분석정보 01 을 조회한다. */
+        /* 그룹코드에 속한 분석정보 01 을 조회한다. */
+        async function step2() {
+
+            return  await new Promise(function(resolve, reject) {
+
                 vm.fn_getSimulAnal01InGrpCd({
                         "grp_cd"            :   vm.simul_result_mast.scen_cd
                     ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp
@@ -390,82 +422,103 @@ export default {
 
                     if( e1 && e1.result ) {
 
-                        var tableObj_anal01 = {
-                            serverSide: false,
-                            ordering: false,
-                            info: false, // control table information display field
-                            stateSave: true, //restore table state on page reload,
-                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            paging: false,
-                            searching: false,
-                            data: [],
-                            autoWidth: false,
+                        try{
+                            var tableObj_anal01 = {
+                                serverSide: false,
+                                ordering: false,
+                                info: false, // control table information display field
+                                stateSave: true, //restore table state on page reload,
+                                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                paging: false,
+                                searching: false,
+                                data: [],
+                                autoWidth: false,
 
-                            fixedColumns:   {
-                                leftColumns: 1,
-                            }                            
-                        };
+                                fixedColumns:   {
+                                    leftColumns: 1,
+                                }                            
+                            };
 
-                        if ($.fn.DataTable.isDataTable("#tbl_result_anal01")) {
-                            $("#tbl_result_anal01").DataTable().destroy();
-                            $("#tbl_result_anal01").empty();
-                        }
-
-                        var v_daily_tr01        =   $("#tbl_result_anal01 thead tr[id='tr01']");
-                        var v_daily_tr01_html   =   "";
-
-
-                        if( vm.arr_result_anal01.length == 0 ) {
-                            v_daily_tr01_html       =   `<td class="txt_center">분석정보가 존재하지 않습니다.</td>`;
-
-                            v_daily_tr01.html( v_daily_tr01_html );
-                        }else{
-
-                            var v_arr_show_column       =   [];
-                            var v_arr_show_columnDef    =   [];
-
-                            v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
-                            v_arr_show_column.push( { "data": "scen_name"  , "orderable": false, 'className': 'dt-body-left' } );
-
-                            vm.arr_result_anal01_header.forEach(function(item, index, array){
-                                v_daily_tr01_html   +=  '<th class="txt_right" width="140">' + item.anal_id + '</th>';
-
-                                v_arr_show_column.push( { "data": item.anal_id, "orderable": false, 'className': 'dt-body-right' } );
-
-                                v_arr_show_columnDef.push({  
-                                        "render": function ( data, type, row ) {
-                                            let htm = ""
-                                        
-                                            if( typeof data != "undefined" && data != null && data != "" ) {
-                                                htm += data;
-                                            }
-
-                                            return htm;
-                                        }
-                                    ,   "targets": index+1
-                                });
-                            });
-
-                            v_daily_tr01.html( v_daily_tr01_html );
-
-                            if ( vm.arr_result_anal01_header.length > 8 ) {
-                                $("#tbl_result_anal01").attr( "style", "width: 1500px; table-layout: fixed;" );
-                                tableObj_anal01.scrollX = true;
-                            } else {
-                                tableObj_anal01.scrollX = "100%";
+                            if ($.fn.DataTable.isDataTable("#tbl_result_anal01")) {
+                                $("#tbl_result_anal01").DataTable().destroy();
+                                $("#tbl_result_anal01").empty();
                             }
 
-                            tableObj_anal01.columns    =   v_arr_show_column;
-                            tableObj_anal01.columnDefs =   v_arr_show_columnDef;
+                            var v_daily_tr01        =   $("#tbl_result_anal01 thead tr[id='tr01']");
+                            var v_daily_tr01_html   =   "";
 
-                            tbl_result_anal01 = $("#tbl_result_anal01").DataTable(tableObj_anal01);
-                            tbl_result_anal01.rows.add( vm.arr_result_anal01 ).draw();
+
+                            if( vm.arr_result_anal01.length == 0 ) {
+                                v_daily_tr01_html       =   `<td class="txt_center">분석정보가 존재하지 않습니다.</td>`;
+
+                                v_daily_tr01.html( v_daily_tr01_html );
+                            }else{
+
+                                var v_arr_show_column       =   [];
+                                var v_arr_show_columnDef    =   [];
+
+                                v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
+                                v_arr_show_column.push( { "data": "scen_name"  , "orderable": false, 'className': 'dt-body-left' } );
+
+                                vm.arr_result_anal01_header.forEach(function(item, index, array){
+                                    v_daily_tr01_html   +=  '<th class="txt_right" width="140">' + item.anal_id + '</th>';
+
+                                    v_arr_show_column.push( { "data": item.anal_id, "orderable": false, 'className': 'dt-body-right' } );
+
+                                    v_arr_show_columnDef.push({  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                            
+                                                if( typeof data != "undefined" && data != null && data != "" ) {
+                                                    htm += data;
+                                                }
+
+                                                return htm;
+                                            }
+                                        ,   "targets": index+1
+                                    });
+                                });
+
+                                v_daily_tr01.html( v_daily_tr01_html );
+
+                                if ( vm.arr_result_anal01_header.length > 8 ) {
+                                    $("#tbl_result_anal01").attr( "style", "width: 1500px; table-layout: fixed;" );
+                                    tableObj_anal01.scrollX = true;
+                                } else {
+                                    tableObj_anal01.scrollX = "100%";
+                                }
+
+                                tableObj_anal01.columns    =   v_arr_show_column;
+                                tableObj_anal01.columnDefs =   v_arr_show_columnDef;
+
+                                tbl_result_anal01 = $("#tbl_result_anal01").DataTable(tableObj_anal01);
+                                tbl_result_anal01.rows.add( vm.arr_result_anal01 ).draw();
+                            }
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                            resolve( { result : false } );
                         }
+
+                    }else{
+                        resolve( { result : false } );
                     }
                 });
 
+            }).catch( function(e1) {
+                console.log( e1 );
+                vm.fn_showProgress( false );
+            });
+        }
 
-                /* 그룹코드에 속한 분석정보 02 를 조회한다. */
+
+        /* 그룹코드에 속한 분석정보 02 를 조회한다. */
+        async function  step3() {
+
+            return  await new Promise(function(resolve, reject) {
+
                 vm.fn_getSimulAnal02InGrpCd({ 
                         "grp_cd"            :   vm.simul_result_mast.scen_cd
                     ,   "arr_scen_in_grp"   :   vm.arr_scen_in_grp 
@@ -473,49 +526,67 @@ export default {
 
                     if( e1 && e1.result ) {
 
-                        var tableObj_anal02 = {
-                            serverSide: false,
-                            ordering: false,
-                            info: false, // control table information display field
-                            stateSave: true, //restore table state on page reload,
-                            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
-                            "scrollY": '680px',
-                            paging: false,
-                            searching: false,
-                            data: [],
-                            autoWidth: false,
+                        try{
+                            var tableObj_anal02 = {
+                                serverSide: false,
+                                ordering: false,
+                                info: false, // control table information display field
+                                stateSave: true, //restore table state on page reload,
+                                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
+                                "scrollY": '680px',
+                                paging: false,
+                                searching: false,
+                                data: [],
+                                autoWidth: false,
 
-                            fixedHeader: {
-                                header: true,
-                                headerOffset: 200,
-                            },                            
-                        };
+                                fixedHeader: {
+                                    header: true,
+                                    headerOffset: 200,
+                                },                            
+                            };
 
-                        if ($.fn.DataTable.isDataTable("#tbl_result_anal02")) {
-                            $("#tbl_result_anal02").DataTable().destroy();
-                            $("#tbl_result_anal02").empty();
-                        }
+                            if ($.fn.DataTable.isDataTable("#tbl_result_anal02")) {
+                                $("#tbl_result_anal02").DataTable().destroy();
+                                $("#tbl_result_anal02").empty();
+                            }
 
-                        var v_daily_tr01        =   $("#tbl_result_anal02 thead tr[id='tr01']");
-                        var v_daily_tr01_html   =   "";
-
-
-                        if( vm.arr_result_anal02.length == 0 ) {
-                            v_daily_tr01_html       =   `<td class="txt_center">분석정보가 존재하지 않습니다.</td>`;
-
-                            v_daily_tr01.html( v_daily_tr01_html );
-                        }else{
-
-                            var v_arr_show_column       =   [];
-                            var v_arr_show_columnDef    =   [];
+                            var v_daily_tr01        =   $("#tbl_result_anal02 thead tr[id='tr01']");
+                            var v_daily_tr01_html   =   "";
 
 
-                            v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
-                            v_arr_show_column.push( { "data": "anal_id"  , "orderable": false, 'className': 'dt-body-left' } );
+                            if( vm.arr_result_anal02.length == 0 ) {
+                                v_daily_tr01_html       =   `<td class="txt_center">분석정보가 존재하지 않습니다.</td>`;
 
-                            vm.arr_result_anal02_header.forEach(function(item, index, array){
-                                v_daily_tr01_html   +=  '<th class="txt_right" width="120">' + item.scen_name + '</th>';
-                                v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd, "orderable": false, 'className': 'dt-body-right' } );
+                                v_daily_tr01.html( v_daily_tr01_html );
+                            }else{
+
+                                var v_arr_show_column       =   [];
+                                var v_arr_show_columnDef    =   [];
+
+
+                                v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
+                                v_arr_show_column.push( { "data": "anal_id"  , "orderable": false, 'className': 'dt-body-left' } );
+
+                                vm.arr_result_anal02_header.forEach(function(item, index, array){
+                                    v_daily_tr01_html   +=  '<th class="txt_right" width="120">' + item.scen_name + '</th>';
+                                    v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd, "orderable": false, 'className': 'dt-body-right' } );
+                                    v_arr_show_columnDef.push({  
+                                            "render": function ( data, type, row ) {
+                                                let htm = ""
+                                            
+                                                if( typeof data != "undefined" && data != null && data != "" ) {
+                                                    htm += data;
+                                                }
+
+                                                return htm;
+                                            }
+                                        ,   "targets": index + 1
+                                    });
+                                });
+
+
+                                v_daily_tr01_html       +=   '<th class="txt_right"  width="120">' + vm.bm_anal_header + '</th>';
+                                v_arr_show_column.push( { "data": "bm", "orderable": false, 'className': 'dt-body-right' } );
                                 v_arr_show_columnDef.push({  
                                         "render": function ( data, type, row ) {
                                             let htm = ""
@@ -526,47 +597,44 @@ export default {
 
                                             return htm;
                                         }
-                                    ,   "targets": index + 1
+                                    ,   "targets": v_arr_show_column.length-1
                                 });
-                            });
 
-
-                            v_daily_tr01_html       +=   '<th class="txt_right"  width="120">' + vm.bm_anal_header + '</th>';
-                            v_arr_show_column.push( { "data": "bm", "orderable": false, 'className': 'dt-body-right' } );
-                            v_arr_show_columnDef.push({  
-                                    "render": function ( data, type, row ) {
-                                        let htm = ""
-                                    
-                                        if( typeof data != "undefined" && data != null && data != "" ) {
-                                            htm += data;
-                                        }
-
-                                        return htm;
-                                    }
-                                ,   "targets": v_arr_show_column.length-1
-                            });
-
-                            v_daily_tr01.html( v_daily_tr01_html );
+                                v_daily_tr01.html( v_daily_tr01_html );
 
 
 
-                            if ( vm.arr_result_anal02_header.length > 10 ) {
-                                $("#tbl_result_anal02").attr( "style", "width: 1500px; table-layout: fixed;" );
-                                tableObj_anal02.scrollX = true;
-                            } else {
-                                tableObj_anal02.scrollX = "100%";
+                                if ( vm.arr_result_anal02_header.length > 10 ) {
+                                    $("#tbl_result_anal02").attr( "style", "width: 1500px; table-layout: fixed;" );
+                                    tableObj_anal02.scrollX = true;
+                                } else {
+                                    tableObj_anal02.scrollX = "100%";
+                                }
+
+                                tableObj_anal02.columns    =   v_arr_show_column;
+                                tableObj_anal02.columnDefs =   v_arr_show_columnDef;
+
+                                tbl_result_anal02 = $("#tbl_result_anal02").DataTable( tableObj_anal02 );
+                                tbl_result_anal02.rows.add( vm.arr_result_anal02 ).draw();
                             }
 
-                            tableObj_anal02.columns    =   v_arr_show_column;
-                            tableObj_anal02.columnDefs =   v_arr_show_columnDef;
+                            resolve( { result : true } );
 
-                            tbl_result_anal02 = $("#tbl_result_anal02").DataTable( tableObj_anal02 );
-                            tbl_result_anal02.rows.add( vm.arr_result_anal02 ).draw();
+                        }catch(ex) {
+                            console.log( "error", ex );
+                            resolve( { result : false } );
                         }
+
+                    }else{
+                        resolve( { result : false } );
                     }
                 });
-            }
-        });
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                vm.fn_showProgress( false );
+            });
+        }
     },
 
     methods: {
