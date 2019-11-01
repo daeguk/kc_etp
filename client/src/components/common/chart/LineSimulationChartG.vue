@@ -147,9 +147,9 @@ export default {
         //   val = item.F15001;
         //   val1 = item.iF15001;
 
-
-          arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? 1000 : _.get(item, 'BM_RATE')));
-
+          if (vm.bm_header != "BM (N/A)") {
+            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? 1000 : _.get(item, 'BM_RATE')));
+          }
           vm.arr_result_header.forEach(function(scen, x) {
             let scen_cd = scen.scen_cd;
             
@@ -397,11 +397,15 @@ export default {
         var cal_hpos = hpos+43;
         vm.arr_checked.forEach(function(check_array, idx) {
           if (check_array) {
-            if (idx == 0) {
-              c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+            if (vm.bm_header != "BM (N/A)") {
+              if (idx == 0) {              
+                c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              } else {
+                
+                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + ".."+[idx]+": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              }
             } else {
-              
-              c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + ".."+[idx]+": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
+              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + ".."+[idx]+": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen+60, cal_hpos);
             }
             
             cal_hpos += 12;
