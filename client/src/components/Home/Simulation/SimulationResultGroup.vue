@@ -104,7 +104,7 @@
                                     </ul>
                                 </div>
 
-                                <table id="tbl_result_anal01" class="tbl_type ver12 pt-3">
+                                <table id="tbl_result_anal01" class="tbl_type ver12">
                                  <thead>
                                      <tr id="tr01"></tr>
                                 </thead>                                
