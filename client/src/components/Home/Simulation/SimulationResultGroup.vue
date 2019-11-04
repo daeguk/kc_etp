@@ -258,6 +258,9 @@ export default {
             return step3();
         }).then(function(e){
             vm.fn_showProgress( false );
+        }).catch( function(e) {
+            console.log( e );
+            vm.fn_showProgress( false );
         });
 
 
