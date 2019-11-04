@@ -371,6 +371,10 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver11 th{background:#f2f2f2; font-size: 14px; text-align: right; }
 .tbl_type.ver12{width:1380px; margin:0 10px;}
 
+.tbl_type.ver10 td .v-input--selection-controls,.tbl_type.ver8 td .v-input--selection-controls{margin-top:0px;}
+.tbl_type.ver10 td .v-input__slot,.tbl_type.ver8 td .v-input__slot{margin-bottom:0px;}
+.tbl_type.ver10 td .v-messages,.tbl_type.ver8 td .v-messages{display: none;}
+
 /*테이블 header고정*/
 caption {
     position: absolute;
@@ -488,6 +492,7 @@ h3.subtit span.text_result_t2{color:#959eb1; margin-right:15px;margin-left:15px;
 :-ms-fullscreen, :root .title_wrap01 .btn_r{float:right;}
 .title01_w .v-card__title{padding:24px 24px 5px 24px}
 .title01_w.case2 .v-card__title{padding-bottom:16px;}
+.title01_w.case2 .right_btn .btn_r .v-btn{margin:0;}
 .title01_w.case3 .v-card__title{padding-bottom:24px;}
 .title01_w .v-card__text{padding:5px 30px 5px 24px;}
 .title_wrap01{width:100%;height:30px;}
@@ -980,6 +985,10 @@ input[type='file']{
 .listset_pop .v-input--selection-controls .v-label{font-weight: 600; color:#878793;}
 
 
+.simul_group_modi_pop{width:300px; max-height: 350px; overflow-y:auto;}
+.simul_group_modi_pop li{border-bottom:1px solid #e7e7e7;}
+
+
 
 /*지수관리*/
 .tdicon_menu .v-list__tile{height:35px;}
@@ -1074,6 +1083,7 @@ input[type='file']{
 .folder_2dep{padding-left:22px;}
 .wid200{width:200px}
 .creat_f span{display:inline-block; margin-top:13px; margin-left:5px; margin-bottom:10px;}
+.creat_f span.btn_r{float:right; margin-right: 10px;}
 h4 span.excel_btn{float:right; margin-right:25px;}
 .margin_t1 .v-btn{margin-top:2px; margin-left:3px;}
 .bullet{padding-left:3px; width:3px; height:14px; display:inline-block; background:#85c406;margin-right:3px;}
@@ -1167,5 +1177,8 @@ h4 span.excel_btn{float:right; margin-right:25px;}
   .incode_pop{padding-left:24px;padding-right: 24px;}
   .incode_pop .point_txt{color:#5e870b;}
   .incode_pop .table-box-wrap{margin:0;}
+  .incode_w01{width: 210px;}
+  .incode_w02{width: 68%;}
+  .select01{width:200px; }
 
 
