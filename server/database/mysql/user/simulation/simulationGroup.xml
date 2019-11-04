@@ -56,11 +56,11 @@
 
 
     <!--
-    *   그룹코드에 속한 일자별 지수를 조회한다.
+    *   코드에 속한 일자별 지수를 조회한다.
     *   2019-10-24  bkLove(촤병국)
     -->
-    <select id="getSimulDailyInGrpCd">
-        SELECT      /* simulation.getSimulDailyInGrpCd     그룹코드에 속한 일자별 지수를 조회한다. */
+    <select id="getSimulDailyInArrCd">
+        SELECT      /* simulation.getSimulDailyInArrCd     코드에 속한 일자별 지수를 조회한다. */
 
                     tm_simul_result_daily.grp_cd                        AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_result_daily.scen_cd                       AS  scen_cd                     /* 시나리오 코드 */
@@ -91,11 +91,10 @@
                                     )                                   AS  bench_index_nm              /* 벤치마크 인덱스 명 */
                           FROM  tm_simul_mast           
                          WHERE  1 = 1
-                           AND  tm_simul_mast.grp_cd                =   #{grp_cd}
-                           AND  tm_simul_mast.scen_cd               IN   
+                           AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd )     IN   
                                 (
                     <foreach    collection="arr_scen_in_grp"   item="item"    index="index"   separator=" ," >
-                                    #{item.scen_cd}
+                                    ( #{item.grp_cd}, #{item.scen_cd} )
                     </foreach>
                                 )
 
@@ -110,12 +109,12 @@
     </select>
 
     <!--
-    *   그룹코드에 속한 분석정보 01 을 조회한다.
+    *   코드에 속한 분석정보 01 을 조회한다.
     *   2019-10-24  bkLove(촤병국)
     -->
-    <select id="getSimulAnal01InGrpCd">
+    <select id="getSimulAnal01InArrCd">
 
-        SELECT      /* simulation.getSimulAnal01InGrpCd     그룹코드에 속한 분석정보 01 을 조회한다. */
+        SELECT      /* simulation.getSimulAnal01InArrCd     코드에 속한 분석정보 01 을 조회한다. */
 
                     tm_simul_result_anal.grp_cd                         AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_result_anal.scen_cd                        AS  scen_cd                     /* 시나리오 코드 */
@@ -143,11 +142,10 @@
 
                           FROM  tm_simul_mast           
                          WHERE  1 = 1
-                           AND  tm_simul_mast.grp_cd                =   #{grp_cd}
-                           AND  tm_simul_mast.scen_cd               IN   
+                           AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd )    IN   
                                 (
                     <foreach    collection="arr_scen_in_grp"   item="item"    index="index"   separator=" ," >
-                                    #{item.scen_cd}
+                                    ( #{item.grp_cd}, #{item.scen_cd} )
                     </foreach>
                                 )
 
@@ -166,12 +164,12 @@
     </select>
 
     <!--
-    *   그룹코드에 속한 분석정보 02 를 조회한다.
+    *   코드에 속한 분석정보 02 를 조회한다.
     *   2019-10-24  bkLove(촤병국)
     -->
-    <select id="getSimulAnal02InGrpCd">
+    <select id="getSimulAnal02InArrCd">
 
-        SELECT      /* simulation.getSimulAnal02InGrpCd     그룹코드에 속한 분석정보 02 를 조회한다. */
+        SELECT      /* simulation.getSimulAnal02InArrCd     코드에 속한 분석정보 02 를 조회한다. */
 
                     tm_simul_result_anal.grp_cd                         AS  grp_cd                      /* 그룹코드(상위코드) */
                 ,   tm_simul_result_anal.scen_cd                        AS  scen_cd                     /* 시나리오 코드 */
@@ -208,11 +206,10 @@
 
                           FROM  tm_simul_mast           
                          WHERE  1 = 1
-                           AND  tm_simul_mast.grp_cd                =   #{grp_cd}
-                           AND  tm_simul_mast.scen_cd               IN   
+                           AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd )     IN   
                                 (
                     <foreach    collection="arr_scen_in_grp"   item="item"    index="index"   separator=" ," >
-                                    #{item.scen_cd}
+                                    ( #{item.grp_cd}, #{item.scen_cd} )
                     </foreach>
                                 )
 

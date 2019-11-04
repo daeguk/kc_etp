@@ -126,7 +126,7 @@ var getScenInGrpCd = function(req, res) {
                     }
                 },                
 
-                /* 2. 그룹코드에 속한 시나리오를 조회한다. */
+                /* 2. 코드에 속한 시나리오를 조회한다. */
                 function(msg, callback) {      
 
                     try{
@@ -252,12 +252,12 @@ var getScenInGrpCd = function(req, res) {
 
 
 /*
- * 그룹코드에 속한 일자별 지수를 조회한다.
+ * 코드에 속한 일자별 지수를 조회한다.
  * 2019-10-24  bkLove(촤병국)
  */
-var getSimulDailyInGrpCd = function(req, res) {
+var getSimulDailyInArrCd = function(req, res) {
     try {
-        log.debug('simulationGroup.getSimulDailyInGrpCd 호출됨.');
+        log.debug('simulationGroup.getSimulDailyInArrCd 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -265,7 +265,7 @@ var getSimulDailyInGrpCd = function(req, res) {
         
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulationGroup.getSimulDailyInGrpCd  req.body.data no data.", req.body.data);
+            log.error("[error] simulationGroup.getSimulDailyInArrCd  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -294,8 +294,8 @@ var getSimulDailyInGrpCd = function(req, res) {
             try{
                 var msg = {};
 
-                /* 그룹에 속한 시뮬레이션을 조회한다. */
-                stmt = mapper.getStatement('simulationGroup', 'getSimulDailyInGrpCd', paramData, format);
+                /* 코드에 속한 시뮬레이션을 조회한다. */
+                stmt = mapper.getStatement('simulationGroup', 'getSimulDailyInArrCd', paramData, format);
                 log.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
@@ -328,14 +328,14 @@ var getSimulDailyInGrpCd = function(req, res) {
                             return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
                         });
 
-                        var arr_result_daily_header     =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        var arr_result_daily_header     =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd , "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
 
                         var v_bm_index  =   -1;
                         for( var i=0; i < rows.length; i++ ) {
-                            var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd  });
+                            var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd  });
 
                             if( v_header > -1 ) {
                                 var v_index     =   _.findIndex( arr_result_daily, { "F12506" : rows[i].F12506  });
@@ -348,8 +348,20 @@ var getSimulDailyInGrpCd = function(req, res) {
                                 }
 
                                 if( v_index > -1 ) {
-                                    arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_INDEX_RATE" ]    =   rows[i].INDEX_RATE;
-                                    arr_result_daily[ v_index ][ arr_result_daily_header[v_header].scen_cd + "_RETURN_VAL" ]    =   rows[i].RETURN_VAL;
+
+                                    arr_result_daily[ v_index ][ 
+                                            arr_result_daily_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_daily_header[v_header].scen_cd 
+                                        +   "_INDEX_RATE" 
+                                    ]    =   rows[i].INDEX_RATE;
+
+                                    arr_result_daily[ v_index ][ 
+                                            arr_result_daily_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_daily_header[v_header].scen_cd 
+                                        +   "_RETURN_VAL" 
+                                    ]    =   rows[i].RETURN_VAL;
 
                                     if( v_bm_index == v_header ) {
                                         arr_result_daily[ v_index ][ "BM_RATE"   ]  =   rows[i].BM_RATE;
@@ -361,20 +373,20 @@ var getSimulDailyInGrpCd = function(req, res) {
 
                         arr_result_daily.forEach( function( item, index, array ) {
                             arr_result_daily_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
-                                    item[ item1.scen_cd + "_INDEX_RATE" ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ]   =   "";
                                 }
 
-                                if( typeof item[ item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
-                                    item[ item1.scen_cd + "_RETURN_VAL" ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ]   =   "";
                                 }                                
                             });
 
-                            if( typeof item[ "BM_RATE" ] == "undefined" ) {
+                            if( typeof item[ "BM_RATE" ] == "undefined" || item[ "BM_RATE" ] == 0 ) {
                                 item[ "BM_RATE" ]    =   "";
                             }
 
-                            if( typeof item[ "BM_RETURN" ] == "undefined" ) {
+                            if( typeof item[ "BM_RETURN" ] == "undefined" || item[ "BM_RETURN" ] == 0 ) {
                                 item[ "BM_RETURN" ] =   "";
                             }                            
                         });
@@ -422,12 +434,12 @@ var getSimulDailyInGrpCd = function(req, res) {
 
 
 /*
- * 그룹코드에 속한 분석정보01 을 조회한다.
+ * 코드에 속한 분석정보01 을 조회한다.
  * 2019-10-24  bkLove(촤병국)
  */
-var getSimulAnal01InGrpCd = function(req, res) {
+var getSimulAnal01InArrCd = function(req, res) {
     try {
-        log.debug('simulationGroup.getSimulAnal01InGrpCd 호출됨.');
+        log.debug('simulationGroup.getSimulAnal01InArrCd 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -435,7 +447,7 @@ var getSimulAnal01InGrpCd = function(req, res) {
         
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulationGroup.getSimulAnal01InGrpCd  req.body.data no data.", req.body.data);
+            log.error("[error] simulationGroup.getSimulAnal01InArrCd  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -467,7 +479,7 @@ var getSimulAnal01InGrpCd = function(req, res) {
                 var msg = {};
 
                 /* 그룹에 속한 분석정보01 을 조회한다. */
-                stmt = mapper.getStatement('simulationGroup', 'getSimulAnal01InGrpCd', paramData, format);
+                stmt = mapper.getStatement('simulationGroup', 'getSimulAnal01InArrCd', paramData, format);
                 log.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
@@ -485,8 +497,8 @@ var getSimulAnal01InGrpCd = function(req, res) {
 
                     if( rows && rows.length > 0 ) {
 
-                        arr_result_anal             =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        arr_result_anal             =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
                         arr_result_anal_header      =   _.uniqBy( rows, "title_anal_id" ).map( function(o) {
@@ -500,7 +512,7 @@ var getSimulAnal01InGrpCd = function(req, res) {
                             var v_header            =   _.findIndex( arr_result_anal_header, { "anal_id" : rows[i].title_anal_id  });
 
                             if( v_header > -1 ) {
-                                var v_index         =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd  });
+                                var v_index         =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
 
                                 var analData        =   "";
 
@@ -570,12 +582,12 @@ var getSimulAnal01InGrpCd = function(req, res) {
 }
 
 /*
- * 그룹코드에 속한 분석정보를 조회한다.
+ * 코드에 속한 분석정보를 조회한다.
  * 2019-10-24  bkLove(촤병국)
  */
-var getSimulAnal02InGrpCd = function(req, res) {
+var getSimulAnal02InArrCd = function(req, res) {
     try {
-        log.debug('simulationGroup.getSimulAnal02InGrpCd 호출됨.');
+        log.debug('simulationGroup.getSimulAnal02InarrCd 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -583,7 +595,7 @@ var getSimulAnal02InGrpCd = function(req, res) {
         
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulationGroup.getSimulAnal02InGrpCd  req.body.data no data.", req.body.data);
+            log.error("[error] simulationGroup.getSimulAnal02InArrCd  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -618,7 +630,7 @@ var getSimulAnal02InGrpCd = function(req, res) {
                 var msg = {};
 
                 /* 그룹에 속한 분석정보를 조회한다. */
-                stmt = mapper.getStatement('simulationGroup', 'getSimulAnal02InGrpCd', paramData, format);
+                stmt = mapper.getStatement('simulationGroup', 'getSimulAnal02InArrCd', paramData, format);
                 log.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
@@ -642,15 +654,15 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
                         arr_result_anal         =   _.orderBy( arr_result_anal, [ "show_order_no" ], [ "asc" ] );
 
-                        arr_result_anal_header  =   _.uniqBy( rows, "scen_cd", "scen_name" ).map( function(o) {
-                            return  { "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                        arr_result_anal_header  =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
                         });
 
 
 
                         var v_bm_index  =   -1;
                         for( var i=0; i < rows.length; i++ ) {
-                            var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd  });
+                            var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
 
                             if( v_header > -1 ) {
                                 var v_index         =   _.findIndex( arr_result_anal, { "anal_id" : rows[i].anal_id  });
@@ -693,7 +705,11 @@ var getSimulAnal02InGrpCd = function(req, res) {
                                 }                                
 
                                 if( v_index > -1 ) {
-                                    arr_result_anal[ v_index ][ arr_result_anal_header[v_header].scen_cd ]      =   analData;
+                                    arr_result_anal[ v_index ][ 
+                                            arr_result_anal_header[v_header].grp_cd 
+                                        +   "_" 
+                                        +   arr_result_anal_header[v_header].scen_cd 
+                                    ]      =   analData;
 
                                     if( v_bm_index == v_header ) {
                                         arr_result_anal_bm[ v_index ]       =   v_bm_data;
@@ -704,8 +720,8 @@ var getSimulAnal02InGrpCd = function(req, res) {
 
                         arr_result_anal.forEach( function( item, index, array ) {
                             arr_result_anal_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.scen_cd ] == "undefined" ) {
-                                    item[ item1.scen_cd ]   =   "";
+                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd ] == "undefined" ) {
+                                    item[ item1.grp_cd + "_" + item1.scen_cd ]   =   "";
                                 }
                             });
 
@@ -758,6 +774,6 @@ var getSimulAnal02InGrpCd = function(req, res) {
 }
 
 module.exports.getScenInGrpCd = getScenInGrpCd;
-module.exports.getSimulDailyInGrpCd = getSimulDailyInGrpCd;
-module.exports.getSimulAnal01InGrpCd = getSimulAnal01InGrpCd;
-module.exports.getSimulAnal02InGrpCd = getSimulAnal02InGrpCd;
+module.exports.getSimulDailyInArrCd = getSimulDailyInArrCd;
+module.exports.getSimulAnal01InArrCd = getSimulAnal01InArrCd;
+module.exports.getSimulAnal02InArrCd = getSimulAnal02InArrCd;

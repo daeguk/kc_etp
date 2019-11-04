@@ -7,11 +7,12 @@
 
 <script>
 import $ from "jquery";
+import _ from "lodash"
 import Config       from "@/js/config.js"
 import util from "@/js/util.js";
 
 export default {
-  props:[ 'simul_result_mast', 'arr_result_daily'],
+  props:[ 'simul_result_mast', 'arr_result_data', 'arr_result_header', 'arr_checked', 'bm_header' ],
   data() {
     return {
       canvas:{},
@@ -48,24 +49,21 @@ export default {
       yAxisVal:[],
       xAxisDd:[],
       xAxisTt:[],
+      lineColor1:["#becbd2", "#97cbe1", "#36adfa", "#186391", "#b8b8b8", "#7b92a9", "#313f55", "#ffca7c", "#c0783f", "#f8ca3d", "#C5E1A5"],
+      lineColor2:["#b9e0f7", "#72cdf4", "#1e99e8", "#0076be", "#dcddde", "#B6B8BA", "#7E8083", "#FBB040", "#F58025", "#EDED8A", "#85c406"],
     };
   },    
   watch: {
 
-//     'dmode': function(newDmode) {
-//       // console.log("watch.........dmode: " + newDmode);
-// //      this.drawMode(newDmode);
-//       this.draw_hist(newDmode);
-//     },      
-//     'dterm': function(newDterm) {
-//       // console.log("watch.........dterm: " + newDterm);
-//       this.drawTerm(newDterm);
-//       this.dataInit();
-//     }
-  },
+    'arr_checked': function() {
+      this.draw_hist( this.dmode );
+    }
+  }, 
   created: function() {
   },
   mounted: function() {
+    var vm = this;
+    
     // console.log("LineIndexChart..........");
     this.canvas = document.getElementById(this.chartId);
     this.ctx = this.canvas.getContext('2d');
@@ -76,12 +74,6 @@ export default {
     this.hlen = this.crect.y2 - this.crect.y1 - 10;
 //    this.ydifflen = (this.crect.y2 - this.crect.y1) / 6;
     // console.log("ydifflen : " + this.ydifflen);
-
-    if( !this.arr_result_daily || this.arr_result_daily.length == 0 ) {
-        vm.$emit("fn_showMessageBox", '확인', "시뮬레이션 결과 데이터가 없습니다" ,{},1 );
-
-        return  false;
-    }
 
     this.drawInit();
     this.dataInit();
@@ -122,145 +114,27 @@ export default {
           var vm = this;
 
           this.hist_data      =   [];
-          this.hist_data      =   [ ...this.arr_result_daily ];
+          this.hist_data      =   [ ...this.arr_result_data ];
 
           this.draw_hist( vm.dmode );
       },      
 
       draw_hist: function (dmode){
-        // console.log("draw_hist... ");
-        if(dmode == 0 || dmode == 1) this.draw_shist(dmode, this.hist_data);
-        else this.draw_mhist(dmode, this.hist_data);        
+        // console.log("draw_hist... ");        
+        this.draw_mhist(dmode, this.hist_data);        
       },      
 
-      draw_shist: function (dmode, idata){
-        var c = this.ctx;
-        var vm = this;
-        var _dnum = idata.length;
-        var val = 0, maxVal = 0, minVal = 0, diffVal = 0;
-        var stepVal = 0;
-        var _wpos = 0, _hpos = 0;
-        var toFixNum = 0;
-
-        this.sArr = [];
-        idata.forEach(function(item, index) {
-          var sdata = {};
-
-        //   val = item.F15001;
-        //   if(dmode == 0) val = item.etp_close_idx;
-        //   else val = item.close_idx;
-          if(dmode == 0) val = item.INDEX_RATE;
-          else val = item.bm_1000_data;
-
-          val = Number(val);
-          if(index == 0) {
-            maxVal = val;
-            minVal = val;
-          }else {
-            if(maxVal < val) maxVal = val;
-            else if(minVal > val) minVal = val;
-          }
-//          sdata.dd = item.F12506;
-          sdata.dd = item.fmt_F12506;
-          sdata.vv = val;
-          vm.sArr.push(sdata);
-        });
-        
-        // console.log("maxval : " + maxVal + " minVal : " + minVal);
-        // 부동소수점 연산 오류 수정
-        diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
-        toFixNum = util.getToFixNum(diffVal);
-
-        // Y Axis 데이터 
-        stepVal = diffVal / 6;
-        vm.yAxisVal[0] = minVal;
-        for(var i=1; i < 6; i++) {
-          // console.log("i : " + i + " minVal : " + minVal + " maxVal : " + maxVal + " stepVal : " + stepVal);
-          vm.yAxisVal[i] = minVal + stepVal * i;
-        }
-        vm.yAxisVal[5] = maxVal;
-        for(var i=0; i < 6; i++) {
-          vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
-          vm.yAxisVal[i] = util.formatStringNum(vm.yAxisVal[i].toString());
-          // vm.yAxisVal[i] = vm.yAxisVal[i].toString();
-        }
-
-        // X Axis 데이터
-        var stepX = Math.floor(_dnum / 5);
-        for(var i=0; i < 5; i++) {
-          vm.xAxisDd[i] = vm.sArr[stepX*i].dd;
-        }
-
-        c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
-
-        c.beginPath();
-        var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        // grd.addColorStop(0, "#C5E1A5");
-        // grd.addColorStop(1, "#85c406");
-        // 그리드 색상 10가지 ['#b9e0f7', '#72cdf4', '#1e99e8', '#0076be', '#dcddde', '#B6B8BA', '#7E8083', '#FBB040', '#F58025', '#EDED8A']
-//        if(this.dmode == 0) {
-        if(this.dmode == 1) {    
-          grd.addColorStop(0, "#C5E1A5");
-          grd.addColorStop(1, "#85c406");
-        }else {
-          grd.addColorStop(0, "#b8b8b8");
-          grd.addColorStop(1, "#8c8c8c");
-        }        
-        c.lineWidth = 1;
-        c.setLineDash([]);
-        c.strokeStyle = grd ;
-        vm.chartDataPosArr = [];
-        vm.chartDataHPosArr = [];
-        vm.sArr.forEach(function(item, index) {
-          // console.log("draw_sintra... : " + index);
-          // console.log(item);
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr[index] = _wpos;
-          vm.chartDataHPosArr[index] = _hpos;
-
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
-          }
-          // console.log("_wpos : " + _wpos + " _hpos : " + _hpos);
-        });
-        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
-        c.stroke();
-
-        //Y-Axis 그리기
-        c.fillStyle = "#424242";
-        c.textBaseline = "middle";
-        c.textAlign = "end";
-        c.font = '12px san-serif';
-        for(var i=0; i < 6; i++) {
-          // console.log("yAxis : " + vm.yAxisVal[i]);
-          c.fillText(vm.yAxisVal[5-i], 65, vm.crect.y1 + 50 * i);
-        }
-        //X-Axis 그리기
-        c.fillStyle = "#424242";
-        c.textBaseline = "middle";
-        c.textAlign = "center";
-        c.font = '12px san-serif';
-        
-        for(var i=0; i < 5; i++) {
-          // console.log("xAxis : " + vm.xAxisDd[i] + " " + vm.xAxisTt[i]);
-          c.fillText(vm.xAxisDd[i], vm.crect.x1 + 35 + (vm.crect.x2-vm.crect.x1) / 5 * i, vm.crect.y2+10);
-        }
-
-        this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
-      },
-
+    
       draw_mhist: function (dmode, idata){
         var c = this.ctx;
         var vm = this;
-        var _dnum = idata.length;
+        var _dnum = idata.length;        
         var val = 0, val1 = 0;
-        var baseVal = 0, baseVal1 = 0;
+        var arr_baseVal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        var arr_curRate = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        //var baseVal = 0, baseVal1 = 0;
         var minRate = 0.0, maxRate = 0.0;
-        var curRate = 0.0, curRate1 = 0.0;
+        //var curRate = 0.0, curRate1 = 0.0;
         var diffRate = 0.0;
         var stepRate = 0.0;
         var _wpos = 0, _hpos = 0;
@@ -269,86 +143,62 @@ export default {
         this.sArr = [];
         idata.forEach(function(item, index) {
           var sdata = {};
-
+          var arr_val = [];
         //   val = item.F15001;
         //   val1 = item.iF15001;
 
-          val = Number( item.INDEX_RATE );
-          val1 = Number( item.bm_1000_data );
+          if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
+            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? '-' : _.get(item, 'BM_RATE')));
+          }
+          vm.arr_result_header.forEach(function(scen, x) {
+            let scen_cd = scen.scen_cd;
+            
+            let val =_.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE') == '' ? '-' : _.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE');
+
+            arr_val.push(Number(val));
+           
+          });
 
           if(index == 0) {
-            baseVal = val; baseVal1 = val1;
-            curRate = 0.0; curRate1 = 0.0;
+            arr_baseVal = [...arr_val];
+
             maxRate = 0.0; minRate = 0.0;
 
-            if( val < val1 ) {
-                minVal = val;
-                maxVal = val1;
-            }else{
-                minVal = val1;
-                maxVal = val;
-            }
 
+            minVal = _.min(arr_val);
+            maxVal = _.max(arr_val);
+          
           }else {
 
-            if( val < val1 ) {
-
-                if( minVal > val ) {
-                    minVal = val;
-                }
-
-                if( maxVal < val1 ) {
-                    maxVal = val1;
-                }
-            }else{
-
-                if( minVal > val1 ) {
-                    minVal = val1;
-                }
-
-                if( maxVal < val ) {
-                    maxVal = val;
-                }                
-            }              
             
-            if( baseVal == 0 ) {
-                curRate =   0;
-            }else{
-                curRate = (val - baseVal) * 100 / baseVal;
-            }
-
-            if( baseVal1 == 0 ) {
-                curRate1 = 0;
-            }else{
-                curRate1 = (val1 - baseVal1) * 100 / baseVal1;
-            }
-
-            if(curRate > curRate1) {
-
-              if(maxRate < curRate) {
-                maxRate = curRate;
-              }                
-              if(minRate > curRate1) {
-                minRate = curRate1;
+            minVal = _.min(arr_val) > minVal ? minVal : _.min(arr_val);
+            maxVal = _.max(arr_val) < maxVal ? maxVal : _.max(arr_val);       
+            
+            arr_baseVal.forEach(function(baseVal, b_index) {
+              if(baseVal == 0 ) {
+                arr_curRate[b_index] =   0;
+              } else{
+                try {
+                  arr_curRate[b_index] = (arr_val[b_index] - baseVal) * 100 / baseVal;
+                } catch(error) {
+                  // arr_val[b_index]]에 값이 없을때
+                  arr_curRate[b_index] = 0;
+                }
               }
-            }else {
-              if(maxRate < curRate1) {
-                maxRate = curRate1;
-              }
-              if(minRate > curRate) {
-                minRate = curRate;
-              }
-            }
+            });
+
+            maxRate = _.max(arr_curRate) < maxRate ? maxRate : _.max(arr_curRate);
+            minRate = _.min(arr_curRate) > minRate ? minRate : _.min(arr_curRate);       
           }
-
-//          sdata.dd = item.F12506;
+      
           sdata.dd = item.fmt_F12506;
-          sdata.vv = val;
-          sdata.ivv = val1;
-          sdata.rate = curRate;
-          sdata.irate = curRate1;
+          sdata.vv = [...arr_val];
+          sdata.rate = [...arr_curRate];
+
           vm.sArr.push(sdata);
         });
+
+
 
         diffVal = (maxVal * 10000 - minVal * 10000) /  10000;
         stepVal = diffVal / 5;
@@ -356,10 +206,7 @@ export default {
         diffRate = maxRate - minRate;
         stepRate = diffRate / 6;
 
-// console.log("maxRate : " + maxRate);
-// console.log("minRate : " + minRate);
-// console.log("diffRate : " + diffRate);
-// console.log("stepRate : " + stepRate);
+
 
         // Y Axis 데이터 
         vm.yAxisVal[0] = minVal;
@@ -369,7 +216,7 @@ export default {
         }
         vm.yAxisVal[5] = maxVal;
         for(var i=0; i < 6; i++) {
-          vm.yAxisVal[i] = vm.yAxisVal[i].toFixed(2);
+          vm.yAxisVal[i] = Number(vm.yAxisVal[i]).toFixed(2);
         }
 
         // X Axis 데이터
@@ -380,58 +227,43 @@ export default {
         }
 
         c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
+        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);   
 
-        // ETP 차트 그리기
-        c.beginPath();
-        var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#C5E1A5");
-        grd.addColorStop(1, "#85c406");
+        
+        // 시나리오 차트 그리기
+        vm.arr_checked.forEach(function(check_array, idx) {
 
-        c.lineWidth = 1;
-        c.setLineDash([]);
-        c.strokeStyle = grd ;
+          if (check_array) {
+            c.beginPath();
+            var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
+            grd.addColorStop(0, vm.lineColor1[idx]);
+            grd.addColorStop(1, vm.lineColor2[idx]);
 
-        vm.chartDataPosArr = [];
-        vm.chartDataHPosArr = [];        
+            c.lineWidth = 1;
+            c.setLineDash([]);
+            c.strokeStyle = grd ;
 
-        vm.sArr.forEach(function(item, index) {
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.vv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr[index] = _wpos;
-          vm.chartDataHPosArr[index] = _hpos;
+            vm.chartDataPosArr = [];
+            vm.chartDataHPosArr = [];        
 
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
+            vm.sArr.forEach(function(item, index) {
+              // _dnum - 1 : 오른쪽 마지막 픽셀 표현
+              if (!isNaN(item.vv[idx])) {
+                _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
+                _hpos = vm.crect.y1 + (vm.hlen - ((item.vv[idx] - minVal) / diffVal * vm.hlen)) ;
+                vm.chartDataPosArr[index] = _wpos;
+                vm.chartDataHPosArr[index] = _hpos;
+
+                if(index == 0) {
+                  c.moveTo(_wpos, _hpos);
+                }else {
+                  c.lineTo(_wpos, _hpos);
+                }
+              }
+            });             
+            c.stroke();
           }
         });
-        c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);
-        c.stroke();
-
-        // INDEX 차트 그리기
-        c.beginPath();
-        grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#b8b8b8");
-        grd.addColorStop(1, "#8c8c8c");
-        c.strokeStyle = grd ;
-        vm.sArr.forEach(function(item, index) {        
-          // console.log("draw_mintra... : " + index);
-          // console.log(item);
-          // _dnum - 1 : 오른쪽 마지막 픽셀 표현
-          _wpos = index / (_dnum-1) * vm.wlen + vm.crect.x1;
-          _hpos = vm.crect.y1 + (vm.hlen - ((item.ivv - minVal) / diffVal * vm.hlen)) ;
-          vm.chartDataPosArr1[index] = _wpos;
-          vm.chartDataHPosArr1[index] = _hpos;
-
-          if(index == 0) {
-            c.moveTo(_wpos, _hpos);
-          }else {
-            c.lineTo(_wpos, _hpos);
-          }
-        });
-        c.stroke();
 
         //Y-Axis 그리기
         c.fillStyle = "#424242";
@@ -456,12 +288,6 @@ export default {
         this.draw_chart_image = c.getImageData(this.crect.x1, this.crect.y1-10, this.crect.x2, this.crect.y2);
 
       },
-
-
-
-
-
-
 
 
 
@@ -533,7 +359,7 @@ export default {
         c.font = '11px san-serif';
 
         c.fillText(item.dd, twpos+tt_wlen, hpos+31);
-        c.fillText( util.formatNumber( item.vv ), twpos+tt_wlen, hpos+43);
+        c.fillText( util.formatNumber( item.vv[0] ), twpos+tt_wlen, hpos+43);
 
         // 포인트 원 그리기
         if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지
@@ -548,8 +374,9 @@ export default {
       // Multi Chart Tool Tip
       drawMToolTip: function(wpos, hpos) {
         var c = this.ctx;
+        var vm = this;
         var twpos = wpos;
-        var tt_wlen = 100;
+        var tt_wlen = 170;
         var tt_hlen = 50;
         var item = {};
         var dhpos = 0;
@@ -557,8 +384,8 @@ export default {
         // 툴팁 박스 그리기
         if(wpos + tt_wlen >= this.crect.x2) twpos -= (tt_wlen + 20);
         c.fillStyle = "#FFFDE7";
-
-        c.fillRect(twpos+10, hpos+20, tt_wlen, tt_hlen-10);
+        
+        c.fillRect(twpos+10, hpos+20, tt_wlen, tt_hlen-10 + (this.arr_checked.length * 12));
 
         // 툴팁 텍스트 그리기
         item = this.getDataByPos(wpos);
@@ -568,8 +395,25 @@ export default {
         c.font = '11px Roboto, sans-serif, Noto-Sans';
 
         c.fillText(item.dd, twpos+tt_wlen, hpos+31);
-        c.fillText("Index : " + util.formatNumber( item.vv ), twpos+tt_wlen, hpos+43);
-        c.fillText("BM : " + util.formatNumber( item.ivv ), twpos+tt_wlen, hpos+55);
+
+        var cal_hpos = hpos+43;
+        vm.arr_checked.forEach(function(check_array, idx) {
+          if (check_array) {
+            
+            if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
+              if (idx == 0) {              
+                c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
+              } else {
+                
+                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + "_("+idx+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
+              }
+            } else {
+              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + "_("+(idx+1)+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
+            }
+            
+            cal_hpos += 12;
+          }
+        });
 
         // 포인트 원 그리기
         if((wpos - this.crect.x1) > 5) {   // Y-Axis 침범 방지

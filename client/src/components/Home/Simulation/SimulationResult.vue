@@ -364,6 +364,7 @@ export default {
             ,   jsonFileName                :   ""
 
             ,   chartFlag                   :   false
+            ,   result_save_yn              :   "N"     /* 결과정보 저장유무 */
 
         };
     },
@@ -439,27 +440,62 @@ export default {
 
         vm.chartFlag   =   false;
 
+        vm.fn_showProgress( true );
+
         /* 초기 설정 데이터를 조회한다. */
-        vm.fn_initData().then( async function(e) {
+        vm.fn_initData().then( function(e) {
+            return  step1();
+        }).then( function(e) {
+            return  step2();
+        }).then( function(e) {
+            vm.fn_showProgress( false );
+        }).catch( function(e) {
+            console.log( e );
+            vm.fn_showProgress( false );
+        })
 
-            if( e && e.result ) {
 
-                /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
-                if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+        /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
+        async function step1() {
 
-                    /* grp_cd 와 scen_cd 가 존재하는 경우 DB 저장된 backtest 결과 조회 */
-                    if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
-                        vm.fn_getBacktestResult( vm.paramData );
-                    }
-                    /* 화면으로 부터 결과정보를 받은 경우 */
-                    else if( 
-                            ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
-                        ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
-                        ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
-                        ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
-                        ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
-                        ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
-                    ){                        
+            if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+                if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+
+                    /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+                    // vm.fn_getSimulResultSaveYn( { 
+                    //         "grp_cd"    :   vm.paramData.grp_cd
+                    //     ,   "scen_cd"   :   vm.paramData.scen_cd
+                    // });
+
+                    /* 백테스트 결과를 조회한다. */
+                    return  vm.fn_getBacktestResult( vm.paramData );
+                }
+            }
+        }
+
+        /* 화면으로 부터 결과정보를 받은 경우 */
+        async function step2() {
+
+            /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+            if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+                if( 
+                        ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
+                    ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
+                    ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
+                    ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
+                    ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
+                    ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
+                ){
+
+                    return  await new Promise(function(resolve, reject) {
+
+                        /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+                        // vm.fn_getSimulResultSaveYn( { 
+                        //         "grp_cd"    :   vm.paramData.simul_mast.grp_cd
+                        //     ,   "scen_cd"   :   vm.paramData.simul_mast.scen_cd
+                        // });                                          
 
                     /*************************************************************************************************************
                     *   array 리밸런스 정보
@@ -559,10 +595,16 @@ export default {
                             console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
                         }
                         vm.fn_setAnal01();
-                    }
+
+                        resolve( { result : true } );
+
+                    }).catch( function(e1) {
+                        console.log( e1 );
+                        vm.fn_showProgress( false );
+                    });
                 }
-            }
-        });
+            }            
+        }
     },
 
     methods: {
@@ -602,7 +644,7 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+//                vm.fn_showProgress( true );
 
                 util.axiosCall(
                         {
@@ -611,7 +653,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+//                            vm.fn_showProgress( false );
 
                             try{
 
@@ -735,7 +777,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+//                            vm.fn_showProgress( false );
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -762,7 +804,7 @@ export default {
 
             return await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+//                vm.fn_showProgress( true );
 
                 util.axiosCall(
                         {
@@ -771,7 +813,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+//                            vm.fn_showProgress( false );
 
                             try{
 
@@ -829,7 +871,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+//                            vm.fn_showProgress( false );
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1824,6 +1866,8 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
+                vm.fn_showProgress( true );
+
                 step1().then( function(e){
                     if( e && e.result ) {
                         return  step2();
@@ -1837,15 +1881,18 @@ export default {
                         return  step4();
                     }
                 }).then( function(e3) {
-                    step5();
-                })
+                    return step5();
+                }).then( function(e4) {
+                    vm.fn_showProgress( false );
+                }).catch( function(e) {
+                    console.log( e );
+                    vm.fn_showProgress( false );
+                });
                 
                 /* 일자별 지수 */
                 async function    step1() {
 
                     return  await new Promise(function(resolve, reject) {
-
-                        vm.fn_showProgress( true );
 
                         try{
                             excelInfo.sheetNm           =   "일자별 지수";
@@ -2133,12 +2180,9 @@ export default {
                         try{                
                             excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
 
-                            vm.fn_showProgress( false );
-
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2307,7 +2351,76 @@ export default {
             }
 
             vm.$emit( "fn_showSimulation", p_param );
-        }            
+        },
+
+
+        /*
+         * 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.
+         * 2019-10-31  bkLove(촤병국)
+         */
+        async fn_getSimulResultSaveYn( p_param ) {
+            var vm = this;
+
+
+            if( !p_param || !p_param.grp_cd || !p_param.scen_cd ) {
+                console.log( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            return await new Promise(function(resolve, reject) {
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/getSimulResultSaveYn"
+                            ,   "data"      :   p_param
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+                            vm.fn_showProgress( false );
+
+                            try{
+
+                                if (response && response.data) {
+                                    var arrMsg = ( response.data.msg && response.data.msg.length > 0 ? response.data.msg : [] );
+
+                                    if (!response.data.result) {
+                                        if( arrMsg.length > 0 ) {
+                                            vm.arr_show_error_message.push( ...arrMsg );
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+
+                                        vm.result_save_yn   =   response.data.result_save_yn;
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },
+
     }
     
 };
