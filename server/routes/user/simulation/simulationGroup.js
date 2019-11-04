@@ -184,7 +184,8 @@ var getScenInGrpCd = function(req, res) {
                             }
 
 
-                            resultMsg.msg   =   "";
+                            resultMsg.msg       =   "";
+                            resultMsg.result    =   true;
                             if( v_arr_result && v_arr_result.length > 0  ) {
 
                                 if( v_change_yn ) {
@@ -232,6 +233,173 @@ var getScenInGrpCd = function(req, res) {
                 res.end();
 
             });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.dataList      =   [];
+        resultMsg.simul_mast    =   {};
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 선택된 시나리오 코드들에 대한 정보를 조회한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var getInfoCheckedScenCd = function(req, res) {
+    try {
+        log.debug('simulationGroup.getInfoCheckedScenCd 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulationGroup.getInfoCheckedScenCd  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.dataList      =   [];
+        resultMsg.simul_mast    =   {};
+
+
+        Promise.using(pool.connect(), conn => {
+
+            try{
+                var msg = {};
+
+                /* 선택된 시나리오 코드들에 대한 정보를 조회한다. */
+                stmt = mapper.getStatement('simulationGroup', 'getInfoCheckedScenCd', paramData, format);
+                log.debug(stmt);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        res.json(resultMsg);
+                        res.end();
+                    }
+
+                    if ( !rows || rows.length == 0) {
+                        resultMsg.result = false;
+                        resultMsg.msg   = "시나리오가 한건 이상 존재해야 합니다.";
+                        resultMsg.err   = "시나리오가 한건 이상 존재해야 합니다.";
+
+                        res.json(resultMsg);
+                        res.end();
+                    }
+
+                    var v_arr_result    =   [];
+                    var v_limit_yn      =   false;
+                    var v_change_yn     =   false;
+                    var v_result_msg    =   "";
+
+                    var v_checkFlag     =   true;
+                    var v_checkCode     =   "";
+
+                    for( var i=0; i < rows.length; i++ ) {
+                        var item    =   rows[i];
+
+                        if( !item.scen_name || item.scen_name == null ) {
+                            v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
+                            v_checkFlag     =   false;
+                            break;
+                        }
+
+                        if( v_arr_result.length == 10 ) {
+                            v_limit_yn          =   true;
+                            v_result_msg        =   "10건까지만 비교됩니다.";
+                            break;
+                        }                                
+
+                        if( item.change_serial_yn  ==  "N" ) {
+                            v_arr_result.push( item );
+                        }else{
+                            v_change_yn =   true;
+                        }
+                    };
+
+                    if( !v_checkFlag ) {
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
+                        resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+
+                        res.json(resultMsg);
+                        res.end();
+                    }else if( !v_arr_result || v_arr_result.length == 0 ) {
+                        resultMsg.result    =   false;
+                        resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+                        resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+
+                        res.json(resultMsg);
+                        res.end();
+                    }else{
+
+                        resultMsg.msg       =   "";
+                        resultMsg.result    =   true;
+                        if( v_arr_result && v_arr_result.length > 0  ) {
+
+                            if( v_change_yn ) {
+                                resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동된 정보가 한건 이상 존재합니다.";
+                            }
+
+                            if( v_limit_yn ) {
+                                resultMsg.msg       +=  v_result_msg;
+                            }
+
+                            for( var i=0; i < v_arr_result.length; i++ ) {
+                                resultMsg.dataList.push( v_arr_result[i] );
+                            }
+
+                            resultMsg.simul_mast    =   {};
+                        }
+
+                        res.json(resultMsg);
+                        res.end();
+                    }
+                });
+
+            } catch (err) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+
+                if( !resultMsg.err ) {
+                    resultMsg.err = err;
+                }
+
+                res.json(resultMsg);
+                res.end();
+            }
         });
 
     } catch (expetion) {
@@ -774,6 +942,7 @@ var getSimulAnal02InArrCd = function(req, res) {
 }
 
 module.exports.getScenInGrpCd = getScenInGrpCd;
+module.exports.getInfoCheckedScenCd = getInfoCheckedScenCd;
 module.exports.getSimulDailyInArrCd = getSimulDailyInArrCd;
 module.exports.getSimulAnal01InArrCd = getSimulAnal01InArrCd;
 module.exports.getSimulAnal02InArrCd = getSimulAnal02InArrCd;

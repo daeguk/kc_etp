@@ -18,7 +18,7 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_yn                =   '1'
 
-           AND  tm_simul_mast.scen_cd               =   #{scen_cd}
+           AND  tm_simul_mast.scen_cd               =   #{grp_cd}
            AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
     </select>
 
@@ -54,6 +54,51 @@
 
     </select>
 
+
+    <!--
+    *   선택된 시나리오 코드들에 대한 정보를 조회한다.
+    *   2019-10-24  bkLove(촤병국)
+    -->
+    <select id="getInfoCheckedScenCd">
+
+        SELECT      /* simulation.getInfoCheckedScenCd     선택된 시나리오 코드들에 대한 정보를 조회한다. */
+
+                    base.grp_cd                                         AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   base.scen_cd                                        AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name                             AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.grp_yn                                AS  grp_yn                      /* 그룹여부(1-그룹) */
+                ,   CASE    WHEN    IFNULL(
+                                            (
+                                                SELECT  tm_simul_result_mast.serial_no
+                                                  FROM  tm_simul_result_mast
+                                                 WHERE  1 = 1
+                                                   AND  tm_simul_result_mast.grp_cd     =   tm_simul_mast.grp_cd
+                                                   AND  tm_simul_result_mast.scen_cd    =   tm_simul_mast.scen_cd
+                                            )
+                                        ,   ''
+                                    )   =   tm_simul_mast.serial_no
+                            THEN    'N'
+                            ELSE    'Y'
+                    END                                                 AS  change_serial_yn            /* 결과정보와 마스터 정보 변동여부 */
+          FROM  (
+            <foreach    collection="dataList"   item="item"    separator=" UNION ALL" >
+            <![CDATA[
+                    SELECT      #{item.grp_cd}                          AS  grp_cd                      /* 그룹코드(상위코드) */
+                            ,   #{item.scen_cd}                         AS  scen_cd                     /* 시나리오 코드 */
+                      FROM  dual
+            ]]>
+            </foreach>
+                )   base
+            
+          LEFT  JOIN    tm_simul_mast
+                  ON    ( 
+                                    1= 1
+                            AND     base.grp_cd     =   tm_simul_mast.grp_cd
+                            AND     base.scen_cd    =   tm_simul_mast.scen_cd
+                       )
+         WHERE  1 = 1
+
+    </select>
 
     <!--
     *   코드에 속한 일자별 지수를 조회한다.

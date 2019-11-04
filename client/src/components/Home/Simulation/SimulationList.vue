@@ -28,7 +28,7 @@
                     </span>
                 </div>
                 <span class="btn_r">
-                    <v-btn depressed color="primary" @click="">비교하기</v-btn>
+                    <v-btn depressed color="primary" @click="fn_compareCheckedData()">비교하기</v-btn>
                 </span>
             </v-card>
 
@@ -60,8 +60,16 @@
 
                         <tr v-for="( item, index ) in arr_simul_list"    :key="'simul_' + index" >
 
-                            <td><v-checkbox  color="primary"></v-checkbox></td>
-                            <!-- Name -->
+                            <td>
+                                <v-checkbox     color="primary" 
+                                                v-model="arr_comp" 
+                                                :name="'chk_' + index" 
+                                                :value="fn_setCheckedValue( item )" 
+
+                                                @click.stop="fn_checkData( item, index )"></v-checkbox>
+                            </td>
+
+                        <!-- Name -->
                             <td class="txt_left">
                                 <!-- 시나리오 그룹 인 경우 -->
                                 <div class=""  v-if="item.grp_yn == '1'">
@@ -79,7 +87,7 @@
                                 </div>
                             </td>
 
-                            <!-- Index -->
+                        <!-- Index -->
                             <td class="txt_right">
                                 {{ fn_formatNumber( item.INDEX_RATE ) }}
                                 <br />
@@ -91,23 +99,42 @@
                                 </div>
                             </td>
 
-                            <!-- Last modified -->
+                        <!-- Last modified -->
                             <td  class="txt_right">
                                 {{ item.fmt_upd_time }}
-                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn } )" />
+                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index } )" />
                             </td>
 
-                            <!-- 버튼 영역 -->
+                        <!-- 버튼 영역 -->
                             <td>
                                 <button name="btn1" class="simul_icon1"></button>
-                                <button name="btn2" class="simul_icon2 disable"  v-if="item.grp_yn == '0' && item.result_daily_yn == '1'" ></button>
+                                <button name="btn2" :class="'simul_icon2 ' + ( item.grp_yn == '0' && item.result_daily_yn == '1' ?  '' : 'disable' )"></button>
 
+
+                            <!-- 그룹인 경우 -->
+                                <v-menu bottom left v-if="item.grp_yn == '1'" >
+
+                                    <template v-slot:activator="{ on }">
+                                        <button name="btn4" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
+                                    </template>
+
+                                    <ul class="more_menu_w">
+                                        <li @click="fn_getScenInGrpCd( item, index )"><v-icon class="simul_del_btn">delete_forever</v-icon>비교</li>
+                                        <!--li @click="">menu2</li>
+                                        <li @click="">menu3</li-->
+                                    </ul>
+                                </v-menu>
+
+
+                            <!-- 시나리오인 경우 -->
                                 <v-menu bottom left v-if="item.grp_yn == '0'" >
+                                    
                                     <template v-slot:activator="{ on }">
                                         <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
                                     </template>
+
                                     <ul class="more_menu_w">
-                                        <li @click="fn_simul_delete( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
+                                        <li @click="fn_simul_delete( item, index )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
                                         <li @click=""><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
                                         <li @click=""><v-icon class="simul_more_btn">restore_page</v-icon> 그룹변경</li>
                                         <!--그룹명 팝업창---->
@@ -126,8 +153,8 @@
 
                                             </v-card>
                                         <!--그룹명 팝업창end--->
-                                        <li @click=""><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
-                                        <li @click=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
+                                        <li @click.stop=""><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
+                                        <li @click.stop=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
                                         <!--공유하기 팝업창--->
                                             <!--v-card style="width:500px;">
                                                 <h5>
@@ -261,17 +288,6 @@
                                         <!--공유하기 팝업창 end--->
                                     </ul>
                                 </v-menu>
-
-                                <v-menu bottom left v-if="item.grp_yn == '1'" >
-                                    <template v-slot:activator="{ on }">
-                                        <button name="btn4" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
-                                    </template>
-                                    <ul class="more_menu_w">
-                                        <li @click="fn_getScenInGrpCd( { grp_cd : item.grp_cd, scen_cd : item.scen_cd } )"><v-icon class="simul_del_btn">delete_forever</v-icon>비교</li>
-                                        <!--li @click="">menu2</li>
-                                        <li @click="">menu3</li-->
-                                    </ul>
-                                </v-menu>
                             </td>
                         </tr>
 
@@ -327,6 +343,10 @@ export default {
             ,   scen_cd                     :   ""          /* 선택한 시나리오 코드 */
             ,   scen_name                   :   ""          /* 그룹명 */
             ,   status                      :   "insert"    /* 상태정보 */
+
+            ,   arr_comp                    :   []
+            ,   now_event                   :   ""
+            ,   now_status                  :   ""
         };
     },
     components: {
@@ -349,29 +369,29 @@ export default {
 
 
         /* table tr 에서 버튼 클릭시  */
-        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2]", async function() {
+        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2], button[name=btn_rename]", async function() {
             var tr          =   $(this).closest('tr');
             var rowIndex    =   tr.index();
 
             var strParam    =   tr.find( "td input[name=strParam]" );
 
+
+            if( !strParam ) {
+                console.log( "simulation strParam parameter 인자값이 없습니다." );
+                return  false;
+            }
+
+            var v_jsonParam =   JSON.parse( strParam.val() );
+
+            if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
+                console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
+                return  false;
+            }
+
             switch( $(this).attr( "name" ) ) {
 
-                        /* 수정화면으로 이동한다. */
+                        /* 수정화면 이동 */
                 case    "btn1"  :
-
-                            if( !strParam ) {
-                                console.log( "simulation strParam parameter 인자값이 없습니다." );
-                                return  false;
-                            }
-
-                            var v_jsonParam =   JSON.parse( strParam.val() );
-
-                            if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
-                                console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
-                                return  false;
-                            }
-
 
                             /* 수정정보를 보여준다. */
                             v_jsonParam.showSimulationId        =   1;
@@ -379,18 +399,11 @@ export default {
 
                             break;
 
+                        /* 상세화면 이동 */
                 case    "btn2"  :
 
-                            if( !strParam ) {
-                                console.log( "simulation strParam parameter 인자값이 없습니다." );
-                                return  false;
-                            }
-
-                            var v_jsonParam =   JSON.parse( strParam.val() );
-
-                            if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
-                                console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
-                                return  false;
+                            if( v_jsonParam.grp_yn == '1' || v_jsonParam.result_daily_yn == '0' ) {
+                                return false;
                             }
 
                             if( v_jsonParam.simul_change_yn == "1" ) {
@@ -415,6 +428,87 @@ export default {
                                 /* 결과화면을 보여준다. */
                                 v_jsonParam.showSimulationId        =   2;
                                 vm.$emit( "fn_showSimulation", v_jsonParam );
+                            }
+
+                            break;
+
+                        /* 이름 변경 */
+                case    "btn_rename"    :
+
+                            vm.now_event    =   "fn_rename";
+                            vm.now_status   =   "ing";
+
+                            var     v_scen_name_obj     =   $( "input[name=txt_simul_" + v_jsonParam.index + "]" );
+
+                            if( v_scen_name_obj && typeof v_scen_name_obj.val() != "undefined" ) {
+
+                                if( v_scen_name_obj.val() == "" ) {
+
+                                    if ( await vm.$refs.confirm2.open(
+                                            '확인',
+                                            '시나리오명을 입력해 주세요.',
+                                            {}
+                                            ,1
+                                        )
+                                    ) {
+                                        v_scen_name_obj.focus();
+                                        return  false;
+                                    }
+                                }
+
+                                var p_param         =   {};
+
+                                p_param.grp_cd      =   v_jsonParam.grp_cd;
+                                p_param.scen_cd     =   v_jsonParam.scen_cd;
+                                p_param.scen_name   =   v_scen_name_obj.val();
+
+
+                                vm.fn_showProgress( true );
+
+                                util.axiosCall(
+                                        {
+                                                "url"       :   Config.base_url + "/user/simulation/renameScenario"
+                                            ,   "data"      :   p_param
+                                            ,   "method"    :   "post"
+                                        }
+                                    ,   async function(response) {
+                                            vm.fn_showProgress( false );
+
+                                            try{
+
+                                            if (response && response.data) {
+                                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                                if (!response.data.result) {
+                                                    if( msg ) {
+                                                        vm.arr_show_error_message.push( msg );
+                                                    }
+                                                }else{
+
+                                                    if( msg ) {
+                                                        if ( vm.$refs.confirm2.open(
+                                                                '확인',
+                                                                msg,
+                                                                {}
+                                                                ,1
+                                                            )
+                                                        ) {
+                                                            /* 시뮬레이션 목록정보를 조회한다. */
+                                                            vm.fn_getSimulList();
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            }catch(ex) {
+                                                console.log( "error", ex );
+                                            }
+                                        }
+                                    ,   function(error) {
+                                            vm.fn_showProgress( false );
+                                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                        }
+                                );                
                             }
 
                             break;
@@ -467,6 +561,10 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            vm.now_event                =   "";
+            vm.now_status               =   "";
+            vm.arr_simul_list           =   [];
+            
             vm.fn_showProgress( true );
 
             util.axiosCall(
@@ -487,6 +585,7 @@ export default {
                                 }
                             }else{
                                 vm.arr_simul_list   =   response.data.dataList;
+                                vm.arr_comp         =   [];
                             }
                         }
                     }
@@ -754,14 +853,14 @@ export default {
          * 시뮬레이션을 삭제한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        async fn_simul_delete( p_param ) {
+        async fn_simul_delete( p_item, p_index ) {
 
             var vm = this;
 
             vm.arr_show_error_message   =   [];
 
 
-            if( !p_param.grp_cd || !p_param.scen_cd  ) {
+            if( !p_item.grp_cd || !p_item.scen_cd  ) {
                 vm.arr_show_error_message.push( "그룹코드 또는 시나리오 코드가 존재하지 않습니다." );
                 return  false;
             }            
@@ -777,6 +876,11 @@ export default {
                     return  false;
                 }
             }
+
+            var p_param     =   {};
+
+            p_param.grp_cd  =   p_item.grp_cd;
+            p_param.scen_cd =   p_item.scen_cd;
 
             vm.fn_showProgress( true );
 
@@ -830,19 +934,21 @@ export default {
          * 그룹코드에 속한 시나리오를 조회한다.
          * 2019-10-24  bkLove(촤병국)
          */
-        async fn_getScenInGrpCd( p_param ) {
+        fn_getScenInGrpCd( p_item, p_index ) {
 
             var vm = this;
 
             vm.arr_show_error_message   =   [];
 
 
-            if( !p_param.scen_cd  ) {
+            if( !p_item.scen_cd  ) {
                 vm.arr_show_error_message.push( "그룹코드가 존재하지 않습니다." );
                 return  false;
             }
 
-            p_param.grp_cd      =   p_param.scen_cd;     
+            var p_param         =   {};
+
+            p_param.grp_cd      =   p_item.scen_cd;     
 
             vm.fn_showProgress( true );
 
@@ -850,6 +956,156 @@ export default {
                     {
                             "url"       :   Config.base_url + "/user/simulation/getScenInGrpCd"
                         ,   "data"      :   p_param
+                        ,   "method"    :   "post"
+                    }
+                ,   async function(response) {
+
+                        try{
+
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+
+                                    vm.fn_showProgress( false );
+
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+
+                                    return  false;
+                                }
+
+                                if( msg ) {
+                                    if ( await vm.$refs.confirm2.open(
+                                            '확인',
+                                            msg,
+                                            {}
+                                            ,1
+                                        )
+                                    ) {
+                                        /* 그룹 내 시나리오 결과 조회 */
+                                        vm.$emit( "fn_showSimulation", { 
+                                                "showSimulationId"  :   3
+                                            ,   "simul_mast"        :   response.data.simul_mast
+                                            ,   "arr_scen_in_grp"   :   response.data.dataList
+                                        });
+
+                                        return  false;
+                                    }
+                                }
+
+                                /* 그룹 내 시나리오 결과 조회 */
+                                vm.$emit( "fn_showSimulation", { 
+                                        "showSimulationId"  :   3
+                                    ,   "simul_mast"        :   response.data.simul_mast
+                                    ,   "arr_scen_in_grp"   :   response.data.dataList
+                                });                                
+                            }
+
+                            vm.fn_showProgress( false );
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+        },
+
+        /*
+         * 선택된 데이터를 설정한다.
+         * 2019-10-24  bkLove(촤병국)
+         */
+        fn_setCheckedValue( p_param ) {
+            return  '{ "grp_cd" : "' + p_param.grp_cd + '", "scen_cd" : "' + p_param.scen_cd + '" }';
+        },
+
+        /*
+         * 체크박크 선택시 데이터를 점검한다.
+         * 2019-10-24  bkLove(촤병국)
+         */
+        async fn_checkData( item, index ) {
+            var vm = this;
+
+            if( item.grp_yn == "1" ) {
+
+                if ( await vm.$refs.confirm2.open(
+                        '확인',
+                        '그룹은 선택하실수 없습니다.',
+                        {}
+                        , 1
+                    )
+                ) {
+                    var v_index =   _.findIndex( vm.arr_comp, function(o){ 
+                        o = JSON.parse(o);
+                        return o.grp_cd == item.grp_cd && o.scen_cd == item.scen_cd;
+                    });
+
+                    if( v_index > -1 ) {
+                        vm.arr_comp.splice(  v_index, 1 );
+                    }
+                }
+            }else{
+
+                if( vm.arr_comp.length >= 10 ) {
+
+                    if ( await vm.$refs.confirm2.open(
+                            '확인',
+                            '최대 10개 까지만 선택 가능합니다.',
+                            {}
+                            , 1
+                        )
+                    ) {
+                        var v_index =   _.findIndex( vm.arr_comp, function(o){ 
+                            o = JSON.parse(o);
+                            return o.grp_cd == item.grp_cd && o.scen_cd == item.scen_cd;
+                        });
+
+                        if( v_index > -1 ) {
+                            vm.arr_comp.splice(  v_index, 1 );
+                        }
+                    }
+                }
+
+            }
+        },
+
+        /*
+         * 체크된 데이터를 비교한다.
+         * 2019-10-24  bkLove(촤병국)
+         */
+        fn_compareCheckedData() {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+
+            if( !vm.arr_comp || vm.arr_comp.length == 0 ) {
+                vm.arr_show_error_message.push( "1건 이상 선택되어 있어야 합니다." );
+                return  false;
+            }
+
+            var param_comp  =   _.map( vm.arr_comp, function(o) {
+                o = JSON.parse(o);
+                return  o;
+            });
+
+            var param       =   {
+                dataList    :   param_comp
+            };
+
+
+            vm.fn_showProgress( true );
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getInfoCheckedScenCd"
+                        ,   "data"      :   param
                         ,   "method"    :   "post"
                     }
                 ,   async function(response) {
@@ -904,7 +1160,7 @@ export default {
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
-        }
+        },
 
     }    
 };

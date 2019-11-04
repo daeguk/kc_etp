@@ -175,6 +175,7 @@ module.exports = {
         { file: './user/simulation/simulation'          , path: '/user/simulation/getSimulList'                 , method: 'getSimulList'                    , session: 'check', type: 'post' },     // 목록정보 조회
         { file: './user/simulation/simulation'          , path: '/user/simulation/deleteAllSimul'               , method: 'deleteAllSimul'                  , session: 'check', type: 'post' },     // 시뮬레이션 정보 삭제
         { file: './user/simulation/simulation'          , path: '/user/simulation/runBacktestWithSaveBasicInfo' , method: 'runBacktestWithSaveBasicInfo'    , session: 'check', type: 'post' },     // 기본정보 저장과 함께 백테스트 실행
+//      { file: './user/simulation/simulation'          , path: '/user/simulation/renameScenario'               , method: 'renameScenario'                  , session: 'check', type: 'post' },     // 시나리오 이름변경
 
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/saveBacktestResult'           , method: 'saveBacktestResult'              , session: 'check', type: 'post' },     // 백테스트 결과 저장
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getBacktestResult'            , method: 'getBacktestResult'               , session: 'check', type: 'post' },     // 백테스트 결과 조회
@@ -185,6 +186,7 @@ module.exports = {
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'              , method: 'uploadPortfolio'                 , session: 'check', type: 'post' },     // 포트폴리오 업로드
 
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getScenInGrpCd'               , method: 'getScenInGrpCd'                  , session: 'check', type: 'post' },     // 그룹코드에 속한 시나리오 조회
+        { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getInfoCheckedScenCd'         , method: 'getInfoCheckedScenCd'            , session: 'check', type: 'post' },     // 선택된 시나리오 코드들에 대한 정보 조회
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulDailyInArrCd'         , method: 'getSimulDailyInArrCd'            , session: 'check', type: 'post' },     // 코드에 속한 일자별지수 조회
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal01InArrCd'        , method: 'getSimulAnal01InArrCd'           , session: 'check', type: 'post' },     // 코드에 속한 분석정보 01 조회
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getSimulAnal02InArrCd'        , method: 'getSimulAnal02InArrCd'           , session: 'check', type: 'post' },     // 코드에 속한 분석정보 02 조회
