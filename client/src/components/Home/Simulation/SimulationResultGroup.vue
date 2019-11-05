@@ -552,12 +552,7 @@ export default {
                                 paging: false,
                                 searching: false,
                                 data: [],
-                                autoWidth: false,
-
-                                fixedHeader: {
-                                    header: true,
-                                    headerOffset: 200,
-                                },                            
+                                autoWidth: false,                      
                             };
 
                             if ($.fn.DataTable.isDataTable("#tbl_result_anal02")) {
@@ -579,7 +574,7 @@ export default {
                                 var v_arr_show_columnDef    =   [];
 
 
-                                v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
+                                v_daily_tr01_html       =   `<th class="txt_left"  width="220">분석지표</th>`;
                                 v_arr_show_column.push( { "data": "anal_id"  , "orderable": false, 'className': 'dt-body-left' } );
 
                                 vm.arr_result_anal02_header.forEach(function(item, index, array){
@@ -617,10 +612,23 @@ export default {
 
                                 v_daily_tr01.html( v_daily_tr01_html );
 
+                                var v_width     =   1660;
 
+                                var v_inx       =   0;
+                                if( vm.arr_result_anal02_header.length == 7 ) {
+                                    v_inx       =   0;
+                                }else if( vm.arr_result_anal02_header.length == 8 ) {
+                                    v_inx       =   1;
+                                }else if( vm.arr_result_anal02_header.length == 9 ) {
+                                    v_inx       =   2;
+                                }else if( vm.arr_result_anal02_header.length >= 10 ) {
+                                    v_inx       =   3;
+                                }
 
-                                if ( vm.arr_result_anal02_header.length > 8 ) {
-                                    $("#tbl_result_anal02").attr( "style", "width: 2180px; table-layout: fixed;" );
+                                v_width     +=  ( v_inx * 180 );
+
+                                if ( vm.arr_result_anal02_header.length >= 7 ) {
+                                    $("#tbl_result_anal02").attr( "style", "width: " + v_width + "px; table-layout: fixed;" );
                                     tableObj_anal02.scrollX = true;
                                 } else {
                                     tableObj_anal02.scrollX = "100%";
