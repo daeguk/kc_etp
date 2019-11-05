@@ -113,9 +113,10 @@ export default {
       dataInit: function() {
           var vm = this;
 
-          this.hist_data      =   [];
-          this.hist_data      =   [ ...this.arr_result_data ];
+          this.hist_data = [];
+          this.hist_data = [ ...this.arr_result_data ];
 
+          this.hist_data = _.orderBy(this.hist_data, ["F12506"], ["asc"]);
           this.draw_hist( vm.dmode );
       },      
 
@@ -131,10 +132,8 @@ export default {
         var _dnum = idata.length;        
         var val = 0, val1 = 0;
         var arr_baseVal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        var arr_curRate = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        //var baseVal = 0, baseVal1 = 0;
+        var arr_curRate = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]        
         var minRate = 0.0, maxRate = 0.0;
-        //var curRate = 0.0, curRate1 = 0.0;
         var diffRate = 0.0;
         var stepRate = 0.0;
         var _wpos = 0, _hpos = 0;
@@ -144,18 +143,31 @@ export default {
         idata.forEach(function(item, index) {
           var sdata = {};
           var arr_val = [];
-        //   val = item.F15001;
-        //   val1 = item.iF15001;
+          var arr_sdata = [];
 
           if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
-            arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? '-' : _.get(item, 'BM_RATE')));
+            arr_sdata.push(Number(_.get(item, 'BM_RATE') == '' ? '-' : _.get(item, 'BM_RATE')));
+            if (vm.arr_checked[0]) {
+              arr_val.push(Number(_.get(item, 'BM_RATE') == '' ? '-' : _.get(item, 'BM_RATE')));
+            }
           }
           vm.arr_result_header.forEach(function(scen, x) {
+            
             let scen_cd = scen.scen_cd;
             
             let val =_.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE') == '' ? '-' : _.get(item, scen.grp_cd + '_' + scen.scen_cd + '_INDEX_RATE');
 
-            arr_val.push(Number(val));
+            arr_sdata.push(Number(val));
+
+            if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
+              if (vm.arr_checked[x+1]) {
+                arr_val.push(Number(val));
+              }
+            } else {
+              if (vm.arr_checked[x]) {
+                arr_val.push(Number(val));
+              }
+            }
            
           });
 
@@ -164,14 +176,16 @@ export default {
 
             maxRate = 0.0; minRate = 0.0;
 
-
-            minVal = _.min(arr_val);
-            maxVal = _.max(arr_val);
+            if (typeof _.min(arr_val) != 'undefined') minVal = _.min(arr_val);
+            
+            if (typeof _.max(arr_val) != 'undefined') maxVal = _.max(arr_val);
           
           }else {
 
-            
+            if (typeof _.min(arr_val) != 'undefined')
             minVal = _.min(arr_val) > minVal ? minVal : _.min(arr_val);
+
+            if (typeof _.max(arr_val) != 'undefined')
             maxVal = _.max(arr_val) < maxVal ? maxVal : _.max(arr_val);       
             
             arr_baseVal.forEach(function(baseVal, b_index) {
@@ -192,9 +206,8 @@ export default {
           }
       
           sdata.dd = item.fmt_F12506;
-          sdata.vv = [...arr_val];
+          sdata.vv = [...arr_sdata];
           sdata.rate = [...arr_curRate];
-
           vm.sArr.push(sdata);
         });
 
@@ -207,25 +220,25 @@ export default {
         stepRate = diffRate / 6;
 
 
+        if (!isNaN(minVal)) {
+          // Y Axis 데이터 
+          vm.yAxisVal[0] = minVal;
+          for(var i=1; i < 6; i++) {
+            vm.yAxisVal[i] = minVal + stepVal * i;
+            // console.log("yAxis : " + vm.yAxisVal[i]);
+          }
+          vm.yAxisVal[5] = maxVal;
+          for(var i=0; i < 6; i++) {
+            vm.yAxisVal[i] = Number(vm.yAxisVal[i]).toFixed(2);
+          }
 
-        // Y Axis 데이터 
-        vm.yAxisVal[0] = minVal;
-        for(var i=1; i < 6; i++) {
-          vm.yAxisVal[i] = minVal + stepVal * i;
-          // console.log("yAxis : " + vm.yAxisVal[i]);
+          // X Axis 데이터
+          var stepX = Math.floor(_dnum / 5);
+          for(var i=0; i < 5; i++) {
+            vm.xAxisDd[i] = vm.sArr[stepX*i].dd;
+  //          vm.xAxisTt[i] = vm.sArr[stepX*i].tt;
+          }
         }
-        vm.yAxisVal[5] = maxVal;
-        for(var i=0; i < 6; i++) {
-          vm.yAxisVal[i] = Number(vm.yAxisVal[i]).toFixed(2);
-        }
-
-        // X Axis 데이터
-        var stepX = Math.floor(_dnum / 5);
-        for(var i=0; i < 5; i++) {
-          vm.xAxisDd[i] = vm.sArr[stepX*i].dd;
-//          vm.xAxisTt[i] = vm.sArr[stepX*i].tt;
-        }
-
         c.clearRect(0, vm.crect.y1-6, vm.chart.width, vm.chart.height-vm.crect.y1+6);
         c.putImageData(vm.init_chart_image, vm.crect.x1-1, vm.crect.y1-2);   
 
