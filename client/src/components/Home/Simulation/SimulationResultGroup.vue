@@ -394,8 +394,8 @@ export default {
                             v_daily_tr01.html( v_daily_tr01_html );
                             v_daily_tr02.html( v_daily_tr02_html );
 
-                            if ( vm.arr_result_daily01_header.length > 5 ) {
-                                $("#tbl_result_daily").attr( "style", "width: 1500px; table-layout: fixed;" );
+                            if ( vm.arr_result_daily01_header.length > 6 ) {
+                                $("#tbl_result_daily").attr( "style", "width: 2040px; table-layout: fixed;" );
                                 tableObj_daily.scrollX = true;
                             } else {
                                 tableObj_daily.scrollX = "100%";
@@ -583,7 +583,7 @@ export default {
                                 v_arr_show_column.push( { "data": "anal_id"  , "orderable": false, 'className': 'dt-body-left' } );
 
                                 vm.arr_result_anal02_header.forEach(function(item, index, array){
-                                    v_daily_tr01_html   +=  '<th class="txt_right" width="120">' + item.scen_name + '</th>';
+                                    v_daily_tr01_html   +=  '<th class="txt_right" width="180">' + item.scen_name + '</th>';
                                     v_arr_show_column.push( { "data": item.grp_cd + "_" + item.scen_cd, "orderable": false, 'className': 'dt-body-right' } );
                                     v_arr_show_columnDef.push({  
                                             "render": function ( data, type, row ) {
@@ -600,7 +600,7 @@ export default {
                                 });
 
 
-                                v_daily_tr01_html       +=   '<th class="txt_right"  width="120">' + vm.bm_anal_header + '</th>';
+                                v_daily_tr01_html       +=   '<th class="txt_right"  width="180">' + vm.bm_anal_header + '</th>';
                                 v_arr_show_column.push( { "data": "bm", "orderable": false, 'className': 'dt-body-right' } );
                                 v_arr_show_columnDef.push({  
                                         "render": function ( data, type, row ) {
@@ -619,8 +619,8 @@ export default {
 
 
 
-                                if ( vm.arr_result_anal02_header.length > 10 ) {
-                                    $("#tbl_result_anal02").attr( "style", "width: 1500px; table-layout: fixed;" );
+                                if ( vm.arr_result_anal02_header.length > 8 ) {
+                                    $("#tbl_result_anal02").attr( "style", "width: 2180px; table-layout: fixed;" );
                                     tableObj_anal02.scrollX = true;
                                 } else {
                                     tableObj_anal02.scrollX = "100%";
