@@ -751,7 +751,7 @@ var saveBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 5. (백테스트) 시뮬레이션 결과를 저장한다. */
+                    /* 5. (백테스트) tm_simul_result 결과를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
