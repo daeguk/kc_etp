@@ -920,6 +920,40 @@
     </select>
 
     <!--
+    * [tm_simul_result] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResult">
+    <![CDATA[
+        DELETE  /* simulation.deleteSimulResult      [tm_simul_result] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result.grp_cd                  =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result.scen_cd                 =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>
+
+    <!--
+    * [tm_simul_result_anal] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResultAnal">
+    <![CDATA[
+        DELETE  /* simulation.deleteSimulResultAnal      [tm_simul_result_anal] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result_anal
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result_anal.grp_cd             =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_anal.scen_cd            =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>        
+
+    <!--
     * [tm_simul_result_rebalance] 테이블을 삭제한다.
     * 2019-07-26  bkLove(촤병국)
     -->
@@ -985,6 +1019,28 @@
            AND  tm_simul_mast.grp_cd                        =   #{grp_cd}           /* 그룹코드(상위코드) */
            AND  tm_simul_mast.scen_cd                       =   #{scen_cd}          /* 시나리오코드 */
     ]]>
-    </delete>        
+    </delete>
+
+    <!--
+    * 시나리오 이름을 변경한다.
+    * 2019-11-05  bkLove(촤병국)
+    -->
+    <update     id="renameScenario">
+    <![CDATA[
+        UPDATE      /* simulation.renameScenario      시나리오 이름을 변경한다. */
+                    tm_simul_mast
+
+           SET      scen_name               =   #{scen_name}                    /* 시나리오명 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
+           AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>    
 
 </mapper>

@@ -2346,7 +2346,71 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 2. tm_simul_result_rebalance 를 삭제한다. */
+                    /* 2. tm_simul_result 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResult', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. tm_simul_result_anal 을 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultAnal', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. tm_simul_result_rebalance 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2378,7 +2442,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 3. tm_simul_result_daily 를 삭제한다. */
+                    /* 5. tm_simul_result_daily 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2410,7 +2474,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 4. tm_simul_result_mast 를 삭제한다. */
+                    /* 6. tm_simul_result_mast 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2442,7 +2506,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 5. tm_simul_portfolio 를 삭제한다. */
+                    /* 7. tm_simul_portfolio 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2474,7 +2538,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 6. tm_simul_mast 를 삭제한다. */
+                    /* 8. tm_simul_mast 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2542,6 +2606,157 @@ var deleteAllSimul = function(req, res) {
 }
 
 
+/*
+ * 시뮬레이션 정보를 삭제한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var renameScenario = function(req, res) {
+    try {
+        log.debug('simulation.renameScenario 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.renameScenario  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 수정할 정보가 존재하는지 체크한다. */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "변경할 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "변경할 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 시나리오 이름을 변경한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 변경하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
 module.exports.getInitData = getInitData;
@@ -2556,3 +2771,4 @@ module.exports.getSimulList = getSimulList;
 module.exports.getSimulPortfolio = getSimulPortfolio;
 module.exports.runBacktestWithSaveBasicInfo = runBacktestWithSaveBasicInfo;
 module.exports.deleteAllSimul = deleteAllSimul;
+module.exports.renameScenario = renameScenario;
