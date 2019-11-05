@@ -216,7 +216,7 @@
             ,   #{data.F15028_C}                /*비교시총 */
             ,   #{data.INDEX_RATE}              /*지수 */
             ,   #{data.RETURN_VAL}              /*결과 */
-            ,   #{data.bm_data01}               /*벤치마크 지수 */
+            ,   #{data.bm_1000_data}            /*벤치마크 지수 */
             ,   #{data.bm_return_data}          /*벤치마크 결과 */
 
             ,   #{user_id}                      /*등록자 ID */
