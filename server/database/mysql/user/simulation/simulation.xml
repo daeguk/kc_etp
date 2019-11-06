@@ -961,7 +961,7 @@
                                     )   =   1
                             THEN    'Y'
                             ELSE    'N'
-                    END                                                                 AS  tm_simul_result_mast_yn                    
+                    END                                                                 AS  tm_simul_result_mast_yn
 
                 ,   CASE    WHEN    /* [tm_simul_result_anal] 테이블 존재 여부 */
                                     COUNT(
@@ -1007,6 +1007,21 @@
                             THEN    'Y'
                             ELSE    'N'
                     END                                                                 AS  tm_simul_result_rebalance_yn
+
+                ,   CASE    WHEN    /* [tm_simul_portfolio] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_portfolio.grp_cd
+                                              FROM  tm_simul_portfolio
+                                             WHERE  1 = 1
+                                               AND  tm_simul_portfolio.grp_cd           =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_portfolio.scen_cd          =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_portfolio_yn
 
           FROM  DUAL    
 
@@ -1244,6 +1259,359 @@
 
            AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
-    </update>    
+    </update>
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_mast] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="copyTmSimulMast">
+
+        INSERT  INTO    
+        /* simulation.copyTmSimulMast      선택된 시나리오를 [tm_simul_mast] 테이블에 복사한다. */
+        tm_simul_mast 
+        ( 
+                grp_cd                                                              /* 그룹코드(상위코드) */
+            ,   scen_cd                                                             /* 시나리오 코드 */
+                                
+            ,   scen_depth                                                          /* 시나리오 DEPTH */
+            ,   scen_order_no                                                       /* 시나리오 정렬 순번 */
+            ,   scen_name                                                           /* 시나리오명 */
+            ,   grp_yn                                                              /* 그룹여부(1-그룹) */
+            ,   start_year                                                          /* 시작년도 */
+            ,   rebalance_cycle_cd                                                  /* 리밸런싱주기 (COM006) */
+            ,   rebalance_date_cd                                                   /* 리밸런싱일자 (COM007) */
+            ,   init_invest_money                                                   /* 초기투자금액 */
+            ,   bench_mark_cd                                                       /* 벤치마크 (COM008) */
+            ,   importance_method_cd                                                /* 비중설정방식 (COM009) */
+                                
+            ,   serial_no                                                           /* 변경 순번 */
+            ,   stock_gubun                                                         /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                                
+            ,   reg_id                                                              /* 등록자 ID */
+            ,   reg_time                                                            /* 등록시간 */
+            ,   upd_id                                                              /* 수정자 ID */
+            ,   upd_time                                                            /* 수정시간 */
+        )
+        SELECT      #{grp_cd}                       AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   #{scen_cd}                      AS  scen_cd                     /* 시나리오 코드 */
+
+                ,   scen_depth                      AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   scen_order_no                   AS  scen_order_no               /* 시나리오 정렬 순번 */
+                ,   #{scen_name}                    AS  scen_name                   /* 시나리오명 */
+                ,   grp_yn                          AS  grp_yn                      /* 그룹여부(1-그룹) */
+                ,   start_year                      AS  start_year                  /* 시작년도 */
+                ,   rebalance_cycle_cd              AS  rebalance_cycle_cd          /* 리밸런싱주기 (COM006) */
+                ,   rebalance_date_cd               AS  rebalance_date_cd           /* 리밸런싱일자 (COM007) */
+                ,   init_invest_money               AS  init_invest_money           /* 초기투자금액 */
+                ,   bench_mark_cd                   AS  bench_mark_cd               /* 벤치마크 (COM008) */
+                ,   importance_method_cd            AS  importance_method_cd        /* 비중설정방식 (COM009) */
+
+                ,   #{serial_no}                    AS  serial_no                   /* 변경 순번 */
+                ,   stock_gubun                     AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+
+                ,   #{user_id}                      AS  reg_id                      /* 등록자 ID */
+                ,   now()                           AS  reg_time                    /* 등록시간 */
+                ,   #{user_id}                      AS  upd_id                      /* 수정자 ID */
+                ,   now()                           AS  upd_time                    /* 수정시간 */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd                =   #{prev_grp_cd}
+           AND  tm_simul_mast.scen_Cd               =   #{prev_scen_cd}
+
+    </insert>
+    
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_portfolio] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->    
+    <insert     id="copyTmSimulPortfolio">
+
+        INSERT  INTO    
+        /* simulation.copyTmSimulPortfolio          선택된 시나리오를 [tm_simul_portfolio] 테이블에 복사한다. */
+        tm_simul_portfolio
+        ( 
+                grp_cd                                                              /* 그룹코드(상위코드) */
+            ,   scen_cd                                                             /* 시나리오코드 */
+            ,   F16013                                                              /* 구성종목코드 */
+            ,   rebalance_date                                                      /* 리밸런싱 날짜 */
+                                
+            ,   order_no                                                            /* 정렬 순번 */
+            ,   importance                                                          /* 비중 */
+            ,   jisu_rate                                                           /* 지수적용비율 */
+                                
+            ,   reg_id                                                              /* 등록자 ID */
+            ,   reg_time                                                            /* 등록시간 */
+            ,   upd_id                                                              /* 수정자 ID */
+            ,   upd_time                                                            /* 수정시간 */
+        )
+        SELECT      #{grp_cd}                       AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   #{scen_cd}                      AS  scen_cd                     /* 시나리오코드 */
+                ,   F16013                          AS  F16013                      /* 구성종목코드 */
+                ,   rebalance_date                  AS  rebalance_date              /* 리밸런싱 날짜 */
+
+                ,   order_no                        AS  order_no                    /* 정렬 순번 */
+                ,   importance                      AS  importance                  /* 비중 */
+                ,   jisu_rate                       AS  jisu_rate                   /* 지수적용비율 */
+
+                ,   #{user_id}                      AS  reg_id                      /* 등록자 ID */
+                ,   now()                           AS  reg_time                    /* 등록시간 */
+                ,   #{user_id}                      AS  upd_id                      /* 수정자 ID */
+                ,   now()                           AS  upd_time                    /* 수정시간 */
+
+          FROM  tm_simul_portfolio
+
+         WHERE  1 = 1
+           AND  tm_simul_portfolio.grp_cd           =   #{prev_grp_cd}
+           AND  tm_simul_portfolio.scen_Cd          =   #{prev_scen_cd}
+
+    </insert>
+    
+    <!--
+    * 선택된 시나리오를 [tm_simul_result] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->    
+    <insert     id="copyTmSimulResult">
+
+        INSERT  INTO    
+        /* simulation.saveTmSimulResult      선택된 시나리오를 [tm_simul_result] 테이블에 복사한다. */
+        tm_simul_result
+        (
+                grp_cd                                                              /* 그룹코드(상위코드) */
+            ,   scen_cd                                                             /* 시나리오코드 */
+            ,   F12506	                                                            /* 입회일자 */
+            ,   F16013	                                                            /* 단축 코드(현금은 KRW로 처리) */
+                                        
+            ,   rebalancing                                                         /* 리밸런싱 여부(Y,N) */
+            ,   F15007	                                                            /* 기준가 */
+            ,   F30700	                                                            /* 종가 */
+            ,   F15001	                                                            /* 수정주가 */
+            ,   F16143	                                                            /* 상장주식수 */
+            ,   BEFORE_RATE                                                         /* (직전)지수적용비율 */
+            ,   TODAY_RATE                                                          /* (당일)지수적용비율 */
+            ,   TODAY_IMPORTANCE                                                    /* (당일)시가총액비중 */
+                                        
+            ,   reg_id	                                                            /* 등록자 ID */
+            ,   reg_time	                                                        /* 등록시간 */
+            ,   upd_id	                                                            /* 수정자 ID */
+            ,   upd_time	                                                        /* 수정시간 */
+        )       
+        SELECT      #{grp_cd}               AS  grp_cd                              /* 그룹코드(상위코드) */
+                ,   #{scen_cd}              AS  scen_cd                             /* 시나리오코드 */
+                ,   F12506	                AS  F12506	                            /* 입회일자 */
+                ,   F16013	                AS  F16013	                            /* 단축 코드(현금은 KRW로 처리) */
+        
+                ,   rebalancing             AS  rebalancing                         /* 리밸런싱 여부(Y,N) */
+                ,   F15007	                AS  F15007	                            /* 기준가 */
+                ,   F30700	                AS  F30700	                            /* 종가 */
+                ,   F15001	                AS  F15001	                            /* 수정주가 */
+                ,   F16143	                AS  F16143	                            /* 상장주식수 */
+                ,   BEFORE_RATE             AS  BEFORE_RATE                         /* (직전)지수적용비율 */
+                ,   TODAY_RATE              AS  TODAY_RATE                          /* (당일)지수적용비율 */
+                ,   TODAY_IMPORTANCE        AS  TODAY_IMPORTANCE                    /* (당일)시가총액비중 */
+        
+                ,   #{user_id}              AS  reg_id	                            /* 등록자 ID */
+                ,   now()                   AS  reg_time	                        /* 등록시간 */
+                ,   #{user_id}              AS  upd_id	                            /* 수정자 ID */
+                ,   now()                   AS  upd_time	                        /* 수정시간 */
+
+          FROM  tm_simul_result
+
+         WHERE  1 = 1
+           AND  tm_simul_result.grp_cd              =   #{prev_grp_cd}
+           AND  tm_simul_result.scen_Cd             =   #{prev_scen_cd}
+    
+    </insert>
+    
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_result_mast] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="copyTmSimulResultMast">
+
+        INSERT  INTO    
+        /* simulation.copyTmSimulResultMast        선택된 시나리오를 [tm_simul_result_mast] 테이블에 복사한다. */
+        tm_simul_result_mast 
+        ( 
+                grp_cd                                                              /* 그룹코드(상위코드) */
+            ,   scen_cd                                                             /* 시나리오 코드 */
+                                
+            ,   serial_no                                                           /* 변경 순번 */
+        )       
+        SELECT      #{grp_cd}                       AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   #{scen_cd}                      AS  scen_cd                     /* 시나리오 코드 */
+        
+                ,   #{serial_no}                    AS  serial_no                   /* 변경 순번 */
+          FROM  tm_simul_result_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_result_mast.grp_cd         =   #{prev_grp_cd}
+           AND  tm_simul_result_mast.scen_Cd        =   #{prev_scen_cd}
+
+    </insert>
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_result_anal] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="copyTmSimulResultAnal">
+
+        INSERT  INTO    
+        /* simulation.saveTmSimulResultAnal      선택된 시나리오를 [tm_simul_result_anal] 테이블에 복사한다. */
+        tm_simul_result_anal
+        (
+                grp_cd                                                              /* 그룹코드(상위코드) */
+            ,   scen_cd                                                             /* 시나리오코드 */
+            ,   anal_id                                                             /* 분석지표 */
+                                    
+            ,   backtest                                                            /* 백테스트 */
+            ,   backtest_year                                                       /* 백테스트_년도 */
+            ,   backtest_percent_yn                                                 /* 백테스트_퍼센트 유무(1-Y, 0-N)*/
+                                    
+            ,   benchmark                                                           /* 벤치마크 */
+            ,   benchmark_year                                                      /* 벤치마크_년도 */
+            ,   benchmark_percent_yn                                                /* 벤치마크_퍼센트 유무(1-Y, 0-N)*/
+                                    
+            ,   show_order_no                                                       /* 화면에 노출할 순번 */
+            ,   title_anal_id                                                       /* 타이틀 분석지표 */
+            ,   title_order_no                                                      /* 타이틀 노출할 순번 */
+                                    
+            ,   upd_id                                                              /* 수정자 ID */
+            ,   upd_time                                                            /* 수정시간 */
+        )
+        SELECT      #{grp_cd}                       AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   #{scen_cd}                      AS  scen_cd                     /* 시나리오코드 */
+                ,   anal_id                         AS  anal_id                     /* 분석지표 */
+
+                ,   backtest                        AS  backtest                    /* 백테스트 */
+                ,   backtest_year                   AS  backtest_year               /* 백테스트_년도 */
+                ,   backtest_percent_yn             AS  backtest_percent_yn         /* 백테스트_퍼센트 유무(1-Y, 0-N)*/
+
+                ,   benchmark                       AS  benchmark                   /* 벤치마크 */
+                ,   benchmark_year                  AS  benchmark_year              /* 벤치마크_년도 */
+                ,   benchmark_percent_yn            AS  benchmark_percent_yn        /* 벤치마크_퍼센트 유무(1-Y, 0-N)*/
+
+                ,   show_order_no                   AS  show_order_no               /* 화면에 노출할 순번 */
+                ,   title_anal_id                   AS  title_anal_id               /* 타이틀 분석지표 */
+                ,   title_order_no                  AS  title_order_no              /* 타이틀 노출할 순번 */
+
+                ,   #{user_id}                      AS  upd_id                      /* 수정자 ID */
+                ,   now()                           AS  upd_time                    /* 수정시간 */
+
+          FROM  tm_simul_result_anal
+
+         WHERE  1 = 1
+           AND  tm_simul_result_anal.grp_cd         =   #{prev_grp_cd}
+           AND  tm_simul_result_anal.scen_Cd        =   #{prev_scen_cd}
+
+    </insert>
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_result_daily] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="copyTmSimulResultDaily">
+
+        INSERT  INTO    
+        /* simulation.copyTmSimulResultDaily      선택된 시나리오를 [tm_simul_result_daily] 테이블에 복사한다. */
+        tm_simul_result_daily
+        (
+                grp_cd                                                              /*그룹코드(상위코드) */
+            ,   scen_cd                                                             /*시나리오코드 */
+            ,   F12506                                                              /*입회일자 */
+                                    
+            ,   rebalancing                                                         /*리밸런싱 여부(Y,N)-COM010 */
+            ,   F15028_S                                                            /*기준시총 */
+            ,   F15028_C                                                            /*비교시총 */
+            ,   INDEX_RATE                                                          /*지수 */
+            ,   RETURN_VAL                                                          /*결과 */
+            ,   BM_RATE                                                             /*벤치마크 지수 */
+            ,   BM_RETURN                                                           /*벤치마크 결과 */
+                                    
+            ,   reg_id                                                              /*등록자 ID */
+            ,   reg_time                                                            /*등록시간 */
+            ,   upd_id                                                              /*수정자 ID */
+            ,   upd_time                                                            /*수정시간 */
+        )
+        SELECT      #{grp_cd}                   AS  grp_cd                          /*그룹코드(상위코드) */
+                ,   #{scen_cd}                  AS  scen_cd                         /*시나리오코드 */
+                ,   F12506                      AS  F12506                          /*입회일자 */
+
+                ,   rebalancing                 AS  rebalancing                     /*리밸런싱 여부(Y,N)-COM010 */
+                ,   F15028_S                    AS  F15028_S                        /*기준시총 */
+                ,   F15028_C                    AS  F15028_C                        /*비교시총 */
+                ,   INDEX_RATE                  AS  INDEX_RATE                      /*지수 */
+                ,   RETURN_VAL                  AS  RETURN_VAL                      /*결과 */
+                ,   BM_RATE                     AS  BM_RATE                         /*벤치마크 지수 */
+                ,   BM_RETURN                   AS  BM_RETURN                       /*벤치마크 결과 */
+
+                ,   #{user_id}                  AS  reg_id                          /*등록자 ID */
+                ,   now()                       AS  reg_time                        /*등록시간 */
+                ,   #{user_id}                  AS  upd_id                          /*수정자 ID */
+                ,   now()                       AS  upd_time                        /*수정시간 */
+
+          FROM  tm_simul_result_daily
+
+         WHERE  1 = 1
+           AND  tm_simul_result_daily.grp_cd        =   #{prev_grp_cd}
+           AND  tm_simul_result_daily.scen_Cd       =   #{prev_scen_cd}
+
+    </insert>
+
+    <!--
+    * 선택된 시나리오를 [tm_simul_result_rebalance] 테이블에 복사한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="copyTmSimulResultRebalance">
+
+        INSERT  INTO    
+        /* simulation.copyTmSimulResultRebalance      [선택된 시나리오를 [tm_simul_result_rebalance] 테이블에 복사한다. */
+        tm_simul_result_rebalance
+        (
+                grp_cd                                                              /*그룹코드(상위코드) */
+            ,   scen_cd                                                             /*시나리오코드 */
+            ,   F12506                                                              /*입회일자 */
+            ,   F16013                                                              /*단축 코드(현금은 KRW로 처리) */
+                                    
+            ,   BEFORE_RATE                                                         /*(직전)지수적용비율 */
+            ,   TODAY_RATE                                                          /*(당일)지수적용비율 */
+            ,   BEFORE_IMPORTANCE                                                   /*(전) 시가총액 비중 */
+            ,   AFTER_IMPORTANCE                                                    /*(후) 시가총액 비중 */
+            ,   EVENT_FLAG                                                          /*이벤트(비중조절, 종목편입)-COM011 */
+            ,   rebalance_import_yn                                                 /* 리밸런싱 당일 종목편입 여부(1-편입,0-미 편입) */
+                                    
+            ,   reg_id                                                              /*등록자 ID */
+            ,   reg_time                                                            /*등록시간 */
+            ,   upd_id                                                              /*수정자 ID */
+            ,   upd_time                                                            /*수정시간 */
+        )
+        SELECT      #{grp_cd}                       AS  grp_cd                      /*그룹코드(상위코드) */
+                ,   #{scen_cd}                      AS  scen_cd                     /*시나리오코드 */
+                ,   F12506                          AS  F12506                      /*입회일자 */
+                ,   F16013                          AS  F16013                      /*단축 코드(현금은 KRW로 처리) */
+
+                ,   BEFORE_RATE                     AS  BEFORE_RATE                 /*(직전)지수적용비율 */
+                ,   TODAY_RATE                      AS  TODAY_RATE                  /*(당일)지수적용비율 */
+                ,   BEFORE_IMPORTANCE               AS  BEFORE_IMPORTANCE           /*(전) 시가총액 비중 */
+                ,   AFTER_IMPORTANCE                AS  AFTER_IMPORTANCE            /*(후) 시가총액 비중 */
+                ,   EVENT_FLAG                      AS  EVENT_FLAG                  /*이벤트(비중조절, 종목편입)-COM011 */
+                ,   rebalance_import_yn             AS  rebalance_import_yn         /* 리밸런싱 당일 종목편입 여부(1-편입,0-미 편입) */
+
+                ,   #{user_id}                      AS  reg_id                      /*등록자 ID */
+                ,   now()                           AS  reg_time                    /*등록시간 */
+                ,   #{user_id}                      AS  upd_id                      /*수정자 ID */
+                ,   now()                           AS  upd_time                    /*수정시간 */
+
+          FROM  tm_simul_result_rebalance
+
+         WHERE  1 = 1
+           AND  tm_simul_result_rebalance.grp_cd    =   #{prev_grp_cd}
+           AND  tm_simul_result_rebalance.scen_Cd   =   #{prev_scen_cd}
+
+    </insert>
 
 </mapper>

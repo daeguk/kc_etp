@@ -3068,6 +3068,675 @@ var renameScenario = function(req, res) {
     }
 }
 
+/*
+ * 시뮬레이션 정보를 삭제한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var copyScenario = function(req, res) {
+    try {
+        log.debug('simulation.copyScenario 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.copyScenario  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 로그인 사용자가 등록한 simul_mast 조회한다.  */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "기본정보가 존재하지 않습니다.";
+                                    resultMsg.err = "기본정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows.length > 0 ) {
+
+                                    var v_simul_mast  =   _.filter( rows, {
+                                            'grp_cd'    :   paramData.prev_grp_cd
+                                        ,   'scen_cd'   :   paramData.prev_scen_cd
+                                    });
+
+                                    if( typeof v_simul_mast == "undefined" || !v_simul_mast || v_simul_mast.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "시나리오 정보가 존재하지 않습니다.";
+                                        resultMsg.err = "시나리오 정보가 존재하지 않습니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    msg.simul_mast  =   v_simul_mast[0];
+
+                                    log.debug( "### msg.simul_mast", msg.simul_mast );
+
+                                    var v_postfix       =   "_copy";
+                                    var v_scen_name     =   msg.simul_mast.scen_name;
+                                    var v_max_count     =   100;
+
+                                    for( var i=0; i < 10; i++ ) {
+
+                                        v_scen_name     +=  v_postfix;
+
+                                        if( fn_getByte.call( this, v_scen_name ) > v_max_count ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "시나리오명(" + v_scen_name + ") 최대 " + v_max_count + "자 초과되었습니다.";
+                                            resultMsg.err = "시나리오명(" + v_scen_name + ") 최대 " + v_max_count + "자 초과되었습니다.";
+
+                                            return callback(resultMsg);                                            
+                                        }
+
+                                        var v_filter_data   =   _.filter( rows, {
+                                            "scen_name"     :   v_scen_name
+                                        });
+
+                                        if( !v_filter_data || v_filter_data.length == 0 ) {
+                                            paramData.scen_name     =   v_scen_name;
+
+                                            break;
+                                        }
+                                    }
+
+                                    log.debug( "#### paramData.scen_name", paramData.scen_name );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 2. 시뮬레이션 시나리오 코드를 채번한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            var queryId     =   "getScenCdByGroup";
+
+                            /* 그룹인지 체크 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+                                queryId     =   "getScenCd1";
+                            }                            
+
+                            paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+
+                            /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
+                            if( typeof paramData.grp_cd == "undefined" || !paramData.grp_cd ) {
+                                paramData.grp_cd            =   initGrpInfo.INIT_GRP_CD;            /* 그룹코드 최초값 */
+                            }
+
+                            stmt = mapper.getStatement('simulation', queryId, paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    paramData.scen_cd   =   rows[0].scen_cd;
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 현재 serialNo 를 구한다.  */
+                    function( msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'getSerialNo', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length != 1 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg, msg);
+                                }else{
+
+                                    paramData.serial_no     =   Number( rows[0].serial_no );
+
+                                    callback(null, msg);
+                                }
+                                
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. 시뮬레이션 기본 정보를 복사한다. */
+                    function( msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            paramData.serial_no    +=  1;
+
+                            stmt = mapper.getStatement('simulation', "copyTmSimulMast", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg, msg);
+                                }else{
+                                    callback(null, msg);
+                                }
+                                
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            stmt = mapper.getStatement('simulation', "getSimulResultExistYnByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length == 1 ) {
+                                    msg.simulResult     =   rows[0];
+                                }                                    
+
+                                callback(null, msg);
+                            });
+                            
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. [tm_simul_result_mast] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                stmt = mapper.getStatement('simulation', "copyTmSimulResultMast", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 7. [tm_simul_portfolio] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                /* [tm_simul_portfolio] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_portfolio_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_portfolio_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "copyTmSimulPortfolio", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 8. [tm_simul_result] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                /* [tm_simul_result] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "copyTmSimulResult", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 9. [tm_simul_result_anal] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                /* [tm_simul_result_anal] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_anal_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_anal_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultAnal", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. [tm_simul_result_daily] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                /* [tm_simul_result_daily] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_daily_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_daily_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultDaily", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. [tm_simul_result_rebalance] 를 복사한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
+
+                                /* [tm_simul_result_rebalance] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_rebalance_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_rebalance_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultRebalance", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 복사하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+*   문자열 길이를 반환한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var fn_getByte  =   function( str ) {
+
+    var count = 0;
+    
+    for(var i = 0; i < str.length; i++) {
+        if(escape(str.charAt(i)).length >= 4)
+            count += 2;
+        else
+            if(escape(str.charAt(i)) != "%0D")
+                count++;
+    }
+    
+    return count;
+
+}
+
 
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
@@ -3084,3 +3753,4 @@ module.exports.getSimulPortfolio = getSimulPortfolio;
 module.exports.runBacktestWithSaveBasicInfo = runBacktestWithSaveBasicInfo;
 module.exports.deleteAllSimul = deleteAllSimul;
 module.exports.renameScenario = renameScenario;
+module.exports.copyScenario = copyScenario;

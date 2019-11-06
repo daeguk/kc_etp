@@ -176,6 +176,7 @@ module.exports = {
         { file: './user/simulation/simulation'          , path: '/user/simulation/deleteAllSimul'               , method: 'deleteAllSimul'                  , session: 'check', type: 'post' },     // 시뮬레이션 정보 삭제
         { file: './user/simulation/simulation'          , path: '/user/simulation/runBacktestWithSaveBasicInfo' , method: 'runBacktestWithSaveBasicInfo'    , session: 'check', type: 'post' },     // 기본정보 저장과 함께 백테스트 실행
         { file: './user/simulation/simulation'          , path: '/user/simulation/renameScenario'               , method: 'renameScenario'                  , session: 'check', type: 'post' },     // 시나리오 이름변경
+        { file: './user/simulation/simulation'          , path: '/user/simulation/copyScenario'                 , method: 'copyScenario'                    , session: 'check', type: 'post' },     // 시나리오 복사
 
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/saveBacktestResult'           , method: 'saveBacktestResult'              , session: 'check', type: 'post' },     // 백테스트 결과 저장
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getBacktestResult'            , method: 'getBacktestResult'               , session: 'check', type: 'post' },     // 백테스트 결과 조회
