@@ -92,7 +92,19 @@ var getInitGrpCd = function(req, res) {
                         resultMsg.err = err;
                     }
                     else if (rows && rows.length > 0) {
-                        resultMsg.dataList.push( ...rows );
+
+                        if( typeof paramData.now_grp_cd != "undefined" ) {
+
+                            if(     paramData.now_grp_cd 
+                                &&  paramData.now_grp_cd == initGrpInfo.INIT_GRP_CD ) {
+                                resultMsg.dataList  =   rows;
+                            }else{
+                                resultMsg.dataList.push( ...rows );
+                            }
+                            
+                        }else{
+                            resultMsg.dataList.push( ...rows );
+                        }
 
                         resultMsg.result = true;
                         resultMsg.msg = "";

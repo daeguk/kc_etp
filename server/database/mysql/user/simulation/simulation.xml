@@ -19,6 +19,10 @@
            AND  tm_simul_mast.grp_yn                =   '1'
            AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
 
+        <if test= 'now_grp_cd != null  and  now_grp_cd != "" ' >
+           AND  tm_simul_mast.scen_cd               !=  #{now_grp_cd}       /* 현재그룹이 존재하는 경우 제외 */
+        </if>
+
          ORDER  BY      tm_simul_mast.scen_name
     </select>
 
