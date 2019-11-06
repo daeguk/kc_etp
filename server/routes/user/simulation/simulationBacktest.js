@@ -1617,30 +1617,37 @@ var getBacktestResult = function(req, res) {
                                 msg = {};
                             }                            
  
-                            /* 파이선을 통해 분석정보를 가져온다. */
-                            if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
 
-                                log.debug( "분석정보 #1 조회 from 파이선 START");
-                                simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily, paramData.bench_mark_cd).then( function(e) {
-                                    if( e && e.result ) {
-                                        if( e.results && e.results.length > 0 ) {
-                                            resultMsg.analyzeList   =   e.results;
-                                            resultMsg.jsonFileName  =   e.jsonFileName;
-                                            resultMsg.inputData  =   e.inputData;
+                            /* tm_simul_result_anal 테이블에 존재하지 않는 경우 파이선 호출 */
+                            if( !resultMsg.arr_analyze || resultMsg.arr_analyze.length == 0 ) {
+
+                                /* 파이선을 통해 분석정보를 가져온다. */
+                                if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
+
+                                    log.debug( "분석정보 #1 조회 from 파이선 START");
+                                    simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily, paramData.bench_mark_cd).then( function(e) {
+                                        if( e && e.result ) {
+                                            if( e.results && e.results.length > 0 ) {
+                                                resultMsg.analyzeList   =   e.results;
+                                                resultMsg.jsonFileName  =   e.jsonFileName;
+                                                resultMsg.inputData  =   e.inputData;
+                                            }
+                                            callback(null);
+                                        }else{
+
+                                            stmt    =   "";
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+
+                                            return callback(null);
+
                                         }
-                                        callback(null);
-                                    }else{
-
-                                        stmt    =   "";
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
-
-                                        return callback(null);
-
-                                    }
-                                });
-                                log.debug( "분석정보 #1 조회 from 파이선 END");
+                                    });
+                                    log.debug( "분석정보 #1 조회 from 파이선 END");
+                                }else{
+                                    callback(null);
+                                }
 
                             }else{
                                 callback(null);
