@@ -276,11 +276,17 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-if="!arr_analyze || arr_analyze.length == 0" >
+                                            <tr v-if="status != 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
                                                 <td colspan="3" style="align:center">
                                                     처리중 오류가 발생하였습니다.
                                                 </td>
                                             </tr>
+
+                                            <tr v-if="status == 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
+                                                <td colspan="3" style="align:center">
+                                                    데이터가 존재하지 않습니다.
+                                                </td>
+                                            </tr>                                            
 
                                             <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
                                                 <td class="txt_left">
@@ -362,6 +368,7 @@ export default {
             ,   arr_analyze_db              :   []      /* DB 에 저장하기 위한 정보 */
             ,   inputData                   :   []
             ,   jsonFileName                :   ""
+            ,   status                      :   ""
 
             ,   chartFlag                   :   false
             ,   result_save_yn              :   "N"     /* 결과정보 저장유무 */
@@ -594,6 +601,8 @@ export default {
                             vm.arr_analyze.push( { anal_title : "처리중 오류가 발생하였습니다." }  );
                             console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
                         }
+
+                        vm.status               =   "insert";
                         vm.fn_setAnal01();
 
                         resolve( { result : true } );
@@ -742,26 +751,27 @@ export default {
                                     /*************************************************************************************************************
                                     *   분석정보 #1
                                     **************************************************************************************************************/
-                                        if( response.data.arr_analyze && response.data.arr_analyze.length > 0 ) {
+                                        // if( response.data.arr_analyze && response.data.arr_analyze.length > 0 ) {
 
+                                            vm.status               =   "detail";
                                             vm.arr_analyze          =   response.data.arr_analyze;
                                             vm.arr_analyze_main     =   response.data.arr_analyze_main;
-                                        }else{
-                                            vm.inputData            =   response.data.inputData;
-                                            vm.jsonFileName         =   response.data.jsonFileName;
+                                        // }else{
+                                        //     vm.inputData            =   response.data.inputData;
+                                        //     vm.jsonFileName         =   response.data.jsonFileName;
 
-                                            vm.arr_analyze_org      =   response.data.analyzeList;
+                                        //     vm.arr_analyze_org      =   response.data.analyzeList;
 
-                                            try{
-                                                if( vm.arr_analyze_org ) {                           
-                                                    vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
-                                                }
-                                            }catch( e ) {
-                                                vm.arr_analyze_temp     =   "";
-                                                console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
-                                            }
-                                            vm.fn_setAnal01();
-                                        }
+                                        //     try{
+                                        //         if( vm.arr_analyze_org ) {                           
+                                        //             vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
+                                        //         }
+                                        //     }catch( e ) {
+                                        //         vm.arr_analyze_temp     =   "";
+                                        //         console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
+                                        //     }
+                                        //     vm.fn_setAnal01();
+                                        // }
 
                                         resolve( { result : true } );
                                     }
