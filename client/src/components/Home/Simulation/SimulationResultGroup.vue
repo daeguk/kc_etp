@@ -251,11 +251,17 @@ export default {
 
         /* 초기 데이터를 설정한다. */
         vm.fn_init().then(function(e){
-            return step1();
+            if( e && e.result ) {
+                return step1();
+            }
         }).then(function(e){
-            return step2();
+            if( e && e.result ) {
+                return step2();
+            }
         }).then(function(e) {
-            return step3();
+            if( e && e.result ) {
+                return step3();
+            }
         }).then(function(e){
             vm.fn_showProgress( false );
         }).catch( function(e) {

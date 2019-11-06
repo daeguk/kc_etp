@@ -490,78 +490,89 @@ var getSimulDailyInArrCd = function(req, res) {
                         return  false;
                     }
 
-                    if( rows && rows.length > 0 ) {
+                    try{
+                        if( rows && rows.length > 0 ) {
 
-                        var arr_result_daily            =   _.uniqBy( rows, "F12506" ).map( function(o) {
-                            return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
-                        });
-
-                        var arr_result_daily_header     =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
-                            return  { "grp_cd" : o.grp_cd , "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
-                        });
-
-
-                        var v_bm_index  =   -1;
-                        for( var i=0; i < rows.length; i++ ) {
-                            var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd  });
-
-                            if( v_header > -1 ) {
-                                var v_index     =   _.findIndex( arr_result_daily, { "F12506" : rows[i].F12506  });
-
-                                if( i==0 ) {
-                                    if(rows[i].bench_index_nm != null ) {
-                                        resultMsg.bm_header =  "BM (" + rows[i].bench_index_nm + ")";
-                                        v_bm_index  =   v_header;
-                                    }
-                                }
-
-                                if( v_index > -1 ) {
-
-                                    arr_result_daily[ v_index ][ 
-                                            arr_result_daily_header[v_header].grp_cd 
-                                        +   "_" 
-                                        +   arr_result_daily_header[v_header].scen_cd 
-                                        +   "_INDEX_RATE" 
-                                    ]    =   rows[i].INDEX_RATE;
-
-                                    arr_result_daily[ v_index ][ 
-                                            arr_result_daily_header[v_header].grp_cd 
-                                        +   "_" 
-                                        +   arr_result_daily_header[v_header].scen_cd 
-                                        +   "_RETURN_VAL" 
-                                    ]    =   rows[i].RETURN_VAL;
-
-                                    if( v_bm_index == v_header ) {
-                                        arr_result_daily[ v_index ][ "BM_RATE"   ]  =   rows[i].BM_RATE;
-                                        arr_result_daily[ v_index ][ "BM_RETURN" ]  =   rows[i].BM_RETURN;
-                                    }
-                                }
-                            }
-                        }
-
-                        arr_result_daily.forEach( function( item, index, array ) {
-                            arr_result_daily_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
-                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ]   =   "";
-                                }
-
-                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
-                                    item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ]   =   "";
-                                }                                
+                            var arr_result_daily            =   _.uniqBy( rows, "F12506" ).map( function(o) {
+                                return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
                             });
 
-                            if( typeof item[ "BM_RATE" ] == "undefined" || item[ "BM_RATE" ] == 0 ) {
-                                item[ "BM_RATE" ]    =   "";
+                            var arr_result_daily_header     =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                                return  { "grp_cd" : o.grp_cd , "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                            });
+
+
+                            var v_bm_index  =   -1;
+                            for( var i=0; i < rows.length; i++ ) {
+                                var v_header        =   _.findIndex( arr_result_daily_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd  });
+                                var v_index         =   -1;
+
+                                if( v_header > -1 ) {
+                                    v_index         =   _.findIndex( arr_result_daily, { "F12506" : rows[i].F12506  });
+
+                                    if( i==0 ) {
+                                        if(rows[i].bench_index_nm != null ) {
+                                            resultMsg.bm_header =  "BM (" + rows[i].bench_index_nm + ")";
+                                            v_bm_index  =   v_header;
+                                        }
+                                    }
+
+                                    if( v_index > -1 ) {
+
+                                        arr_result_daily[ v_index ][ 
+                                                arr_result_daily_header[v_header].grp_cd 
+                                            +   "_" 
+                                            +   arr_result_daily_header[v_header].scen_cd 
+                                            +   "_INDEX_RATE" 
+                                        ]    =   rows[i].INDEX_RATE;
+
+                                        arr_result_daily[ v_index ][ 
+                                                arr_result_daily_header[v_header].grp_cd 
+                                            +   "_" 
+                                            +   arr_result_daily_header[v_header].scen_cd 
+                                            +   "_RETURN_VAL" 
+                                        ]    =   rows[i].RETURN_VAL;
+
+                                        if( v_bm_index == v_header ) {
+                                            arr_result_daily[ v_index ][ "BM_RATE"   ]  =   rows[i].BM_RATE;
+                                            arr_result_daily[ v_index ][ "BM_RETURN" ]  =   rows[i].BM_RETURN;
+                                        }
+                                    }
+                                }
                             }
 
-                            if( typeof item[ "BM_RETURN" ] == "undefined" || item[ "BM_RETURN" ] == 0 ) {
-                                item[ "BM_RETURN" ] =   "";
-                            }                            
-                        });
+                            arr_result_daily.forEach( function( item, index, array ) {
+                                arr_result_daily_header.forEach( function( item1, index1, array1 ){
+                                    if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ] == "undefined" ) {
+                                        item[ item1.grp_cd + "_" + item1.scen_cd + "_INDEX_RATE" ]   =   "";
+                                    }
 
-                        resultMsg.result                        =   true;
-                        resultMsg.arr_result_daily01_header     =   arr_result_daily_header;
-                        resultMsg.arr_result_daily01            =   arr_result_daily;
+                                    if( typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ] == "undefined" ) {
+                                        item[ item1.grp_cd + "_" + item1.scen_cd + "_RETURN_VAL" ]   =   "";
+                                    }                                
+                                });
+
+                                if( typeof item[ "BM_RATE" ] == "undefined" || item[ "BM_RATE" ] == 0 ) {
+                                    item[ "BM_RATE" ]    =   "";
+                                }
+
+                                if( typeof item[ "BM_RETURN" ] == "undefined" || item[ "BM_RETURN" ] == 0 ) {
+                                    item[ "BM_RETURN" ] =   "";
+                                }                            
+                            });
+
+                            resultMsg.result                        =   true;
+                            resultMsg.arr_result_daily01_header     =   arr_result_daily_header;
+                            resultMsg.arr_result_daily01            =   arr_result_daily;
+
+                            res.json(resultMsg);
+                            res.end();
+                        }
+
+                    }catch(err){
+                        resultMsg.result        =   false;
+                        resultMsg.msg           =   config.MSG.error01;
+                        resultMsg.err           =   err;
 
                         res.json(resultMsg);
                         res.end();
@@ -663,59 +674,70 @@ var getSimulAnal01InArrCd = function(req, res) {
                         return  false;
                     }
 
-                    if( rows && rows.length > 0 ) {
+                    try{
+                        if( rows && rows.length > 0 ) {
 
-                        arr_result_anal             =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
-                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
-                        });
+                            arr_result_anal             =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                                return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                            });
 
-                        arr_result_anal_header      =   _.uniqBy( rows, "title_anal_id" ).map( function(o) {
-                            return  { "anal_id" : o.title_anal_id, "title_order_no" : o.title_order_no };
-                        });
+                            arr_result_anal_header      =   _.uniqBy( rows, "title_anal_id" ).map( function(o) {
+                                return  { "anal_id" : o.title_anal_id, "title_order_no" : o.title_order_no };
+                            });
 
-                        arr_result_anal_header      =   _.orderBy( arr_result_anal_header, [ "title_order_no" ], [ "asc" ] );
+                            arr_result_anal_header      =   _.orderBy( arr_result_anal_header, [ "title_order_no" ], [ "asc" ] );
 
 
-                        for( var i=0; i < rows.length; i++ ) {
-                            var v_header            =   _.findIndex( arr_result_anal_header, { "anal_id" : rows[i].title_anal_id  });
+                            for( var i=0; i < rows.length; i++ ) {
+                                var v_header            =   _.findIndex( arr_result_anal_header, { "anal_id" : rows[i].title_anal_id  });
+                                var v_index             =   -1;
 
-                            if( v_header > -1 ) {
-                                var v_index         =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
+                                if( v_header > -1 ) {
+                                    v_index             =   _.findIndex( arr_result_anal, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
 
-                                var analData        =   "";
+                                    var analData        =   "";
 
-                                analData            +=  rows[i].backtest;
-                                if(  rows[i].backtest != "N/A" ) {
-                                    if( rows[i].backtest_percent_yn  == "1"  ) {
-                                        analData        +=  " %";
+                                    analData            +=  rows[i].backtest;
+                                    if(  rows[i].backtest != "N/A" ) {
+                                        if( rows[i].backtest_percent_yn  == "1"  ) {
+                                            analData        +=  " %";
+                                        }
+
+                                        if( rows[i].backtest_year != null && rows[i].backtest_year != "" ) {
+                                            analData        +=   " (" + rows[i].backtest_year + ")";
+                                        }
                                     }
 
-                                    if( rows[i].backtest_year != null && rows[i].backtest_year != "" ) {
-                                        analData        +=   " (" + rows[i].backtest_year + ")";
+                                    if( v_index > -1 ) {
+                                        arr_result_anal[ v_index ][ arr_result_anal_header[v_header].anal_id ]      =   analData;
                                     }
-                                }
-
-                                if( v_index > -1 ) {
-                                    arr_result_anal[ v_index ][ arr_result_anal_header[v_header].anal_id ]      =   analData;
                                 }
                             }
+
+                            arr_result_anal.forEach( function( item, index, array ) {
+                                arr_result_anal_header.forEach( function( item1, index1, array1 ){
+                                    if( typeof item[ item1.anal_id ] == "undefined" ) {
+                                        item[ item1.anal_id ]   =   "";
+                                    }
+                                });
+                            });
                         }
 
-                        arr_result_anal.forEach( function( item, index, array ) {
-                            arr_result_anal_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.anal_id ] == "undefined" ) {
-                                    item[ item1.anal_id ]   =   "";
-                                }
-                            });
-                        });
+                        resultMsg.result                        =   true;
+                        resultMsg.arr_result_anal_header        =   arr_result_anal_header;
+                        resultMsg.arr_result_anal               =   arr_result_anal;
+
+                        res.json(resultMsg);
+                        res.end();
+
+                    }catch(err){
+                        resultMsg.result        =   false;
+                        resultMsg.msg           =   config.MSG.error01;
+                        resultMsg.err           =   err;
+
+                        res.json(resultMsg);
+                        res.end();
                     }
-
-                    resultMsg.result                        =   true;
-                    resultMsg.arr_result_anal_header        =   arr_result_anal_header;
-                    resultMsg.arr_result_anal               =   arr_result_anal;
-
-                    res.json(resultMsg);
-                    res.end();                    
                 });
 
             } catch (err) {
@@ -814,99 +836,110 @@ var getSimulAnal02InArrCd = function(req, res) {
                         return  false;
                     }
 
-                    if( rows && rows.length > 0 ) {
+                    try{
+                        if( rows && rows.length > 0 ) {
 
-                        arr_result_anal         =   _.uniqBy( rows, "anal_id" ).map( function(o) {
-                            return  { "anal_id" : o.anal_id, "show_order_no" : o.show_order_no };
-                        });
-
-                        arr_result_anal         =   _.orderBy( arr_result_anal, [ "show_order_no" ], [ "asc" ] );
-
-                        arr_result_anal_header  =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
-                            return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
-                        });
-
-
-
-                        var v_bm_index  =   -1;
-                        for( var i=0; i < rows.length; i++ ) {
-                            var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
-
-                            if( v_header > -1 ) {
-                                var v_index         =   _.findIndex( arr_result_anal, { "anal_id" : rows[i].anal_id  });
-
-                                if( i==0 ) {
-                                    if(rows[i].bench_index_nm != null ) {
-                                        resultMsg.bm_header =  "BM (" + rows[i].bench_index_nm + ")";
-                                        v_bm_index  =   v_header;
-                                    }
-                                }
-
-                                var analData        =   "";
-                                analData            +=  rows[i].backtest;
-                                if( rows[i].backtest != "N/A" ) {
-
-                                    if( rows[i].backtest_percent_yn  == "1" ) {
-                                        analData        +=  " %";
-                                    }
-
-                                    if( rows[i].backtest_year != null && rows[i].backtest_year != "" ) {
-                                        analData        +=   " (" + rows[i].backtest_year + ")";
-                                    }
-                                }
-
-
-                                var v_bm_data       =   "";
-                                if( v_bm_index == v_header ) {
-                                    v_bm_data       +=  rows[i].benchmark;
-                                    
-                                    if( rows[i].benchmark != "N/A" ) {
-
-                                        if( rows[i].benchmark_percent_yn  == "1" ) {
-                                            v_bm_data   +=  " %";
-                                        }
-
-                                        if( rows[i].benchmark_year != null && rows[i].benchmark_year != "" ) {
-                                            v_bm_data   +=   " (" + rows[i].benchmark_year + ")";
-                                        }
-                                    }
-                                }                                
-
-                                if( v_index > -1 ) {
-                                    arr_result_anal[ v_index ][ 
-                                            arr_result_anal_header[v_header].grp_cd 
-                                        +   "_" 
-                                        +   arr_result_anal_header[v_header].scen_cd 
-                                    ]      =   analData;
-
-                                    if( v_bm_index == v_header ) {
-                                        arr_result_anal_bm[ v_index ]       =   v_bm_data;
-                                    }
-                                }
-                            }
-                        }
-
-                        arr_result_anal.forEach( function( item, index, array ) {
-                            arr_result_anal_header.forEach( function( item1, index1, array1 ){
-                                if( typeof item[ item1.grp_cd + "_" + item1.scen_cd ] == "undefined" ) {
-                                    item[ item1.grp_cd + "_" + item1.scen_cd ]   =   "";
-                                }
+                            arr_result_anal         =   _.uniqBy( rows, "anal_id" ).map( function(o) {
+                                return  { "anal_id" : o.anal_id, "show_order_no" : o.show_order_no };
                             });
 
-                            if( typeof arr_result_anal_bm[ index ] == "undefined" ) {
-                                item[ "bm" ]    =   "N/A";
-                            }else{
-                                item[ "bm" ]    =   arr_result_anal_bm[ index ];
+                            arr_result_anal         =   _.orderBy( arr_result_anal, [ "show_order_no" ], [ "asc" ] );
+
+                            arr_result_anal_header  =   _.uniqBy( rows, function(o) { return o.grp_cd + "_" +  o.scen_cd; } ).map( function(o) {
+                                return  { "grp_cd" : o.grp_cd, "scen_cd" : o.scen_cd, "scen_name" : o.scen_name };
+                            });
+
+
+
+                            var v_bm_index  =   -1;
+                            for( var i=0; i < rows.length; i++ ) {
+                                var v_header            =   _.findIndex( arr_result_anal_header, { "scen_cd" : rows[i].scen_cd, "grp_cd" : rows[i].grp_cd });
+                                var v_index             =   -1;
+
+                                if( v_header > -1 ) {
+                                    v_index             =   _.findIndex( arr_result_anal, { "anal_id" : rows[i].anal_id  });
+
+                                    if( i==0 ) {
+                                        if(rows[i].bench_index_nm != null ) {
+                                            resultMsg.bm_header =  "BM (" + rows[i].bench_index_nm + ")";
+                                            v_bm_index  =   v_header;
+                                        }
+                                    }
+
+                                    var analData        =   "";
+                                    analData            +=  rows[i].backtest;
+                                    if( rows[i].backtest != "N/A" ) {
+
+                                        if( rows[i].backtest_percent_yn  == "1" ) {
+                                            analData        +=  " %";
+                                        }
+
+                                        if( rows[i].backtest_year != null && rows[i].backtest_year != "" ) {
+                                            analData        +=   " (" + rows[i].backtest_year + ")";
+                                        }
+                                    }
+
+
+                                    var v_bm_data       =   "";
+                                    if( v_bm_index == v_header ) {
+                                        v_bm_data       +=  rows[i].benchmark;
+                                        
+                                        if( rows[i].benchmark != "N/A" ) {
+
+                                            if( rows[i].benchmark_percent_yn  == "1" ) {
+                                                v_bm_data   +=  " %";
+                                            }
+
+                                            if( rows[i].benchmark_year != null && rows[i].benchmark_year != "" ) {
+                                                v_bm_data   +=   " (" + rows[i].benchmark_year + ")";
+                                            }
+                                        }
+                                    }                                
+
+                                    if( v_index > -1 ) {
+                                        arr_result_anal[ v_index ][ 
+                                                arr_result_anal_header[v_header].grp_cd 
+                                            +   "_" 
+                                            +   arr_result_anal_header[v_header].scen_cd 
+                                        ]      =   analData;
+
+                                        if( v_bm_index == v_header ) {
+                                            arr_result_anal_bm[ v_index ]       =   v_bm_data;
+                                        }
+                                    }
+                                }
                             }
-                        });
+
+                            arr_result_anal.forEach( function( item, index, array ) {
+                                arr_result_anal_header.forEach( function( item1, index1, array1 ){
+                                    if( typeof item[ item1.grp_cd + "_" + item1.scen_cd ] == "undefined" ) {
+                                        item[ item1.grp_cd + "_" + item1.scen_cd ]   =   "";
+                                    }
+                                });
+
+                                if( typeof arr_result_anal_bm[ index ] == "undefined" ) {
+                                    item[ "bm" ]    =   "N/A";
+                                }else{
+                                    item[ "bm" ]    =   arr_result_anal_bm[ index ];
+                                }
+                            });
+                        }
+
+                        resultMsg.result                        =   true;
+                        resultMsg.arr_result_anal_header        =   arr_result_anal_header;
+                        resultMsg.arr_result_anal               =   arr_result_anal;
+
+                        res.json(resultMsg);
+                        res.end();
+
+                    }catch(err){
+                        resultMsg.result        =   false;
+                        resultMsg.msg           =   config.MSG.error01;
+                        resultMsg.err           =   err;
+
+                        res.json(resultMsg);
+                        res.end();
                     }
-
-                    resultMsg.result                        =   true;
-                    resultMsg.arr_result_anal_header        =   arr_result_anal_header;
-                    resultMsg.arr_result_anal               =   arr_result_anal;
-
-                    res.json(resultMsg);
-                    res.end();                    
                 });
 
             } catch (err) {
