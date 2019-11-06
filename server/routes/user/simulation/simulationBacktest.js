@@ -1615,43 +1615,46 @@ var getBacktestResult = function(req, res) {
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
-                            }                            
+                            }
+
+
+                            callback(null);
  
 
-                            /* tm_simul_result_anal 테이블에 존재하지 않는 경우 파이선 호출 */
-                            if( !resultMsg.arr_analyze || resultMsg.arr_analyze.length == 0 ) {
+                            // /* tm_simul_result_anal 테이블에 존재하지 않는 경우 파이선 호출 */
+                            // if( !resultMsg.arr_analyze || resultMsg.arr_analyze.length == 0 ) {
 
-                                /* 파이선을 통해 분석정보를 가져온다. */
-                                if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
+                            //     /* 파이선을 통해 분석정보를 가져온다. */
+                            //     if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
 
-                                    log.debug( "분석정보 #1 조회 from 파이선 START");
-                                    simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily, paramData.bench_mark_cd).then( function(e) {
-                                        if( e && e.result ) {
-                                            if( e.results && e.results.length > 0 ) {
-                                                resultMsg.analyzeList   =   e.results;
-                                                resultMsg.jsonFileName  =   e.jsonFileName;
-                                                resultMsg.inputData  =   e.inputData;
-                                            }
-                                            callback(null);
-                                        }else{
+                            //         log.debug( "분석정보 #1 조회 from 파이선 START");
+                            //         simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily, paramData.bench_mark_cd).then( function(e) {
+                            //             if( e && e.result ) {
+                            //                 if( e.results && e.results.length > 0 ) {
+                            //                     resultMsg.analyzeList   =   e.results;
+                            //                     resultMsg.jsonFileName  =   e.jsonFileName;
+                            //                     resultMsg.inputData  =   e.inputData;
+                            //                 }
+                            //                 callback(null);
+                            //             }else{
 
-                                            stmt    =   "";
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                            //                 stmt    =   "";
+                            //                 resultMsg.result = false;
+                            //                 resultMsg.msg = config.MSG.error01;
+                            //                 resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
-                                            return callback(null);
+                            //                 return callback(null);
 
-                                        }
-                                    });
-                                    log.debug( "분석정보 #1 조회 from 파이선 END");
-                                }else{
-                                    callback(null);
-                                }
+                            //             }
+                            //         });
+                            //         log.debug( "분석정보 #1 조회 from 파이선 END");
+                            //     }else{
+                            //         callback(null);
+                            //     }
 
-                            }else{
-                                callback(null);
-                            }
+                            // }else{
+                            //     callback(null);
+                            // }
 
                         } catch (err) {
 
@@ -1807,69 +1810,78 @@ var getSimulJongmoForExcel = function(req, res) {
                                 return callback(resultMsg);
                             }
 
+                            try{
+                                var arr_result_data     =   [];
+                                if( rows && rows.length > 0 ) {
 
-                            var arr_result_data     =   [];
-                            if( rows && rows.length > 0 ) {
-
-                                arr_result_data     =   _.uniqBy( rows, "F12506" ).map( function(o) {
-                                    return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
-                                });
+                                    arr_result_data     =   _.uniqBy( rows, "F12506" ).map( function(o) {
+                                        return  { "F12506" : o.F12506, "fmt_F12506" : o.fmt_F12506 };
+                                    });
 
 
-                                if( msg.arr_excel_jongmok_header && msg.arr_excel_jongmok_header.length > 0 ) {
+                                    if( msg.arr_excel_jongmok_header && msg.arr_excel_jongmok_header.length > 0 ) {
 
-                                    for( var i=0; i < rows.length; i++ ) {
-                                        var v_header            =   _.findIndex( msg.arr_excel_jongmok_header, { "F16013" : rows[i].F16013  });
+                                        for( var i=0; i < rows.length; i++ ) {
+                                            var v_header            =   _.findIndex( msg.arr_excel_jongmok_header, { "F16013" : rows[i].F16013  });
+                                            var v_index             =   -1;
 
-                                        if( v_header > -1 ) {
-                                            var v_index         =   _.findIndex( arr_result_data, { "F12506" : rows[i].F12506  });
-                                        }
+                                            if( v_header > -1 ) {
+                                                v_index         =   _.findIndex( arr_result_data, { "F12506" : rows[i].F12506  });
+                                            }
 
-                                        if( v_index > -1 ) {
-                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F15007" ]             =   rows[i].F15007;             /* 기준가 */
-                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F30700" ]             =   rows[i].F30700;             /* 종가 */
-                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F16143" ]             =   rows[i].F16143;             /* 상장주식수 */
-                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_RATE" ]         =   rows[i].TODAY_RATE;         /* 지수적용비율 */
-                                            arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_IMPORTANCE" ]   =   rows[i].TODAY_IMPORTANCE;   /* 비중 */
+                                            if( v_index > -1 ) {
+                                                arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F15007" ]             =   rows[i].F15007;             /* 기준가 */
+                                                arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F30700" ]             =   rows[i].F30700;             /* 종가 */
+                                                arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_F16143" ]             =   rows[i].F16143;             /* 상장주식수 */
+                                                arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_RATE" ]         =   rows[i].TODAY_RATE;         /* 지수적용비율 */
+                                                arr_result_data[ v_index ][ msg.arr_excel_jongmok_header[v_header].F16013 + "_TODAY_IMPORTANCE" ]   =   rows[i].TODAY_IMPORTANCE;   /* 비중 */
+                                            }
                                         }
                                     }
+
+                                    arr_result_data.forEach( function( item, index, array ) {
+                                        msg.arr_excel_jongmok_header.forEach( function( item1, index1, array1 ){
+
+                                            /* 기준가 */
+                                            if( typeof item[ item1.F16013 + "_F15007" ] == "undefined" ) {
+                                                item[ item1.F16013 + "_F15007" ]            =   "";
+                                            }
+
+                                            /* 종가 */
+                                            if( typeof item[ item1.F16013 + "_F30700" ] == "undefined" ) {
+                                                item[ item1.F16013 + "_F30700" ]            =   "";
+                                            }
+
+                                            /* 상장주식수 */
+                                            if( typeof item[ item1.F16013 + "_F16143" ] == "undefined" ) {
+                                                item[ item1.F16013 + "_F16143" ]            =   "";
+                                            }
+
+                                            /* 지수적용비율 */
+                                            if( typeof item[ item1.F16013 + "_TODAY_RATE" ] == "undefined" ) {
+                                                item[ item1.F16013 + "_TODAY_RATE" ]        =   "";
+                                            }
+
+                                            /* 비중 */
+                                            if( typeof item[ item1.F16013 + "_TODAY_IMPORTANCE" ] == "undefined" ) {
+                                                item[ item1.F16013 + "_TODAY_IMPORTANCE" ]  =   "";
+                                            }                                                                                                                                                                
+                                        });
+                                    });
                                 }
 
-                                arr_result_data.forEach( function( item, index, array ) {
-                                    msg.arr_excel_jongmok_header.forEach( function( item1, index1, array1 ){
+                                resultMsg.arr_excel_jongmok_header  =   msg.arr_excel_jongmok_header;
+                                resultMsg.arr_excel_jongmok_data    =   arr_result_data;
 
-                                        /* 기준가 */
-                                        if( typeof item[ item1.F16013 + "_F15007" ] == "undefined" ) {
-                                            item[ item1.F16013 + "_F15007" ]            =   "";
-                                        }
+                                callback(null);
 
-                                        /* 종가 */
-                                        if( typeof item[ item1.F16013 + "_F30700" ] == "undefined" ) {
-                                            item[ item1.F16013 + "_F30700" ]            =   "";
-                                        }
+                            }catch(err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
 
-                                        /* 상장주식수 */
-                                        if( typeof item[ item1.F16013 + "_F16143" ] == "undefined" ) {
-                                            item[ item1.F16013 + "_F16143" ]            =   "";
-                                        }
-
-                                        /* 지수적용비율 */
-                                        if( typeof item[ item1.F16013 + "_TODAY_RATE" ] == "undefined" ) {
-                                            item[ item1.F16013 + "_TODAY_RATE" ]        =   "";
-                                        }
-
-                                        /* 비중 */
-                                        if( typeof item[ item1.F16013 + "_TODAY_IMPORTANCE" ] == "undefined" ) {
-                                            item[ item1.F16013 + "_TODAY_IMPORTANCE" ]  =   "";
-                                        }                                                                                                                                                                
-                                    });
-                                });
+                                return callback(resultMsg);
                             }
-
-                            resultMsg.arr_excel_jongmok_header  =   msg.arr_excel_jongmok_header;
-                            resultMsg.arr_excel_jongmok_data    =   arr_result_data;
-
-                            callback(null);
                         });
 
                     } catch (err) {
