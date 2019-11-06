@@ -919,6 +919,172 @@
     ]]>
     </select>
 
+
+    <!--
+    *   그룹변경인 경우 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulResultExistYnByChangeGroup">
+
+        SELECT      /* simulation.getSimulResultExistYnByChangeGroup     그룹변경인 경우 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
+
+                    CASE    WHEN    /* [tm_simul_result] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_result.grp_cd
+                                              FROM  tm_simul_result
+                                             WHERE  1 = 1
+
+                                               AND  tm_simul_result.grp_cd              =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_result.scen_cd             =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_result_yn
+
+                ,   CASE    WHEN    /* [tm_simul_result_anal] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_result_anal.grp_cd
+                                              FROM  tm_simul_result_anal
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_anal.grp_cd         =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_result_anal.scen_cd        =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_result_anal_yn
+
+                ,   CASE    WHEN    /* [tm_simul_result_daily] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_result_daily.grp_cd
+                                              FROM  tm_simul_result_daily
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_daily.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_result_daily.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_result_daily_yn
+                    
+                ,   CASE    WHEN    /* [tm_simul_result_rebalance] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_result_rebalance.grp_cd
+                                              FROM  tm_simul_result_rebalance
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_rebalance.grp_cd    =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_result_rebalance.scen_cd   =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_result_rebalance_yn
+
+          FROM  DUAL    
+
+    </select>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultByChangeGroup      그룹변경인 경우 [tm_simul_result] 수정한다. */
+                    tm_simul_result
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result_anal] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultAnalByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultAnalByChangeGroup      그룹변경인 경우 [tm_simul_result_anal] 수정한다. */
+                    tm_simul_result_anal
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  upd_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result_daily] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultDailyByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultDailyByChangeGroup     그룹변경인 경우 [tm_simul_result_daily] 수정한다. */
+                    tm_simul_result_daily
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultRebalanceByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultRebalanceByChangeGroup     그룹변경인 경우 [tm_simul_result_rebalance] 수정한다. */
+                    tm_simul_result_rebalance
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+
+           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
+    ]]>
+    </update>    
+
     <!--
     * [tm_simul_result] 테이블을 삭제한다.
     * 2019-07-26  bkLove(촤병국)
