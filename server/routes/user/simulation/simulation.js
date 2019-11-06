@@ -2106,7 +2106,58 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 11. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    /* 11. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* [tm_simul_result_mast] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_mast_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_mast_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 12. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2157,7 +2208,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 12. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    /* 13. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2208,7 +2259,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 13. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    /* 14. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2259,7 +2310,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 14. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
+                    /* 15. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2300,7 +2351,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 15. tm_simul_portfolio 에 저장한다. */
+                    /* 16. tm_simul_portfolio 에 저장한다. */
                     function( msg, callback) {
 
                         try {

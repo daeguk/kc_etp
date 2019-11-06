@@ -948,6 +948,21 @@
                             ELSE    'N'
                     END                                                                 AS  tm_simul_result_yn
 
+                ,   CASE    WHEN    /* [tm_simul_result_mast] 테이블 존재 여부 */
+                                    COUNT(
+                                        (
+                                            SELECT  tm_simul_result_mast.grp_cd
+                                              FROM  tm_simul_result_mast
+                                             WHERE  1 = 1
+                                               AND  tm_simul_result_mast.grp_cd         =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+                                               AND  tm_simul_result_mast.scen_cd        =   #{prev_scen_cd}     /* 시나리오코드 */
+                                             LIMIT  1
+                                        )
+                                    )   =   1
+                            THEN    'Y'
+                            ELSE    'N'
+                    END                                                                 AS  tm_simul_result_mast_yn                    
+
                 ,   CASE    WHEN    /* [tm_simul_result_anal] 테이블 존재 여부 */
                                     COUNT(
                                         (
@@ -1019,6 +1034,24 @@
            AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result_mast] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultMastByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultMastByChangeGroup      그룹변경인 경우 [tm_simul_result_mast] 수정한다. */
+                    tm_simul_result_mast
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+    ]]>
+    </update>    
 
     <!--
     * 그룹변경인 경우 [tm_simul_result_anal] 수정한다.
