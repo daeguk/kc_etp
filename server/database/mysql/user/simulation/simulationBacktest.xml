@@ -351,11 +351,7 @@
                 ,   tm_simul_result_rebalance.scen_cd                           AS  scen_cd                 /* 시나리오코드 */
                 ,   tm_simul_result_rebalance.F12506                            AS  F12506                  /* 입회일자 */
                 ,   tm_simul_result_rebalance.F16013                            AS  F16013                  /* 단축 코드(현금은 KRW로 처리) */
-
-                ,   IFNULL(
-                            td_kspjong_basic.F16002   
-                        ,   td_etp_basic.F16002
-                    )                                                           AS  F16002                  /* 한글종목명 */
+                ,   td_kspjong_basic.F16002                                     AS  F16002                  /* 한글종목명 */
                 ,   tm_simul_result_rebalance.BEFORE_RATE                       AS  BEFORE_RATE             /* (직전)지수적용비율 */
                 ,   tm_simul_result_rebalance.TODAY_RATE                        AS  TODAY_RATE              /* (당일)지수적용비율 */
                 ,   tm_simul_result_rebalance.BEFORE_IMPORTANCE                 AS  BEFORE_IMPORTANCE       /* (전) 시가총액 비중 */
@@ -369,11 +365,7 @@
                   ON    (
                             tm_simul_result_rebalance.F16013    =   td_kspjong_basic.F16013
                         )
-
-          LEFT  JOIN    td_etp_basic
-                  ON    (
-                            tm_simul_result_rebalance.F16013    =   td_etp_basic.F16013
-                        )                
+     
          WHERE  1 = 1
            AND  tm_simul_result_rebalance.grp_cd            =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_result_rebalance.scen_cd           =   #{scen_cd}      /* 시나리오코드 */
