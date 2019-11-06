@@ -1518,7 +1518,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1575,7 +1575,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                                 paramData.changeGrpCdYn  =   "1";
                                 stmt = mapper.getStatement('simulation', 'getExistSubCnt', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1636,7 +1636,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 
                                 stmt = mapper.getStatement('simulation', "getScenCd1", paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1697,7 +1697,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     ||  paramData.prev_grp_cd   !=  paramData.grp_cd  ) {
 
                                     stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
-                                    log.debug(stmt);
+                                    log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
 
@@ -1816,7 +1816,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             try{
 
                                 stmt = mapper.getStatement('simulation', 'getSimulPortfolio2', paramData, format);
-                                log.debug(stmt);
+                                log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -1877,7 +1877,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulation', 'getSerialNo', paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1964,7 +1964,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             }
 
                             stmt = mapper.getStatement('simulation', queryId, paramData, format);
-                            log.debug(stmt);
+                            log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1998,7 +1998,256 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 9. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
+                    /* 9. 그룹변경인 경우 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "getSimulResultExistYnByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows && rows.length == 1 ) {
+                                        msg.simulResult     =   rows[0];
+                                    }                                    
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. 그룹변경인 경우 [tm_simul_result] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* [tm_simul_result] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* [tm_simul_result_anal] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_anal_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_anal_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 12. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* [tm_simul_result_daily] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_daily_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_daily_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 13. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* [tm_simul_result_rebalance] 데이터가 존재하는 경우 */
+                                if(     typeof msg.simulResult != "undefined" 
+                                    &&  typeof msg.simulResult.tm_simul_result_rebalance_yn != "undefined" 
+                                    &&  msg.simulResult.tm_simul_result_rebalance_yn == "Y" 
+                                ) {
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);    
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 14. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2039,7 +2288,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 10. tm_simul_portfolio 에 저장한다. */
+                    /* 15. tm_simul_portfolio 에 저장한다. */
                     function( msg, callback) {
 
                         try {
