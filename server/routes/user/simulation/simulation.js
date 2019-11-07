@@ -3161,7 +3161,7 @@ var copyScenario = function(req, res) {
                                     var v_scen_name     =   msg.simul_mast.scen_name;
                                     var v_max_count     =   100;
 
-                                    for( var i=0; i < 10; i++ ) {
+                                    for( var i=0; i < 20; i++ ) {
 
                                         v_scen_name     +=  v_postfix;
 
