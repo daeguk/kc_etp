@@ -69,6 +69,7 @@ ol, ul{padding:0 !important;}
 .progressbar_w{box-shadow: none !important; overflow-y:hidden !important; background: transparent !important; max-width: 60px;}
 .progressbar_w .v-progress-circular{color:#afff0f; caret-color:#afff0f;}
 .progress_1{padding:15px;}
+.pogress_1icon .v-icon{font-size:37px !important}
 .v-toolbar__content{height:60px !important;}
 .progressbar_w1{box-shadow: none !important; overflow-y:hidden !important; background: transparent !important; max-width: 250px;}
 .v-content{padding-top:60px !important;}

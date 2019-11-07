@@ -11,11 +11,16 @@
           class="subtitle-1 text-center"
           cols="6"
         >
-         Please wait a minute<br> 잠시만 기다려주세요
+        <v-flex class="pogress_1icon">
+            <v-icon>error</v-icon>
+        </v-flex>
+        <v-flex>
+            Please wait a minute<br>잠시만 기다려주세요
+        </v-flex>
         </v-col>
         <v-col cols="10">
           <v-progress-linear
-            color="primary accent-4"
+            color="#1e99e8"
             indeterminate
             rounded
             height="6"
