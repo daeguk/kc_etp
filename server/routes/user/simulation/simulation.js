@@ -3253,54 +3253,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 3. 현재 serialNo 를 구한다.  */
-                    function( msg, callback) {
-
-                        try{
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', 'getSerialNo', paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if ( !rows || rows.length != 1 ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    callback(resultMsg, msg);
-                                }else{
-
-                                    paramData.serial_no     =   Number( rows[0].serial_no );
-
-                                    callback(null, msg);
-                                }
-                                
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 4. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    /* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -3341,7 +3294,7 @@ var copyScenario = function(req, res) {
                         }
                     },                    
 
-                    /* 5. 시뮬레이션 기본 정보를 복사한다. */
+                    /* 4. 시뮬레이션 기본 정보를 복사한다. */
                     function( msg, callback) {
 
                         try{
@@ -3350,7 +3303,7 @@ var copyScenario = function(req, res) {
                                 msg = {};
                             }                            
 
-                            paramData.serial_no    +=  1;
+                            paramData.serial_no     =  1;
 
                             stmt = mapper.getStatement('simulation', "copyTmSimulMast", paramData, format);
                             log.debug(stmt, paramData);
@@ -3387,7 +3340,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 6. 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    /* 5. 시뮬레이션 포트폴리오 테이블에 저장되어 있는지 체크한다. */
                     function( msg, callback) {
 
                         try {
@@ -3396,8 +3349,7 @@ var copyScenario = function(req, res) {
                                 msg = {};
                             }
 
-
-                            stmt = mapper.getStatement('simulation', "getSimulResultExistYnByChangeGroup", paramData, format);
+                            stmt = mapper.getStatement('simulation', "getSimulPortfolioExistYn", paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
@@ -3411,7 +3363,7 @@ var copyScenario = function(req, res) {
                                 }
 
                                 if ( rows && rows.length == 1 ) {
-                                    msg.simulResult     =   rows[0];
+                                    msg.tm_simul_portfolio_yn       =   "Y";
                                 }                                    
 
                                 callback(null, msg);
@@ -3426,48 +3378,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 7. [tm_simul_result_mast] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                stmt = mapper.getStatement('simulation', "copyTmSimulResultMast", paramData, format);
-                                log.debug(stmt, paramData);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    callback(null, msg);
-                                });
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },                    
-
-                    /* 8. [tm_simul_portfolio] 를 복사한다.  */
+                    /* 6. [tm_simul_portfolio] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3480,9 +3391,8 @@ var copyScenario = function(req, res) {
                             if( msg.simul_mast.grp_yn == "0" ) {
 
                                 /* [tm_simul_portfolio] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_portfolio_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_portfolio_yn == "Y" 
+                                if(     typeof msg.tm_simul_portfolio_yn != "undefined" 
+                                    &&  msg.tm_simul_portfolio_yn == "Y" 
                                 ) {
 
                                     stmt = mapper.getStatement('simulation', "copyTmSimulPortfolio", paramData, format);
@@ -3498,15 +3408,15 @@ var copyScenario = function(req, res) {
                                             return callback(resultMsg);
                                         }
 
-                                        callback(null, msg);
+                                        callback(null);
                                     });
 
                                 }else{
-                                    callback(null, msg);    
+                                    callback(null);    
                                 }
 
                             }else{
-                                callback(null, msg);
+                                callback(null);
                             }
 
                         } catch (err) {
@@ -3517,210 +3427,6 @@ var copyScenario = function(req, res) {
                             return callback(resultMsg);
                         }
                     },
-
-                    /* 9. [tm_simul_result] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResult", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 10. [tm_simul_result_anal] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_anal] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_anal_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_anal_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultAnal", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 11. [tm_simul_result_daily] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_daily] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_daily_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_daily_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultDaily", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 12. [tm_simul_result_rebalance] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_rebalance] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_rebalance_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_rebalance_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultRebalance", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },                    
 
                 ], function(err) {
 
