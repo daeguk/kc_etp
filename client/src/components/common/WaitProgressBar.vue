@@ -11,7 +11,7 @@
           class="subtitle-1 text-center"
           cols="6"
         >
-          몇분만 기다려 주세요
+         Please wait a minute<br> 잠시만 기다려주세요
         </v-col>
         <v-col cols="10">
           <v-progress-linear

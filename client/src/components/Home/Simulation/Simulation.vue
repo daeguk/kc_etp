@@ -813,6 +813,11 @@ export default {
             vm.$emit("fn_showProgress", visible );
         },
 
+        fn_showWaitProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showWaitProgress", visible );
+        },
+
         /*
          * 비중설정방식 선택시 테이블의 비중정보를 설정한다.
          * 2019-07-26  bkLove(촤병국)
@@ -1890,7 +1895,7 @@ export default {
             }
 
 
-            vm.fn_showProgress( true );
+            vm.fn_showWaitProgress( true );
 
             util.axiosCall(
                     {
@@ -1920,7 +1925,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
 
                         try{
                             if (response && response.data) {
@@ -1966,7 +1971,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
