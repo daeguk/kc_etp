@@ -1297,7 +1297,7 @@
                 ,   #{scen_cd}                      AS  scen_cd                     /* 시나리오 코드 */
 
                 ,   scen_depth                      AS  scen_depth                  /* 시나리오 DEPTH */
-                ,   scen_order_no                   AS  scen_order_no               /* 시나리오 정렬 순번 */
+                ,   #{scen_order_no}                AS  scen_order_no               /* 시나리오 정렬 순번 */
                 ,   #{scen_name}                    AS  scen_name                   /* 시나리오명 */
                 ,   grp_yn                          AS  grp_yn                      /* 그룹여부(1-그룹) */
                 ,   start_year                      AS  start_year                  /* 시작년도 */

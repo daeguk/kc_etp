@@ -3300,7 +3300,48 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 4. 시뮬레이션 기본 정보를 복사한다. */
+                    /* 4. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            paramData.grp_yn    =   msg.simul_mast.grp_yn;
+
+                            stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    paramData.scen_order_no     =   rows[0].scen_order_no;
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 5. 시뮬레이션 기본 정보를 복사한다. */
                     function( msg, callback) {
 
                         try{
@@ -3346,7 +3387,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 5. 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    /* 6. 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3385,7 +3426,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 6. [tm_simul_result_mast] 를 복사한다.  */
+                    /* 7. [tm_simul_result_mast] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3426,7 +3467,7 @@ var copyScenario = function(req, res) {
                         }
                     },                    
 
-                    /* 7. [tm_simul_portfolio] 를 복사한다.  */
+                    /* 8. [tm_simul_portfolio] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3477,7 +3518,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 8. [tm_simul_result] 를 복사한다.  */
+                    /* 9. [tm_simul_result] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3528,7 +3569,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 9. [tm_simul_result_anal] 를 복사한다.  */
+                    /* 10. [tm_simul_result_anal] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3579,7 +3620,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 10. [tm_simul_result_daily] 를 복사한다.  */
+                    /* 11. [tm_simul_result_daily] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3630,7 +3671,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 10. [tm_simul_result_rebalance] 를 복사한다.  */
+                    /* 12. [tm_simul_result_rebalance] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
