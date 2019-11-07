@@ -68,7 +68,9 @@ ol, ul{padding:0 !important;}
 
 .progressbar_w{box-shadow: none !important; overflow-y:hidden !important; background: transparent !important; max-width: 60px;}
 .progressbar_w .v-progress-circular{color:#afff0f; caret-color:#afff0f;}
+.progress_1{padding:15px;}
 .v-toolbar__content{height:60px !important;}
+.progressbar_w1{box-shadow: none !important; overflow-y:hidden !important; background: transparent !important; max-width: 250px;}
 .v-content{padding-top:60px !important;}
 .v-toolbar__content, .v-toolbar__extension{width:1400px !important; margin:0 auto !important; overflow: hidden !important;}
 
@@ -374,6 +376,8 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver10 td .v-input--selection-controls,.tbl_type.ver8 td .v-input--selection-controls{margin-top:0px;}
 .tbl_type.ver10 td .v-input__slot,.tbl_type.ver8 td .v-input__slot{margin-bottom:0px;}
 .tbl_type.ver10 td .v-messages,.tbl_type.ver8 td .v-messages{display: none;}
+.tbl_type.ver10 td .v-text-field__details{ margin-bottom:0px}
+.tbl_type.ver10 td.fileicon .v-icon{float:left;}
 
 /*테이블 header고정*/
 caption {
