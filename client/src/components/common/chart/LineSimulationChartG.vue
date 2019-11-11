@@ -49,8 +49,8 @@ export default {
       yAxisVal:[],
       xAxisDd:[],
       xAxisTt:[],
-      lineColor1:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#C5E1A5"],
-      lineColor2:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#85c406"],
+      lineColor1:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#23233f"],
+      lineColor2:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#23233f"],
     };
   },    
   watch: {
@@ -413,15 +413,24 @@ export default {
         vm.arr_checked.forEach(function(check_array, idx) {
           if (check_array) {
             
+            var circle = new Path2D();
+            circle.moveTo(125, 35);
+            circle.arc(twpos+20, cal_hpos, 5, 0, 2 * Math.PI);
+            c.fillStyle = vm.lineColor1[idx];
+            c.fill(circle);       
+
+            c.fillStyle = "black";
+            c.textAlign = "right";
+            c.font = '11px Roboto, sans-serif, Noto-Sans';
+
             if (vm.bm_header != "BM (N/A)" && vm.bm_header != "") {
-              if (idx == 0) {              
+              if (idx == 0) {   
                 c.fillText(vm.bm_header + ": " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
               } else {
-                
-                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + "_("+idx+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
+                c.fillText(vm.arr_result_header[idx-1].scen_name.substr(0, 10) + "...: " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
               }
             } else {
-              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + "_("+(idx+1)+"): " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
+              c.fillText(vm.arr_result_header[idx].scen_name.substr(0, 10) + "...: " + util.formatNumber( item.vv[idx] ), twpos+tt_wlen, cal_hpos);
             }
             
             cal_hpos += 12;
