@@ -49,8 +49,8 @@ export default {
       yAxisVal:[],
       xAxisDd:[],
       xAxisTt:[],
-      lineColor1:["#becbd2", "#97cbe1", "#36adfa", "#186391", "#b8b8b8", "#7b92a9", "#313f55", "#ffca7c", "#c0783f", "#f8ca3d", "#C5E1A5"],
-      lineColor2:["#b9e0f7", "#72cdf4", "#1e99e8", "#0076be", "#dcddde", "#B6B8BA", "#7E8083", "#FBB040", "#F58025", "#EDED8A", "#85c406"],
+      lineColor1:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#C5E1A5"],
+      lineColor2:["#2ac9ad", "#5e8bff", "#febd57", "#9a25ff", "#ea557f", "#afdb4a", "#5073b8", "#0f98ad", "#e2c395", "#a3adbf", "#85c406"],
     };
   },    
   watch: {
