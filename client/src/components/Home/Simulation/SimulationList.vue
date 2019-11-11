@@ -123,7 +123,7 @@
                         <!-- 버튼 영역 -->
                             <td>
                                 <button name="btn1" :class="'simul_icon1 ' + ( item.grp_yn == '0' ?  '' : 'disable' )"></button>
-                                <button name="btn2" :class="'simul_icon2 ' + ( item.grp_yn == '0' && item.result_daily_yn == '1' ?  '' : 'disable' )"></button>
+                                <button name="btn2" :class="'simul_icon2 ' + ( ( item.grp_yn == '1' || ( item.grp_yn == '0' && item.result_daily_yn == '1' ) ) ?  '' : 'disable' )"></button>
 
 
                             <!-- 그룹인 경우 -->
@@ -134,7 +134,6 @@
                                     </template>
 
                                     <ul class="more_menu_w">
-                                        <li @click="fn_get_scen_in_grpCd( item, index )"><v-icon class="simul_del_btn">delete_forever</v-icon>비교하기</li>
                                         <li @click="fn_modify_group( 'delete', item, index )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
                                         <li @click="fn_show_rename( item, index, 'true' )"><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
                                         <li @click="fn_copy_scenario( item, index )"><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
@@ -369,7 +368,12 @@ export default {
             ,   arr_comp                    :   []
             ,   now_event                   :   ""
             ,   now_status                  :   ""
+
             ,   v_share_count               :   0           /* 공유 건수 */
+            ,   arr_all_for_share           :   []          /* array 모든 공유할 공유자 */
+            ,   arr_all_shared              :   []          /* array 모든 공유된 공유자 */
+            ,   arr_checked_for_share       :   []          /* array 선택된 공유할 공유자 */
+            ,   arr_checked_shared          :   []          /* array 선택된 공유된 공유자 */
         };
     },
     components: {
@@ -431,32 +435,38 @@ export default {
                         /* 상세화면 이동 */
                 case    "btn2"  :
 
-                            if( v_jsonParam.grp_yn == '1' || v_jsonParam.result_daily_yn == '0' ) {
+                            if( !( v_jsonParam.grp_yn == '1' || ( v_jsonParam.grp_yn == '0' && v_jsonParam.result_daily_yn == '1' ) ) ) {
                                 return false;
                             }
 
-                            if( v_jsonParam.simul_change_yn == "1" ) {
-
-                                if ( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
-                                        {}
-                                        ,2
-                                    )
-                                ) {
-
-                                    if( "Y" == vm.$refs.confirm2.val ) {
-                                        /* 수정정보를 보여준다. */
-                                        v_jsonParam.showSimulationId        =   1;
-                                        vm.fn_showSimulation( v_jsonParam );
-                                    }
-                                }
-
+                            if( v_jsonParam.grp_yn == '1' ) {
+                                vm.fn_get_scen_in_grpCd( v_jsonParam, rowIndex );
                             }else{
 
-                                /* 결과화면을 보여준다. */
-                                v_jsonParam.showSimulationId        =   2;
-                                vm.$emit( "fn_showSimulation", v_jsonParam );
+                                if( v_jsonParam.simul_change_yn == "1" ) {
+
+                                    if ( await vm.$refs.confirm2.open(
+                                            '확인',
+                                            '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
+                                            {}
+                                            ,2
+                                        )
+                                    ) {
+
+                                        if( "Y" == vm.$refs.confirm2.val ) {
+                                            /* 수정정보를 보여준다. */
+                                            v_jsonParam.showSimulationId        =   1;
+                                            vm.fn_showSimulation( v_jsonParam );
+                                        }
+                                    }
+
+                                }else{
+
+                                    /* 결과화면을 보여준다. */
+                                    v_jsonParam.showSimulationId        =   2;
+                                    vm.$emit( "fn_showSimulation", v_jsonParam );
+                                }
+
                             }
 
                             break;
@@ -482,21 +492,6 @@ export default {
                                         return  false;
                                     }
                                 }
-
-
-                                if ( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '[' + v_obj.val() + ']  이름변경 하시겠습니까?',
-                                        {}
-                                        ,2
-                                    )
-                                ) {
-                                    if( "Y" != vm.$refs.confirm2.val ) {
-                                        v_obj.focus();
-                                        return  false;
-                                    }
-                                }
-
 
                                 var p_param         =   {};
 
@@ -527,17 +522,6 @@ export default {
                                                     }
                                                 }else{
 
-                                                    if( msg ) {
-                                                        if ( vm.$refs.confirm2.open(
-                                                                '확인',
-                                                                msg,
-                                                                {}
-                                                                ,1
-                                                            )
-                                                        ) {
-                                                        }
-                                                    }
-
                                                     /* 시뮬레이션 목록정보를 조회한다. */
                                                     vm.fn_getSimulList();                                                    
                                                 }
@@ -563,20 +547,6 @@ export default {
                             var     v_obj       =   $( "input[name=txt_simul_" + v_jsonParam.index + "]" );
 
                             if( v_obj && typeof v_obj.val() != "undefined" ) {
-
-                                if ( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '이름변경 취소 하시겠습니까?',
-                                        {}
-                                        ,2
-                                    )
-                                ) {
-                                    if( "Y" != vm.$refs.confirm2.val ) {
-                                        v_obj.focus();
-                                        return  false;
-                                    }
-                                }
-
 
                                 vm.fn_show_rename( v_jsonParam, v_jsonParam.index, "false" );
                             }                    
@@ -979,17 +949,6 @@ export default {
                                                 vm.arr_show_error_message.push( msg );
                                             }
                                         }else{
-
-                                            if( msg ) {
-                                                if ( vm.$refs.confirm2.open(
-                                                        '확인',
-                                                        msg,
-                                                        {}
-                                                        ,1
-                                                    )
-                                                ) {
-                                                }
-                                            }
 
                                             /* 시뮬레이션 목록정보를 조회한다. */
                                             vm.fn_getSimulList();                                            
@@ -1464,17 +1423,6 @@ export default {
                                         resolve( { result : false } );
                                     }else{
 
-                                        if( msg ) {
-                                            if ( vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {
-                                            }
-                                        }
-
                                         /* 시뮬레이션 목록정보를 조회한다. */
                                         vm.fn_getSimulList();
 
@@ -1604,18 +1552,6 @@ export default {
                 return  false;
             }
 
-            if ( await vm.$refs.confirm2.open(
-                    '확인',
-                    '[' + p_item.grp_name + '] 으로 그룹변경 하시겠습니까?',
-                    {}
-                    ,2
-                )
-            ) {
-                if( "Y" != vm.$refs.confirm2.val ) {
-                    return  false;
-                }
-            }            
-
             var param           =   {};
 
             param.prev_grp_cd   =   p_now_item.grp_cd;
@@ -1647,17 +1583,6 @@ export default {
                                         resolve( { result : false } );
                                     }else{
 
-                                        if( msg ) {
-                                            if ( vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {
-                                            }
-                                        }
-
                                         /* 시뮬레이션 목록정보를 조회한다. */
                                         vm.fn_getSimulList();
                                     }
@@ -1680,7 +1605,7 @@ export default {
             }).catch( function(e1) {
                 console.log( e1 );
             });            
-        }
+        },
     }  
 };
 </script>
