@@ -414,7 +414,6 @@ export default {
           if (check_array) {
             
             var circle = new Path2D();
-            circle.moveTo(125, 35);
             circle.arc(twpos+20, cal_hpos, 5, 0, 2 * Math.PI);
             c.fillStyle = vm.lineColor1[idx];
             c.fill(circle);       
