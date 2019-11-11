@@ -1,7 +1,7 @@
 <template>
 <v-dialog v-model="dialog" persistent max-width="650">
         <template v-slot:activator="{ on }">
-              <v-btn  small flat icon class="simul_ticon" dark v-on="on"><v-icon>help_outline</v-icon></v-btn>
+              <v-btn  small flat icon class="simul_ticon pl-3 mr-1" dark v-on="on" ><v-icon>help_outline</v-icon></v-btn>
         </template>
             <v-card flat>
                 <h5>
