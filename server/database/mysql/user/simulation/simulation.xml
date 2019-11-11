@@ -1607,4 +1607,320 @@
 
     </delete>
 
+
+    <!--
+    *   공유할 모든 대상자를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getAllUserListForShare">
+
+        SELECT      /* simulation.getAllUserListForShare  공유할 모든 대상자를 조회한다. */
+
+                    tm_user_member.type_cd                                  AS  type_cd                     /* 사용자 그룹 코드 */
+                ,   tm_user_member.inst_cd                                  AS  inst_cd                     /* 기관구분코드 */
+                ,   tm_user_member.email                                    AS  email                       /* 이메일 */
+
+                ,   tm_user_member.name                                     AS  name                        /* 이름 */
+                
+          FROM  tm_user_member
+
+         WHERE  1 = 1
+
+         ORDER  BY      tm_user_member.name                
+
+    </select>
+
+    <!--
+    *   선택된 시뮬레이션에 속한 대상자를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getUserListInCheckedSimulation">
+
+        SELECT      /* simulation.getUserListInCheckedSimulation  선택된 시뮬레이션에 속한 대상자를 조회한다. */
+
+                    tm_simul_share.grp_cd                                   AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                                  AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+
+                ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+          FROM  tm_simul_share
+
+         WHERE  1 = 1
+
+           AND  tm_simul_share.grp_cd           =   #{grp_cd}
+           AND  tm_simul_share.scen_cd          =   #{scen_cd}
+
+         ORDER  BY      tm_simul_share.email
+
+    </select>    
+
+
+    <!--
+    *   공유 정보가 이미 존재하는지 체크한다. ( 그룹, 시나리오 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getUserListShared">
+
+        SELECT      /* simulation.getUserListShared  공유된 공유자를 조회한다. */
+                    
+                    COUNT( tm_simul_share.scen_cd )                         AS  exist_cnt                   /* 존재 건수 */
+
+          FROM  tm_simul_share
+         WHERE  1 = 1
+           AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd )       IN 
+                (
+                    SELECT      tm_simul_mast.grp_cd 
+                            ,   tm_simul_mast.scen_cd
+
+                      FROM  tm_simul_mast
+
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_cd                =   #{upper_scen_cd}    /* 그룹코드(상위코드) */
+                       AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+                )
+
+    </select>
+
+
+
+    <!--
+    *   시나리오 또는 그룹에 속한 공유자 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulShareInArr">
+
+        SELECT      /* simulation.getSimulShareInArr  시나리오 또는 그룹에 속한 공유자 정보를 조회한다. */
+
+                    tm_simul_share.grp_cd                                   AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                                  AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+
+                ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+          FROM  tm_simul_share
+
+         WHERE  1 = 1
+
+           AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
+                (
+                <foreach    collection="arr_data_list"   item="item"    index="index"   separator=" ," >
+                    ( #{item.grp_cd}, #{item.scen_cd} )
+                </foreach>
+                )
+
+    </select>    
+
+    <!--
+    *   공유자에게 공유를 설정한다. ( 신규 등록 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <insert     id="saveShareUser">
+    <![CDATA[
+        INSERT  INTO    
+        /* simulation.saveShareUser      [td_etfpdf_basic] 테이블에 저장한다. */
+        td_etfpdf_basic 
+        ( 
+                F16583                      /* 사무수탁회사번호 */
+            ,   F16012                      /* ETF종목코드 */
+            ,   F16013                      /* ETF단축코드 */
+            ,   F16316                      /* 구성종목코드 */
+
+            ,   F16499                      /* 1CU단위증권수 */
+            ,   F33861                      /* ETF시장구분 */
+            ,   F16004                      /* 해외시장종목명 */
+            ,   F34840                      /* 액면금액 */
+            ,   F16588                      /* 평가금액 */
+            ,   F34743                      /* ETF_PDF비중 */
+            ,   F34744                      /* ETF_PDF포함여부 */
+        ) 
+    ]]>
+        VALUES
+        <foreach    collection="dataLists"   item="data"     separator="," >
+    <![CDATA[        
+        ( 
+                #{f16583}                   /* 사무수탁회사번호 */
+            ,   #{f16012}                   /* ETF종목코드 */
+            ,   #{f16013}                   /* ETF단축코드 */
+            ,   #{data.f16316}              /* 구성종목코드 */
+
+            ,   #{data.f16499}              /* 1CU단위증권수 */
+            ,   #{data.f33861}              /* ETF시장구분 */
+            ,   #{data.f16004}              /* 해외시장종목명 */
+            ,   #{data.f34840}              /* 액면금액 */
+            ,   #{data.f16588}              /* 평가금액 */
+            ,   0                           /* ETF_PDF비중 */
+            ,   0                           /* ETF_PDF포함여부 */
+        )
+    ]]>
+        </foreach>
+    </insert>    
+
+    <!--
+    *   공유자에게 공유를 설정한다. ( 수정 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="setShareRevoke">
+
+        UPDATE  /* simulation.setShareRevoke      공유 또는 해제한다. */
+        
+                tm_simul_share
+        
+         INNER  JOIN    (
+                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
+                                        ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
+                                        ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
+                                        ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
+
+                                        ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
+                                        ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
+                                        ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
+                                        ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
+                                        ,   #{data.f34840}                  AS  f34840      /* 액면금액 */
+                                        ,   #{data.f16588}                  AS  f16588      /* 평가금액 */
+
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     td_etfpdf_basic.f16583      =   base.f16583     /* 사무수탁회사번호 */
+                        AND     td_etfpdf_basic.f16012      =   base.f16012     /* ETF종목코드 */
+                        AND     td_etfpdf_basic.f16013      =   base.f16013     /* ETF단축코드 */
+                        AND     td_etfpdf_basic.f16316      =   base.f16316     /* 구성종목코드 */
+
+           SET      scen_name               =   #{owner_yn}                     /* 시나리오명 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */     
+
+    </update>
+
+    <!--
+    *   공유해제를 수행한다. ( 시나리오별 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmPdfModifyDtl">
+
+        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
+
+                tm_pdf_modify_dtl
+
+          FROM  tm_pdf_modify_dtl
+        
+         INNER  JOIN    (
+                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{user_id}                      AS  email           /* 이메일 */
+                                        ,   #{f16583}                       AS  f16583          /* 사무수탁회사번호 */
+                                        ,   #{f16012}                       AS  f16012          /* ETF종목코드 */
+                                        ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
+                                        ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
+                        AND     tm_pdf_modify_dtl.f16583    =   base.f16583     /* 사무수탁회사번호 */
+                        AND     tm_pdf_modify_dtl.f16012    =   base.f16012     /* ETF종목코드 */
+                        AND     tm_pdf_modify_dtl.f16013    =   base.f16013     /* ETF단축코드 */
+                        AND     tm_pdf_modify_dtl.f16316    =   base.f16316     /* 구성종목코드 */
+
+    </delete>
+
+    <!--
+    *   공유해제를 수행한다. ( 그룹별 )
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteTmPdfModifyDtl">
+
+        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
+
+                tm_pdf_modify_dtl
+
+          FROM  tm_pdf_modify_dtl
+        
+         INNER  JOIN    (
+                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{user_id}                      AS  email           /* 이메일 */
+                                        ,   #{f16583}                       AS  f16583          /* 사무수탁회사번호 */
+                                        ,   #{f16012}                       AS  f16012          /* ETF종목코드 */
+                                        ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
+                                        ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
+                        AND     tm_pdf_modify_dtl.f16583    =   base.f16583     /* 사무수탁회사번호 */
+                        AND     tm_pdf_modify_dtl.f16012    =   base.f16012     /* ETF종목코드 */
+                        AND     tm_pdf_modify_dtl.f16013    =   base.f16013     /* ETF단축코드 */
+                        AND     tm_pdf_modify_dtl.f16316    =   base.f16316     /* 구성종목코드 */
+
+    </delete>
+
+    <!--
+    *   상위 그룹정보 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenarioUpperGrp">
+
+        SELECT      /* simulation.getScenarioUpperGrp  상위 그룹정보 정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd                =   '*'                 /* 그룹코드(상위코드) */
+           AND  tm_simul_mast.scen_cd               =   #{grp_cd}           /* 시나리오코드 */
+           AND  tm_simul_mast.grp_yn                =   '1'                 /* 그룹여부 */
+
+    </select>
+
+    <!--
+    *   그룹에 속한 시나리오들을 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenarioInGrp">
+
+        SELECT      /* simulation.getScenarioInGrp  그룹에 속한 시나리오들을 조회한다. */
+                    
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+
+          FROM  tm_simul_mast
+         WHERE  1 = 1
+           AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd )       IN 
+                (
+                    SELECT      tm_simul_mast.grp_cd 
+                            ,   tm_simul_mast.scen_cd
+
+                      FROM  tm_simul_mast
+
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_cd                =   #{scen_cd}}         /* 그룹코드(상위코드) */
+                       AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+                )
+
+    </select>    
+
 </mapper>
