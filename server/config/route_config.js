@@ -178,6 +178,7 @@ module.exports = {
         { file: './user/simulation/simulation'          , path: '/user/simulation/renameScenario'               , method: 'renameScenario'                  , session: 'check', type: 'post' },     // 시나리오 이름변경
         { file: './user/simulation/simulation'          , path: '/user/simulation/copyScenario'                 , method: 'copyScenario'                    , session: 'check', type: 'post' },     // 시나리오 복사
         { file: './user/simulation/simulation'          , path: '/user/simulation/changeGroup'                  , method: 'changeGroup'                     , session: 'check', type: 'post' },     // 시나리오 그룹변경
+        { file: './user/simulation/simulation'          , path: '/user/simulation/getScenarioShareCount'        , method: 'getScenarioShareCount'           , session: 'check', type: 'post' },     // 시나리오 공유 건수 조회
         
 
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/saveBacktestResult'           , method: 'saveBacktestResult'              , session: 'check', type: 'post' },     // 백테스트 결과 저장
