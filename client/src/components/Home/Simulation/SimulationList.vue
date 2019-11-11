@@ -42,8 +42,8 @@
                     
                     <colgroup>
                         <col width="4%">
-                        <col width="30%" />
-                        <col width="30%" />
+                        <col width="40%" />
+                        <col width="20%" />
                         <col width="25%" />
                         <col width="15%" />
                     </colgroup>
@@ -51,8 +51,8 @@
                     <thead>
                         <tr>
                             <th width="4%"></th>
-                            <th width="30%" class="txt_left">Name</th>
-                            <th width="30%"  class="txt_right">Index</th>
+                            <th width="40%" class="txt_left">Name</th>
+                            <th width="20%"  class="txt_right">Index</th>
                             <th width="25%"  class="txt_right">Last modifired</th>
                             <th width="15%" ></th>
                         </tr>
@@ -74,26 +74,30 @@
                         <!-- Name -->
                             <td class="txt_left">
                                 <!-- 시나리오 그룹 인 경우 -->
-                                <div class=""  v-if="item.grp_yn == '1'">
-                                    <v-icon>folder_open</v-icon>
+                                <div class="simu_namemodi_w"  v-if="item.grp_yn == '1'">
+                                    <div><v-icon>folder_open</v-icon></div>
 
                                     <div :name="'div_simul_' + index + '_read'" style="display:inline">{{ item.scen_name }}</div>
                                     <div :name="'div_simul_' + index + '_edit'" style="display:none;">
-                                        <input type="text" :name="'txt_simul_' + index"  :value="item.scen_name" style="width:80%" maxlength="50"/>
-                                        <button name="btn_rename" class="simul_icon1" ></button>
-                                        <button name="btn_rename_cancel" class="simul_icon1" ></button>
+                                        <ul>
+                                        <li><input type="text" :name="'txt_simul_' + index"  :value="item.scen_name"  maxlength="50"/></li>
+                                        <li><v-btn name="btn_rename" outline small class="primary" >변경</v-btn></li>
+                                        <li><v-btn name="btn_rename_cancel" small outline color="primary" >취소</v-btn></li>
+                                        </ul>
                                     </div>
                                 </div>
 
                                 <!-- 시나리오 그룹이 아닌 경우 -->
-                                <div :class="fn_grp_check_class(item)" v-if="item.grp_yn == '0'">
-                                    <v-icon>description</v-icon> 
+                                <div :class="fn_grp_check_class(item)" v-if="item.grp_yn == '0'" class="simu_namemodi_w">
+                                    <div><v-icon>description</v-icon> </div>
 
                                     <div :name="'div_simul_' + index + '_read'" style="display:inline">{{ item.scen_name }}</div>
                                     <div :name="'div_simul_' + index + '_edit'" style="display:none;">
-                                        <input type="text" :name="'txt_simul_' + index"  :value="item.scen_name" style="width:80%" maxlength="50"/>
-                                        <button name="btn_rename" class="simul_icon1" ></button>
-                                        <button name="btn_rename_cancel" class="simul_icon1" ></button>
+                                        <ul>
+                                            <li><input type="text" :name="'txt_simul_' + index"  :value="item.scen_name" maxlength="50"/></li>
+                                            <li><v-btn name="btn_rename" small outline color="primary">변경</v-btn></li>
+                                            <li><v-btn name="btn_rename_cancel" small outline color="primary" >취소</v-btn></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </td>
@@ -180,6 +184,7 @@
                                                      </v-card-title>
                                                  </h5>
                                                  <!--1table-->
+                                                 <div class="simul_share_search"><v-text-field v-model="search" v-on:keyup="" append-icon="search" label="Search" single-line hide-details></v-text-field></div>
                     <div class="incode_pop">
                         <h6>공유자 선택</h6>
                         <div class="table-box-wrap" >

@@ -372,6 +372,10 @@ table.tbl_type{border-spacing: 0 !important; border-bottom:0;}
 .tbl_type.ver10 td.td_in_input button{vertical-align: middle;}
 .tbl_type.ver11{border-top:1px solid #bbbbbb; width: 80%; margin:0 auto; margin-top:15px; margin-bottom:15px; }
 .tbl_type.ver11 th{background:#f2f2f2; font-size: 14px; text-align: right; }
+.table-box-wrap.v3{padding-top:0px;}
+.tbl_type.ver11.v3{width: 100%; margin-top:0;}
+.tbl_type.ver11.v3 th{border-top:1px solid #e5e5e5;}
+.tbl_type.ver11.v3 td{font-weight: normal;border-top:1px solid #e5e5e5;}
 .tbl_type.ver12{width:1380px; margin:0 10px;}
 
 .tbl_type.ver10 td .v-input--selection-controls,.tbl_type.ver8 td .v-input--selection-controls{margin-top:0px;}
@@ -994,6 +998,15 @@ input[type='file']{
 .simul_group_modi_pop li{border-bottom:1px solid #e7e7e7;}
 
 
+.simul_ticon .v-icon{font-size: 26px !important; color:#9e9e9e !important;}
+.simul_ticon.v-btn:before{opacity: 0 !important;}
+.simul_ticon .v-icon:hover{color:#85c406 !important;}
+
+.sub_tabletitle{font-size: 14px; display: block; font-weight: normal;}
+.t_head{margin-top:10px;display: block;}
+.po_txt_pad{padding-left:67px;line-height:20px; font-weight: normal !important;}
+
+
 
 /*지수관리*/
 .tdicon_menu .v-list__tile{height:35px;}
@@ -1173,6 +1186,13 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_g_w ul li span.rcolor09{ color:#F58025;}
 .simul_g_w ul li span.rcolor010{ color:#EDED8A;}
 .simul_g_w ul li span.rcolor011{ color:#85c406;}
+
+
+.simu_namemodi_w div{display:inline-block; float: left; vertical-align: middle; line-height: 25px;}
+.simu_namemodi_w div ul li{display:inline-block !important; vertical-align: middle; }
+.simu_namemodi_w div ul li input{width:280px; line-height: 20px;}
+.simu_namemodi_w div ul li .v-btn{margin:0 4px !important;}
+.simul_share_search .v-text-field{padding:0 20px 10px; margin-top:0px; width:300px;}
 
 
 
