@@ -1684,76 +1684,35 @@
     </select>
 
     <!--
-    *   그룹 또는 그룹에 속한 공유자 정보를 조회한다.
+    *   그룹에 속한 공유자 정보를 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
     <select id="getSimulShareInGrp">
 
-        SELECT      /* simulation.getSimulShareInGrp  그룹 또는 그룹에 속한 공유자 정보를 조회한다. */
+        SELECT      /* simulation.getSimulShareInGrp  그룹에 속한 공유자 정보를 조회한다. */
 
-                    tm_simul_share.grp_cd                                   AS  grp_cd                  /* 그룹코드(상위코드) */
-                ,   tm_simul_share.scen_cd                                  AS  scen_cd                 /* 시나리오 코드 */
-                ,   tm_simul_share.email                                    AS  email                   /* 이메일 */
+                    tm_simul_share.grp_cd                       AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                      AS  scen_cd                 /* 시나리오 코드 */
+                ,   tm_simul_share.email                        AS  email                   /* 이메일 */
 
-                ,   tm_simul_share.owner_yn                                 AS  owner_yn                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+                ,   tm_simul_share.owner_yn                     AS  owner_yn                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
 
-          FROM  (
-              
-                /* 그룹 */
-                    SELECT      tm_simul_share.grp_cd                       AS  grp_cd                  /* 그룹코드(상위코드) */
-                            ,   tm_simul_share.scen_cd                      AS  scen_cd                 /* 시나리오 코드 */
-                            ,   tm_simul_share.email                        AS  email                   /* 이메일 */
-
-                            ,   tm_simul_share.owner_yn                     AS  owner_yn                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
-
-                      FROM  tm_simul_share
-
-                     WHERE  1 = 1
-                       AND  tm_simul_share.owner_yn                         =   '0'
-
-                       AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
-                            (
-                                SELECT      tm_simul_mast.grp_cd 
-                                        ,   tm_simul_mast.scen_cd
-
-                                  FROM  tm_simul_mast
-
-                                 WHERE  1 = 1
-                                   AND  tm_simul_mast.grp_cd                =   #{upper_grp_cd}         /* 그룹코드(상위코드) */
-                                   AND  tm_simul_mast.scen_cd               =   #{upper_scen_cd}        /* 그룹코드(상위코드) */
-
-                                   AND  tm_simul_mast.grp_yn                =   '1'                     /* 그룹여부(1-그룹) */
-                            )
-
-                    UNION   ALL    
-
-                /* 그룹에 속한 공유자 */
-                    SELECT      tm_simul_share.grp_cd                       AS  grp_cd                  /* 그룹코드(상위코드) */
-                            ,   tm_simul_share.scen_cd                      AS  scen_cd                 /* 시나리오 코드 */
-                            ,   tm_simul_share.email                        AS  email                   /* 이메일 */
-
-                            ,   tm_simul_share.owner_yn                     AS  owner_yn                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
-
-                      FROM  tm_simul_share
-
-                     WHERE  1 = 1
-                       AND  tm_simul_share.owner_yn         =   '0'
-
-                       AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
-                            (
-                                SELECT      tm_simul_mast.grp_cd 
-                                        ,   tm_simul_mast.scen_cd
-
-                                  FROM  tm_simul_mast
-
-                                 WHERE  1 = 1
-                                   AND  tm_simul_mast.grp_cd                =   #{upper_scen_cd}        /* 그룹코드(상위코드) */
-                                   AND  tm_simul_mast.grp_yn                =   '0'                     /* 그룹여부(1-그룹) */
-                            )
-
-                )   tm_simul_share
+          FROM  tm_simul_share
 
          WHERE  1 = 1
+           AND  tm_simul_share.owner_yn         =   '0'
+
+           AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
+                (
+                    SELECT      tm_simul_mast.grp_cd 
+                            ,   tm_simul_mast.scen_cd
+
+                      FROM  tm_simul_mast
+
+                     WHERE  1 = 1
+                       AND  tm_simul_mast.grp_cd                =   #{upper_scen_cd}        /* 그룹코드(상위코드) */
+                       AND  tm_simul_mast.grp_yn                =   '0'                     /* 그룹여부(1-그룹) */
+                )
 
     </select>
 

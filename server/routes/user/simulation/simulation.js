@@ -5613,7 +5613,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 4. 그룹 또는 그룹에 속한 공유자 정보를 조회한다. */
+                    /* 4. 그룹에 속한 공유자 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -5658,7 +5658,18 @@ var applyShareUserRevokeInArr = function(req, res) {
                                         return callback(resultMsg);
                                     }
 
-                                    if( rows && rows.length > 0 ) {
+                                    if( !rows || rows.length == 0 ) {
+
+                                        paramData.arr_checked_shared.forEach( function( item, index, array) {
+
+                                            msg.arr_delete_list.push({
+                                                    "grp_cd"    :   msg.upper_grp_cd
+                                                ,   "scen_cd"   :   msg.upper_scen_cd
+                                                ,   "email"     :   item.email
+                                            });
+                                        });                                        
+
+                                    }else {
 
                                         paramData.arr_checked_shared.forEach( function( item, index, array) {
 
