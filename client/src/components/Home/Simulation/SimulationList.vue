@@ -81,7 +81,7 @@
                                     <div :name="'div_simul_' + index + '_edit'" style="display:none;">
                                         <ul>
                                         <li><input type="text" :name="'txt_simul_' + index"  :value="item.scen_name"  maxlength="50"/></li>
-                                        <li><v-btn name="btn_rename" outline small class="primary" >변경</v-btn></li>
+                                        <li><v-btn name="btn_rename" outline small color="primary" >변경</v-btn></li>
                                         <li><v-btn name="btn_rename_cancel" small outline color="primary" >취소</v-btn></li>
                                         </ul>
                                     </div>
