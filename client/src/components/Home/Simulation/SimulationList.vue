@@ -220,7 +220,7 @@
                             
                         </div>
                         <div class="text-xs-center">
-                            <v-btn depressed small color="primary" @click.stop="fn_set_share_revoke( item, index, '01' )">공유하기</v-btn>
+                            <v-btn depressed small color="primary" @click.stop="fn_apply_share_user_in_arr( item, index )">공유하기</v-btn>
                         </div>
                     </div>
 
@@ -251,9 +251,9 @@
                                         </tr>
 
                                         <tr v-for="( item_shared, index_shared ) in arr_user_list_shared" :key="index_shared">
-                                            <td class="txt_left">{{ index_shared.name }}</td>
-                                            <td class="txt_left">{{ index_shared.email }}</td>
-                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="fn_set_share_revoke( item, index, item_shared, '02' )">공유해제</v-btn></td>
+                                            <td class="txt_left">{{ item_shared.name }}</td>
+                                            <td class="txt_left">{{ item_shared.email }}</td>
+                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )">공유해제</v-btn></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1582,6 +1582,7 @@ export default {
 
             vm.arr_user_list_for_share      =   [];
             vm.arr_user_list_for_share_cp   =   [];
+            p_item.show_share               =   false;
         },
 
         /*
@@ -1786,16 +1787,17 @@ export default {
         },
 
         /*
-         * 공유 또는 해제한다.
+         * 선택된 사용자를 공유한다.
          * 2019-11-13  bkLove(촤병국)
          */
-        async fn_set_share_revoke( p_item, p_index, p_checkedItem, p_type="01" ) {
+        async fn_apply_share_user_in_arr( p_item, p_index ) {
 
             var vm = this;
 
             var v_check =   false;
 
             vm.arr_show_error_message   =   [];
+            vm.arr_checked_for_share    =   [];
 
 
             return  await new Promise( async function(resolve, reject) {
@@ -1806,13 +1808,32 @@ export default {
                     resolve( { result : false } );
                 }
 
-                if( p_type == "01" ) {
 
-                    var temp    =   _.filter( vm.arr_user_list_for_share, function(o) {
-                        return  typeof o.checked_for_share != "undefined" && o.checked_for_share != "";
+                var temp    =   _.filter( vm.arr_user_list_for_share, function(o) {
+                    return  typeof o.checked_for_share != "undefined" && o.checked_for_share != "";
+                });
+
+console.log( "vtemp", temp );                
+
+                if( temp.length == 0 ) {
+
+                    if ( await vm.$refs.confirm2.open(
+                            '확인',
+                            '공유할 대상자가 1건 이상 선택되어야 합니다.',
+                            {}
+                            , 1
+                        )
+                    ) {
+                    }
+
+                }else{
+
+                    vm.arr_checked_for_share    =   _.map( temp, function(o) { 
+                        return JSON.parse(o.checked_for_share); 
                     });
 
-                    if( temp.length == 0 ) {
+console.log( "vm.arr_checked_for_share", vm.arr_checked_for_share );
+                    if( !vm.arr_checked_for_share || vm.arr_checked_for_share.length == 0 ) {
 
                         if ( await vm.$refs.confirm2.open(
                                 '확인',
@@ -1823,48 +1844,8 @@ export default {
                         ) {        
                             
                         }
-                        v_check =   false;
 
                     }else{
-
-                        vm.arr_checked_for_share    =   _.map( temp, function(o) { 
-                            return JSON.parse(o.checked_for_share); 
-                        });
-
-                        if( !vm.arr_checked_for_share || vm.arr_checked_for_share.length == 0 ) {
-
-                            if ( await vm.$refs.confirm2.open(
-                                    '확인',
-                                    '공유할 대상자가 1건 이상 선택되어야 합니다.',
-                                    {}
-                                    , 1
-                                )
-                            ) {        
-                                
-                            }
-
-                            v_check =   false;
-                        }else{
-                            v_check =   true;
-                        }
-                    }
-
-                }else if( p_type == "02" ) {
-
-                    if( !p_checkedItem || !p_checkedItem.email ) {
-                        vm.arr_show_error_message.push( "공유해제할 대상자가 선택되어야 합니다." );
-                        v_check =   false;
-                    }else{
-
-                        vm.arr_checked_shared.push( { 
-                            "email"     :   p_checkedItem.email 
-                        });
-
-                        vm.arr_checked_shared  =   _.map( vm.arr_checked_shared, function(o) {
-                            o = JSON.parse(o);
-                            return  o;
-                        });
-
                         v_check =   true;
                     }
                 }
@@ -1879,16 +1860,13 @@ export default {
 
                     p_param.grp_cd                  =   p_item.grp_cd;
                     p_param.scen_cd                 =   p_item.scen_cd;
-                    p_param.type                    =   p_type;
                     p_param.arr_checked_for_share   =   vm.arr_checked_for_share;
-                    p_param.arr_checked_shared      =   vm.arr_checked_shared;
-
 
                     vm.fn_showProgress( true );
 
                     util.axiosCall(
                             {
-                                    "url"       :   Config.base_url + "/user/simulation/setShareRevoke"
+                                    "url"       :   Config.base_url + "/user/simulation/applyShareUserInArr"
                                 ,   "data"      :   p_param
                                 ,   "method"    :   "post"
                             }
@@ -1910,20 +1888,152 @@ export default {
                                             resolve( { result : false } );
                                         }else{
 
+                                            vm.fn_showProgress( false );
+
+                                            /* 공유할 공유자를 조회한다. */
+                                            vm.fn_get_user_list_for_share( p_item, p_index );
+
+                                            /* 공유된 공유자를 조회한다. */
+                                            vm.fn_get_user_list_shared( p_item, p_index );
+
                                             resolve( { result : true } );
                                         }
 
                                     }else{
 
+                                        vm.fn_showProgress( false );
+
                                         resolve( { result : false } );
                                     }
 
                                 }catch(ex) {
+
+                                    vm.fn_showProgress( false );
                                     console.log( "error", ex );
                                     resolve( { result : false } );
                                 }
                             }
                         ,   function(error) {
+                                vm.fn_showProgress( false );
+                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                resolve( { result : false } );
+                            }
+                    );
+                }
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });
+        },
+
+        /*
+         * 선택된 사용자를 공유해제 한다.
+         * 2019-11-13  bkLove(촤병국)
+         */
+        async fn_apply_share_user_revoke_in_arr( p_item, p_index, p_checkedItem ) {
+
+            var vm = this;
+
+            var v_check =   false;
+
+            vm.arr_show_error_message   =   [];
+            vm.arr_checked_shared       =   [];
+
+
+            return  await new Promise( async function(resolve, reject) {
+
+
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                    resolve( { result : false } );
+                }
+
+
+                if( !p_checkedItem || !p_checkedItem.email ) {
+
+                    if ( await vm.$refs.confirm2.open(
+                            '확인',
+                            '공유해제할 대상자가 선택되어야 합니다.',
+                            {}
+                            , 1
+                        )
+                    ) {
+                    }
+
+                }else{
+
+                    vm.arr_checked_shared.push( { 
+                        "email"     :   p_checkedItem.email 
+                    });
+
+                    v_check =   true;
+                }
+
+
+                if( !v_check  ) {
+                    resolve( { result : false } );
+
+                }else{
+
+                    var p_param                     =   {};
+
+                    p_param.grp_cd                  =   p_item.grp_cd;
+                    p_param.scen_cd                 =   p_item.scen_cd;
+                    p_param.arr_checked_shared      =   vm.arr_checked_shared;
+
+
+                    vm.fn_showProgress( true );
+
+                    util.axiosCall(
+                            {
+                                    "url"       :   Config.base_url + "/user/simulation/applyShareUserRevokeInArr"
+                                ,   "data"      :   p_param
+                                ,   "method"    :   "post"
+                            }
+                        ,   async function(response) {
+
+                                try{
+
+                                    if (response && response.data) {
+                                        var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                        if (!response.data.result) {
+
+                                            vm.fn_showProgress( false );
+
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( msg );
+                                            }
+
+                                            resolve( { result : false } );
+                                        }else{
+                                            vm.fn_showProgress( false );
+
+                                            /* 공유할 공유자를 조회한다. */
+                                            vm.fn_get_user_list_for_share( p_item, p_index );
+
+                                            /* 공유된 공유자를 조회한다. */
+                                            vm.fn_get_user_list_shared( p_item, p_index );
+
+                                            resolve( { result : true } );
+                                        }
+
+                                    }else{
+                                        vm.fn_showProgress( false );
+
+                                        resolve( { result : false } );
+                                    }
+
+                                }catch(ex) {
+                                    vm.fn_showProgress( false );
+
+                                    console.log( "error", ex );
+                                    resolve( { result : false } );
+                                }
+                            }
+                        ,   function(error) {
+                                vm.fn_showProgress( false );
+
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                                 resolve( { result : false } );
                             }
