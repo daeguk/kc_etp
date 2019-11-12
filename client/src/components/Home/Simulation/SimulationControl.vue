@@ -23,6 +23,7 @@
                                 :paramData  =   "paramData"
 
                                 @fn_showProgress="fn_showProgress"
+                                @fn_showWaitProgress="fn_showWaitProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </Simulation>
 
@@ -32,6 +33,7 @@
                                 :paramData  =   "paramData"
 
                                 @fn_showProgress="fn_showProgress"
+                                @fn_showWaitProgress="fn_showWaitProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationResult>
 
@@ -46,6 +48,7 @@
 
         <v-flex>
             <ProgressBar ref="progress2"></ProgressBar>
+            <WaitProgressBar ref="wait_progress"></WaitProgressBar>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>   
         
@@ -63,6 +66,7 @@ import Config from "@/js/config.js";
 
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import WaitProgressBar from "@/components/common/WaitProgressBar.vue";
 
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import SimulationList from "@/components/Home/Simulation/SimulationList.vue";
@@ -89,6 +93,7 @@ export default {
     },
     components: {
             ProgressBar
+        ,   WaitProgressBar
         ,   ConfirmDialog
 
         ,   Simulation
@@ -152,6 +157,17 @@ export default {
                 util.processing( this.$refs.progress2, visible );
             }
         },         
+
+        /*
+         *  진행 progress 를 보여준다.
+         *  2019-07-26  bkLove(촤병국)
+         */
+        fn_showWaitProgress: function(visible) {
+
+            if( this.$refs && this.$refs.wait_progress ) {
+                util.processing( this.$refs.wait_progress, visible );
+            }
+        },      
 
         /*
          *  param 과 일치하는 정보를 보여준다.

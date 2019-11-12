@@ -27,6 +27,11 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
                     <span class="btn_r">
+                    <v-btn small flat icon v-on:click="">
+                            <v-icon>share</v-icon>
+                        </v-btn>
+                    </span>
+                    <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
                         </v-btn>
@@ -627,6 +632,11 @@ export default {
             vm.$emit("fn_showProgress", visible );
         },
 
+        fn_showWaitProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showWaitProgress", visible );
+        },
+        
         /*
          *  메시지 팝업창을 노출한다.
          *  2019-07-26  bkLove(촤병국)
@@ -901,7 +911,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showProgress( true );
+            vm.fn_showWaitProgress( true );
 
             var paramData   =  {};
 
@@ -915,7 +925,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
 
                         try{
 
@@ -954,7 +964,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );

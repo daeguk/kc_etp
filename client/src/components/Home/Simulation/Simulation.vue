@@ -204,7 +204,8 @@
                                 <span>
 
                                 <!-- 엑셀 업로드 -->
-                                    <!--button type='button'  class="excelup_btn" @click.stop="fn_fileClick();"></button-->
+                            
+                                    <SimulationExcelupModal></SimulationExcelupModal>
                                     <v-btn depressed outline small color="primary" @click.stop="fn_fileClick();">포트폴리오 업로드</v-btn>
 
 
@@ -289,6 +290,7 @@ import _ from "lodash";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import SimulationExcelupModal  from "@/components/Home/simulation/SimulationExcelupModal.vue";
 
 var table01 = null;
 
@@ -383,7 +385,8 @@ export default {
 
     components: {
         MastPopup02,
-        ConfirmDialog        
+        ConfirmDialog,
+        SimulationExcelupModal : SimulationExcelupModal,      
     },    
 
     created() {
@@ -811,6 +814,11 @@ export default {
         fn_showProgress: function( visible ) {
             var vm = this;
             vm.$emit("fn_showProgress", visible );
+        },
+
+        fn_showWaitProgress: function( visible ) {
+            var vm = this;
+            vm.$emit("fn_showWaitProgress", visible );
         },
 
         /*
@@ -1890,7 +1898,7 @@ export default {
             }
 
 
-            vm.fn_showProgress( true );
+            vm.fn_showWaitProgress( true );
 
             util.axiosCall(
                     {
@@ -1920,7 +1928,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
 
                         try{
                             if (response && response.data) {
@@ -1966,7 +1974,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.fn_showWaitProgress( false );
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );

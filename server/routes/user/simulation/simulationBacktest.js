@@ -714,164 +714,164 @@ var saveBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 4. (백테스트) tm_simul_result 결과를 삭제한다. */
-                    function(msg, callback) {
+//                     /* 4. (백테스트) tm_simul_result 결과를 삭제한다. */
+//                     function(msg, callback) {
 
-                        try {
+//                         try {
 
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }                            
+//                             if( !msg || Object.keys( msg ).length == 0 ) {
+//                                 msg = {};
+//                             }                            
 
-                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
-                            log.debug(stmt);
+//                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResult', paramData, format);
+//                             log.debug(stmt);
 
-                            conn.query(stmt, function(err, rows) {
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
+//                             conn.query(stmt, function(err, rows) {
+//                                 if (err) {
+//                                     resultMsg.result = false;
+//                                     resultMsg.msg = config.MSG.error01;
+//                                     resultMsg.err = err;
 
-                                    return callback(resultMsg);
-                                }
+//                                     return callback(resultMsg);
+//                                 }
 
-                                callback(null, msg);
-                            });
+//                                 callback(null, msg);
+//                             });
 
-                        } catch (err) {
+//                         } catch (err) {
 
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
+//                             resultMsg.result = false;
+//                             resultMsg.msg = config.MSG.error01;
 
-                            if( !resultMsg.err ) {
-                                resultMsg.err = err;
-                            }
+//                             if( !resultMsg.err ) {
+//                                 resultMsg.err = err;
+//                             }
 
-                            return callback(resultMsg);
-                        }
-                    },
+//                             return callback(resultMsg);
+//                         }
+//                     },
 
-                    /* 5. (백테스트) tm_simul_result 결과를 저장한다. */
-                    function(msg, callback) {
+//                     /* 5. (백테스트) tm_simul_result 결과를 저장한다. */
+//                     function(msg, callback) {
 
-                        if( !msg || Object.keys( msg ).length == 0 ) {
-                            msg = {};
-                        }
-
-
-                        var arrInsertDtl    =   [];
-
-                        /* tm_simul_result 테이블에 저장하기 위한 변수 설정 */
-                        if (    v_resultSimulData 
-                            &&  v_resultSimulData.dailyJongmokObj 
-                            &&  Object.keys( v_resultSimulData.dailyJongmokObj ).length > 0 
-                        ) {
-
-                            for( var i=0; i < Object.keys( v_resultSimulData.dailyJongmokObj ).length; i++ ) {
-                                var v_F12506        =   Object.keys( v_resultSimulData.dailyJongmokObj )[i];
-                                var v_subItem       =   v_resultSimulData.dailyJongmokObj[ v_F12506 ];
-                                var v_mastItem      =   v_resultSimulData.dailyObj[ v_F12506 ];
-
-                                for( var j=0; j < Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
-                                    var v_dataKey       =   Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] )[j];
-                                    var v_dataItem      =   v_resultSimulData.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
-
-                                    Object.assign( v_dataItem, v_mastItem );
-                                    arrInsertDtl.push( v_dataItem  );
-                                }
-                            }
-                        }
+//                         if( !msg || Object.keys( msg ).length == 0 ) {
+//                             msg = {};
+//                         }
 
 
-                        /* 등록건이 존재하는 경우 */
-                        if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+//                         var arrInsertDtl    =   [];
 
-                            var divideList  =   [];
-                            async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+//                         /* tm_simul_result 테이블에 저장하기 위한 변수 설정 */
+//                         if (    v_resultSimulData 
+//                             &&  v_resultSimulData.dailyJongmokObj 
+//                             &&  Object.keys( v_resultSimulData.dailyJongmokObj ).length > 0 
+//                         ) {
 
-                                async.waterfall([
+//                             for( var i=0; i < Object.keys( v_resultSimulData.dailyJongmokObj ).length; i++ ) {
+//                                 var v_F12506        =   Object.keys( v_resultSimulData.dailyJongmokObj )[i];
+//                                 var v_subItem       =   v_resultSimulData.dailyJongmokObj[ v_F12506 ];
+//                                 var v_mastItem      =   v_resultSimulData.dailyObj[ v_F12506 ];
 
-                                    function(innerCallback) {
-                                        divideList.push( subList );
+//                                 for( var j=0; j < Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
+//                                     var v_dataKey       =   Object.keys( v_resultSimulData.dailyJongmokObj[ v_F12506 ] )[j];
+//                                     var v_dataItem      =   v_resultSimulData.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
+
+//                                     Object.assign( v_dataItem, v_mastItem );
+//                                     arrInsertDtl.push( v_dataItem  );
+//                                 }
+//                             }
+//                         }
+
+
+//                         /* 등록건이 존재하는 경우 */
+//                         if( arrInsertDtl && arrInsertDtl.length > 0 ) {
+
+//                             var divideList  =   [];
+//                             async.forEachOfLimit( arrInsertDtl, 1, function(subList, i, innerCallback) {
+
+//                                 async.waterfall([
+
+//                                     function(innerCallback) {
+//                                         divideList.push( subList );
                                         
-                                        innerCallback(null, paramData);
-                                    },
+//                                         innerCallback(null, paramData);
+//                                     },
 
-                                    function(sub_msg, innerCallback) {
+//                                     function(sub_msg, innerCallback) {
 
-                                        var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
-                                            try {
-                                                paramData.dataLists =   divideList;
-                                                stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResult', paramData, format);
-//                                                log.debug(stmt);
+//                                         var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+//                                         if( divideList && ( divideList.length == divide_size || i == arrInsertDtl.length-1 ) ) {
+//                                             try {
+//                                                 paramData.dataLists =   divideList;
+//                                                 stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResult', paramData, format);
+// //                                                log.debug(stmt);
 
-                                                conn.query(stmt, function(err, rows) {
-                                                    if (err) {
-                                                        resultMsg.result = false;
-                                                        resultMsg.msg = config.MSG.error01;
-                                                        resultMsg.err = err;
+//                                                 conn.query(stmt, function(err, rows) {
+//                                                     if (err) {
+//                                                         resultMsg.result = false;
+//                                                         resultMsg.msg = config.MSG.error01;
+//                                                         resultMsg.err = err;
 
-                                                        return innerCallback(resultMsg);
-                                                    }
+//                                                         return innerCallback(resultMsg);
+//                                                     }
 
-                                                    innerCallback(null);
-                                                });
+//                                                     innerCallback(null);
+//                                                 });
 
-                                                divideList  =   [];
+//                                                 divideList  =   [];
 
-                                            } catch (err) {
+//                                             } catch (err) {
 
-                                                resultMsg.result = false;
-                                                resultMsg.msg = config.MSG.error01;
+//                                                 resultMsg.result = false;
+//                                                 resultMsg.msg = config.MSG.error01;
 
-                                                if( !resultMsg.err ) {
-                                                    resultMsg.err = err;
-                                                }
+//                                                 if( !resultMsg.err ) {
+//                                                     resultMsg.err = err;
+//                                                 }
 
-                                                return innerCallback(resultMsg);
-                                            }
+//                                                 return innerCallback(resultMsg);
+//                                             }
 
-                                        }else{
-                                            innerCallback(null);
-                                        }
-                                    }
+//                                         }else{
+//                                             innerCallback(null);
+//                                         }
+//                                     }
 
-                                ], function(err) {
+//                                 ], function(err) {
 
-                                    if( err ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        if( !resultMsg.err ) {
-                                            resultMsg.err = err;
-                                        }
+//                                     if( err ) {
+//                                         resultMsg.result = false;
+//                                         resultMsg.msg = config.MSG.error01;
+//                                         if( !resultMsg.err ) {
+//                                             resultMsg.err = err;
+//                                         }
 
-                                        return innerCallback(resultMsg);
-                                    }
+//                                         return innerCallback(resultMsg);
+//                                     }
 
-                                    innerCallback(null);
-                                });                                            
+//                                     innerCallback(null);
+//                                 });                                            
 
-                            }, function(err) {
+//                             }, function(err) {
 
-                                log.debug( "############ simulationBacktest.saveTmSimulResult #############" );
+//                                 log.debug( "############ simulationBacktest.saveTmSimulResult #############" );
 
-                                if (err) {
-                                    return callback(resultMsg);
-                                }
+//                                 if (err) {
+//                                     return callback(resultMsg);
+//                                 }
 
-                                delete  v_resultSimulData.dailyJongmokObj;
-                                delete  v_resultSimulData.dailyObj;
-                                arrInsertDtl    =   [];
+//                                 delete  v_resultSimulData.dailyJongmokObj;
+//                                 delete  v_resultSimulData.dailyObj;
+//                                 arrInsertDtl    =   [];
 
-                                callback(null, msg);
-                            });
+//                                 callback(null, msg);
+//                             });
 
-                        }else{
-                            callback(null, msg);
-                        }
+//                         }else{
+//                             callback(null, msg);
+//                         }
 
-                    },                    
+//                     },
 
                     /* 6. (백테스트) tm_simul_result_daily 결과를 삭제한다. */
                     function(msg, callback) {

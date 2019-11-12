@@ -570,7 +570,7 @@ var modifyGroup = function(req, res) {
 
                 async.waterfall([
 
-                    /* 2. grp_cd, scen_cd 가 존재하는지 체크한다. */
+                    /* 1. grp_cd, scen_cd 가 존재하는지 체크한다. */
                     function(callback) {
 
                         try{
@@ -2010,7 +2010,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 9. 그룹변경인 경우 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    /* 9. 그룹변경이 아닌 경우 상위 그룹정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -2019,11 +2019,11 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
+                            /* 그룹변경이 아닌 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
 
-                                stmt = mapper.getStatement('simulation', "getSimulResultExistYnByChangeGroup", paramData, format);
-                                log.debug(stmt, paramData);
+                                stmt = mapper.getStatement('simulation', "getUpperGrp", paramData, format);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -2036,8 +2036,8 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if ( rows && rows.length == 1 ) {
-                                        msg.simulResult     =   rows[0];
-                                    }                                    
+                                        msg.simul_grp       =   rows[0];
+                                    }
 
                                     callback(null, msg);
                                 });
@@ -2055,7 +2055,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 10. 그룹변경인 경우 [tm_simul_result] 수정한다.  */
+                    /* 10. 그룹변경이 아닌 경우 [tm_simul_share] 그룹을 삭제한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2064,16 +2064,18 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
+                            /* 그룹변경이 아닌 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
 
-                                /* [tm_simul_result] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_yn == "Y" 
+                                /* 상위그룹 정보가 존재하는 경우 */
+                                if(     typeof msg.simul_grp != "undefined"
+                                    &&  Object.keys( msg.simul_grp ).length > 0
                                 ) {
 
-                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultByChangeGroup", paramData, format);
+                                    paramData.upper_grp_cd      =   msg.simul_grp.grp_cd;
+                                    paramData.upper_scen_cd     =   msg.simul_grp.scen_cd;
+
+                                    stmt = mapper.getStatement('simulation', "deleteTmSimulShareGrp", paramData, format);
                                     log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
@@ -2090,7 +2092,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     });
 
                                 }else{
-                                    callback(null, msg);    
+                                    callback(null, msg);
                                 }
 
                             }else{
@@ -2106,7 +2108,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 11. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
+                    /* 11. 그룹변경이 아닌 경우 [tm_simul_share] 그룹을 저장한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2115,16 +2117,20 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
+                            /* 그룹변경이 아닌 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
 
-                                /* [tm_simul_result_mast] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_mast_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_mast_yn == "Y" 
+                                /* 상위그룹 정보가 존재하는 경우 */
+                                if(     typeof msg.simul_grp != "undefined"
+                                    &&  Object.keys( msg.simul_grp ).length > 0
                                 ) {
 
-                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
+                                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+                                    paramData.owner_yn          =   "1";                                    
+                                    paramData.upper_grp_cd      =   msg.simul_grp.grp_cd;
+                                    paramData.upper_scen_cd     =   msg.simul_grp.scen_cd;
+
+                                    stmt = mapper.getStatement('simulation', "saveTmSimulShareGrp", paramData, format);
                                     log.debug(stmt, paramData);
 
                                     conn.query(stmt, function(err, rows) {
@@ -2141,58 +2147,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     });
 
                                 }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },                    
-
-                    /* 12. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
-
-                                /* [tm_simul_result_anal] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_anal_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_anal_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
+                                    callback(null, msg);
                                 }
 
                             }else{
@@ -2208,7 +2163,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 13. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    /* 11. 그룹변경이 아닌 경우 [tm_simul_share] 시나리오별 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -2217,34 +2172,24 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
+                            /* 그룹변경이 아닌 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
 
-                                /* [tm_simul_result_daily] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_daily_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_daily_yn == "Y" 
-                                ) {
+                                stmt = mapper.getStatement('simulation', "deleteTmSimulShareScen", paramData, format);
+                                log.debug(stmt, paramData);
 
-                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
-                                    log.debug(stmt, paramData);
+                                conn.query(stmt, function(err, rows) {
 
-                                    conn.query(stmt, function(err, rows) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
+                                        return callback(resultMsg);
+                                    }
 
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
+                                    callback(null, msg);
+                                });
 
                             }else{
                                 callback(null, msg);
@@ -2259,7 +2204,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 14. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    /* 12. 그룹변경이 아닌 경우 [tm_simul_share] 시나리오별 저장한다. */
                     function( msg, callback) {
 
                         try {
@@ -2268,34 +2213,26 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 그룹변경이 존재하는 경우 */
-                            if( paramData.changeGrpCdYn == "1" ) {
+                            /* 그룹변경이 아닌 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
 
-                                /* [tm_simul_result_rebalance] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_rebalance_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_rebalance_yn == "Y" 
-                                ) {
+                                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+                                paramData.owner_yn          =   "1";
+                                stmt = mapper.getStatement('simulation', "saveTmSimulShareScen", paramData, format);
+                                log.debug(stmt, paramData);
 
-                                    stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
-                                    log.debug(stmt, paramData);
+                                conn.query(stmt, function(err, rows) {
 
-                                    conn.query(stmt, function(err, rows) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
 
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
+                                        return callback(resultMsg);
+                                    }
 
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
+                                    callback(null, msg);
+                                });
 
                             }else{
                                 callback(null, msg);
@@ -2310,7 +2247,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 15. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
+                    /* 13. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2351,7 +2288,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 16. tm_simul_portfolio 에 저장한다. */
+                    /* 14. tm_simul_portfolio 에 저장한다. */
                     function( msg, callback) {
 
                         try {
@@ -2472,9 +2409,336 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                                     log.debug( "simulation.saveTmSimulPortfolio" );
                                     delete msg.arrInsertDtl;
-                                    callback(null);
+                                    callback(null, msg);
                                 });                                
                             
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 15. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 16. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 17. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 18. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 19. 그룹변경인 경우 상위 그룹정보를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "getUpperGrpByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length == 1 ) {
+                                        msg.simul_change_grp    =   rows[0];
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 20. 그룹변경인 경우 [tm_simul_share] 그룹별 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* 상위그룹 정보가 존재하는 경우 */
+                                if(     typeof msg.simul_change_grp != "undefined"
+                                    &&  Object.keys( msg.simul_change_grp ).length > 0
+                                ) {
+
+                                    paramData.upper_prev_grp_cd     =   msg.simul_change_grp.grp_cd;
+                                    paramData.upper_prev_scen_Cd    =   msg.simul_change_grp.scen_cd;
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulShareGrpByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0 ) {
+                                            log.debug( "simulation.modifyTmSimulShareGrpByChangeGroup ( 그룹변경 그룹별 ) success", paramData );
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 21. 그룹변경인 경우 [tm_simul_share] 시나리오별 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                stmt = mapper.getStatement('simulation', "modifyTmSimulShareScenByChangeGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 그룹변경 시나리오별 ) success", paramData );
+                                    }
+
+                                    callback(null);
+                                });
+
+                            }else{
+                                callback(null);
                             }
 
                         } catch (err) {
@@ -2571,6 +2835,104 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 **************************************************************************************************************/
 
 
+/*
+ * 시나리오 공유 건수를 조회한다.
+ * 2019-11-11  bkLove(촤병국)
+ */
+var getScenarioShareCount = function(req, res) {
+
+    try {
+        log.debug('simulation.getScenarioShareCount 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getScenarioShareCount  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.share_count    =  0;
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            try {
+
+                stmt = mapper.getStatement('simulation', 'getScenarioShareCount', paramData, format);
+                log.debug(stmt, paramData);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        log.error(err, stmt, paramData);
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+                    }
+
+                    if( !rows || rows.length == 0 ) {
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = config.MSG.error01;
+                    }
+                    
+                    if( rows && rows.length == 1 ){
+                        resultMsg.result = true;
+                        resultMsg.msg = "";
+                        resultMsg.share_count   =   rows[0].share_count;
+                    }
+ 
+                    res.json(resultMsg);
+                    res.end();
+                });
+
+            } catch (err) {
+                log.error(err, stmt, paramData);
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+                resultMsg.err = err;
+                resultMsg.share_count   =   0;
+
+                res.json(resultMsg);
+                res.end();
+            }
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.share_count   =   0;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
 
 
 /*
@@ -2658,199 +3020,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 2. tm_simul_result 를 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteSimulResult', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 3. tm_simul_result_anal 을 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteSimulResultAnal', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },                    
-
-                    /* 4. tm_simul_result_rebalance 를 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteSimulResultRebalance', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 5. tm_simul_result_daily 를 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteSimulResultDaily', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 6. tm_simul_result_mast 를 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteSimulResultMast', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 7. tm_simul_portfolio 를 삭제한다. */
-                    function(msg, callback) {
-
-                        try{
-                            var msg         =   {};
-
-                            stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
-                            log.debug(stmt);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 8. tm_simul_mast 를 삭제한다. */
+                    /* 2. tm_simul_mast 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
@@ -2869,7 +3039,11 @@ var deleteAllSimul = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                callback(null);
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteSimulMast success", paramData );
+                                }
+
+                                callback(null, msg);
                             });
 
                         } catch (err) {
@@ -2879,6 +3053,361 @@ var deleteAllSimul = function(req, res) {
                             resultMsg.err = err;
 
                             callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 3. tm_simul_portfolio 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteTmSimulPortfolio success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. tm_simul_result_anal 을 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultAnal', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteSimulResultAnal success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 5. tm_simul_result_rebalance 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultRebalance', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteSimulResultRebalance success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. tm_simul_result_daily 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultDaily', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteSimulResultDaily success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. tm_simul_result_mast 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultMast', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteSimulResultMast success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 8. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "deleteAllTmSimulShareScen", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.deleteAllTmSimulShareScen success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 9. 상위 그룹정보를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            stmt = mapper.getStatement('simulation', "getUpperGrp", paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length == 1 ) {
+                                    msg.simul_grp       =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. 그룹 하위에 시나리오 건수를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 상위그룹 정보가 존재하는 경우 */
+                            if(     typeof msg.simul_grp != "undefined"
+                                &&  Object.keys( msg.simul_grp ).length > 0
+                            ) {
+
+                                paramData.upper_grp_cd      =   msg.simul_grp.grp_cd;
+                                paramData.upper_scen_cd     =   msg.simul_grp.scen_cd;
+
+                                stmt = mapper.getStatement('simulation', "getScenarioCountInGrp", paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows && rows.length == 1 ) {
+                                        msg.count_in_grp    =   rows[0];
+                                    }
+
+                                    callback(null, msg);
+                                });
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. 사용자에 상관없이 [tm_simul_share] 그룹별 삭제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            /* 그룹내 건수가 없는 경우 */
+                            if(     typeof msg.count_in_grp != "undefined"
+                                &&  Object.keys( msg.count_in_grp ).length > 0
+                                &&  msg.count_in_grp.exist_cnt == 0
+                            ) {
+                                stmt = mapper.getStatement('simulation', "deleteAllTmSimulShareGrp", paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        log.debug( "simulation.deleteAllTmSimulShareGrp success", paramData );
+                                    }
+
+                                    callback(null);
+                                });
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
                         }
                     },
 
@@ -2919,7 +3448,7 @@ var deleteAllSimul = function(req, res) {
 
 
 /*
- * 시뮬레이션 정보를 삭제한다.
+ * 선택된 시나리오를 이름 변경한다.
  * 2019-05-20  bkLove(촤병국)
  */
 var renameScenario = function(req, res) {
@@ -3069,8 +3598,8 @@ var renameScenario = function(req, res) {
 }
 
 /*
- * 시뮬레이션 정보를 삭제한다.
- * 2019-05-20  bkLove(촤병국)
+ * 선택된 시나리오를 복사한다.
+ * 2019-11-07  bkLove(촤병국)
  */
 var copyScenario = function(req, res) {
     try {
@@ -3253,54 +3782,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 3. 현재 serialNo 를 구한다.  */
-                    function( msg, callback) {
-
-                        try{
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', 'getSerialNo', paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if ( !rows || rows.length != 1 ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    callback(resultMsg, msg);
-                                }else{
-
-                                    paramData.serial_no     =   Number( rows[0].serial_no );
-
-                                    callback(null, msg);
-                                }
-                                
-                            });
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(resultMsg);
-                        }
-                    },
-
-                    /* 4. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    /* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -3341,7 +3823,7 @@ var copyScenario = function(req, res) {
                         }
                     },                    
 
-                    /* 5. 시뮬레이션 기본 정보를 복사한다. */
+                    /* 4. 시뮬레이션 기본 정보를 복사한다. */
                     function( msg, callback) {
 
                         try{
@@ -3350,7 +3832,7 @@ var copyScenario = function(req, res) {
                                 msg = {};
                             }                            
 
-                            paramData.serial_no    +=  1;
+                            paramData.serial_no     =  1;
 
                             stmt = mapper.getStatement('simulation', "copyTmSimulMast", paramData, format);
                             log.debug(stmt, paramData);
@@ -3387,7 +3869,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 6. 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다.  */
+                    /* 6. [tm_simul_portfolio] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3396,8 +3878,204 @@ var copyScenario = function(req, res) {
                                 msg = {};
                             }
 
+                            /* 시나리오인 경우 */
+                            if( msg.simul_mast.grp_yn == "0" ) {
 
-                            stmt = mapper.getStatement('simulation', "getSimulResultExistYnByChangeGroup", paramData, format);
+                                stmt = mapper.getStatement('simulation', "copyTmSimulPortfolio", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null);
+                                });
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 복사하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 선택된 시나리오를 그룹변경한다.
+ * 2019-11-07  bkLove(촤병국)
+ */
+var changeGroup = function(req, res) {
+    try {
+        log.debug('simulation.changeGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.changeGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 선택된 시나리오 및 변경할 그룹정보가 존재하는지 체크한다. */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            paramData.INIT_GRP_CD       =   initGrpInfo.INIT_GRP_CD;
+
+                            stmt = mapper.getStatement('simulation', 'checkScenarioExistForChangeGroup', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "기본정보가 존재하지 않습니다.";
+                                    resultMsg.err = "기본정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if( rows.length == 1 ) {
+
+                                    if( rows[0].scenario_exist_yn != "Y" ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+                                        resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows[0].grp_exist_yn != "Y" ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "변경 할 그룹 정보가 존재하지 않습니다.";
+                                        resultMsg.msg = "변경 할 그룹 정보가 존재하지 않습니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null, msg);
+
+                                }else{
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "기본정보를 확인해 주세요.";
+                                    resultMsg.err = "기본정보를 확인해 주세요.";
+
+                                    return callback(resultMsg);
+                                }
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 2. 시뮬레이션 시나리오 코드를 채번한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            paramData.init_incre_grp_cd     =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+
+                            /* 상위그룹이 없는 경우 그룹여부='1' 설정 */
+                            if( typeof paramData.grp_cd == "undefined" || !paramData.grp_cd ) {
+                                paramData.grp_cd            =   initGrpInfo.INIT_GRP_CD;            /* 그룹코드 최초값 */
+                            }
+
+                            stmt = mapper.getStatement('simulation', "getScenCd1", paramData, format);
                             log.debug(stmt, paramData);
 
                             conn.query(stmt, function(err, rows) {
@@ -3410,13 +4088,137 @@ var copyScenario = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                if ( rows && rows.length == 1 ) {
-                                    msg.simulResult     =   rows[0];
-                                }                                    
+                                if (rows && rows.length == 1) {
+                                    paramData.scen_cd   =   rows[0].scen_cd;
+                                }
 
                                 callback(null, msg);
                             });
-                            
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            paramData.grp_yn    =   "0";
+
+                            stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    paramData.scen_order_no     =   rows[0].scen_order_no;
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. 그룹변경인 경우 [tm_simul_mast] 수정한다. */
+                    function( msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulMastByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg, msg);
+                                }else{
+                                    callback(null, msg);
+                                }
+                                
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },      
+
+                    /* 5. 그룹변경인 경우 [tm_simul_portfolio] 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulPortfolioByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulPortfolioByChangeGroup ( 그룹변경 tm_simul_portfolio ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
                         } catch (err) {
                             resultMsg.result = false;
                             resultMsg.msg = config.MSG.error01;
@@ -3426,7 +4228,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 7. [tm_simul_result_mast] 를 복사한다.  */
+                    /* 6. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -3435,11 +4237,990 @@ var copyScenario = function(req, res) {
                                 msg = {};
                             }
 
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
 
-                                stmt = mapper.getStatement('simulation', "copyTmSimulResultMast", paramData, format);
-                                log.debug(stmt, paramData);
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 8. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 9. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. 그룹변경인 경우 상위 그룹정보를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "getUpperGrpByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length == 1 ) {
+                                    msg.simul_change_grp    =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. 그룹변경인 경우 [tm_simul_share] 그룹별 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            /* 그룹변경이 존재하는 경우 */
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* 상위그룹 정보가 존재하는 경우 */
+                                if(     typeof msg.simul_change_grp != "undefined"
+                                    &&  Object.keys( msg.simul_change_grp ).length > 0
+                                ) {
+
+                                    paramData.upper_prev_grp_cd     =   msg.simul_change_grp.grp_cd;
+                                    paramData.upper_prev_scen_Cd    =   msg.simul_change_grp.scen_cd;
+
+                                    stmt = mapper.getStatement('simulation', "modifyTmSimulShareGrpByChangeGroup", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0 ) {
+                                            log.debug( "simulation.modifyTmSimulShareGrpByChangeGroup ( 그룹변경 그룹별 ) success", paramData );
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);
+                                }
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 12. 그룹변경인 경우 [tm_simul_share] 시나리오별 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulShareScenByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 그룹변경 시나리오별 ) success", paramData );
+                                }
+
+                                callback(null);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 그룹변경 하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 공유할 공유자를 조회한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var getUserListForShare = function(req, res) {
+
+    try {
+        log.debug('simulation.getUserListForShare 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getUserListForShare  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.arr_user_list_for_share   =   [];
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. 선택된 시뮬레이션에 속한 대상자를 조회한다. */
+                function(callback) {
+
+                    try{
+                        var msg         =   {};
+
+                        stmt = mapper.getStatement('simulation', 'getUserListInCheckedSimulation', paramData, format);
+                        log.debug(stmt, paramData);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 ) {
+                                msg.arr_user_list_checked_simulation        =   rows;
+                            }
+
+                            callback(null, msg);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. 공유할 모든 대상자를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "대상자가 존재하지 않습니다.";
+                                resultMsg.err = "대상자가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+
+                            if( rows && rows.length > 0 ) {
+
+                                if( typeof msg.arr_user_list_checked_simulation == "undefined" || msg.arr_user_list_checked_simulation.length == 0 ) {
+                                    resultMsg.arr_user_list_for_share   =   rows;
+
+                                }else{
+
+                                    rows.forEach( function( item, index, array ) {
+
+                                        var v_check_data    =   _.filter( msg.arr_user_list_checked_simulation, {
+                                                'email'     :   item.email
+                                            ,   'owner_yn'  :   '0'
+                                        });
+
+                                        if( typeof v_check_data == "undefined" || !v_check_data || v_check_data.length == 0 ) {
+                                            resultMsg.arr_user_list_for_share.push( item );
+                                        }
+
+                                    });
+                                }
+
+                                callback(null);
+                            }
+
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+
+                    resultMsg.result        =   true;
+                    resultMsg.msg           =   "";
+                    resultMsg.err           =   null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_user_list_for_share   =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 공유된 공유자를 조회한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var getUserListShared = function(req, res) {
+
+    try {
+        log.debug('simulation.getUserListShared 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getUserListShared  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.arr_user_list_shared      =   [];
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. 선택된 시뮬레이션에 속한 대상자를 조회한다. */
+                function(callback) {
+
+                    try{
+                        var msg         =   {};
+
+                        stmt = mapper.getStatement('simulation', 'getUserListInCheckedSimulation', paramData, format);
+                        log.debug(stmt, paramData);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 ) {
+                                msg.arr_user_list_checked_simulation        =   rows;
+                            }
+
+                            callback(null, msg);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. 공유할 모든 대상자를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        /* 선택된 시뮬레이션에 공유 대상이 존재하는지 체크 */
+                        if( typeof msg.arr_user_list_checked_simulation == "undefined" || msg.arr_user_list_checked_simulation.length == 0 ) {
+
+                            callback(null);
+                        }
+                        else{
+
+                            stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "대상자가 존재하지 않습니다.";
+                                    resultMsg.err = "대상자가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if( rows && rows.length > 0 ) {
+
+                                    msg.arr_user_list_checked_simulation.forEach( function( item, index, array ) {
+
+                                        if( item.owner_yn   =   '0' ) {
+
+                                            var v_check_data    =   _.filter( rows, {
+                                                    'email'     :   item.email
+                                            });
+
+                                            if( typeof v_check_data != "undefined" && v_check_data.length > 0 ) {
+                                                resultMsg.arr_user_list_shared.push( item );
+                                            }
+                                        }
+
+                                    });
+
+                                }
+                                    
+                                callback(null);
+
+                            });
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+
+                    resultMsg.result        =   true;
+                    resultMsg.msg           =   "";
+                    resultMsg.err           =   null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_user_list_shared      =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 공유 대상자를 적용한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var applyShareUserInArr = function(req, res) {
+
+    try {
+        log.debug('simulation.applyShareUserInArr 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.applyShareUserInArr  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.share_count    =  0;
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 시나리오 또는 그룹 정보를 조회한다. */
+                    function(callback) {
+
+                        try{
+
+                            var msg         =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "선택된 시나리오 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length == 1 ) {
+                                    msg.v_simul_mast    =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 시나리오 인 경우 상위 그룹, 그룹인 경우 그룹에 속한 시나리오들을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if(     typeof msg.v_simul_mast == "undefined"
+                                ||  Object.keys( msg.v_simul_mast ).length == 0
+                            ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+                                resultMsg.err = "선택된 시나리오 정보가 존재하지 않습니다.";
+
+                                callback(resultMsg);
+
+                            }else{
+
+                                var v_queryId   =   "getScenarioUpperGrp";
+
+                                /* 그룹인 경우 */
+                                if( msg.v_simul_mast.grp_yn == "1" ) {
+                                    v_queryId   =   "getScenarioInGrp";
+                                }
+
+                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( !rows || rows.length == 0  ) {
+
+                                        /* 그룹이 아닌 경우 */
+                                        if( msg.v_simul_mast.grp_yn == "0" ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = "선택된 시나리오 그룹 정보가 존재하지 않습니다.";
+                                            resultMsg.err = "선택된 시나리오 그룹 정보가 존재하지 않습니다.";
+
+                                            return callback(resultMsg);
+                                        }
+
+                                    }else{
+
+                                        /* 그룹인 경우 경우 */
+                                        if( msg.v_simul_mast.grp_yn == "1" ) {
+
+                                            /* 그룹에 속한 시나리오 */
+                                            msg.v_arr_simul_in_grp      =   rows;
+                                        }else{
+
+                                            if( rows && rows.length > 1 ) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = "선택된 시나리오 그룹 정보가 한건 이상 존재합니다.";
+                                                resultMsg.err = "선택된 시나리오 그룹 정보가 한건 이상 존재합니다.";
+
+                                                return callback(resultMsg);
+
+                                            }else if( rows.length == 1 ) {
+                                                /* 상위 그룹 */
+                                                msg.v_simul_upper_grp       =   rows[0];
+                                            }
+                                        }
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 시나리오 또는 그룹에 속한 공유자 정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.arr_data_list       =   [];
+
+                            msg.arr_insert_list     =   [];
+                            msg.arr_update_list     =   [];
+
+                            if( msg.v_simul_mast.grp_yn == "1" ) {
+
+                                /* 그룹 하위 시나리오 정보가 존재하는 경우 */
+                                if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0 ) {
+                                    msg.arr_data_list   =   msg.v_arr_simul_in_grp;
+                                }
+
+                                msg.arr_data_list.push( msg.v_simul_mast );
+
+                            }else{
+                                /* 그룹 정보가 존재하는 경우 */
+                                if( typeof msg.v_simul_upper_grp != "undefined" && Object.keys( msg.v_simul_upper_grp ).length != 0  ) {
+                                    msg.arr_data_list.push( msg.v_simul_upper_grp );
+                                }
+
+                                msg.arr_data_list.push( msg.v_simul_mast );
+                            }
+
+
+                            if( msg.arr_data_list.length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+                                resultMsg.err = "선택된 시나리오 정보가 존재하지 않습니다.";
+
+                                callback(resultMsg);
+
+                            }else{
+
+                                paramData.arr_data_list     =   msg.arr_data_list;
+                                stmt = mapper.getStatement('simulation', 'getSimulShareInArr', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( !rows || rows.length == 0 ) {
+
+                                        paramData.arr_checked_for_share.forEach( function( item, index, array) {
+
+                                            msg.arr_insert_list.push({
+                                                    "grp_cd"    :   paramData.grp_cd
+                                                ,   "scen_cd"   :   paramData.scen_cd
+                                                ,   "email"     :   item.email
+                                                ,   "owner_yn"  :   "0"
+                                            });
+                                        });
+                                    }else{
+
+                                        paramData.arr_checked_for_share.forEach( function( item, index, array) {
+
+                                            var v_temp  =   _.filter( rows, function(o) {
+                                                return  o.owner_yn == "0" && o.email == item.email;
+                                            });
+
+                                            if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                                msg.arr_insert_list.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "owner_yn"  :   "0"
+                                                });
+                                            }else{
+                                                msg.arr_update_list.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "owner_yn"  :   "0"
+                                                });
+                                            }
+                                        });
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. 신규 등록할 공유자들을 등록한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+
+                            if(     typeof msg.arr_insert_list == "undefined"
+                                ||  msg.arr_insert_list.length == 0 
+                            ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_insert_list   =   msg.arr_insert_list;
+                                stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                                log.debug(stmt);
 
                                 conn.query(stmt, function(err, rows) {
 
@@ -3453,274 +5234,61 @@ var copyScenario = function(req, res) {
 
                                     callback(null, msg);
                                 });
-
-                            }else{
-                                callback(null, msg);
                             }
 
                         } catch (err) {
+
                             resultMsg.result = false;
                             resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
-                            return callback(resultMsg);
-                        }
-                    },                    
-
-                    /* 8. [tm_simul_portfolio] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_portfolio] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_portfolio_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_portfolio_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulPortfolio", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
+                            callback(resultMsg);
                         }
                     },
 
-                    /* 9. [tm_simul_result] 를 복사한다.  */
-                    function( msg, callback) {
+                    /* 5. 수정할 공유자들을 변경한다. */
+                    function(msg, callback) {
 
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResult", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 10. [tm_simul_result_anal] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
+                        try{
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
                             }
 
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_anal] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_anal_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_anal_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultAnal", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
+                            if(     typeof msg.arr_update_list == "undefined"
+                                ||  msg.arr_update_list.length == 0 
+                            ) {
+                                callback(null);
 
                             }else{
-                                callback(null, msg);
+
+                                paramData.arr_update_list   =   msg.arr_update_list;
+                                stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null);
+                                });
                             }
 
                         } catch (err) {
+
                             resultMsg.result = false;
                             resultMsg.msg = config.MSG.error01;
                             resultMsg.err = err;
 
-                            return callback(resultMsg);
+                            callback(resultMsg);
                         }
-                    },
-
-                    /* 11. [tm_simul_result_daily] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_daily] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_daily_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_daily_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultDaily", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 12. [tm_simul_result_rebalance] 를 복사한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            /* 시나리오인 경우 */
-                            if( msg.simul_mast.grp_yn == "0" ) {
-
-                                /* [tm_simul_result_rebalance] 데이터가 존재하는 경우 */
-                                if(     typeof msg.simulResult != "undefined" 
-                                    &&  typeof msg.simulResult.tm_simul_result_rebalance_yn != "undefined" 
-                                    &&  msg.simulResult.tm_simul_result_rebalance_yn == "Y" 
-                                ) {
-
-                                    stmt = mapper.getStatement('simulation', "copyTmSimulResultRebalance", paramData, format);
-                                    log.debug(stmt, paramData);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        callback(null, msg);
-                                    });
-
-                                }else{
-                                    callback(null, msg);    
-                                }
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },                    
+                    },                                        
 
                 ], function(err) {
 
@@ -3731,7 +5299,270 @@ var copyScenario = function(req, res) {
                     } else {
 
                         resultMsg.result        =   true;
-                        resultMsg.msg           =   "성공적으로 복사하였습니다.";
+                        resultMsg.msg           =   "성공적으로 공유하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 공유 대상자를 해제한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var applyShareUserRevokeInArr = function(req, res) {
+
+    try {
+        log.debug('simulation.applyShareUserRevokeInArr 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.applyShareUserRevokeInArr  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.share_count    =  0;
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 시나리오 또는 그룹 정보를 조회한다. */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "변경할 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "변경할 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 그룹인 경우 그룹에 속한 시나리오들을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 3. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. 그룹에 속한 시나리오 공유 건수를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. 그룹에 속한 공유자 정보가 없는 경우 그룹 공유자 정보를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 해제하였습니다.";
                         resultMsg.err           =   null;
 
                         conn.commit();
@@ -3795,3 +5626,9 @@ module.exports.runBacktestWithSaveBasicInfo = runBacktestWithSaveBasicInfo;
 module.exports.deleteAllSimul = deleteAllSimul;
 module.exports.renameScenario = renameScenario;
 module.exports.copyScenario = copyScenario;
+module.exports.changeGroup = changeGroup;
+module.exports.getScenarioShareCount = getScenarioShareCount;
+module.exports.getUserListForShare = getUserListForShare;
+module.exports.getUserListShared = getUserListShared;
+module.exports.applyShareUserInArr = applyShareUserInArr;
+module.exports.applyShareUserRevokeInArr = applyShareUserRevokeInArr;
