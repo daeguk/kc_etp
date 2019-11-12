@@ -4914,10 +4914,10 @@ var getUserListShared = function(req, res) {
  * 공유 대상자를 적용한다.
  * 2019-11-13  bkLove(촤병국)
  */
-var applyShareUser = function(req, res) {
+var applyShareUserInArr = function(req, res) {
 
     try {
-        log.debug('simulation.applyShareUser 호출됨.');
+        log.debug('simulation.applyShareUserInArr 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -4925,7 +4925,7 @@ var applyShareUser = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulation.applyShareUser  req.body.data no data.", req.body.data);
+            log.error("[error] simulation.applyShareUserInArr  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -5329,10 +5329,10 @@ var applyShareUser = function(req, res) {
  * 공유 대상자를 해제한다.
  * 2019-11-13  bkLove(촤병국)
  */
-var applyShareUserRevoke = function(req, res) {
+var applyShareUserRevokeInArr = function(req, res) {
 
     try {
-        log.debug('simulation.applyShareUserRevoke 호출됨.');
+        log.debug('simulation.applyShareUserRevokeInArr 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -5340,7 +5340,7 @@ var applyShareUserRevoke = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] simulation.applyShareUserRevoke  req.body.data no data.", req.body.data);
+            log.error("[error] simulation.applyShareUserRevokeInArr  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -5630,5 +5630,5 @@ module.exports.changeGroup = changeGroup;
 module.exports.getScenarioShareCount = getScenarioShareCount;
 module.exports.getUserListForShare = getUserListForShare;
 module.exports.getUserListShared = getUserListShared;
-module.exports.applyShareUser = applyShareUser;
-module.exports.applyShareUserRevoke = applyShareUserRevoke;
+module.exports.applyShareUserInArr = applyShareUserInArr;
+module.exports.applyShareUserRevokeInArr = applyShareUserRevokeInArr;
