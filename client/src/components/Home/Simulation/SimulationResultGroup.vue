@@ -23,7 +23,11 @@
                 <h4>
                     {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
-
+                    <span class="btn_r">
+                    <v-btn small flat icon v-on:click="">
+                            <v-icon>share</v-icon>
+                        </v-btn>
+                    </span>
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulBack()">
                             <v-icon>reply</v-icon>

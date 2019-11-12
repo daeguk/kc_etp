@@ -27,6 +27,11 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
                     <span class="btn_r">
+                    <v-btn small flat icon v-on:click="">
+                            <v-icon>share</v-icon>
+                        </v-btn>
+                    </span>
+                    <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
                         </v-btn>
