@@ -1712,74 +1712,62 @@
     </select>    
 
     <!--
-    *   공유자에게 공유를 설정한다. ( 신규 등록 )
+    *   신규 등록할 공유정보 설정한다.
     *   2019-07-26  bkLove(촤병국)
     -->
-    <insert     id="saveShareUser">
+    <insert     id="saveShareUserInArr">
     <![CDATA[
         INSERT  INTO    
-        /* simulation.saveShareUser      [td_etfpdf_basic] 테이블에 저장한다. */
-        td_etfpdf_basic 
+        /* simulation.saveShareUserInArr    신규 등록할 공유정보 설정한다. */
+        tm_simul_share 
         ( 
-                F16583                      /* 사무수탁회사번호 */
-            ,   F16012                      /* ETF종목코드 */
-            ,   F16013                      /* ETF단축코드 */
-            ,   F16316                      /* 구성종목코드 */
+                grp_cd                              /* 그룹코드(상위코드) */
+            ,   scen_cd                             /* 시나리오 코드 */
+            ,   email                               /* 이메일 */
 
-            ,   F16499                      /* 1CU단위증권수 */
-            ,   F33861                      /* ETF시장구분 */
-            ,   F16004                      /* 해외시장종목명 */
-            ,   F34840                      /* 액면금액 */
-            ,   F16588                      /* 평가금액 */
-            ,   F34743                      /* ETF_PDF비중 */
-            ,   F34744                      /* ETF_PDF포함여부 */
-        ) 
+            ,   owner_yn                            /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+            ,   reg_id                              /* 등록자 ID */
+            ,   reg_time                            /* 등록시간 */
+            ,   upd_id                              /* 수정자 ID */
+            ,   upd_time                            /* 수정시간 */
+        )
     ]]>
         VALUES
-        <foreach    collection="dataLists"   item="data"     separator="," >
-    <![CDATA[        
+        <foreach    collection="arr_insert_list"   item="data"     separator="," >
+    <![CDATA[
         ( 
-                #{f16583}                   /* 사무수탁회사번호 */
-            ,   #{f16012}                   /* ETF종목코드 */
-            ,   #{f16013}                   /* ETF단축코드 */
-            ,   #{data.f16316}              /* 구성종목코드 */
+                #{data.grp_cd}                      /* 그룹코드(상위코드) */
+            ,   #{data.scen_cd}                     /* 시나리오 코드 */
+            ,   #{data.email}                       /* 이메일 */
 
-            ,   #{data.f16499}              /* 1CU단위증권수 */
-            ,   #{data.f33861}              /* ETF시장구분 */
-            ,   #{data.f16004}              /* 해외시장종목명 */
-            ,   #{data.f34840}              /* 액면금액 */
-            ,   #{data.f16588}              /* 평가금액 */
-            ,   0                           /* ETF_PDF비중 */
-            ,   0                           /* ETF_PDF포함여부 */
+            ,   #{data.owner_yn}                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+            ,   #{user_id}                          /* 등록자 ID */
+            ,   now()                               /* 등록시간 */
+            ,   #{user_id}                          /* 수정자 ID */
+            ,   now()                               /* 수정시간 */
         )
     ]]>
         </foreach>
     </insert>    
 
     <!--
-    *   공유자에게 공유를 설정한다. ( 수정 )
+    *   수정할 공유정보 설정한다.
     *   2019-07-26  bkLove(촤병국)
     -->
-    <update     id="setShareRevoke">
+    <update     id="modifyShareUserInArr">
 
-        UPDATE  /* simulation.setShareRevoke      공유 또는 해제한다. */
+        UPDATE  /* simulation.modifyShareUserInArr      수정할 공유정보 설정한다. */
         
                 tm_simul_share
         
          INNER  JOIN    (
-                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <foreach    collection="arr_update_list"   item="data"     separator=" UNION ALL" >
                             <![CDATA[              
-                                SELECT      #{f16583}                       AS  f16583      /* 사무수탁회사번호 */
-                                        ,   #{f16012}                       AS  f16012      /* ETF종목코드 */
-                                        ,   #{f16013}                       AS  f16013      /* ETF단축코드 */
-                                        ,   #{data.f16316}                  AS  f16316      /* 구성종목코드 */
-
-                                        ,   #{data.status}                  AS  status      /* insert( 신규 ), modify( 변경 ) */
-                                        ,   #{data.f16499}                  AS  f16499      /* 1CU단위증권수 */
-                                        ,   #{data.f33861}                  AS  f33861      /* ETF시장구분 */
-                                        ,   #{data.f16004}                  AS  f16004      /* 해외시장종목명 */
-                                        ,   #{data.f34840}                  AS  f34840      /* 액면금액 */
-                                        ,   #{data.f16588}                  AS  f16588      /* 평가금액 */
+                                SELECT      #{data.grp_cd}                      /* 그룹코드(상위코드) */
+                                        ,   #{data.scen_cd}                     /* 시나리오 코드 */
+                                        ,   #{data.email}                       /* 이메일 */
 
                                 FROM  DUAL
                             ]]>
@@ -1788,38 +1776,31 @@
                         
                   ON            1 = 1
 
-                        AND     td_etfpdf_basic.f16583      =   base.f16583     /* 사무수탁회사번호 */
-                        AND     td_etfpdf_basic.f16012      =   base.f16012     /* ETF종목코드 */
-                        AND     td_etfpdf_basic.f16013      =   base.f16013     /* ETF단축코드 */
-                        AND     td_etfpdf_basic.f16316      =   base.f16316     /* 구성종목코드 */
+                        AND     grp_cd      =   base.grp_cd                     /* 그룹코드(상위코드) */
+                        AND     scen_cd     =   base.scen_cd                    /* 시나리오 코드 */
+                        AND     email       =   base.email                      /* 이메일 */
 
-           SET      scen_name               =   #{owner_yn}                     /* 시나리오명 */
-
-                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
-                ,   upd_time                =   now()                           /* 수정시간 */     
+           SET      upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */
 
     </update>
 
     <!--
-    *   공유해제를 수행한다. ( 시나리오별 )
+    *   공유해제 할 정보를 설정한다.
     *   2019-07-26  bkLove(촤병국)
     -->
-    <delete     id="deleteTmPdfModifyDtl">
+    <delete     id="deleteShareUserInArr">
 
-        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
+        DELETE  /* simulation.deleteShareUserInArr      공유해제 할 정보를 설정한다. */
 
-                tm_pdf_modify_dtl
-
-          FROM  tm_pdf_modify_dtl
+          FROM  tm_simul_share
         
          INNER  JOIN    (
-                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
+                            <foreach    collection="arr_delete_list"   item="data"     separator=" UNION ALL" >
                             <![CDATA[              
-                                SELECT      #{user_id}                      AS  email           /* 이메일 */
-                                        ,   #{f16583}                       AS  f16583          /* 사무수탁회사번호 */
-                                        ,   #{f16012}                       AS  f16012          /* ETF종목코드 */
-                                        ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
-                                        ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
+                                SELECT      #{data.grp_cd}                      /* 그룹코드(상위코드) */
+                                        ,   #{data.scen_cd}                     /* 시나리오 코드 */
+                                        ,   #{data.email}                       /* 이메일 */
                                 FROM  DUAL
                             ]]>
                             </foreach>
@@ -1827,48 +1808,13 @@
                         
                   ON            1 = 1
 
-                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
-                        AND     tm_pdf_modify_dtl.f16583    =   base.f16583     /* 사무수탁회사번호 */
-                        AND     tm_pdf_modify_dtl.f16012    =   base.f16012     /* ETF종목코드 */
-                        AND     tm_pdf_modify_dtl.f16013    =   base.f16013     /* ETF단축코드 */
-                        AND     tm_pdf_modify_dtl.f16316    =   base.f16316     /* 구성종목코드 */
+                        AND     grp_cd      =   base.grp_cd                     /* 그룹코드(상위코드) */
+                        AND     scen_cd     =   base.scen_cd                    /* 시나리오 코드 */
+                        AND     email       =   base.email                      /* 이메일 */
 
     </delete>
 
-    <!--
-    *   공유해제를 수행한다. ( 그룹별 )
-    *   2019-07-26  bkLove(촤병국)
-    -->
-    <delete     id="deleteTmPdfModifyDtl">
 
-        DELETE  /* etpOper.deleteTmPdfModifyDtl      [tm_pdf_modify_dtl] 테이블을 수정한다. */
-
-                tm_pdf_modify_dtl
-
-          FROM  tm_pdf_modify_dtl
-        
-         INNER  JOIN    (
-                            <foreach    collection="dataLists"   item="data"     separator=" UNION ALL" >
-                            <![CDATA[              
-                                SELECT      #{user_id}                      AS  email           /* 이메일 */
-                                        ,   #{f16583}                       AS  f16583          /* 사무수탁회사번호 */
-                                        ,   #{f16012}                       AS  f16012          /* ETF종목코드 */
-                                        ,   #{f16013}                       AS  f16013          /* ETF단축코드 */
-                                        ,   #{data.f16316}                  AS  f16316          /* 구성종목코드 */
-                                FROM  DUAL
-                            ]]>
-                            </foreach>
-                        )       base
-                        
-                  ON            1 = 1
-
-                        AND     tm_pdf_modify_dtl.email     =   base.email      /* 이메일 */
-                        AND     tm_pdf_modify_dtl.f16583    =   base.f16583     /* 사무수탁회사번호 */
-                        AND     tm_pdf_modify_dtl.f16012    =   base.f16012     /* ETF종목코드 */
-                        AND     tm_pdf_modify_dtl.f16013    =   base.f16013     /* ETF단축코드 */
-                        AND     tm_pdf_modify_dtl.f16316    =   base.f16316     /* 구성종목코드 */
-
-    </delete>
 
     <!--
     *   상위 그룹정보 정보를 조회한다.

@@ -5110,12 +5110,13 @@ var applyShareUser = function(req, res) {
 
                             if( msg.v_simul_mast.grp_yn == "1" ) {
 
-                                /* 그룹 하위 시나리오 정보가 없는 경우 */
-                                if( typeof msg.v_arr_simul_in_grp == "undefined" || msg.v_arr_simul_in_grp.length == 0 ) {
-                                    msg.arr_data_list.push( msg.v_simul_mast );
-                                }else{
+                                /* 그룹 하위 시나리오 정보가 존재하는 경우 */
+                                if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0 ) {
                                     msg.arr_data_list   =   msg.v_arr_simul_in_grp;
                                 }
+
+                                msg.arr_data_list.push( msg.v_simul_mast );
+
                             }else{
                                 /* 그룹 정보가 존재하는 경우 */
                                 if( typeof msg.v_simul_upper_grp != "undefined" && Object.keys( msg.v_simul_upper_grp ).length != 0  ) {
@@ -5169,9 +5170,19 @@ var applyShareUser = function(req, res) {
                                             });
 
                                             if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
-//                                                msg.arr_insert_list.push( )
+                                                msg.arr_insert_list.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "owner_yn"  :   "0"
+                                                });
                                             }else{
-                                                
+                                                msg.arr_update_list.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "owner_yn"  :   "0"
+                                                });
                                             }
                                         });
                                     }
@@ -5199,21 +5210,31 @@ var applyShareUser = function(req, res) {
                                 msg = {};
                             }                            
 
-                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
-                            log.debug(stmt);
 
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
+                            if(     typeof msg.arr_insert_list == "undefined"
+                                ||  msg.arr_insert_list.length == 0 
+                            ) {
                                 callback(null, msg);
-                            });
+
+                            }else{
+
+                                paramData.arr_insert_list   =   msg.arr_insert_list;
+                                stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
 
                         } catch (err) {
 
@@ -5234,21 +5255,30 @@ var applyShareUser = function(req, res) {
                                 msg = {};
                             }
 
-                            stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
-                            log.debug(stmt);
+                            if(     typeof msg.arr_update_list == "undefined"
+                                ||  msg.arr_update_list.length == 0 
+                            ) {
+                                callback(null);
 
-                            conn.query(stmt, function(err, rows) {
+                            }else{
 
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
+                                paramData.arr_update_list   =   msg.arr_update_list;
+                                stmt = mapper.getStatement('simulation', 'renameScenario', paramData, format);
+                                log.debug(stmt);
 
-                                    return callback(resultMsg);
-                                }
+                                conn.query(stmt, function(err, rows) {
 
-                                callback(null, msg);
-                            });
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null);
+                                });
+                            }
 
                         } catch (err) {
 
