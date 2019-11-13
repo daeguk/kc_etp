@@ -1870,7 +1870,7 @@
                       FROM  tm_simul_mast
 
                      WHERE  1 = 1
-                       AND  tm_simul_mast.grp_cd                =   #{scen_cd}}         /* 그룹코드(상위코드) */
+                       AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
                        AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
                 )
 
