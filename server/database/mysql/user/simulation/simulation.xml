@@ -1862,7 +1862,7 @@
 
           FROM  tm_simul_mast
          WHERE  1 = 1
-           AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd )       IN 
+           AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd )     IN 
                 (
                     SELECT      tm_simul_mast.grp_cd 
                             ,   tm_simul_mast.scen_cd
