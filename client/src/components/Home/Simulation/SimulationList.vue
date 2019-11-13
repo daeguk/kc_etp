@@ -276,10 +276,21 @@
                                                 </li>
 
 
-                                                <!--공유하기 팝업창--->
-                                                <v-card style="width:500px;" v-if="item.show_share_grp && item.owner_yn == '1'">
+
+                                                <!--공유하기 팝업 띄우기 <li> 
+                                                    <v-menu  top>
+                                                    <template v-slot:activator="{ on, attrs }">
+                                                        <v-btn v-bind="attrs" v-on="on" flat>
+        
+                                                    <v-icon class="simul_more_btn">share</v-icon>공유하기</v-btn>
+                                                    </template>
+
+                                                     <!--공유하기 팝업창--->
+                                                
+
+                                                <!--v-card style="width:500px; max-height:350px" flat>
                                                     <h5>
-                                                        <v-card-title>
+                                                        <v-card-title class="ver2">
                                                             공유하기
                                                             <span class="pl-0"></span>
                                                             <v-spacer></v-spacer>
@@ -292,7 +303,7 @@
                                                         </v-card-title>
                                                     </h5>
                                                     <!--1table-->
-                                                    <div class="simul_share_search">
+                                                    <!--div class="simul_share_search">
                                                         <v-text-field
                                                             v-model="v_txt_search"
                                                             @keyup.stop="fn_filterAllData()"
@@ -365,7 +376,7 @@
                                                     </div>
 
                                                     <!--2table-->
-                                                    <div class="incode_pop pt-3">
+                                                    <!--div class="incode_pop pt-3">
                                                         <h6 class="pb-1">공유자 선택해제</h6>
                                                         <div class="table-box-wrap">
                                                             <div
@@ -428,11 +439,11 @@
                                                         </div>
                                                     </div>
                                                 </v-card>
-                                                <!--공유하기 팝업창 end--->
+                                        </v-menu>
+                                    </li> 공유하기 팝업 띄우기end-->
 
 
-                                                <!--li @click="">menu2</li>
-                                                <li @click="">menu3</li-->
+
                                             </ul>
                                         </v-menu>
 
@@ -697,6 +708,7 @@ export default {
 
     data() {
         return {
+            alert: true,
                 dialog: false
             ,   showGrpChange : false
             ,   showMenu        :   false
