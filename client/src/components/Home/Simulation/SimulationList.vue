@@ -125,6 +125,8 @@
                                                             :name="'txt_simul_' + index"
                                                             :value="item.scen_name"
                                                             maxlength="50"
+
+                                                            @keyup.enter.stop="fn_rename_scenario( item, index )"
                                                         />
                                                     </li>
                                                     <li>
@@ -133,6 +135,8 @@
                                                             outline
                                                             small
                                                             color="primary"
+
+                                                            @click.stop="fn_rename_scenario( item, index )"
                                                         >변경</v-btn>
                                                     </li>
                                                     <li>
@@ -141,6 +145,8 @@
                                                             small
                                                             outline
                                                             color="primary"
+
+                                                            @click.stop="fn_show_rename_cancel( item, index )"
                                                         >취소</v-btn>
                                                     </li>
                                                 </ul>
@@ -172,6 +178,8 @@
                                                             :name="'txt_simul_' + index"
                                                             :value="item.scen_name"
                                                             maxlength="50"
+
+                                                            @keyup.enter.stop="fn_rename_scenario( item, index )"
                                                         />
                                                     </li>
                                                     <li>
@@ -180,6 +188,8 @@
                                                             small
                                                             outline
                                                             color="primary"
+
+                                                            @click.stop="fn_rename_scenario( item, index )"
                                                         >변경</v-btn>
                                                     </li>
                                                     <li>
@@ -188,6 +198,8 @@
                                                             small
                                                             outline
                                                             color="primary"
+
+                                                            @click.stop="fn_show_rename_cancel( item, index )"  
                                                         >취소</v-btn>
                                                     </li>
                                                 </ul>
@@ -230,10 +242,14 @@
                                         <button
                                             name="btn1"
                                             :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' ) ?  '' : 'disable' )"
+
+                                            @click.stop="fn_show_simul_modify( item, index )"
                                         ></button>
                                         <button
                                             name="btn2"
                                             :class="'simul_icon2 ' + ( ( item.grp_yn == '1' || ( item.grp_yn == '0' && item.result_daily_yn == '1' ) ) ?  '' : 'disable' )"
+
+                                            @click.stop="fn_show_simul_detail( item, index )"
                                         ></button>
 
                                         <!-- 그룹인 경우 -->
@@ -757,201 +773,6 @@ export default {
 
         /* 시뮬레이션 목록정보를 조회한다. */
         vm.fn_getSimulList();
-
-
-        table01 =   $( "#table01" );
-
-
-        /* table tr 에서 버튼 클릭시  */
-        $('#table01 tbody').on('click', "button[name=btn1], button[name=btn2], button[name=btn_rename], button[name=btn_rename_cancel]", async function() {
-            var tr          =   $(this).closest('tr');
-            var rowIndex    =   tr.index();
-
-            var strParam    =   tr.find( "td input[name=strParam]" );
-
-
-            if( !strParam ) {
-                console.log( "simulation strParam parameter 인자값이 없습니다." );
-                return  false;
-            }
-
-            var v_jsonParam =   JSON.parse( strParam.val() );
-
-            if( !v_jsonParam || Object.keys( v_jsonParam ).length == 0 ) {
-                console.log( "simulation v_jsonParam parameter 인자값이 없습니다." );
-                return  false;
-            }
-
-            switch( $(this).attr( "name" ) ) {
-            
-                        /* 수정화면 이동 */
-                case    "btn1"  :
-
-                            if( !( v_jsonParam.grp_yn == '0' && v_jsonParam.owner_yn == '1' ) ) {
-                                return false;
-                            }                    
-
-                            /* 수정정보를 보여준다. */
-                            v_jsonParam.showSimulationId        =   1;
-                            vm.fn_showSimulation( v_jsonParam );
-
-                            break;
-
-
-                        /* 상세화면 이동 */
-                case    "btn2"  :
-
-                            if( !( v_jsonParam.grp_yn == '1' || ( v_jsonParam.grp_yn == '0' && v_jsonParam.result_daily_yn == '1' ) ) ) {
-                                return false;
-                            }
-
-                            if( v_jsonParam.grp_yn == '1' ) {
-                                vm.fn_get_scen_in_grpCd( v_jsonParam, rowIndex );
-                            }else{
-
-                                if( v_jsonParam.simul_change_yn == "1" ) {
-
-                                    if( v_jsonParam.owner_yn != "1" ) {
-
-                                        if ( await vm.$refs.confirm2.open(
-                                                '확인',
-                                                '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 소유자만 시나리오 화면으로 이동가능합니다.',
-                                                {}
-                                                ,1
-                                            )
-                                        ) {
-                                            return  false;
-                                        }
-
-                                    }else{
-
-                                        if ( await vm.$refs.confirm2.open(
-                                                '확인',
-                                                '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
-                                                {}
-                                                ,2
-                                            )
-                                        ) {
-
-                                            if( "Y" == vm.$refs.confirm2.val ) {
-                                                /* 수정정보를 보여준다. */
-                                                v_jsonParam.showSimulationId        =   1;
-                                                vm.fn_showSimulation( v_jsonParam );
-                                            }
-                                        }
-                                    }
-
-                                }else{
-
-                                    /* 결과화면을 보여준다. */
-                                    v_jsonParam.showSimulationId        =   2;
-                                    vm.$emit( "fn_showSimulation", v_jsonParam );
-                                }
-
-                            }
-
-                            break;
-
-
-                        /* 이름 변경 */
-                case    "btn_rename"    :
-
-                            var     v_obj       =   $( "input[name=txt_simul_" + v_jsonParam.index + "]" );
-
-                            if( v_obj && typeof v_obj.val() != "undefined" ) {
-
-                                if( v_obj.val() == "" ) {
-
-                                    if ( await vm.$refs.confirm2.open(
-                                            '확인',
-                                            '시나리오명 을 입력해 주세요.',
-                                            {}
-                                            ,1
-                                        )
-                                    ) {
-                                        v_obj.focus();
-                                        return  false;
-                                    }
-                                }
-
-                                var p_param         =   {};
-
-                                p_param.grp_cd      =   v_jsonParam.grp_cd;
-                                p_param.scen_cd     =   v_jsonParam.scen_cd;
-                                p_param.scen_name   =   v_obj.val();
-
-
-                                vm.fn_showProgress( true );
-
-                                util.axiosCall(
-                                        {
-                                                "url"       :   Config.base_url + "/user/simulation/renameScenario"
-                                            ,   "data"      :   p_param
-                                            ,   "method"    :   "post"
-                                        }
-                                    ,   async function(response) {
-                                            vm.fn_showProgress( false );
-
-                                            try{
-
-                                            if (response && response.data) {
-                                                var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                                if (!response.data.result) {
-                                                    if( msg ) {
-                                                        vm.arr_show_error_message.push( msg );
-                                                    }
-                                                }else{
-
-                                                    /* 시뮬레이션 목록정보를 조회한다. */
-                                                    vm.fn_getSimulList();                                                    
-                                                }
-                                            }
-
-                                            }catch(ex) {
-                                                console.log( "error", ex );
-                                            }
-                                        }
-                                    ,   function(error) {
-                                            vm.fn_showProgress( false );
-                                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                                        }
-                                );                
-                            }
-
-                            break;
-
-
-                        /* 이름변경 취소 */
-                case    "btn_rename_cancel" :
-
-                            var     v_obj       =   $( "input[name=txt_simul_" + v_jsonParam.index + "]" );
-
-                            if( v_obj && typeof v_obj.val() != "undefined" ) {
-
-                                vm.fn_show_rename( v_jsonParam, v_jsonParam.index, "false" );
-                            }                    
-
-
-
-                            break;
-
-            }
-        });
-
-
-        /* 이름변경 엔터키를 누른 경우 */
-        // $('#table01 tbody').on('keypress', "input[name^='txt_simul_']", function(e) {
-        //     var tr          =   $(this).closest('tr');
-        //     var rowIndex    =   tr.index();
-
-        //     vm.arr_show_error_message   =   [];
-
-        //     if( e.which == 13 ) {
-        //         tr.find( "td button[name=btn_rename]").click();
-        //     }
-            
-        // });
     },
 
     methods: {
@@ -1065,7 +886,6 @@ export default {
 
                 if( e && e.result ) {            
 
-                    var confirm_nm          =   "저장";
 
                     /* 등록인 경우 그룹명 필수 */
                     if( ["insert" ].includes( v_status ) ) {
@@ -1080,23 +900,13 @@ export default {
                     }
 
 
-                    /* 수정, 삭제인 경우 */
-                    if( [ "modify", "delete" ].includes( v_status ) ) {
+                    /* 삭제인 경우 */
+                    if( [ "delete" ].includes( v_status ) ) {
 
                         if( typeof p_item == "undefined" || Object.keys( p_item ).length == 0 || typeof p_index == "undefined" || p_index < 0 ) {
                             vm.arr_show_error_message.push( "기본정보를 확인해 주세요." );
                             return  false;
                         }
-
-                        var v_obj       =   $( "input[name=txt_simul_" + p_index + "]" );
-
-                        if( typeof v_obj == "undefined" || typeof v_obj.val() == "undefined" ) {
-                            vm.arr_show_error_message.push( "기본정보를 확인해 주세요." );
-                            return  false;
-                        }
-
-                        var tr          =   v_obj.closest('tr');
-                        var rowIndex    =   tr.index();
 
                         if( typeof p_item.grp_cd == "undefined" || !p_item.grp_cd ) {
                             vm.arr_show_error_message.push( "그룹코드가 존재하지 않습니다." );
@@ -1108,44 +918,16 @@ export default {
                             return  false;
                         }
 
-                        /* 수정인 경우 그룹명 필수 */
-                        if( ["modify" ].includes( v_status ) ) {
 
-                            if( v_obj.val() == "" ) {
-
-                                if ( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        '시나리오 그룹명을 입력해 주세요.',
-                                        {}
-                                        ,1
-                                    )
-                                ) {
-                                    v_obj.focus();
-                                    return  false;
-                                }
-                            }
-
-                            var p_param         =   {};
-
-                            p_param.grp_cd      =   v_jsonParam.grp_cd;
-                            p_param.scen_cd     =   v_jsonParam.scen_cd;
-                            p_param.scen_name   =   v_obj.val();
-                        }
-
-
-                        if( param.status == "delete" ) {
-                            confirm_nm          =   "삭제";
-
-                            if( await vm.$refs.confirm2.open(
-                                        '[시나리오 그룹]',
-                                        '[' + v_obj.val() + '] ' + confirm_nm + ' 하시겠습니까?',
-                                        {}
-                                    ,   2
-                                )
-                            ) {
-                                if( "Y" != vm.$refs.confirm2.val ) {
-                                    return  false;
-                                }
+                        if( await vm.$refs.confirm2.open(
+                                    '[시나리오 그룹]',
+                                    '[' + p_item.scen_name + '] 삭제 하시겠습니까?',
+                                    {}
+                                ,   2
+                            )
+                        ) {
+                            if( "Y" != vm.$refs.confirm2.val ) {
+                                return  false;
                             }
                         }
 
@@ -2062,13 +1844,14 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }            
+
             
             return  await new Promise(function(resolve, reject) {
-
-                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                    resolve( { result : false } );
-                }
 
                 vm.arr_user_list_for_share      =   [];
                 vm.arr_user_list_for_share_cp   =   [];
@@ -2140,13 +1923,13 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
 
             return  await new Promise(function(resolve, reject) {
-
-                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                    resolve( { result : false } );
-                }
 
                 var p_param         =   {};
 
@@ -2213,15 +1996,13 @@ export default {
             vm.arr_show_error_message   =   [];
             vm.arr_checked_for_share    =   [];
 
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
 
             return  await new Promise( async function(resolve, reject) {
-
-
-                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                    resolve( { result : false } );
-                }
-
 
                 var temp    =   _.filter( vm.arr_user_list_for_share, function(o) {
 
@@ -2363,14 +2144,13 @@ export default {
             vm.arr_show_error_message   =   [];
             vm.arr_checked_shared       =   [];
 
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }            
+
 
             return  await new Promise( async function(resolve, reject) {
-
-
-                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                    resolve( { result : false } );
-                }
 
 
                 if( !p_checkedItem || !p_checkedItem.email ) {
@@ -2505,7 +2285,223 @@ export default {
                 vm.arr_user_list_for_share  =   filterData;
 
             }, 1000 );
-        },         
+        },
+
+        /*
+         *  수정화면을 보여준다.
+         *  2019-11-13  bkLove(촤병국)
+         */
+        fn_show_simul_modify( p_item, p_index ) {
+
+            var vm = this;
+
+            try{
+
+                vm.arr_show_error_message   =   [];
+
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                    return  false;
+                }
+
+                if( !( p_item.grp_yn == '0' && p_item.owner_yn == '1' ) ) {
+                    return false;
+                }                       
+
+                /* 수정정보를 보여준다. */
+                p_item.showSimulationId         =   1;
+                vm.fn_showSimulation( p_item );
+
+            }catch( e ) {
+                console.log( e );
+            }
+
+        },
+
+        /*
+         *  상세화면을 보여준다.
+         *  2019-11-13  bkLove(촤병국)
+         */
+        async fn_show_simul_detail( p_item, p_index ) {
+
+            var vm = this;
+
+            try{
+
+                vm.arr_show_error_message   =   [];
+
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                    return  false;
+                }
+
+
+                if( !( p_item.grp_yn == '1' || ( p_item.grp_yn == '0' && p_item.result_daily_yn == '1' ) ) ) {
+                    return false;
+                }
+
+
+                if( p_item.grp_yn == '1' ) {
+                    vm.fn_get_scen_in_grpCd( p_item, p_index );
+                }else{
+
+                    if( p_item.simul_change_yn == "1" ) {
+
+                        if( p_item.owner_yn != "1" ) {
+
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 소유자만 시나리오 화면으로 이동가능합니다.',
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                return  false;
+                            }
+
+                        }else{
+
+                            if ( await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
+                                    {}
+                                    ,2
+                                )
+                            ) {
+
+                                if( "Y" == vm.$refs.confirm2.val ) {
+                                    /* 수정정보를 보여준다. */
+                                    p_item.showSimulationId        =   1;
+                                    vm.fn_showSimulation( p_item );
+                                }
+                            }
+                        }
+
+                    }else{
+
+                        /* 결과화면을 보여준다. */
+                        p_item.showSimulationId        =   2;
+                        vm.$emit( "fn_showSimulation", p_item );
+                    }
+
+                }
+
+            }catch( e ) {
+                console.log( e );
+            }
+
+        },
+
+        /*
+         *  이름변경을 수행한다.
+         *  2019-11-13  bkLove(촤병국)
+         */
+        async fn_rename_scenario( p_item, p_index ) {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0 ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            var v_obj   =   $( "input[name=txt_simul_" + p_index + "]" );
+
+            if( v_obj && typeof v_obj.val() != "undefined" ) {
+
+                if( v_obj.val() == "" ) {
+
+                    if ( await vm.$refs.confirm2.open(
+                            '확인',
+                            '시나리오명 을 입력해 주세요.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        v_obj.focus();
+                        return  false;
+                    }
+                }            
+
+
+                var p_param         =   {};
+
+                p_param.grp_cd      =   p_item.grp_cd;
+                p_param.scen_cd     =   p_item.scen_cd;
+                p_param.scen_name   =   v_obj.val();
+
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/renameScenario"
+                            ,   "data"      :   p_param
+                            ,   "method"    :   "post"
+                        }
+                    ,   async function(response) {
+
+                            try{
+
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+
+                                    vm.fn_showProgress( false );
+
+                                }else{
+
+                                    /* 시뮬레이션 목록정보를 조회한다. */
+                                    vm.fn_getSimulList();
+
+                                    vm.fn_showProgress( false );
+                                }
+                            }
+
+                            }catch(ex) {
+                                vm.fn_showProgress( false );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            vm.fn_showProgress( false );
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+            }
+
+        },
+
+        /*
+         *  이름변경을 취소한다.
+         *  2019-11-13  bkLove(촤병국)
+         */
+        fn_show_rename_cancel( p_item, p_index ) {
+
+            var vm = this;
+
+            try{
+
+                vm.arr_show_error_message   =   [];
+
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0 ) {
+                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                    return  false;
+                }            
+
+                vm.fn_show_rename( p_item, p_index, "false" );
+
+            }catch( e ) {
+                console.log( e );
+            }
+        },
+        
     }  
 };
 </script>

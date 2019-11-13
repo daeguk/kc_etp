@@ -13,11 +13,16 @@
                     tm_simul_mast.scen_cd           AS  grp_cd              /* 시나리오 코드 */
                 ,   tm_simul_mast.scen_name         AS  grp_name            /* 시나리오명 */
 
-          FROM  tm_simul_mast
+          FROM  tm_simul_share
+          JOIN  tm_simul_mast
+            ON  (
+                            tm_simul_share.grp_cd       =   tm_simul_mast.grp_cd
+                    AND     tm_simul_share.scen_cd      =   tm_simul_mast.scen_cd
+                    AND     tm_simul_share.email        =   #{user_id}      /* 등록자 ID */
+                )
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_yn                =   '1'
-           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
 
         <if test= 'now_grp_cd != null  and  now_grp_cd != "" ' >
            AND  tm_simul_mast.scen_cd               !=  #{now_grp_cd}       /* 현재그룹이 존재하는 경우 제외 */
@@ -548,6 +553,14 @@
                 ,   tm_simul_mast.stock_gubun                               AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
 
           FROM  tm_simul_mast
+
+          JOIN  tm_simul_share
+            ON  (
+                            tm_simul_mast.grp_cd        =   tm_simul_share.grp_cd       /* 그룹코드(상위코드) */
+                    AND     tm_simul_mast.scen_cd       =   tm_simul_share.scen_cd      /* 시나리오코드 */
+                    AND     tm_simul_share.email        =   #{user_id}                  /* 등록자 ID */
+                )
+
          WHERE  1 = 1
 
         <if   test= ' changeGrpCdYn == "1" ' >
@@ -559,8 +572,6 @@
            AND  tm_simul_mast.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
            AND  tm_simul_mast.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
         </if>
-
-           AND  tm_simul_mast.reg_id        =   #{user_id}          /* 등록자 ID */
 
          ORDER  BY      tm_simul_mast.scen_cd
                     ,   tm_simul_mast.scen_order_no
@@ -1338,8 +1349,6 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
-
-           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
 
@@ -1673,6 +1682,31 @@
     </select>
 
     <!--
+    *   그룹 공유자 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulShareUpperGrp">
+
+        SELECT      /* simulation.getSimulShareUpperGrp  그룹 공유자 정보를 조회한다. */
+
+                    tm_simul_share.grp_cd                                   AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                                  AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+
+                ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+          FROM  tm_simul_share
+
+         WHERE  1 = 1
+
+           AND  tm_simul_share.grp_cd           =   #{upper_grp_cd}
+           AND  tm_simul_share.scen_cd          =   #{upper_scen_cd}
+
+         ORDER  BY      tm_simul_share.email
+
+    </select>    
+
+    <!--
     *   시나리오 또는 그룹 공유자 정보를 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -1689,7 +1723,6 @@
           FROM  tm_simul_share
 
          WHERE  1 = 1
-           AND  tm_simul_share.owner_yn         =   '0'
 
            AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
                 (
