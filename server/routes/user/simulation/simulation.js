@@ -5130,7 +5130,7 @@ var applyShareUserInArr = function(req, res) {
 
                                 /* 그룹 하위 정보가 존재하는 경우 */
                                 if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0  ) {
-                                    msg.arr_data_list.push( msg.v_arr_simul_in_grp );
+                                    msg.arr_data_list   =   msg.v_arr_simul_in_grp;
                                 }
 
                                 msg.arr_data_list.push( msg.v_simul_mast );
@@ -5550,7 +5550,6 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                 /* 그룹 하위 시나리오 정보가 존재하는 경우 */
                                 if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0 ) {
-                                    msg.arr_delete_list     =   msg.v_arr_simul_in_grp;
 
                                     paramData.arr_checked_shared.forEach( function( item, index, array) {
 
