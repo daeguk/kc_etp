@@ -84,10 +84,12 @@
                             </thead>
 
                             <tbody>
+
                                 <tr
                                     v-for="( item, index ) in arr_simul_list"
                                     :key="'simul_' + index"
                                 >
+
                                     <td>
                                         <v-checkbox
                                             color="primary"
@@ -98,8 +100,10 @@
                                         ></v-checkbox>
                                     </td>
 
-                                    <!-- Name -->
+
+                                <!-- Name -->
                                     <td class="txt_left">
+
                                         <!-- 시나리오 그룹 인 경우 -->
                                         <div class="simu_namemodi_w" v-if="item.grp_yn == '1'">
                                             <div>
@@ -191,7 +195,8 @@
                                         </div>
                                     </td>
 
-                                    <!-- Index -->
+
+                                <!-- Index -->
                                     <td class="txt_right">
                                         {{ fn_formatNumber( item.INDEX_RATE ) }}
                                         <br />
@@ -207,21 +212,24 @@
                                         </div>
                                     </td>
 
-                                    <!-- Last modified -->
+
+                                <!-- Last modified -->
                                     <td class="txt_right">
                                         {{ item.fmt_upd_time }}
                                         <input
                                             type="hidden"
                                             name="strParam"
-                                            :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index } )"
+                                            :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index, 'owner_yn' : item.owner_yn } )"
                                         />
                                     </td>
 
-                                    <!-- 버튼 영역 -->
+
+                                <!-- 버튼 영역 start -->
                                     <td>
+
                                         <button
                                             name="btn1"
-                                            :class="'simul_icon1 ' + ( item.grp_yn == '0' ?  '' : 'disable' )"
+                                            :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' ) ?  '' : 'disable' )"
                                         ></button>
                                         <button
                                             name="btn2"
@@ -229,27 +237,200 @@
                                         ></button>
 
                                         <!-- 그룹인 경우 -->
-                                        <v-menu bottom left v-if="item.grp_yn == '1'">
+                                        <v-menu
+                                            bottom
+                                            left
+                                            v-if="item.grp_yn == '1'"
+                                            :close-on-content-click="false"
+                                            v-model="item.menu_grp"
+                                        >
                                             <template v-slot:activator="{ on }">
                                                 <button
                                                     name="btn4"
                                                     class="btn_icon v-icon material-icons"
                                                     v-on="on"
+                                                    @click="fn_show_more( item, index, 'grp' )"
                                                 >more_horiz</button>
                                             </template>
 
                                             <ul class="more_menu_w">
-                                                <li
+                                                
+                                                <li v-if="item.owner_yn == '1'"
                                                     @click="fn_modify_group( 'delete', item, index )"
                                                 >
                                                     <v-icon class="simul_more_btn">delete</v-icon>삭제
                                                 </li>
-                                                <li @click="fn_show_rename( item, index, 'true' )">
+
+                                                <li v-if="item.owner_yn == '1'"
+                                                    @click="fn_show_rename( item, index, 'true' )">
                                                     <v-icon class="simul_more_btn">create</v-icon>이름변경
                                                 </li>
+
                                                 <li @click="fn_copy_scenario( item, index )">
                                                     <v-icon class="simul_more_btn">file_copy</v-icon>복사하기
                                                 </li>
+
+                                                <li v-if="item.owner_yn == '1'"
+                                                     @click="fn_show_share( item, index, 'grp' )">
+                                                    <v-icon class="simul_more_btn">share</v-icon>공유하기
+                                                </li>
+
+
+                                                <!--공유하기 팝업창--->
+                                                <v-card style="width:500px;" v-if="item.show_share_grp && item.owner_yn == '1'">
+                                                    <h5>
+                                                        <v-card-title>
+                                                            공유하기
+                                                            <span class="pl-0"></span>
+                                                            <v-spacer></v-spacer>
+                                                            <v-btn
+                                                                icon
+                                                                @click="arr_user_list_for_share=[];item.show_share_grp=false"
+                                                            >
+                                                                <v-icon>close</v-icon>
+                                                            </v-btn>
+                                                        </v-card-title>
+                                                    </h5>
+                                                    <!--1table-->
+                                                    <div class="simul_share_search">
+                                                        <v-text-field
+                                                            v-model="v_txt_search"
+                                                            @keyup.stop="fn_filterAllData()"
+                                                            append-icon="search"
+                                                            label="Search"
+                                                            single-line
+                                                            hide-details
+                                                        ></v-text-field>
+                                                    </div>
+                                                    <div class="incode_pop">
+                                                        <h6>공유자 선택</h6>
+                                                        <div class="table-box-wrap">
+                                                            <div
+                                                                class="table-box"
+                                                                style="max-height:200px;"
+                                                            >
+                                                                <table class="tbl_type ver8 v2">
+                                                                    <caption>헤더 고정 테이블</caption>
+                                                                    <colgroup>
+                                                                        <col width="10%" />
+                                                                        <col width="30%" />
+                                                                        <col width="60%" />
+                                                                    </colgroup>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:10%"></th>
+                                                                            <th
+                                                                                style="width:30%"
+                                                                                class="txt_left"
+                                                                            >이름</th>
+                                                                            <th
+                                                                                style="width:60%"
+                                                                                class="txt_left"
+                                                                            >이메일</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr
+                                                                            v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
+                                                                            :key="index_for_share"
+                                                                        >
+                                                                            <td class="txt_left">
+                                                                                <v-checkbox
+                                                                                    v-model="item_for_share.checked_for_share"
+                                                                                    :name="'chk_share_' + index_for_share"
+                                                                                    :value="fn_set_checked_share_value( item_for_share )"
+                                                                                    color="primary"
+                                                                                ></v-checkbox>
+                                                                            </td>
+
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_for_share.name }}</td>
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_for_share.email }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-xs-center">
+                                                            <v-btn
+                                                                depressed
+                                                                small
+                                                                color="primary"
+                                                                @click.stop="fn_apply_share_user_in_arr( item, index )"
+                                                            >공유하기</v-btn>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--2table-->
+                                                    <div class="incode_pop pt-3">
+                                                        <h6 class="pb-1">공유자 선택해제</h6>
+                                                        <div class="table-box-wrap">
+                                                            <div
+                                                                class="table-box"
+                                                                style="max-height:200px;"
+                                                            >
+                                                                <table class="tbl_type ver8 v2">
+                                                                    <caption>헤더 고정 테이블</caption>
+                                                                    <colgroup>
+                                                                        <col width="20%" />
+                                                                        <col width="50%" />
+                                                                        <col width="30%" />
+                                                                    </colgroup>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:20%">이름</th>
+                                                                            <th
+                                                                                style="width:50%"
+                                                                                class="txt_left"
+                                                                            >이메일</th>
+                                                                            <th
+                                                                                style="width:30%"
+                                                                                class="txt_left"
+                                                                            ></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr
+                                                                            v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
+                                                                        >
+                                                                            <td
+                                                                                class="txt_left"
+                                                                                colspan="3"
+                                                                            >공유된 공유자가 없습니다.</td>
+                                                                        </tr>
+
+                                                                        <tr
+                                                                            v-for="( item_shared, index_shared ) in arr_user_list_shared"
+                                                                            :key="index_shared"
+                                                                        >
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_shared.name }}</td>
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_shared.email }}</td>
+                                                                            <td class="txt_left">
+                                                                                <v-btn
+                                                                                    depressed
+                                                                                    outline
+                                                                                    small
+                                                                                    color="primary"
+                                                                                    @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
+                                                                                >공유해제</v-btn>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </v-card>
+                                                <!--공유하기 팝업창 end--->
+
+
                                                 <!--li @click="">menu2</li>
                                                 <li @click="">menu3</li-->
                                             </ul>
@@ -262,37 +443,41 @@
                                             v-if="item.grp_yn == '0'"
                                             :close-on-content-click="false"
                                             v-model="item.menu"
-                                            ref="ref_more_open"
                                         >
                                             <template v-slot:activator="{ on }">
                                                 <button
                                                     name="btn3"
                                                     class="btn_icon v-icon material-icons"
                                                     v-on="on"
-                                                    @click="fn_show_more( item, index )"
+                                                    @click="fn_show_more( item, index, 'scen' )"
                                                 >more_horiz</button>
                                             </template>
 
+
                                             <ul class="more_menu_w">
-                                                <li
+
+                                                <li v-if="item.owner_yn == '1'"
                                                     @click="fn_simul_delete( item, index );item.menu = false"
                                                 >
                                                     <v-icon class="simul_more_btn">delete</v-icon>삭제
                                                 </li>
-                                                <li
+
+                                                <li v-if="item.owner_yn == '1'"
                                                     @click="fn_show_rename( item, index, 'true' ); item.menu = false"
                                                 >
                                                     <v-icon class="simul_more_btn">create</v-icon>이름변경
                                                 </li>
 
-                                                <li
+
+                                                <li v-if="item.owner_yn == '1'"
                                                     @click="fn_show_change_group_list( item, index );"
                                                 >
                                                     <v-icon class="simul_more_btn">restore_page</v-icon>그룹변경
                                                 </li>
 
+
                                                 <!--그룹명 팝업창---->
-                                                <v-card v-if="showGrpChange">
+                                                <v-card v-if="showGrpChange && item.owner_yn == '1'">
                                                     <ul class="simul_group_modi_pop">
                                                         <li
                                                             @click.stop
@@ -308,14 +493,18 @@
                                                 </v-card>
                                                 <!--그룹명 팝업창end--->
 
+
                                                 <li @click="fn_copy_scenario( item, index )">
                                                     <v-icon class="simul_more_btn">file_copy</v-icon>복사하기
                                                 </li>
-                                                <li @click="">
+
+                                                <li v-if="item.owner_yn == '1'"
+                                                    @click="fn_show_share( item, index, 'scen' )">
                                                     <v-icon class="simul_more_btn">share</v-icon>공유하기
                                                 </li>
+
                                                 <!--공유하기 팝업창--->
-                                                <v-card style="width:500px;" v-if="item.show_share">
+                                                <v-card style="width:500px;" v-if="item.show_share && item.owner_yn == '1'">
                                                     <h5>
                                                         <v-card-title>
                                                             공유하기
@@ -468,8 +657,11 @@
                                                 </v-card>
                                                 <!--공유하기 팝업창 end--->
                                             </ul>
+
                                         </v-menu>
                                     </td>
+                                <!-- 버튼 영역 end -->
+
                                 </tr>
                             </tbody>
                         </table>
@@ -579,12 +771,11 @@ export default {
             }
 
             switch( $(this).attr( "name" ) ) {
-
-
+            
                         /* 수정화면 이동 */
                 case    "btn1"  :
 
-                            if( v_jsonParam.grp_yn == '1' ) {
+                            if( !( v_jsonParam.grp_yn == '0' && v_jsonParam.owner_yn == '1' ) ) {
                                 return false;
                             }                    
 
@@ -608,18 +799,33 @@ export default {
 
                                 if( v_jsonParam.simul_change_yn == "1" ) {
 
-                                    if ( await vm.$refs.confirm2.open(
-                                            '확인',
-                                            '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
-                                            {}
-                                            ,2
-                                        )
-                                    ) {
+                                    if( v_jsonParam.owner_yn != "1" ) {
 
-                                        if( "Y" == vm.$refs.confirm2.val ) {
-                                            /* 수정정보를 보여준다. */
-                                            v_jsonParam.showSimulationId        =   1;
-                                            vm.fn_showSimulation( v_jsonParam );
+                                        if ( await vm.$refs.confirm2.open(
+                                                '확인',
+                                                '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 소유자만 시나리오 화면으로 이동가능합니다.',
+                                                {}
+                                                ,1
+                                            )
+                                        ) {
+                                            return  false;
+                                        }
+
+                                    }else{
+
+                                        if ( await vm.$refs.confirm2.open(
+                                                '확인',
+                                                '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
+                                                {}
+                                                ,2
+                                            )
+                                        ) {
+
+                                            if( "Y" == vm.$refs.confirm2.val ) {
+                                                /* 수정정보를 보여준다. */
+                                                v_jsonParam.showSimulationId        =   1;
+                                                vm.fn_showSimulation( v_jsonParam );
+                                            }
                                         }
                                     }
 
@@ -720,6 +926,20 @@ export default {
 
             }
         });
+
+
+        /* 이름변경 엔터키를 누른 경우 */
+        // $('#table01 tbody').on('keypress', "input[name^='txt_simul_']", function(e) {
+        //     var tr          =   $(this).closest('tr');
+        //     var rowIndex    =   tr.index();
+
+        //     vm.arr_show_error_message   =   [];
+
+        //     if( e.which == 13 ) {
+        //         tr.find( "td button[name=btn_rename]").click();
+        //     }
+            
+        // });
     },
 
     methods: {
@@ -759,7 +979,6 @@ export default {
 
                     vm.status           =   'insert';
                     vm.showCreateGroup  =   'Y'
-
                 }
             });
         },
@@ -845,18 +1064,6 @@ export default {
                             return  false;
                         }
 
-                        if( await vm.$refs.confirm2.open(
-                                    '[시나리오 그룹]',
-                                    confirm_nm + '하시겠습니까?',
-                                    {}
-                                ,   2
-                            )
-                        ) {
-                            if( "Y" != vm.$refs.confirm2.val ) {
-                                return  false;
-                            }
-                        }
-
                         param.scen_name     =   vm.scen_name;           /* 그룹명 */
                     }
 
@@ -914,21 +1121,19 @@ export default {
                         }
 
 
-                        if( param.status == "modify" ) {
-                            confirm_nm          =   "이름변경";
-                        }else if( param.status == "delete" ) {
+                        if( param.status == "delete" ) {
                             confirm_nm          =   "삭제";
-                        }
 
-                        if( await vm.$refs.confirm2.open(
-                                    '[시나리오 그룹]',
-                                    '[' + v_obj.val() + '] ' + confirm_nm + ' 하시겠습니까?',
-                                    {}
-                                ,   2
-                            )
-                        ) {
-                            if( "Y" != vm.$refs.confirm2.val ) {
-                                return  false;
+                            if( await vm.$refs.confirm2.open(
+                                        '[시나리오 그룹]',
+                                        '[' + v_obj.val() + '] ' + confirm_nm + ' 하시겠습니까?',
+                                        {}
+                                    ,   2
+                                )
+                            ) {
+                                if( "Y" != vm.$refs.confirm2.val ) {
+                                    return  false;
+                                }
                             }
                         }
 
@@ -957,28 +1162,17 @@ export default {
                                             }
                                         }else{
 
-                                            if( msg ) {
-                                                if ( await vm.$refs.confirm2.open(
-                                                        '확인',
-                                                        msg,
-                                                        {}
-                                                        ,1
-                                                    )
-                                                ) {
+                                            vm.grp_cd           =   "";         /* 선택한 그룹코드 */
+                                            vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
+                                            vm.scen_name        =   "";         /* 그룹명 */
 
-                                                    vm.grp_cd           =   "";         /* 선택한 그룹코드 */
-                                                    vm.scen_cd          =   "";         /* 선택한 시나리오 코드 */
-                                                    vm.scen_name        =   "";         /* 그룹명 */
+                                            vm.status           =   "insert";
 
-                                                    vm.status           =   "insert";
+                                            /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
+                                            vm.showCreateGroup  =   'N';
 
-                                                    /* 정상적으로 수정된 경우 create group 영역을 보이지 않게 한다. */
-                                                    vm.showCreateGroup  =   'N';
-
-                                                    /* 시뮬레이션 목록정보를 조회한다. */
-                                                    vm.fn_getSimulList();
-                                                }
-                                            }
+                                            /* 시뮬레이션 목록정보를 조회한다. */
+                                            vm.fn_getSimulList();
                                         }
                                     }
 
@@ -1221,7 +1415,8 @@ export default {
 
             var p_param         =   {};
 
-            p_param.grp_cd      =   p_item.scen_cd;     
+            p_param.grp_cd      =   p_item.grp_cd;
+            p_param.scen_cd     =   p_item.scen_cd;
 
             vm.fn_showProgress( true );
 
@@ -1774,7 +1969,7 @@ export default {
          *  더보기를 클릭한다.
          *  2019-11-11  bkLove(촤병국)
          */
-        fn_show_more( p_item, p_index ) {
+        fn_show_more( p_item, p_index, p_gubun="scen" ) {
             var vm = this;
 
             vm.arr_group_list               =   [];
@@ -1782,7 +1977,9 @@ export default {
 
             vm.arr_user_list_for_share      =   [];
             vm.arr_user_list_for_share_cp   =   [];
+
             p_item.show_share               =   false;
+            p_item.show_share_grp           =   false;
         },
 
         /*
@@ -1797,7 +1994,7 @@ export default {
          *  공유정보를 노출한다.
          *  2019-10-24  bkLove(촤병국)
          */
-        fn_show_share( p_item, p_index ) {
+        fn_show_share( p_item, p_index, p_gubun="scen" ) {
 
             var vm = this;
 
@@ -1810,9 +2007,14 @@ export default {
             }
 
 
-            p_item.show_share     =   !p_item.show_share;
+            if( p_gubun == "scen" ) {
+                p_item.show_share     =   !p_item.show_share;
+            }else{
+                p_item.show_share_grp =   !p_item.show_share_grp;
+            }
 
-            if( p_item.show_share ) {
+
+            if( p_item.show_share || p_item.show_share_grp ) {
 
                 vm.fn_check_now_status().then( function(e){
 
@@ -2010,10 +2212,22 @@ export default {
 
 
                 var temp    =   _.filter( vm.arr_user_list_for_share, function(o) {
-                    return  typeof o.checked_for_share != "undefined" && o.checked_for_share != "";
+
+                    var v_json  =   null;
+                    
+                    if( typeof o.checked_for_share != "undefined" && o.checked_for_share != "" ) {
+                        try{
+                            v_json  =   JSON.parse(o.checked_for_share);
+                        }catch(e){
+                            console.log( e );
+                        }
+                    }
+
+                    return v_json != null && typeof v_json.email != "undefined" && v_json.email != "";
                 });
 
-                if( temp.length == 0 ) {
+
+                if( !temp || temp.length == 0 ) {
 
                     if ( await vm.$refs.confirm2.open(
                             '확인',

@@ -5674,7 +5674,7 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                             /* 그룹 하위 조회 */
                                             var v_temp  =   _.filter( rows, function(o) {
-                                                return  o.email == item.email && o.grp_cd == msg.upper_scen_cd;
+                                                return  o.email == item.email && o.grp_cd == msg.upper_scen_cd && o.owner_yn == '0';
                                             });
 
 

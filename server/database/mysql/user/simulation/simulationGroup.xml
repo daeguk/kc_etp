@@ -18,8 +18,7 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_yn                =   '1'
 
-           AND  tm_simul_mast.scen_cd               =   #{grp_cd}
-           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+           AND  tm_simul_mast.scen_cd               =   #{upper_grp_cd}
     </select>
 
     <!--
@@ -49,8 +48,7 @@
           FROM  tm_simul_mast           
          WHERE  1 = 1
 
-           AND  tm_simul_mast.grp_cd                =   #{grp_cd}
-           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+           AND  tm_simul_mast.grp_cd                =   #{upper_scen_cd}
 
     </select>
 

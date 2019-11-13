@@ -400,11 +400,20 @@
                             ,   '0'                                                     AS  simul_change_yn             /* simul_mast 와 simul_portfolio 둘다 변동여부 */
                             ,   NULL                                                    AS  INDEX_RATE                  /* index */
 
-                      FROM  tm_simul_mast
+                            ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+                            ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+                      FROM  tm_simul_share
+
+                      JOIN  tm_simul_mast
+                        ON  (
+                                        tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
+                                AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
+                                AND     tm_simul_share.email    =   #{user_id}
+                            )
+
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_yn          =   '1'
-
-                       AND  tm_simul_mast.reg_id          =   #{user_id}                 /* 등록자 ID */
 
                     UNION   ALL
 
@@ -470,11 +479,20 @@
                                             )
                                 )                                                       AS  INDEX_RATE                  /* index */
 
-                      FROM  tm_simul_mast
+                            ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+                            ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+                      FROM  tm_simul_share
+
+                      JOIN  tm_simul_mast
+                        ON  (
+                                        tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
+                                AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
+                                AND     tm_simul_share.email    =   #{user_id}
+                            )
+
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_yn          =   '0'
-
-                       AND  tm_simul_mast.reg_id          =   #{user_id}                /* 등록자 ID */
 
                        AND  EXISTS
                             (
@@ -483,25 +501,24 @@
                                  WHERE  1 = 1
                                    AND  tm_simul_portfolio.grp_cd       =   tm_simul_mast.grp_cd
                                    AND  tm_simul_portfolio.scen_cd      =   tm_simul_mast.scen_cd
-                                   AND  tm_simul_portfolio.reg_id       =   #{user_id}                 /* 등록자 ID */
                                  LIMIT  1
                             )                       
 
                 )   base
 
-            ORDER  BY       /* 상위그룹 '선택안함' 을 제일 먼저 노출되게 하고, 그룹코드는 역순으로 노출 */
-                            CASE    WHEN    base.temp_order     =   '*'
-                                    THEN    '1'
-                                    ELSE    base.temp_order
-                            END                     DESC
+         ORDER  BY      /* 상위그룹 '선택안함' 을 제일 먼저 노출되게 하고, 그룹코드는 역순으로 노출 */
+                        CASE    WHEN    base.temp_order     =   '*'
+                                THEN    '1'
+                                ELSE    base.temp_order
+                        END                     DESC
 
-                        ,   base.grp_cd             ASC     /* 그룹코드(상위코드) */
+                    ,   base.grp_cd             ASC     /* 그룹코드(상위코드) */
 
-                        ,   /* 상위그룹 '선택안함' 인 경우 정렬순번 역순 노출, 그룹코드는 정방향 노출 */
-                            CASE    WHEN    base.temp_order     =   '*'
-                                    THEN    -base.scen_order_no
-                                    ELSE    base.scen_order_no
-                            END                     ASC     /* 시나리오 정렬 순번 */
+                    ,   /* 상위그룹 '선택안함' 인 경우 정렬순번 역순 노출, 그룹코드는 정방향 노출 */
+                        CASE    WHEN    base.temp_order     =   '*'
+                                THEN    -base.scen_order_no
+                                ELSE    base.scen_order_no
+                        END                     ASC     /* 시나리오 정렬 순번 */
     </select>
 
     <!--
@@ -1700,7 +1717,6 @@
           FROM  tm_simul_share
 
          WHERE  1 = 1
-           AND  tm_simul_share.owner_yn         =   '0'
 
            AND  ( tm_simul_share.grp_cd, tm_simul_share.scen_cd ) IN
                 (

@@ -84,6 +84,7 @@ var getScenInGrpCd = function(req, res) {
                     try{
                         var msg = {};
 
+                        paramData.upper_grp_cd      =   paramData.scen_cd;
                         stmt = mapper.getStatement('simulationGroup', 'getGrpCd', paramData, format);
                         log.debug(stmt);
 
@@ -124,14 +125,17 @@ var getScenInGrpCd = function(req, res) {
 
                         return callback(resultMsg);
                     }
-                },                
+                },
 
-                /* 2. 코드에 속한 시나리오를 조회한다. */
-                function(msg, callback) {      
+                /* 2. 선택된 시뮬레이션에 속한 대상자를 조회한다. */
+                function(msg, callback) {        
 
                     try{
-                        paramData.grp_cd    =   msg.grp_cd;
-                        stmt = mapper.getStatement('simulationGroup', 'getScenInGrpCd', paramData, format);
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        stmt = mapper.getStatement('simulation', 'getUserListInCheckedSimulation', paramData, format);
                         log.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
@@ -146,65 +150,215 @@ var getScenInGrpCd = function(req, res) {
 
                             if ( !rows || rows.length == 0) {
                                 resultMsg.result = false;
-                                resultMsg.msg   = "해당 그룹정보에 속한 시나리오가 한건 이상 존재해야 합니다.";
-                                resultMsg.err   = "해당 그룹정보에 속한 시나리오가 한건 이상 존재해야 합니다.";
+                                resultMsg.msg   = "그룹 공유 정보가 존재하지 않습니다.";
+                                resultMsg.err   = "그룹 공유 정보가 존재하지 않습니다.";
 
                                 return callback(resultMsg);
                             }
 
+                            if( rows && rows.length > 0 ) {
 
-                            var v_arr_result    =   [];
-                            var v_limit_yn      =   false;
-                            var v_change_yn     =   false;
-                            var v_result_msg    =   "";
+                                var v_temp  =   _.filter( rows, function(o) {
+                                    return  o.email  == paramData.user_id;
+                                });
 
-                            for( var i=0; i < rows.length; i++ ) {
-                                var item    =   rows[i];
+                                if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
 
-                                if( v_arr_result.length == 10 ) {
-                                    v_limit_yn          =   true;
-                                    v_result_msg        =   "10건까지만 비교됩니다.";
-                                    break;
-                                }                                
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "해당 그룹에 공유 정보가 존재하지 않습니다.";
+                                    resultMsg.err   = "해당 그룹에 공유 정보가 존재하지 않습니다.";
 
-                                if( item.change_serial_yn  ==  "N" ) {
-                                    v_arr_result.push( item );
-                                }else{
-                                    v_change_yn =   true;
+                                    return callback(resultMsg);                                    
                                 }
-                            };
 
-
-                            if( !v_arr_result || v_arr_result.length == 0 ) {
-                                resultMsg.result    =   false;
-                                resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
-                                resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
-
-                                return callback(resultMsg);
                             }
 
-
-                            resultMsg.msg       =   "";
-                            resultMsg.result    =   true;
-                            if( v_arr_result && v_arr_result.length > 0  ) {
-
-                                if( v_change_yn ) {
-                                    resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동된 정보가 한건 이상 존재합니다.";
-                                }
-
-                                if( v_limit_yn ) {
-                                    resultMsg.msg       +=  v_result_msg;
-                                }
-
-                                for( var i=0; i < v_arr_result.length; i++ ) {
-                                    resultMsg.dataList.push( v_arr_result[i] );
-                                }
-
-                                resultMsg.simul_mast    =   msg.simul_mast;
-                            }
-
-                            callback(null);
+                            callback(null, msg);
                         });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
+                    }
+                },
+
+                /* 3. 그룹에 속한 공유자 정보를 조회한다. */
+                function(msg, callback) {      
+
+                    try{
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        paramData.upper_scen_cd     =   msg.grp_cd;
+                        stmt = mapper.getStatement('simulation', 'getSimulShareInGrp', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+
+                            if ( !rows || rows.length == 0) {
+                                resultMsg.result = false;
+                                resultMsg.msg   = "해당 그룹 하위에 공유 정보가 존재하지 않습니다.";
+                                resultMsg.err   = "해당 그룹 하위에 공유 정보가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+
+                            if( rows && rows.length > 0 ) {
+
+                                var v_temp  =   _.filter( rows, function(o) {
+                                    return  o.email  == paramData.user_id;
+                                });
+
+                                if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "해당 그룹 하위에 공유된 정보가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err   = "해당 그룹 하위에 공유된 정보가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);                                    
+                                }
+
+                                msg.v_arr_share_in_grp      =   rows;
+                            }
+
+                            callback(null, msg);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
+                    }
+                },                
+
+                /* 3. 코드에 속한 시나리오를 조회한다. */
+                function(msg, callback) {      
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }                        
+
+                        if(     typeof msg.v_arr_share_in_grp == "undefined"
+                            ||  msg.v_arr_share_in_grp.length == 0 
+                        ) {
+                            resultMsg.result = false;
+                            resultMsg.msg   = "해당 그룹 하위에 공유된 정보가 한건 이상 존재해야 합니다.";
+                            resultMsg.err   = "해당 그룹 하위에 공유된 정보가 한건 이상 존재해야 합니다.";
+
+                            return callback(resultMsg);
+
+                        }else{
+
+                            paramData.upper_scen_cd     =   msg.grp_cd;
+                            stmt = mapper.getStatement('simulationGroup', 'getScenInGrpCd', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "해당 그룹정보에 속한 시나리오가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err   = "해당 그룹정보에 속한 시나리오가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                var v_arr_result    =   [];
+                                var v_limit_yn      =   false;
+                                var v_change_yn     =   false;
+                                var v_result_msg    =   "";
+
+                                for( var i=0; i < rows.length; i++ ) {
+                                    var item    =   rows[i];
+
+                                    var v_temp  =   _.filter( msg.v_arr_share_in_grp, function(o) {
+                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd;
+                                    });
+
+                                    if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                        continue;
+                                    }
+
+                                    if( v_arr_result.length == 10 ) {
+                                        v_limit_yn          =   true;
+                                        v_result_msg        =   "10건까지만 비교됩니다.";
+                                        break;
+                                    }                                
+
+                                    if( item.change_serial_yn  ==  "N" ) {
+                                        v_arr_result.push( item );
+                                    }else{
+                                        v_change_yn =   true;
+                                    }
+                                };
+
+
+                                if( !v_arr_result || v_arr_result.length == 0 ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                resultMsg.msg       =   "";
+                                resultMsg.result    =   true;
+                                if( v_arr_result && v_arr_result.length > 0  ) {
+
+                                    if( v_change_yn ) {
+                                        resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동된 정보가 한건 이상 존재합니다.";
+                                    }
+
+                                    if( v_limit_yn ) {
+                                        resultMsg.msg       +=  v_result_msg;
+                                    }
+
+                                    for( var i=0; i < v_arr_result.length; i++ ) {
+                                        resultMsg.dataList.push( v_arr_result[i] );
+                                    }
+
+                                    resultMsg.simul_mast    =   msg.simul_mast;
+                                }
+
+                                callback(null);
+                            });
+                        }
 
                     } catch (err) {
 
