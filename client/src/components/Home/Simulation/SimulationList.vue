@@ -1,32 +1,57 @@
 <template>
-
-    <v-layout row wrap class="content_margin" >
+    <v-layout row wrap class="content_margin">
         <v-flex grow>
-
             <v-card flat class="creat_f">
-                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
-                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                <div
+                    class="warning_box"
+                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                    <span
+                        class="margin_n"
+                        v-for="(item, index) in arr_show_error_message"
+                        :key="index"
+                    >
+                        <v-icon color="#ff4366">error_outline</v-icon>
+                        {{item}}
+                        <br />
                     </span>
                 </div>
 
                 <span>
-                    <v-btn depressed color="primary" @click="fn_showSenario()" >Create Senario</v-btn>
+                    <v-btn depressed color="primary" @click="fn_showSenario()">Create Senario</v-btn>
                 </span>
                 <span>
-                    <v-btn depressed outline color="primary" @click="fn_showCreateGroup();">Create A Group</v-btn>
+                    <v-btn
+                        depressed
+                        outline
+                        color="primary"
+                        @click="fn_showCreateGroup();"
+                    >Create A Group</v-btn>
                 </span>
 
                 <div style="display:inline" v-if="showCreateGroup=='Y'">
                     <span>
-                        <v-text-field   v-model="scen_name" outline class="wid200 text_in01"  maxlegnth="50"    ref="scen_name"></v-text-field>
+                        <v-text-field
+                            v-model="scen_name"
+                            outline
+                            class="wid200 text_in01"
+                            maxlegnth="50"
+                            ref="scen_name"
+                        ></v-text-field>
                     </span>
                     <span class="margin_t1">
-                        <v-btn  v-if="['insert'].includes( status )"    depressed small outline color="primary" @click="fn_modify_group( 'insert' )">추가</v-btn>
-<!-- 
+                        <v-btn
+                            v-if="['insert'].includes( status )"
+                            depressed
+                            small
+                            outline
+                            color="primary"
+                            @click="fn_modify_group( 'insert' )"
+                        >추가</v-btn>
+                        <!-- 
                         <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modify_group( 'modify' )">수정</v-btn>
                         <v-btn  v-if="['modify'].includes( status )"    depressed small outline color="primary" @click="fn_modify_group( 'delete' )">삭제</v-btn> 
--->
+                        -->
                     </span>
                 </div>
                 <span class="btn_r">
@@ -35,252 +60,427 @@
             </v-card>
 
             <v-card flat>
-           <div class="table-box-wrap">
-            <div class="table-box" style="max-height:690px;">
-                <table  id="table01" class="tbl_type ver10">
-                    <caption></caption>
-                    
-                    <colgroup>
-                        <col width="4%">
-                        <col width="40%" />
-                        <col width="20%" />
-                        <col width="25%" />
-                        <col width="15%" />
-                    </colgroup>
+                <div class="table-box-wrap">
+                    <div class="table-box" style="max-height:690px;">
+                        <table id="table01" class="tbl_type ver10">
+                            <caption></caption>
 
-                    <thead>
-                        <tr>
-                            <th width="4%"></th>
-                            <th width="40%" class="txt_left">Name</th>
-                            <th width="20%"  class="txt_right">Index</th>
-                            <th width="25%"  class="txt_right">Last modifired</th>
-                            <th width="15%" ></th>
-                        </tr>
-                    </thead>
+                            <colgroup>
+                                <col width="4%" />
+                                <col width="40%" />
+                                <col width="20%" />
+                                <col width="25%" />
+                                <col width="15%" />
+                            </colgroup>
 
-                    <tbody>
+                            <thead>
+                                <tr>
+                                    <th width="4%"></th>
+                                    <th width="40%" class="txt_left">Name</th>
+                                    <th width="20%" class="txt_right">Index</th>
+                                    <th width="25%" class="txt_right">Last modifired</th>
+                                    <th width="15%"></th>
+                                </tr>
+                            </thead>
 
-                        <tr v-for="( item, index ) in arr_simul_list"    :key="'simul_' + index" >
+                            <tbody>
+                                <tr
+                                    v-for="( item, index ) in arr_simul_list"
+                                    :key="'simul_' + index"
+                                >
+                                    <td>
+                                        <v-checkbox
+                                            color="primary"
+                                            v-model="arr_comp"
+                                            :name="'chk_' + index"
+                                            :value="fn_set_checked_value( item )"
+                                            @click.stop="fn_check_data( item, index )"
+                                        ></v-checkbox>
+                                    </td>
 
-                            <td>
-                                <v-checkbox     color="primary" 
-                                                v-model="arr_comp" 
-                                                :name="'chk_' + index" 
-                                                :value="fn_set_checked_value( item )" 
+                                    <!-- Name -->
+                                    <td class="txt_left">
+                                        <!-- 시나리오 그룹 인 경우 -->
+                                        <div class="simu_namemodi_w" v-if="item.grp_yn == '1'">
+                                            <div>
+                                                <v-icon>folder_open</v-icon>
+                                            </div>
 
-                                                @click.stop="fn_check_data( item, index )"></v-checkbox>
-                            </td>
+                                            <div
+                                                :name="'div_simul_' + index + '_read'"
+                                                style="display:inline"
+                                            >{{ item.scen_name }}</div>
+                                            <div
+                                                :name="'div_simul_' + index + '_edit'"
+                                                style="display:none;"
+                                            >
+                                                <ul>
+                                                    <li>
+                                                        <input
+                                                            type="text"
+                                                            :name="'txt_simul_' + index"
+                                                            :value="item.scen_name"
+                                                            maxlength="50"
+                                                        />
+                                                    </li>
+                                                    <li>
+                                                        <v-btn
+                                                            name="btn_rename"
+                                                            outline
+                                                            small
+                                                            color="primary"
+                                                        >변경</v-btn>
+                                                    </li>
+                                                    <li>
+                                                        <v-btn
+                                                            name="btn_rename_cancel"
+                                                            small
+                                                            outline
+                                                            color="primary"
+                                                        >취소</v-btn>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
 
-                        <!-- Name -->
-                            <td class="txt_left">
-                                <!-- 시나리오 그룹 인 경우 -->
-                                <div class="simu_namemodi_w"  v-if="item.grp_yn == '1'">
-                                    <div><v-icon>folder_open</v-icon></div>
+                                        <!-- 시나리오 그룹이 아닌 경우 -->
+                                        <div
+                                            :class="fn_grp_check_class(item)"
+                                            v-if="item.grp_yn == '0'"
+                                            class="simu_namemodi_w"
+                                        >
+                                            <div>
+                                                <v-icon>description</v-icon>
+                                            </div>
 
-                                    <div :name="'div_simul_' + index + '_read'" style="display:inline">{{ item.scen_name }}</div>
-                                    <div :name="'div_simul_' + index + '_edit'" style="display:none;">
-                                        <ul>
-                                        <li><input type="text" :name="'txt_simul_' + index"  :value="item.scen_name"  maxlength="50"/></li>
-                                        <li><v-btn name="btn_rename" outline small color="primary" >변경</v-btn></li>
-                                        <li><v-btn name="btn_rename_cancel" small outline color="primary" >취소</v-btn></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                            <div
+                                                :name="'div_simul_' + index + '_read'"
+                                                style="display:inline"
+                                            >{{ item.scen_name }}</div>
+                                            <div
+                                                :name="'div_simul_' + index + '_edit'"
+                                                style="display:none;"
+                                            >
+                                                <ul>
+                                                    <li>
+                                                        <input
+                                                            type="text"
+                                                            :name="'txt_simul_' + index"
+                                                            :value="item.scen_name"
+                                                            maxlength="50"
+                                                        />
+                                                    </li>
+                                                    <li>
+                                                        <v-btn
+                                                            name="btn_rename"
+                                                            small
+                                                            outline
+                                                            color="primary"
+                                                        >변경</v-btn>
+                                                    </li>
+                                                    <li>
+                                                        <v-btn
+                                                            name="btn_rename_cancel"
+                                                            small
+                                                            outline
+                                                            color="primary"
+                                                        >취소</v-btn>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                                <!-- 시나리오 그룹이 아닌 경우 -->
-                                <div :class="fn_grp_check_class(item)" v-if="item.grp_yn == '0'" class="simu_namemodi_w">
-                                    <div><v-icon>description</v-icon> </div>
+                                    <!-- Index -->
+                                    <td class="txt_right">
+                                        {{ fn_formatNumber( item.INDEX_RATE ) }}
+                                        <br />
+                                        <div
+                                            v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'
+                                        >
+                                            <span
+                                                :class='( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 > 0 ? "text_S text_red" : "text_S text_blue" '
+                                            >
+                                                {{ fn_formatNumber( Number( item.INDEX_RATE ) - 1000 ) }}
+                                                ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 ) + " %" }} )
+                                            </span>
+                                        </div>
+                                    </td>
 
-                                    <div :name="'div_simul_' + index + '_read'" style="display:inline">{{ item.scen_name }}</div>
-                                    <div :name="'div_simul_' + index + '_edit'" style="display:none;">
-                                        <ul>
-                                            <li><input type="text" :name="'txt_simul_' + index"  :value="item.scen_name" maxlength="50"/></li>
-                                            <li><v-btn name="btn_rename" small outline color="primary">변경</v-btn></li>
-                                            <li><v-btn name="btn_rename_cancel" small outline color="primary" >취소</v-btn></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </td>
+                                    <!-- Last modified -->
+                                    <td class="txt_right">
+                                        {{ item.fmt_upd_time }}
+                                        <input
+                                            type="hidden"
+                                            name="strParam"
+                                            :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index } )"
+                                        />
+                                    </td>
 
-                        <!-- Index -->
-                            <td class="txt_right">
-                                {{ fn_formatNumber( item.INDEX_RATE ) }}
-                                <br />
-                                <div  v-if='fn_formatNumber( item.INDEX_RATE ) != null && fn_formatNumber( item.INDEX_RATE ) != ""'>
-                                    <span :class='( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 > 0 ? "text_S text_red" : "text_S text_blue" '>
-                                        {{ fn_formatNumber( Number( item.INDEX_RATE ) - 1000 ) }} 
-                                        ( {{ fn_formatNumber( ( ( Number( item.INDEX_RATE ) - 1000 ) / 1000) * 100 ) + " %" }} )
-                                    </span>
-                                </div>
-                            </td>
+                                    <!-- 버튼 영역 -->
+                                    <td>
+                                        <button
+                                            name="btn1"
+                                            :class="'simul_icon1 ' + ( item.grp_yn == '0' ?  '' : 'disable' )"
+                                        ></button>
+                                        <button
+                                            name="btn2"
+                                            :class="'simul_icon2 ' + ( ( item.grp_yn == '1' || ( item.grp_yn == '0' && item.result_daily_yn == '1' ) ) ?  '' : 'disable' )"
+                                        ></button>
 
-                        <!-- Last modified -->
-                            <td  class="txt_right">
-                                {{ item.fmt_upd_time }}
-                                <input  type="hidden"   name="strParam"    :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index } )" />
-                            </td>
+                                        <!-- 그룹인 경우 -->
+                                        <v-menu bottom left v-if="item.grp_yn == '1'">
+                                            <template v-slot:activator="{ on }">
+                                                <button
+                                                    name="btn4"
+                                                    class="btn_icon v-icon material-icons"
+                                                    v-on="on"
+                                                >more_horiz</button>
+                                            </template>
 
-                        <!-- 버튼 영역 -->
-                            <td>
-                                <button name="btn1" :class="'simul_icon1 ' + ( item.grp_yn == '0' ?  '' : 'disable' )"></button>
-                                <button name="btn2" :class="'simul_icon2 ' + ( ( item.grp_yn == '1' || ( item.grp_yn == '0' && item.result_daily_yn == '1' ) ) ?  '' : 'disable' )"></button>
-
-
-                            <!-- 그룹인 경우 -->
-                                <v-menu bottom left v-if="item.grp_yn == '1'" >
-
-                                    <template v-slot:activator="{ on }">
-                                        <button name="btn4" class="btn_icon v-icon material-icons" v-on="on" >more_horiz</button>
-                                    </template>
-
-                                    <ul class="more_menu_w">
-                                        <li @click="fn_modify_group( 'delete', item, index )"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
-                                        <li @click="fn_show_rename( item, index, 'true' )"><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
-                                        <li @click="fn_copy_scenario( item, index )"><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
-                                        <!--li @click="">menu2</li>
-                                        <li @click="">menu3</li-->
-                                    </ul>
-                                </v-menu>
-
-
-                            <!-- 시나리오인 경우 -->
-                                <v-menu bottom left v-if="item.grp_yn == '0'" :close-on-content-click="false" v-model="item.menu" ref="ref_more_open">
-                                    
-                                    <template v-slot:activator="{ on }">
-                                        <button name="btn3" class="btn_icon v-icon material-icons" v-on="on" @click="fn_show_more( item, index )">more_horiz</button>
-                                    </template>
-
-                                    <ul class="more_menu_w">
-                                        <li @click="fn_simul_delete( item, index );item.menu = false"><v-icon class="simul_more_btn">delete</v-icon> 삭제</li> 
-                                        <li @click="fn_show_rename( item, index, 'true' ); item.menu = false"><v-icon class="simul_more_btn">create</v-icon> 이름변경</li>
-
-                                        <li @click="fn_show_change_group_list( item, index );"><v-icon class="simul_more_btn">restore_page</v-icon> 그룹변경</li>
-
-                                        <!--그룹명 팝업창---->
-                                        <v-card v-if="showGrpChange">
-                                            <ul class="simul_group_modi_pop">
-                                                <li @click.stop="" v-if="!arr_group_list || arr_group_list.length == 0">
-                                                    변경할 그룹정보가 없습니다.
-                                                </li>                          
-                        
-                                                <li @click="fn_change_group( item_grp, index_grp, item )" v-for="( item_grp, index_grp ) in arr_group_list" :key="index_grp">
-                                                    {{ item_grp.grp_name }}
+                                            <ul class="more_menu_w">
+                                                <li
+                                                    @click="fn_modify_group( 'delete', item, index )"
+                                                >
+                                                    <v-icon class="simul_more_btn">delete</v-icon>삭제
                                                 </li>
+                                                <li @click="fn_show_rename( item, index, 'true' )">
+                                                    <v-icon class="simul_more_btn">create</v-icon>이름변경
+                                                </li>
+                                                <li @click="fn_copy_scenario( item, index )">
+                                                    <v-icon class="simul_more_btn">file_copy</v-icon>복사하기
+                                                </li>
+                                                <!--li @click="">menu2</li>
+                                                <li @click="">menu3</li-->
                                             </ul>
-                                        </v-card>
-                                        <!--그룹명 팝업창end--->
+                                        </v-menu>
 
-                                        <li @click="fn_copy_scenario( item, index )"><v-icon class="simul_more_btn">file_copy</v-icon> 복사하기</li>
-                                        <li @click=""><v-icon class="simul_more_btn">share</v-icon> 공유하기</li>
-                                        <!--공유하기 팝업창--->
-                                            <v-card style="width:500px;" v-if="item.show_share">
-                                                <h5>
-                                                    <v-card-title>공유하기<span class="pl-0"></span>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn icon @click="arr_user_list_for_share=[];item.show_share=false">
-                                                    <v-icon>close</v-icon>
-                                                </v-btn>
-                                                     </v-card-title>
-                                                 </h5>
-                                                 <!--1table-->
-                                                 <div class="simul_share_search"><v-text-field v-model="v_txt_search"  @keyup.stop="fn_filterAllData()" append-icon="search" label="Search" single-line hide-details></v-text-field></div>
-                    <div class="incode_pop">
-                        <h6>공유자 선택</h6>
-                        <div class="table-box-wrap" >
-                            <div class="table-box" style="max-height:200px;">
-                                <table class="tbl_type ver8 v2">
-                                    <caption>헤더 고정 테이블</caption>
-                                    <colgroup>
-                                        <col width="10%" />
-                                        <col width="30%" />
-                                        <col width="60%" />
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th style="width:10%"></th>
-                                            <th style="width:30%" class="txt_left">이름</th>
-                                            <th style="width:60%" class="txt_left">이메일</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="( item_for_share, index_for_share ) in arr_user_list_for_share" :key="index_for_share">
-                                            <td class="txt_left">
-                                                <v-checkbox v-model="item_for_share.checked_for_share"  
-                                                            :name="'chk_share_' + index_for_share" 
-                                                            :value="fn_set_checked_share_value( item_for_share )" 
-                                                            color="primary"></v-checkbox>
-                                            </td>
+                                        <!-- 시나리오인 경우 -->
+                                        <v-menu
+                                            bottom
+                                            left
+                                            v-if="item.grp_yn == '0'"
+                                            :close-on-content-click="false"
+                                            v-model="item.menu"
+                                            ref="ref_more_open"
+                                        >
+                                            <template v-slot:activator="{ on }">
+                                                <button
+                                                    name="btn3"
+                                                    class="btn_icon v-icon material-icons"
+                                                    v-on="on"
+                                                    @click="fn_show_more( item, index )"
+                                                >more_horiz</button>
+                                            </template>
 
-                                            <td class="txt_left">{{ item_for_share.name }}</td>
-                                            <td class="txt_left">{{ item_for_share.email }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                        </div>
-                        <div class="text-xs-center">
-                            <v-btn depressed small color="primary" @click.stop="fn_apply_share_user_in_arr( item, index )">공유하기</v-btn>
-                        </div>
+                                            <ul class="more_menu_w">
+                                                <li
+                                                    @click="fn_simul_delete( item, index );item.menu = false"
+                                                >
+                                                    <v-icon class="simul_more_btn">delete</v-icon>삭제
+                                                </li>
+                                                <li
+                                                    @click="fn_show_rename( item, index, 'true' ); item.menu = false"
+                                                >
+                                                    <v-icon class="simul_more_btn">create</v-icon>이름변경
+                                                </li>
+
+                                                <li
+                                                    @click="fn_show_change_group_list( item, index );"
+                                                >
+                                                    <v-icon class="simul_more_btn">restore_page</v-icon>그룹변경
+                                                </li>
+
+                                                <!--그룹명 팝업창---->
+                                                <v-card v-if="showGrpChange">
+                                                    <ul class="simul_group_modi_pop">
+                                                        <li
+                                                            @click.stop
+                                                            v-if="!arr_group_list || arr_group_list.length == 0"
+                                                        >변경할 그룹정보가 없습니다.</li>
+
+                                                        <li
+                                                            @click="fn_change_group( item_grp, index_grp, item )"
+                                                            v-for="( item_grp, index_grp ) in arr_group_list"
+                                                            :key="index_grp"
+                                                        >{{ item_grp.grp_name }}</li>
+                                                    </ul>
+                                                </v-card>
+                                                <!--그룹명 팝업창end--->
+
+                                                <li @click="fn_copy_scenario( item, index )">
+                                                    <v-icon class="simul_more_btn">file_copy</v-icon>복사하기
+                                                </li>
+                                                <li @click="">
+                                                    <v-icon class="simul_more_btn">share</v-icon>공유하기
+                                                </li>
+                                                <!--공유하기 팝업창--->
+                                                <v-card style="width:500px;" v-if="item.show_share">
+                                                    <h5>
+                                                        <v-card-title>
+                                                            공유하기
+                                                            <span class="pl-0"></span>
+                                                            <v-spacer></v-spacer>
+                                                            <v-btn
+                                                                icon
+                                                                @click="arr_user_list_for_share=[];item.show_share=false"
+                                                            >
+                                                                <v-icon>close</v-icon>
+                                                            </v-btn>
+                                                        </v-card-title>
+                                                    </h5>
+                                                    <!--1table-->
+                                                    <div class="simul_share_search">
+                                                        <v-text-field
+                                                            v-model="v_txt_search"
+                                                            @keyup.stop="fn_filterAllData()"
+                                                            append-icon="search"
+                                                            label="Search"
+                                                            single-line
+                                                            hide-details
+                                                        ></v-text-field>
+                                                    </div>
+                                                    <div class="incode_pop">
+                                                        <h6>공유자 선택</h6>
+                                                        <div class="table-box-wrap">
+                                                            <div
+                                                                class="table-box"
+                                                                style="max-height:200px;"
+                                                            >
+                                                                <table class="tbl_type ver8 v2">
+                                                                    <caption>헤더 고정 테이블</caption>
+                                                                    <colgroup>
+                                                                        <col width="10%" />
+                                                                        <col width="30%" />
+                                                                        <col width="60%" />
+                                                                    </colgroup>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:10%"></th>
+                                                                            <th
+                                                                                style="width:30%"
+                                                                                class="txt_left"
+                                                                            >이름</th>
+                                                                            <th
+                                                                                style="width:60%"
+                                                                                class="txt_left"
+                                                                            >이메일</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr
+                                                                            v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
+                                                                            :key="index_for_share"
+                                                                        >
+                                                                            <td class="txt_left">
+                                                                                <v-checkbox
+                                                                                    v-model="item_for_share.checked_for_share"
+                                                                                    :name="'chk_share_' + index_for_share"
+                                                                                    :value="fn_set_checked_share_value( item_for_share )"
+                                                                                    color="primary"
+                                                                                ></v-checkbox>
+                                                                            </td>
+
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_for_share.name }}</td>
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_for_share.email }}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-xs-center">
+                                                            <v-btn
+                                                                depressed
+                                                                small
+                                                                color="primary"
+                                                                @click.stop="fn_apply_share_user_in_arr( item, index )"
+                                                            >공유하기</v-btn>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--2table-->
+                                                    <div class="incode_pop pt-3">
+                                                        <h6 class="pb-1">공유자 선택해제</h6>
+                                                        <div class="table-box-wrap">
+                                                            <div
+                                                                class="table-box"
+                                                                style="max-height:200px;"
+                                                            >
+                                                                <table class="tbl_type ver8 v2">
+                                                                    <caption>헤더 고정 테이블</caption>
+                                                                    <colgroup>
+                                                                        <col width="20%" />
+                                                                        <col width="50%" />
+                                                                        <col width="30%" />
+                                                                    </colgroup>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:20%">이름</th>
+                                                                            <th
+                                                                                style="width:50%"
+                                                                                class="txt_left"
+                                                                            >이메일</th>
+                                                                            <th
+                                                                                style="width:30%"
+                                                                                class="txt_left"
+                                                                            ></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr
+                                                                            v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
+                                                                        >
+                                                                            <td
+                                                                                class="txt_left"
+                                                                                colspan="3"
+                                                                            >공유된 공유자가 없습니다.</td>
+                                                                        </tr>
+
+                                                                        <tr
+                                                                            v-for="( item_shared, index_shared ) in arr_user_list_shared"
+                                                                            :key="index_shared"
+                                                                        >
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_shared.name }}</td>
+                                                                            <td
+                                                                                class="txt_left"
+                                                                            >{{ item_shared.email }}</td>
+                                                                            <td class="txt_left">
+                                                                                <v-btn
+                                                                                    depressed
+                                                                                    outline
+                                                                                    small
+                                                                                    color="primary"
+                                                                                    @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
+                                                                                >공유해제</v-btn>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </v-card>
+                                                <!--공유하기 팝업창 end--->
+                                            </ul>
+                                        </v-menu>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
-
-                    <!--2table-->
-                    <div  class="incode_pop pt-3" >
-                        <h6 class="pb-1">공유자 선택해제</h6>
-                        <div class="table-box-wrap">
-                            <div class="table-box" style="max-height:200px;">
-                                <table class="tbl_type ver8 v2">
-                                    <caption>헤더 고정 테이블</caption>
-                                    <colgroup>
-                                        <col width="20%" />
-                                        <col width="50%" />
-                                        <col width="30%" />
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th style="width:20%">이름</th>
-                                            <th style="width:50%" class="txt_left">이메일</th>
-                                            <th style="width:30%" class="txt_left"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        <tr v-if="!arr_user_list_shared || arr_user_list_shared.length == 0">
-                                            <td class="txt_left" colspan="3">공유된 공유자가 없습니다.</td>
-                                        </tr>
-
-                                        <tr v-for="( item_shared, index_shared ) in arr_user_list_shared" :key="index_shared">
-                                            <td class="txt_left">{{ item_shared.name }}</td>
-                                            <td class="txt_left">{{ item_shared.email }}</td>
-                                            <td class="txt_left"><v-btn depressed outline small color="primary" @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )">공유해제</v-btn></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-
-                                            </v-card>
-                                        <!--공유하기 팝업창 end--->
-                                    </ul>
-                                </v-menu>
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-            </div>
-           </div>
-                
+                </div>
             </v-card>
         </v-flex>
 
         <v-flex>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>        
+        </v-flex>
     </v-layout>
 </template>
 
@@ -1813,8 +2013,6 @@ export default {
                     return  typeof o.checked_for_share != "undefined" && o.checked_for_share != "";
                 });
 
-console.log( "vtemp", temp );                
-
                 if( temp.length == 0 ) {
 
                     if ( await vm.$refs.confirm2.open(
@@ -1832,7 +2030,7 @@ console.log( "vtemp", temp );
                         return JSON.parse(o.checked_for_share); 
                     });
 
-console.log( "vm.arr_checked_for_share", vm.arr_checked_for_share );
+
                     if( !vm.arr_checked_for_share || vm.arr_checked_for_share.length == 0 ) {
 
                         if ( await vm.$refs.confirm2.open(
