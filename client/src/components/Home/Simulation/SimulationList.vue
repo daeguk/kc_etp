@@ -95,6 +95,7 @@
                                             :name="'chk_' + index"
                                             :value="fn_set_checked_value( item )"
                                             @click.stop="fn_check_data( item, index )"
+                                            :disabled="item.grp_yn=='1'"
                                         ></v-checkbox>
                                     </td>
 
