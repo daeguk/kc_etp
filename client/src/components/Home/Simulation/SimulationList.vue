@@ -238,21 +238,26 @@
 
                                 <!-- 버튼 영역 start -->
                                     <td>
-
+                                        <div class="tooltip">
                                         <button
                                             name="btn1"
                                             :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' ) ?  '' : 'disable' )"
 
                                             @click.stop="fn_show_simul_modify( item, index )"
                                         ></button>
+                                        <span class="tooltiptext" style="width:70px;">설정하기</span></div>
+
+                                        <div class="tooltip">
                                         <button
                                             name="btn2"
                                             :class="'simul_icon2 ' + ( ( item.grp_yn == '1' || ( item.grp_yn == '0' && item.result_daily_yn == '1' ) ) ?  '' : 'disable' )"
 
                                             @click.stop="fn_show_simul_detail( item, index )"
                                         ></button>
+                                        <span class="tooltiptext" style="width:70px;">결과보기</span></div>
 
                                         <!-- 그룹인 경우 -->
+                                        <div class="tooltip">
                                         <v-menu
                                             bottom
                                             left
@@ -457,13 +462,14 @@
                                                 </v-card>
                                         </v-menu>
                                     </li> 공유하기 팝업 띄우기end-->
-
-
-
-                                            </ul>
+                                    
+                                    </ul>
                                         </v-menu>
+                                        <span class="tooltiptext" style="width:50px;">more</span></div>
+
 
                                         <!-- 시나리오인 경우 -->
+                                        <div class='tooltip'>
                                         <v-menu
                                             bottom
                                             left
@@ -686,6 +692,7 @@
                                             </ul>
 
                                         </v-menu>
+                                        <span class="tooltiptext" style="width:50px;">more</span></div>
                                     </td>
                                 <!-- 버튼 영역 end -->
 
