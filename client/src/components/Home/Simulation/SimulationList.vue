@@ -302,10 +302,8 @@
 
 
                                                             <!--공유하기 팝업창--->
-                                                            <v-card
-                                                                style="width:500px; max-height:350px"
-                                                                flat
-                                                            >
+                                                            <div style="width:500px; max-height:350px">
+                                                            <v-card flat>
                                                                 <h5>
                                                                     <v-card-title class="ver2">
                                                                         공유하기
@@ -481,6 +479,7 @@
                                                                     </div>
                                                                 </div>
                                                             </v-card>
+                                                            </div>
                                                         </v-menu>
                                                     </li>
                                                     <!-- 공유하기 팝업 띄우기end-->
