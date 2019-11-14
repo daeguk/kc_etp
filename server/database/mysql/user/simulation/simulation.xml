@@ -1546,8 +1546,17 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   '*'                 /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.scen_cd               =   #{grp_cd}           /* 시나리오코드 */
            AND  tm_simul_mast.grp_yn                =   '1'                 /* 그룹여부 */
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+                /* 그룹변경이 있는 경우 */
+           AND  tm_simul_mast.scen_cd               =   #{prev_grp_cd}      /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+                /* 그룹변경이 없는 경우 */
+           AND  tm_simul_mast.scen_cd               =   #{grp_cd}           /* 시나리오코드 */
+        </if>           
 
     </select>
 
@@ -1674,8 +1683,15 @@
 
          WHERE  1 = 1
 
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_share.grp_cd           =   #{prev_grp_cd}
+           AND  tm_simul_share.scen_cd          =   #{prev_scen_cd}
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
            AND  tm_simul_share.grp_cd           =   #{grp_cd}
            AND  tm_simul_share.scen_cd          =   #{scen_cd}
+        </if>
 
          ORDER  BY      tm_simul_share.email
 
@@ -1699,8 +1715,16 @@
 
          WHERE  1 = 1
 
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_share.grp_cd           =   #{prev_upper_grp_cd}
+           AND  tm_simul_share.scen_cd          =   #{prev_upper_scen_cd}
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
            AND  tm_simul_share.grp_cd           =   #{upper_grp_cd}
            AND  tm_simul_share.scen_cd          =   #{upper_scen_cd}
+        </if>
 
          ORDER  BY      tm_simul_share.email
 
@@ -1838,6 +1862,44 @@
                 ,   upd_time                =   now()                           /* 수정시간 */
 
     </update>
+
+    <!--
+    *   그룹변경인 경우 수정할 공유정보 설정한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyShareUserInArrByChangeGroup">
+
+        UPDATE  /* simulation.modifyShareUserInArrByChangeGroup      그룹변경인 경우 수정할 공유정보 설정한다. */
+        
+                tm_simul_share
+        
+         INNER  JOIN    (
+                            <foreach    collection="arr_update_list"   item="data"     separator=" UNION ALL" >
+                            <![CDATA[              
+                                SELECT      #{data.prev_grp_cd}                 AS  prev_grp_cd     /* 그룹코드(상위코드) */
+                                        ,   #{data.prev_scen_cd}                AS  prev_scen_cd    /* 시나리오 코드 */
+                                        ,   #{data.grp_cd}                      AS  grp_cd          /* 그룹코드(상위코드) */
+                                        ,   #{data.scen_cd}                     AS  scen_cd         /* 시나리오 코드 */
+                                        ,   #{data.email}                       AS  email           /* 이메일 */
+
+                                FROM  DUAL
+                            ]]>
+                            </foreach>
+                        )       base
+                        
+                  ON            1 = 1
+
+                        AND     tm_simul_share.grp_cd       =   base.prev_grp_cd                    /* 그룹코드(상위코드) */
+                        AND     tm_simul_share.scen_cd      =   base.prev_scen_cd                   /* 시나리오 코드 */
+                        AND     tm_simul_share.email        =   base.email                          /* 이메일 */                        
+
+           SET      tm_simul_share.grp_cd                   =   #{grp_cd}                           /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                  =   #{scen_cd}                          /* 시나리오 코드 */
+
+                ,   tm_simul_share.upd_id                   =   #{user_id}                          /* 수정자 ID */
+                ,   tm_simul_share.upd_time                 =   now()                               /* 수정시간 */
+
+    </update>    
 
     <!--
     *   공유해제 할 정보를 설정한다.
