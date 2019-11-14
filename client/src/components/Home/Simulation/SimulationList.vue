@@ -283,7 +283,11 @@
 
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
-                                                        <v-menu top >
+                                                        <v-menu 
+                                                            top
+                                                            :close-on-content-click="false" 
+                                                            :value="item.show_share_grp">
+
                                                             <template
                                                                 v-slot:activator="{ on, attrs }"
                                                             >
@@ -311,7 +315,7 @@
                                                                             <v-spacer></v-spacer>
                                                                             <v-btn
                                                                                 icon
-                                                                                @click="arr_user_list_for_share=[];item.show_share_grp=false"
+                                                                                @click="arr_user_list_for_share=[];item.show_share_grp=false;item.menu_grp = false"
                                                                             >
                                                                                 <v-icon>close</v-icon>
                                                                             </v-btn>
@@ -555,7 +559,11 @@
 
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
-                                                        <v-menu top>
+                                                        <v-menu 
+                                                            top
+                                                            :close-on-content-click="false"
+                                                            :value="item.show_share">
+
                                                             <template
                                                                 v-slot:activator="{ on, attrs }"
                                                             >
@@ -586,7 +594,7 @@
                                                                             <v-spacer></v-spacer>
                                                                             <v-btn
                                                                                 icon
-                                                                                @click="arr_user_list_for_share=[];item.show_share=false"
+                                                                                @click="arr_user_list_for_share=[];item.show_share=false;item.menu = false"
                                                                             >
                                                                                 <v-icon>close</v-icon>
                                                                             </v-btn>
@@ -1876,6 +1884,8 @@ export default {
                 return  false;
             }
 
+
+            vm.v_txt_search         =   "";
 
             if( p_gubun == "scen" ) {
                 p_item.show_share     =   !p_item.show_share;
