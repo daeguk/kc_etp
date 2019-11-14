@@ -283,7 +283,7 @@
 
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
-                                                        <v-menu top v-model="item.show_share_grp">
+                                                        <v-menu top >
                                                             <template
                                                                 v-slot:activator="{ on, attrs }"
                                                             >
@@ -302,183 +302,183 @@
 
 
                                                             <!--공유하기 팝업창--->
-                                                            <div style="width:500px; max-height:350px">
-                                                            <v-card flat>
-                                                                <h5>
-                                                                    <v-card-title class="ver2">
-                                                                        공유하기
-                                                                        <span class="pl-0"></span>
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-btn
-                                                                            icon
-                                                                            @click="arr_user_list_for_share=[];item.show_share_grp=false"
-                                                                        >
-                                                                            <v-icon>close</v-icon>
-                                                                        </v-btn>
-                                                                    </v-card-title>
-                                                                </h5>
-
-                                                                <!--1table-->
-                                                                <div class="simul_share_search">
-                                                                    <v-text-field
-                                                                        v-model="v_txt_search"
-                                                                        @keyup.stop="fn_filterAllData()"
-                                                                        append-icon="search"
-                                                                        label="Search"
-                                                                        single-line
-                                                                        hide-details
-                                                                    ></v-text-field>
-                                                                </div>
-                                                                <div class="incode_pop">
-                                                                    <h6>공유자 선택</h6>
-                                                                    <div class="table-box-wrap">
-                                                                        <div
-                                                                            class="table-box"
-                                                                            style="max-height:200px;"
-                                                                        >
-                                                                            <table
-                                                                                class="tbl_type ver8 v2"
+                                                            <div style="width:500px; max-height:350px" v-if="item.show_share_grp">
+                                                                <v-card flat>
+                                                                    <h5>
+                                                                        <v-card-title class="ver2">
+                                                                            공유하기
+                                                                            <span class="pl-0"></span>
+                                                                            <v-spacer></v-spacer>
+                                                                            <v-btn
+                                                                                icon
+                                                                                @click="arr_user_list_for_share=[];item.show_share_grp=false"
                                                                             >
-                                                                                <caption>헤더 고정 테이블</caption>
-                                                                                <colgroup>
-                                                                                    <col
-                                                                                        width="10%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="30%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="60%"
-                                                                                    />
-                                                                                </colgroup>
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th
-                                                                                            style="width:10%"
-                                                                                        ></th>
-                                                                                        <th
-                                                                                            style="width:30%"
-                                                                                            class="txt_left"
-                                                                                        >이름</th>
-                                                                                        <th
-                                                                                            style="width:60%"
-                                                                                            class="txt_left"
-                                                                                        >이메일</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
-                                                                                        :key="index_for_share"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >
-                                                                                            <v-checkbox
-                                                                                                v-model="item_for_share.checked_for_share"
-                                                                                                :name="'chk_share_' + index_for_share"
-                                                                                                :value="fn_set_checked_share_value( item_for_share )"
-                                                                                                color="primary"
-                                                                                            ></v-checkbox>
-                                                                                        </td>
+                                                                                <v-icon>close</v-icon>
+                                                                            </v-btn>
+                                                                        </v-card-title>
+                                                                    </h5>
 
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_for_share.name }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_for_share.email }}</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
+                                                                    <!--1table-->
+                                                                    <div class="simul_share_search">
+                                                                        <v-text-field
+                                                                            v-model="v_txt_search"
+                                                                            @keyup.stop="fn_filterAllData()"
+                                                                            append-icon="search"
+                                                                            label="Search"
+                                                                            single-line
+                                                                            hide-details
+                                                                        ></v-text-field>
+                                                                    </div>
+                                                                    <div class="incode_pop">
+                                                                        <h6>공유자 선택</h6>
+                                                                        <div class="table-box-wrap">
+                                                                            <div
+                                                                                class="table-box"
+                                                                                style="max-height:200px;"
+                                                                            >
+                                                                                <table
+                                                                                    class="tbl_type ver8 v2"
+                                                                                >
+                                                                                    <caption>헤더 고정 테이블</caption>
+                                                                                    <colgroup>
+                                                                                        <col
+                                                                                            width="10%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="30%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="60%"
+                                                                                        />
+                                                                                    </colgroup>
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th
+                                                                                                style="width:10%"
+                                                                                            ></th>
+                                                                                            <th
+                                                                                                style="width:30%"
+                                                                                                class="txt_left"
+                                                                                            >이름</th>
+                                                                                            <th
+                                                                                                style="width:60%"
+                                                                                                class="txt_left"
+                                                                                            >이메일</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr
+                                                                                            v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
+                                                                                            :key="index_for_share"
+                                                                                        >
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >
+                                                                                                <v-checkbox
+                                                                                                    v-model="item_for_share.checked_for_share"
+                                                                                                    :name="'chk_share_' + index_for_share"
+                                                                                                    :value="fn_set_checked_share_value( item_for_share )"
+                                                                                                    color="primary"
+                                                                                                ></v-checkbox>
+                                                                                            </td>
+
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_for_share.name }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_for_share.email }}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-xs-center">
+                                                                            <v-btn
+                                                                                depressed
+                                                                                small
+                                                                                color="primary"
+                                                                                @click.stop="fn_apply_share_user_in_arr( item, index )"
+                                                                            >공유하기</v-btn>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="text-xs-center">
-                                                                        <v-btn
-                                                                            depressed
-                                                                            small
-                                                                            color="primary"
-                                                                            @click.stop="fn_apply_share_user_in_arr( item, index )"
-                                                                        >공유하기</v-btn>
-                                                                    </div>
-                                                                </div>
 
-                                                                <!--2table-->
-                                                                <div class="incode_pop pt-3">
-                                                                    <h6 class="pb-1">공유자 선택해제</h6>
-                                                                    <div class="table-box-wrap">
-                                                                        <div
-                                                                            class="table-box"
-                                                                            style="max-height:200px;"
-                                                                        >
-                                                                            <table
-                                                                                class="tbl_type ver8 v2"
+                                                                    <!--2table-->
+                                                                    <div class="incode_pop pt-3">
+                                                                        <h6 class="pb-1">공유자 선택해제</h6>
+                                                                        <div class="table-box-wrap">
+                                                                            <div
+                                                                                class="table-box"
+                                                                                style="max-height:200px;"
                                                                             >
-                                                                                <caption>헤더 고정 테이블</caption>
-                                                                                <colgroup>
-                                                                                    <col
-                                                                                        width="20%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="50%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="30%"
-                                                                                    />
-                                                                                </colgroup>
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th
-                                                                                            style="width:20%"
-                                                                                        >이름</th>
-                                                                                        <th
-                                                                                            style="width:50%"
-                                                                                            class="txt_left"
-                                                                                        >이메일</th>
-                                                                                        <th
-                                                                                            style="width:30%"
-                                                                                            class="txt_left"
-                                                                                        ></th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                            colspan="3"
-                                                                                        >공유된 공유자가 없습니다.</td>
-                                                                                    </tr>
-
-                                                                                    <tr
-                                                                                        v-for="( item_shared, index_shared ) in arr_user_list_shared"
-                                                                                        :key="index_shared"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_shared.name }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_shared.email }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
+                                                                                <table
+                                                                                    class="tbl_type ver8 v2"
+                                                                                >
+                                                                                    <caption>헤더 고정 테이블</caption>
+                                                                                    <colgroup>
+                                                                                        <col
+                                                                                            width="20%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="50%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="30%"
+                                                                                        />
+                                                                                    </colgroup>
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th
+                                                                                                style="width:20%"
+                                                                                            >이름</th>
+                                                                                            <th
+                                                                                                style="width:50%"
+                                                                                                class="txt_left"
+                                                                                            >이메일</th>
+                                                                                            <th
+                                                                                                style="width:30%"
+                                                                                                class="txt_left"
+                                                                                            ></th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr
+                                                                                            v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
                                                                                         >
-                                                                                            <v-btn
-                                                                                                depressed
-                                                                                                outline
-                                                                                                small
-                                                                                                color="primary"
-                                                                                                @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
-                                                                                            >공유해제</v-btn>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                                colspan="3"
+                                                                                            >공유된 공유자가 없습니다.</td>
+                                                                                        </tr>
+
+                                                                                        <tr
+                                                                                            v-for="( item_shared, index_shared ) in arr_user_list_shared"
+                                                                                            :key="index_shared"
+                                                                                        >
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_shared.name }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_shared.email }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >
+                                                                                                <v-btn
+                                                                                                    depressed
+                                                                                                    outline
+                                                                                                    small
+                                                                                                    color="primary"
+                                                                                                    @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
+                                                                                                >공유해제</v-btn>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </v-card>
+                                                                </v-card>
                                                             </div>
                                                         </v-menu>
                                                     </li>
@@ -555,7 +555,7 @@
 
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
-                                                        <v-menu top v-model="item.show_share">
+                                                        <v-menu top>
                                                             <template
                                                                 v-slot:activator="{ on, attrs }"
                                                             >
@@ -574,185 +574,187 @@
 
 
                                                             <!--공유하기 팝업창--->
-                                                            <v-card
-                                                                style="width:500px; max-height:350px"
-                                                                flat
-                                                            >
-                                                                <h5>
-                                                                    <v-card-title class="ver2">
-                                                                        공유하기
-                                                                        <span class="pl-0"></span>
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-btn
-                                                                            icon
-                                                                            @click="arr_user_list_for_share=[];item.show_share=false"
-                                                                        >
-                                                                            <v-icon>close</v-icon>
-                                                                        </v-btn>
-                                                                    </v-card-title>
-                                                                </h5>
-
-                                                                <!--1table-->
-                                                                <div class="simul_share_search">
-                                                                    <v-text-field
-                                                                        v-model="v_txt_search"
-                                                                        @keyup.stop="fn_filterAllData()"
-                                                                        append-icon="search"
-                                                                        label="Search"
-                                                                        single-line
-                                                                        hide-details
-                                                                    ></v-text-field>
-                                                                </div>
-                                                                <div class="incode_pop">
-                                                                    <h6>공유자 선택</h6>
-                                                                    <div class="table-box-wrap">
-                                                                        <div
-                                                                            class="table-box"
-                                                                            style="max-height:200px;"
-                                                                        >
-                                                                            <table
-                                                                                class="tbl_type ver8 v2"
+                                                            <div style="width:500px; max-height:350px" v-if="item.show_share">
+                                                                <v-card
+                                                                    style="width:500px; max-height:350px"
+                                                                    flat
+                                                                >
+                                                                    <h5>
+                                                                        <v-card-title class="ver2">
+                                                                            공유하기
+                                                                            <span class="pl-0"></span>
+                                                                            <v-spacer></v-spacer>
+                                                                            <v-btn
+                                                                                icon
+                                                                                @click="arr_user_list_for_share=[];item.show_share=false"
                                                                             >
-                                                                                <caption>헤더 고정 테이블</caption>
-                                                                                <colgroup>
-                                                                                    <col
-                                                                                        width="10%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="30%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="60%"
-                                                                                    />
-                                                                                </colgroup>
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th
-                                                                                            style="width:10%"
-                                                                                        ></th>
-                                                                                        <th
-                                                                                            style="width:30%"
-                                                                                            class="txt_left"
-                                                                                        >이름</th>
-                                                                                        <th
-                                                                                            style="width:60%"
-                                                                                            class="txt_left"
-                                                                                        >이메일</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
-                                                                                        :key="index_for_share"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >
-                                                                                            <v-checkbox
-                                                                                                v-model="item_for_share.checked_for_share"
-                                                                                                :name="'chk_share_' + index_for_share"
-                                                                                                :value="fn_set_checked_share_value( item_for_share )"
-                                                                                                color="primary"
-                                                                                            ></v-checkbox>
-                                                                                        </td>
+                                                                                <v-icon>close</v-icon>
+                                                                            </v-btn>
+                                                                        </v-card-title>
+                                                                    </h5>
 
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_for_share.name }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_for_share.email }}</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
+                                                                    <!--1table-->
+                                                                    <div class="simul_share_search">
+                                                                        <v-text-field
+                                                                            v-model="v_txt_search"
+                                                                            @keyup.stop="fn_filterAllData()"
+                                                                            append-icon="search"
+                                                                            label="Search"
+                                                                            single-line
+                                                                            hide-details
+                                                                        ></v-text-field>
+                                                                    </div>
+                                                                    <div class="incode_pop">
+                                                                        <h6>공유자 선택</h6>
+                                                                        <div class="table-box-wrap">
+                                                                            <div
+                                                                                class="table-box"
+                                                                                style="max-height:200px;"
+                                                                            >
+                                                                                <table
+                                                                                    class="tbl_type ver8 v2"
+                                                                                >
+                                                                                    <caption>헤더 고정 테이블</caption>
+                                                                                    <colgroup>
+                                                                                        <col
+                                                                                            width="10%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="30%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="60%"
+                                                                                        />
+                                                                                    </colgroup>
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th
+                                                                                                style="width:10%"
+                                                                                            ></th>
+                                                                                            <th
+                                                                                                style="width:30%"
+                                                                                                class="txt_left"
+                                                                                            >이름</th>
+                                                                                            <th
+                                                                                                style="width:60%"
+                                                                                                class="txt_left"
+                                                                                            >이메일</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr
+                                                                                            v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
+                                                                                            :key="index_for_share"
+                                                                                        >
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >
+                                                                                                <v-checkbox
+                                                                                                    v-model="item_for_share.checked_for_share"
+                                                                                                    :name="'chk_share_' + index_for_share"
+                                                                                                    :value="fn_set_checked_share_value( item_for_share )"
+                                                                                                    color="primary"
+                                                                                                ></v-checkbox>
+                                                                                            </td>
+
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_for_share.name }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_for_share.email }}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-xs-center">
+                                                                            <v-btn
+                                                                                depressed
+                                                                                small
+                                                                                color="primary"
+                                                                                @click.stop="fn_apply_share_user_in_arr( item, index )"
+                                                                            >공유하기</v-btn>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="text-xs-center">
-                                                                        <v-btn
-                                                                            depressed
-                                                                            small
-                                                                            color="primary"
-                                                                            @click.stop="fn_apply_share_user_in_arr( item, index )"
-                                                                        >공유하기</v-btn>
-                                                                    </div>
-                                                                </div>
 
-                                                                <!--2table-->
-                                                                <div class="incode_pop pt-3">
-                                                                    <h6 class="pb-1">공유자 선택해제</h6>
-                                                                    <div class="table-box-wrap">
-                                                                        <div
-                                                                            class="table-box"
-                                                                            style="max-height:200px;"
-                                                                        >
-                                                                            <table
-                                                                                class="tbl_type ver8 v2"
+                                                                    <!--2table-->
+                                                                    <div class="incode_pop pt-3">
+                                                                        <h6 class="pb-1">공유자 선택해제</h6>
+                                                                        <div class="table-box-wrap">
+                                                                            <div
+                                                                                class="table-box"
+                                                                                style="max-height:200px;"
                                                                             >
-                                                                                <caption>헤더 고정 테이블</caption>
-                                                                                <colgroup>
-                                                                                    <col
-                                                                                        width="20%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="50%"
-                                                                                    />
-                                                                                    <col
-                                                                                        width="30%"
-                                                                                    />
-                                                                                </colgroup>
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th
-                                                                                            style="width:20%"
-                                                                                        >이름</th>
-                                                                                        <th
-                                                                                            style="width:50%"
-                                                                                            class="txt_left"
-                                                                                        >이메일</th>
-                                                                                        <th
-                                                                                            style="width:30%"
-                                                                                            class="txt_left"
-                                                                                        ></th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                            colspan="3"
-                                                                                        >공유된 공유자가 없습니다.</td>
-                                                                                    </tr>
-
-                                                                                    <tr
-                                                                                        v-for="( item_shared, index_shared ) in arr_user_list_shared"
-                                                                                        :key="index_shared"
-                                                                                    >
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_shared.name }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
-                                                                                        >{{ item_shared.email }}</td>
-                                                                                        <td
-                                                                                            class="txt_left"
+                                                                                <table
+                                                                                    class="tbl_type ver8 v2"
+                                                                                >
+                                                                                    <caption>헤더 고정 테이블</caption>
+                                                                                    <colgroup>
+                                                                                        <col
+                                                                                            width="20%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="50%"
+                                                                                        />
+                                                                                        <col
+                                                                                            width="30%"
+                                                                                        />
+                                                                                    </colgroup>
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th
+                                                                                                style="width:20%"
+                                                                                            >이름</th>
+                                                                                            <th
+                                                                                                style="width:50%"
+                                                                                                class="txt_left"
+                                                                                            >이메일</th>
+                                                                                            <th
+                                                                                                style="width:30%"
+                                                                                                class="txt_left"
+                                                                                            ></th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr
+                                                                                            v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
                                                                                         >
-                                                                                            <v-btn
-                                                                                                depressed
-                                                                                                outline
-                                                                                                small
-                                                                                                color="primary"
-                                                                                                @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
-                                                                                            >공유해제</v-btn>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                                colspan="3"
+                                                                                            >공유된 공유자가 없습니다.</td>
+                                                                                        </tr>
+
+                                                                                        <tr
+                                                                                            v-for="( item_shared, index_shared ) in arr_user_list_shared"
+                                                                                            :key="index_shared"
+                                                                                        >
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_shared.name }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >{{ item_shared.email }}</td>
+                                                                                            <td
+                                                                                                class="txt_left"
+                                                                                            >
+                                                                                                <v-btn
+                                                                                                    depressed
+                                                                                                    outline
+                                                                                                    small
+                                                                                                    color="primary"
+                                                                                                    @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
+                                                                                                >공유해제</v-btn>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </v-card>
+                                                                </v-card>
+                                                            </div>
                                                         </v-menu>
                                                     </li>
                                                     <!-- 공유하기 팝업 띄우기end-->
