@@ -318,7 +318,7 @@ export default {
                             var v_arr_show_columnDef    =   [];
 
 
-                            v_daily_tr01_html       =   `<th class="txt_left"  width="100" rowspan="2">일자</th>`;
+                            v_daily_tr01_html       =   `<th class="txt_center"  width="100" rowspan="2">일자</th>`;
                             v_arr_show_column.push( { "data": "fmt_F12506"  , "orderable": false } );
 
                             if( vm.bm_daily_header != 'BM (N/A)' ) {
@@ -329,7 +329,7 @@ export default {
 
                                 vm.arr_checked.push( true );
 
-                                v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + item.scen_name + '</th>';
+                                v_daily_tr01_html   +=  '<th class="txt_center" colspan="2" width="180">' + item.scen_name + '</th>';
 
                                 v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
                                 v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
@@ -365,7 +365,7 @@ export default {
                             });
 
 
-                            v_daily_tr01_html   +=  '<th class="txt_right" colspan="2" width="180">' + vm.bm_daily_header + '</th>';
+                            v_daily_tr01_html   +=  '<th class="txt_center" colspan="2" width="180">' + vm.bm_daily_header + '</th>';
 
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">지수</th>';
                             v_daily_tr02_html   +=  '<th class="txt_right" width="90">등락</th>';
