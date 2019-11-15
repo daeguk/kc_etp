@@ -70,7 +70,8 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                     args: [fileName]
                 };
                     
-                
+                log.debug("[PYTHON] 시작");
+
                 PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
                     if (err) {
                         log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
@@ -87,7 +88,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                         });
                     }
                 });
-
+                log.debug("[PYTHON] 완료");
             }else{
                 log.debug( "파일 write 중 오류가 발생되었습니다.", e );
                 resolve1( { result : false } );
