@@ -30,7 +30,6 @@
 
                     <span class="btn_r">
                         <v-menu 
-                            bottom
                             :close-on-content-click="false"
                             :value="v_item.show_share">
 
@@ -56,7 +55,6 @@
                             <div style="width:500px; max-height:350px" v-if="v_item.show_share==true">
 
                                 <v-card
-                                    style="width:500px; max-height:350px"
                                     flat
                                 >
                                     <h5>

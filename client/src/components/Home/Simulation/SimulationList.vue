@@ -285,7 +285,6 @@
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
                                                         <v-menu 
-                                                            top
                                                             :close-on-content-click="false" 
                                                             :value="item.show_share_grp">
 
@@ -307,7 +306,7 @@
 
 
                                                             <!--공유하기 팝업창--->
-                                                            <div style="width:500px; max-height:350px" v-if="item.show_share_grp">
+                                                            <div style="width:500px; max-height:650px" v-if="item.show_share_grp">
                                                                 <v-card flat>
                                                                     <h5>
                                                                         <v-card-title class="ver2">
@@ -561,7 +560,6 @@
                                                     <!--공유하기 팝업 띄우기 -->
                                                     <li>
                                                         <v-menu 
-                                                            top
                                                             :close-on-content-click="false"
                                                             :value="item.show_share">
 
@@ -585,7 +583,6 @@
                                                             <!--공유하기 팝업창--->
                                                             <div style="width:500px; max-height:350px" v-if="item.show_share">
                                                                 <v-card
-                                                                    style="width:500px; max-height:350px"
                                                                     flat
                                                                 >
                                                                     <h5>
@@ -1793,7 +1790,10 @@ export default {
 
             param.prev_grp_cd   =   p_now_item.grp_cd;
             param.prev_scen_cd  =   p_now_item.scen_cd;
+            param.prev_grp_yn   =   p_now_item.grp_yn;
+
             param.grp_cd        =   p_item.grp_cd;
+            param.grp_yn        =   p_item.grp_yn;
         
 
             return  await new Promise(function(resolve, reject) {
