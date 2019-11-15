@@ -85,10 +85,11 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                             ,   jsonFileName : jsonFileName
                             ,   inputData : JSON.stringify(analyzeList)
                             ,   results : results 
-                        });
+                        });                        
+                        log.debug("[PYTHON] 완료");
                     }
                 });
-                log.debug("[PYTHON] 완료");
+                
             }else{
                 log.debug( "파일 write 중 오류가 발생되었습니다.", e );
                 resolve1( { result : false } );
