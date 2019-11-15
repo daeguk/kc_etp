@@ -1,4 +1,4 @@
-<!--°øÀ¯ÇÏ±â ÆË¾÷ ¶ç¿ì±â -->
+<!--ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½Ë¾ï¿½ ï¿½ï¿½ï¿½ï¿½ -->
                                                     <li>
                                                         <v-dialog v-model="dialog1"
                                                             :value="item.show_share" width="500px">
@@ -15,19 +15,19 @@
                                                                 >
                                                                     <v-icon
                                                                         class="simul_more_btn"
-                                                                    >share</v-icon>°øÀ¯ÇÏ±â
+                                                                    >share</v-icon>ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
                                                                 </v-btn>
                                                             </template>
 
 
-                                                            <!--°øÀ¯ÇÏ±â ÆË¾÷Ã¢--->
-                                                            <div style="width:500px; max-height:350px" v-if="item.show_share">
+                                                            <!--ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½Ë¾ï¿½Ã¢--->
+                                                            <div v-if="item.show_share">
                                                                 <v-card
                                                                     flat
                                                                 >
                                                                     <h5>
                                                                         <v-card-title class="ver2">
-                                                                            °øÀ¯ÇÏ±â
+                                                                            ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
                                                                             <span class="pl-0"></span>
                                                                             <v-spacer></v-spacer>
                                                                             <v-btn
@@ -51,7 +51,7 @@
                                                                         ></v-text-field>
                                                                     </div>
                                                                     <div class="incode_pop">
-                                                                        <h6>°øÀ¯ÀÚ ¼±ÅÃ</h6>
+                                                                        <h6>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½</h6>
                                                                         <div class="table-box-wrap">
                                                                             <div
                                                                                 class="table-box"
@@ -60,7 +60,7 @@
                                                                                 <table
                                                                                     class="tbl_type ver8 v2"
                                                                                 >
-                                                                                    <caption>Çì´õ °íÁ¤ Å×ÀÌºí</caption>
+                                                                                    <caption>ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½</caption>
                                                                                     <colgroup>
                                                                                         <col
                                                                                             width="10%"
@@ -80,11 +80,11 @@
                                                                                             <th
                                                                                                 style="width:30%"
                                                                                                 class="txt_left"
-                                                                                            >ÀÌ¸§</th>
+                                                                                            >ï¿½Ì¸ï¿½</th>
                                                                                             <th
                                                                                                 style="width:60%"
                                                                                                 class="txt_left"
-                                                                                            >ÀÌ¸ÞÀÏ</th>
+                                                                                            >ï¿½Ì¸ï¿½ï¿½ï¿½</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -120,13 +120,13 @@
                                                                                 small
                                                                                 color="primary"
                                                                                 @click.stop="fn_apply_share_user_in_arr( item, index )"
-                                                                            >°øÀ¯ÇÏ±â</v-btn>
+                                                                            >ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½</v-btn>
                                                                         </div>
                                                                     </div>
 
                                                                     <!--2table-->
                                                                     <div class="incode_pop pt-3">
-                                                                        <h6 class="pb-1">°øÀ¯ÀÚ ¼±ÅÃÇØÁ¦</h6>
+                                                                        <h6 class="pb-1">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</h6>
                                                                         <div class="table-box-wrap">
                                                                             <div
                                                                                 class="table-box"
@@ -135,7 +135,7 @@
                                                                                 <table
                                                                                     class="tbl_type ver8 v2"
                                                                                 >
-                                                                                    <caption>Çì´õ °íÁ¤ Å×ÀÌºí</caption>
+                                                                                    <caption>ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½</caption>
                                                                                     <colgroup>
                                                                                         <col
                                                                                             width="20%"
@@ -151,11 +151,11 @@
                                                                                         <tr>
                                                                                             <th
                                                                                                 style="width:20%"
-                                                                                            >ÀÌ¸§</th>
+                                                                                            >ï¿½Ì¸ï¿½</th>
                                                                                             <th
                                                                                                 style="width:50%"
                                                                                                 class="txt_left"
-                                                                                            >ÀÌ¸ÞÀÏ</th>
+                                                                                            >ï¿½Ì¸ï¿½ï¿½ï¿½</th>
                                                                                             <th
                                                                                                 style="width:30%"
                                                                                                 class="txt_left"
@@ -169,7 +169,7 @@
                                                                                             <td
                                                                                                 class="txt_left"
                                                                                                 colspan="3"
-                                                                                            >°øÀ¯µÈ °øÀ¯ÀÚ°¡ ¾ø½À´Ï´Ù.</td>
+                                                                                            >ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.</td>
                                                                                         </tr>
 
                                                                                         <tr
@@ -191,7 +191,7 @@
                                                                                                     small
                                                                                                     color="primary"
                                                                                                     @click="fn_apply_share_user_revoke_in_arr( item, index, item_shared )"
-                                                                                                >°øÀ¯ÇØÁ¦</v-btn>
+                                                                                                >ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</v-btn>
                                                                                             </td>
                                                                                         </tr>
                                                                                     </tbody>
@@ -203,4 +203,4 @@
                                                             </div>
                                                         </v-dialog>
                                                     </li>
-                                                    <!-- °øÀ¯ÇÏ±â ÆË¾÷ ¶ç¿ì±âend-->
+                                                    <!-- ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½Ë¾ï¿½ ï¿½ï¿½ï¿½ï¿½end-->
