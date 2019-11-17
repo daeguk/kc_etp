@@ -13,6 +13,9 @@
                     tm_simul_mast.scen_cd           AS  grp_cd              /* 시나리오 코드 */
                 ,   tm_simul_mast.scen_name         AS  grp_name            /* 시나리오명 */
 
+                ,   tm_simul_mast.grp_cd            AS  org_grp_cd          /* 원 그룹코드 */
+                ,   tm_simul_mast.grp_yn            AS  grp_yn              /* 그룹여부 */
+
           FROM  tm_simul_share
           JOIN  tm_simul_mast
             ON  (
@@ -1983,6 +1986,71 @@
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
                        AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+                )
+
+    </select>
+
+
+    <!--
+    *   변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulShareNotInGroupForDelelete">
+
+        SELECT      /* simulation.getSimulShareNotInGroupForDelelete  변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+
+                    tm_simul_share.grp_cd                       AS  grp_cd                  /* 그룹코드(상위코드) */
+                ,   tm_simul_share.scen_cd                      AS  scen_cd                 /* 시나리오 코드 */
+                ,   tm_simul_share.email                        AS  email                   /* 이메일 */
+
+                ,   tm_simul_share.owner_yn                     AS  owner_yn                /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
+          FROM  tm_simul_share
+
+         WHERE  1 = 1
+
+           AND  grp_cd          =   #{prev_grp_cd}
+           AND  scen_cd         =   #{prev_scen_cd}
+           
+           AND  email           NOT IN  
+                (
+           
+                /* 변경전 그룹 공유자 */
+                    SELECT  email
+                      FROM  tm_simul_share
+                      
+                     WHERE  1 = 1
+                     
+                       AND  grp_cd          =   '*'
+                       AND  scen_cd         =   #{prev_grp_cd}
+
+                       AND  email           NOT IN
+                            (
+                    
+                            /* 변경전 시나리오 공유자  */
+                                SELECT  email
+                                  FROM  tm_simul_share
+                                  
+                                 WHERE  1 = 1
+                                 
+                                   AND  grp_cd          =   #{prev_grp_cd}
+                                   AND  scen_cd         =   #{prev_scen_cd}
+                               )
+                            
+                    UNION   ALL
+                            
+                /* 변경전 그룹 하위 공유자 */
+                    SELECT  DISTINCT 
+                            email
+                      FROM  tm_simul_share
+                      
+                     WHERE  1 = 1
+                     
+                       AND  grp_cd          =   #{prev_grp_cd}
+                       AND  ( grp_cd, scen_cd )   NOT IN
+                            (
+                                ( #{prev_grp_cd} , #{prev_scen_cd} )
+                            )
                 )
 
     </select>

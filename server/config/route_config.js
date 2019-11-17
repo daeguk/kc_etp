@@ -177,7 +177,7 @@ module.exports = {
         { file: './user/simulation/simulation'          , path: '/user/simulation/runBacktestWithSaveBasicInfo' , method: 'runBacktestWithSaveBasicInfo'    , session: 'check', type: 'post' },     // 기본정보 저장과 함께 백테스트 실행
         { file: './user/simulation/simulation'          , path: '/user/simulation/renameScenario'               , method: 'renameScenario'                  , session: 'check', type: 'post' },     // 시나리오 이름변경
         { file: './user/simulation/simulation'          , path: '/user/simulation/copyScenario'                 , method: 'copyScenario'                    , session: 'check', type: 'post' },     // 시나리오 복사
-        { file: './user/simulation/simulation'          , path: '/user/simulation/changeGroup'                  , method: 'changeGroup'                     , session: 'check', type: 'post' },     // 시나리오 그룹변경
+        { file: './user/simulation/simulation'          , path: '/user/simulation/fnChangeGroup'                , method: 'fnChangeGroup'                   , session: 'check', type: 'post' },     // 시나리오 그룹변경
         { file: './user/simulation/simulation'          , path: '/user/simulation/getScenarioShareCount'        , method: 'getScenarioShareCount'           , session: 'check', type: 'post' },     // 시나리오 공유 건수 조회
         { file: './user/simulation/simulation'          , path: '/user/simulation/getUserListForShare'          , method: 'getUserListForShare'             , session: 'check', type: 'post' },     // 공유할 공유자 조회
         { file: './user/simulation/simulation'          , path: '/user/simulation/getUserListShared'            , method: 'getUserListShared'               , session: 'check', type: 'post' },     // 공유된 공유자 조회
