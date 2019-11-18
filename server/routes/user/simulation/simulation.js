@@ -4543,160 +4543,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 7. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-
-                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 8. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 9. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 10. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 11. 변경할 대상이 상위 그룹이 있는 경우 - 변경전 시나리오 공유자 정보를 조회한다. */
+                    /* 7. 변경할 대상이 상위 그룹이 있는 경우 - 변경전 시나리오 공유자 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4745,7 +4592,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 12. 변경할 대상이 상위 그룹이 있는 경우 - 변경할 그룹 공유자 정보를 조회한다. */
+                    /* 8. 변경할 대상이 상위 그룹이 있는 경우 - 변경할 그룹 공유자 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4796,7 +4643,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 13. 변경할 대상이 상위 그룹이 있는 경우 - 그룹 공유자 정보를 설정한다. */
+                    /* 9. 변경할 대상이 상위 그룹이 있는 경우 - 그룹 공유자 정보를 설정한다. */
                     function( msg, callback) {
 
                         try {
@@ -4878,7 +4725,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 14. 그룹변경인 경우 [tm_simul_share] 시나리오 수정한다. */
+                    /* 10. 그룹변경인 경우 [tm_simul_share] 시나리오 수정한다. */
                     function( msg, callback) {
 
                         try {
@@ -4916,7 +4763,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 15. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    /* 11. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4967,7 +4814,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 16. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    /* 12. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -4979,7 +4826,7 @@ var fnChangeGroup = function(req, res) {
 
                             /* 변경전 대상이 상위그룹이 있는 경우 */
                             if( typeof msg.v_arr_simul_share_not_in_group == "undefined" || msg.v_arr_simul_share_not_in_group.length == 0 ) {
-                                callback(null);
+                                callback(null, msg);
 
                             }else{
 
@@ -5003,9 +4850,162 @@ var fnChangeGroup = function(req, res) {
 
                                     paramData.arr_delete_list   =   [];
 
-                                    callback(null);
+                                    callback(null, msg);
                                 });
                             }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 13. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultMastByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 14. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultAnalByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 15. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultDailyByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 16. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultRebalanceByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                }
+
+                                callback(null);
+                            });
 
                         } catch (err) {
                             resultMsg.result = false;
