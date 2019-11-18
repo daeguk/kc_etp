@@ -74,7 +74,7 @@
                                         </div>
                                     </div>
                                     <div class="text-xs-center">
-                                        <v-btn depressed small color="primary" @click.stop="fn_apply_share_user_in_arr()">공유하기</v-btn>
+                                        <v-btn depressed small color="primary" @click.stop="">공유하기</v-btn>
                                     </div>
                                 </div>
 

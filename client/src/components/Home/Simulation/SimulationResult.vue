@@ -1,7 +1,6 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
-
             <v-card flat>
                 <v-card-title primary-title>
                     <h3 class="headline" pb-0>
@@ -14,9 +13,18 @@
             </v-card>
 
             <v-card flat class="bot_pad1">
-                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
-                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                <div
+                    class="warning_box"
+                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                    <span
+                        class="margin_n"
+                        v-for="(item, index) in arr_show_error_message"
+                        :key="index"
+                    >
+                        <v-icon color="#ff4366">error_outline</v-icon>
+                        {{item}}
+                        <br />
                     </span>
                 </div>
 
@@ -27,19 +35,16 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
 
-
                     <span class="btn_r">
-						<v-btn
-							small 
-							flat 
-							icon
-
-							@click="fn_open_share_modal( v_item, v_index, 'scen' )"
-						>
-							<v-icon>share</v-icon>
-						</v-btn>
+                        <v-btn
+                            small
+                            flat
+                            icon
+                            @click="fn_open_share_modal( v_item, v_index, 'scen' )"
+                        >
+                            <v-icon>share</v-icon>
+                        </v-btn>
                     </span>
-
 
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
@@ -48,55 +53,57 @@
                     </span>
                 </h4>
 
+                <!-- 그래프 영역-->
 
-            <!-- 그래프 영역-->
+                <div class="simul_g_w">
+                    <div class="simul_g_l">
+                        <!-- <div class="simul_graph"> -->
+                        <LineSimulationChart
+                            v-if="chartFlag"
+                            :arr_result_daily="arr_result_daily"
+                            :simul_result_mast="simul_result_mast"
+                            @fn_showMessageBox="fn_showMessageBox"
+                        ></LineSimulationChart>
+                        <ul>
+                            <li>
+                                <span class="rcolor1">●</span> Scenario
+                            </li>
+                            <li>
+                                <span class="rcolor2">●</span>
+                                {{ simul_result_mast.bench_index_nm2 }}
+                            </li>
+                        </ul>
+                        <!-- </div> -->
+                    </div>
+                    <div class="simul_g_r">
+                        <table class="tbl_type ver11 v2">
+                            <colgroup>
+                                <col width="38%" />
+                                <col width="31%" />
+                                <col width="31%" />
+                            </colgroup>
+                            <thead>
+                                <th></th>
+                                <th>Scenario</th>
+                                <th>{{ simul_result_mast.bench_index_nm2 }}</th>
+                            </thead>
 
-
-                            <div class="simul_g_w">
-                                <div class="simul_g_l">
-                            <!-- <div class="simul_graph"> -->
-                                <LineSimulationChart    v-if="chartFlag" 
-                                
-                                                        :arr_result_daily="arr_result_daily"
-                                                        :simul_result_mast="simul_result_mast"
-                                                        
-                                                        @fn_showMessageBox="fn_showMessageBox">
-                                </LineSimulationChart>
-                                <ul>
-                                    <li><span class="rcolor1">●</span> Scenario </li>
-                                    <li><span class="rcolor2">●</span> {{ simul_result_mast.bench_index_nm2 }}</li>
-                                </ul>
-                            <!-- </div> -->
-                                </div>
-                                <div class="simul_g_r">
-                                <table class="tbl_type ver11 v2">
-                                    <colgroup>
-                                        <col width="38%"/>
-                                        <col width="31%"/>
-                                        <col width="31%"/>
-                                    </colgroup>
-                                    <thead>
-                                        <th></th>
-                                        <th>Scenario</th>
-                                        <th>{{ simul_result_mast.bench_index_nm2 }}</th>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr v-for="( row, index ) in  fn_sort_arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <th class="txt_left"  width="38%">
-                                                {{ row.anal_title          /* 분석지표 */ }}
-                                            </th>
-                                            <td class="txt_right" width="31%">
-                                                {{ row.backtest           /* Senario */ }}
-                                            </td>
-                                            <td class="txt_right" width="31%">
-                                                {{ row.benchmark          /* BM */ }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </div>
-                            </div>
+                            <tbody>
+                                <tr
+                                    v-for="( row, index ) in  fn_sort_arr_analyze_main"
+                                    v-bind:key="row + '_' + index + '_main'"
+                                >
+                                    <th class="txt_left" width="38%">{{ row.anal_title /* 분석지표 */ }}</th>
+                                    <td
+                                        class="txt_right"
+                                        width="31%"
+                                    >{{ row.backtest /* Senario */ }}</td>
+                                    <td class="txt_right" width="31%">{{ row.benchmark /* BM */ }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
@@ -104,9 +111,7 @@
                 </v-tabs>
 
                 <v-tabs-items v-model="activeTab">
-
-
-            <!-- 일자별 지수 탭1-->
+                    <!-- 일자별 지수 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -125,25 +130,44 @@
                                                     <col width="14%" />
                                                 </colgroup>
                                                 <thead>
-                                                    <tr >
+                                                    <tr>
                                                         <th class="txt_left">일자</th>
                                                         <th class="txt_right">Index</th>
                                                         <th class="txt_right">Balance</th>
                                                         <th class="txt_right">Return</th>
-                                                        <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
+                                                        <th
+                                                            class="txt_right"
+                                                        >{{ simul_result_mast.bench_index_nm }}</th>
                                                         <th class="txt_right">BM(1000환산)</th>
                                                         <th class="txt_right">BM return</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="( row, index ) in  fn_sort_arr_result_daily" v-bind:key="row + '_' + index" >
-                                                        <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_data01          /* BM */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_1000_data       /* BM(1000환산) */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_return_data     /* BM(return) */ }}</td>
+                                                    <tr
+                                                        v-for="( row, index ) in  fn_sort_arr_result_daily"
+                                                        v-bind:key="row + '_' + index"
+                                                    >
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F12506 /* 일자 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_INDEX_RATE /* 지수 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_balance /* balance */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_RETURN_VAL /* return */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_data01 /* BM */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_1000_data /* BM(1000환산) */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_return_data /* BM(return) */ }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -154,8 +178,7 @@
                         </v-layout>
                     </v-tab-item>
 
-
-            <!-- 리밸런싱 내역 탭2-->
+                    <!-- 리밸런싱 내역 탭2-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -174,7 +197,6 @@
                                                 </colgroup>
 
                                                 <thead>
-                                                                   
                                                     <tr>
                                                         <th width="20%" class="txt_left">일자</th>
                                                         <th width="20%">Event</th>
@@ -184,17 +206,31 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-    
-                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)" :style="row.style_background">
-                                                        <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
-                                                        <td><!--비중조절 div class="grav_icon"></div--> 
-                                                            <!--종목편출 div class="extr_icon"></div--> 
-                                                            <div :class='row.EVENT_FLAG == "20" ? "trans_icon" : ( row.EVENT_FLAG == "10" ? "grav_icon" : "extr_icon"  ) '></div>
+                                                    <tr
+                                                        v-for="(row, index) in fn_sort_arr_result_rebalance"
+                                                        v-bind:key="(row + '_' + index)"
+                                                        :style="row.style_background"
+                                                    >
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F12506 /* 일자 */ }}</td>
+                                                        <td>
+                                                            <!--비중조절 div class="grav_icon"></div-->
+                                                            <!--종목편출 div class="extr_icon"></div-->
+                                                            <div
+                                                                :class='row.EVENT_FLAG == "20" ? "trans_icon" : ( row.EVENT_FLAG == "10" ? "grav_icon" : "extr_icon"  ) '
+                                                            ></div>
                                                             {{ row.fmt_EVENT_FLAG /* EVENT */ }}
                                                         </td>
-                                                        <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F16002 /* 종목 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_BEFORE_IMPORTANCE /* 변경전 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_AFTER_IMPORTANCE /* 변경후 */ }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -205,39 +241,37 @@
                         </v-layout>
                     </v-tab-item>
 
-
-            <!--시뮬레이션 설정 탭3-->
+                    <!--시뮬레이션 설정 탭3-->
                     <v-tab-item>
                         <div class="table-box">
-                                <table class="tbl_type ver11">
-                                    <caption>헤더 고정 테이블</caption>
-                                    <colgroup>
-                                        <col width="35%" />
-                                        <col width="65%" />
-                                    </colgroup>
-                                        <tr>
-                                            <th style="width:35%">시작년도</th>
-                                            <td style="width:65%">{{  simul_result_mast.start_year  }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>리밸런싱주기</th>
-                                            <td>{{ simul_result_mast.fmt_rebalance }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>초기투자금액(KRW)</th>
-                                            <td>{{ simul_result_mast.fmt_init_invest_money }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>벤치마크 설정</th>
-                                            <td>{{ simul_result_mast.fmt_bench_mark_cd }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>비중설정방식</th>
-                                            <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
-                                        </tr>
-                                        
-                                </table>
-                            </div>
+                            <table class="tbl_type ver11">
+                                <caption>헤더 고정 테이블</caption>
+                                <colgroup>
+                                    <col width="35%" />
+                                    <col width="65%" />
+                                </colgroup>
+                                <tr>
+                                    <th style="width:35%">시작년도</th>
+                                    <td style="width:65%">{{ simul_result_mast.start_year }}</td>
+                                </tr>
+                                <tr>
+                                    <th>리밸런싱주기</th>
+                                    <td>{{ simul_result_mast.fmt_rebalance }}</td>
+                                </tr>
+                                <tr>
+                                    <th>초기투자금액(KRW)</th>
+                                    <td>{{ simul_result_mast.fmt_init_invest_money }}</td>
+                                </tr>
+                                <tr>
+                                    <th>벤치마크 설정</th>
+                                    <td>{{ simul_result_mast.fmt_bench_mark_cd }}</td>
+                                </tr>
+                                <tr>
+                                    <th>비중설정방식</th>
+                                    <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
+                                </tr>
+                            </table>
+                        </div>
                         <!--div class="simul_setup">
                             <h6>
                                 <span class="bullet"></span>리밸런싱
@@ -268,51 +302,59 @@
                         </div-->
                     </v-tab-item>
 
-
-            <!--분석정보 -->
-                    <v-tab-item >
+                    <!--분석정보 -->
+                    <v-tab-item>
                         <v-card flat>
-                        <div class="btn_only_r">
-                            <span class="btn_rr"><button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button></span>
-                        </div>
+                            <div class="btn_only_r">
+                                <span class="btn_rr">
+                                    <button
+                                        type="button"
+                                        class="exceldown_btn"
+                                        id="jsonFileDownload"
+                                        @click="fn_jsonFileDownload()"
+                                    ></button>
+                                </span>
+                            </div>
                             <div class="table-box-wrap mar15">
                                 <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
                                         <colgroup>
-                                            <col width="33%"/>
-                                            <col width="33%"/>
-                                            <col width="33%"/>
+                                            <col width="33%" />
+                                            <col width="33%" />
+                                            <col width="33%" />
                                         </colgroup>
                                         <thead>
                                             <tr>
                                                 <th class="txt_left">분석지표</th>
                                                 <th class="txt_right">백테스트</th>
-                                                <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
+                                                <th
+                                                    class="txt_right"
+                                                >{{ simul_result_mast.bench_index_nm }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-if="status != 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
-                                                <td colspan="3" style="align:center">
-                                                    처리중 오류가 발생하였습니다.
-                                                </td>
+                                            <tr
+                                                v-if="status != 'detail' && ( !arr_analyze || arr_analyze.length == 0 )"
+                                            >
+                                                <td
+                                                    colspan="3"
+                                                    style="align:center"
+                                                >처리중 오류가 발생하였습니다.</td>
                                             </tr>
 
-                                            <tr v-if="status == 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
-                                                <td colspan="3" style="align:center">
-                                                    데이터가 존재하지 않습니다.
-                                                </td>
-                                            </tr>                                            
+                                            <tr
+                                                v-if="status == 'detail' && ( !arr_analyze || arr_analyze.length == 0 )"
+                                            >
+                                                <td colspan="3" style="align:center">데이터가 존재하지 않습니다.</td>
+                                            </tr>
 
-                                            <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
-                                                <td class="txt_left">
-                                                    {{ row.anal_title          /* 분석지표 */ }}
-                                                </td>
-                                                <td class="txt_right">
-                                                    {{ row.backtest           /* 백테스트 */ }}
-                                                </td>
-                                                <td class="txt_right">
-                                                    {{ row.benchmark          /* 벤치마크 */ }}
-                                                </td>
+                                            <tr
+                                                v-for="( row, index ) in  arr_analyze"
+                                                v-bind:key="row + '_' + index"
+                                            >
+                                                <td class="txt_left">{{ row.anal_title /* 분석지표 */ }}</td>
+                                                <td class="txt_right">{{ row.backtest /* 백테스트 */ }}</td>
+                                                <td class="txt_right">{{ row.benchmark /* 벤치마크 */ }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -320,7 +362,6 @@
                             </div>
                         </v-card>
                     </v-tab-item>
-
                 </v-tabs-items>
 
                 <v-card flat>
@@ -328,21 +369,19 @@
                         <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
                     </div>
                 </v-card>
-
             </v-card>
         </v-flex>
 
         <v-flex>
-            <sharePopup01 
-                v-if="share_modal_flag" 
-                
+            <sharePopup01
+                v-if="share_modal_flag"
                 :share_row_data="share_row_data"
-                 @fn_close_share_modal="fn_close_share_modal" 
-                 @fn_showProgress="fn_showProgress"></sharePopup01>
-			
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup01>
+
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
-        
     </v-layout>
 </template>
 

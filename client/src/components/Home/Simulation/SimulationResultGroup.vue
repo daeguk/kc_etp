@@ -1,7 +1,6 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
-
             <v-card flat>
                 <v-card-title primary-title>
                     <h3 class="headline" pb-0>
@@ -14,9 +13,18 @@
             </v-card>
 
             <v-card flat class="bot_pad1">
-                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
-                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                <div
+                    class="warning_box"
+                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                    <span
+                        class="margin_n"
+                        v-for="(item, index) in arr_show_error_message"
+                        :key="index"
+                    >
+                        <v-icon color="#ff4366">error_outline</v-icon>
+                        {{item}}
+                        <br />
                     </span>
                 </div>
 
@@ -25,16 +33,10 @@
                     <span class="sub_t">테스트 결과</span>
 
                     <span class="btn_r">
-						<v-btn
-							small 
-							flat 
-							icon
-
-							@click="fn_open_share_modal( v_item, v_index )"
-						>
-							<v-icon>share</v-icon>
-						</v-btn>
-                    </span>					
+                        <v-btn small flat icon @click="fn_open_share_modal( v_item, v_index )">
+                            <v-icon>share</v-icon>
+                        </v-btn>
+                    </span>
 
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulBack()">
@@ -43,138 +45,154 @@
                     </span>
                 </h4>
 
+                <!-- 그래프 영역-->
 
-            <!-- 그래프 영역-->
+                <div class="simul_g_w">
+                    <div class="simul_g_l">
+                        <!-- <div class="simul_graph"> -->
+                        <LineSimulationChartG
+                            v-if="chartFlag"
+                            :arr_result_data="arr_result_daily01"
+                            :arr_result_header="arr_result_daily01_header"
+                            :arr_checked="arr_checked"
+                            :bm_header="bm_daily_header"
+                            @fn_showMessageBox="fn_showMessageBox"
+                        ></LineSimulationChartG>
+                        <!-- </div> -->
+                    </div>
 
+                    <div class="simul_g_r v2">
+                        <ul v-if="bm_daily_header=='BM (N/A)'">
+                            <li
+                                v-for="(item, index) in arr_result_daily01_header"
+                                v-bind:key="index"
+                            >
+                                <span
+                                    :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) "
+                                >●</span>
 
-                            <div class="simul_g_w">
-                                <div class="simul_g_l">
-                            <!-- <div class="simul_graph"> -->
-                                <LineSimulationChartG    v-if="chartFlag" 
-                                
-                                                        :arr_result_data    =   "arr_result_daily01"
-                                                        :arr_result_header  =   "arr_result_daily01_header"
-                                                        :arr_checked        =   "arr_checked"
-                                                        :bm_header          =   "bm_daily_header"
-                                                        
-                                                        @fn_showMessageBox="fn_showMessageBox">
-                                </LineSimulationChartG>
-                            <!-- </div> -->
-                                </div>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ item.scen_name }}</span>
+                                </v-tooltip>
 
-                                <div class="simul_g_r v2" >
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[index]"
+                                        :key="item.scen_cd"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
+                        </ul>
 
-                                    <ul v-if="bm_daily_header=='BM (N/A)'" >
-                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                            <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
+                        <ul v-if="bm_daily_header!='BM (N/A)'">
+                            <li>
+                                <span class="rcolor01">●</span>
 
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ item.scen_name }}</span>
-                                            </v-tooltip>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( bm_daily_header, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ bm_daily_header }}</span>
+                                </v-tooltip>
 
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                            </span>
-                                        </li>
-                                    </ul>
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[0]"
+                                        key="bm"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
 
+                            <li
+                                v-for="(item, index) in arr_result_daily01_header"
+                                v-bind:key="index"
+                            >
+                                <span
+                                    :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) "
+                                >●</span>
 
-                                    <ul v-if="bm_daily_header!='BM (N/A)'" >
-                                        <li>
-                                            <span class="rcolor01">●</span> 
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ item.scen_name }}</span>
+                                </v-tooltip>
 
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( bm_daily_header, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ bm_daily_header }}</span>
-                                            </v-tooltip>
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[index+1]"
+                                        :key="item.scen_cd"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
 
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[0]" key="bm"  checked="true" unchecked="false"></v-checkbox>
-                                            </span>
-                                        </li>
-
-
-                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                            <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
-
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ item.scen_name }}</span>
-                                            </v-tooltip>
-
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <table id="tbl_result_anal01" class="tbl_type ver12">
-                                 <thead>
-                                     <tr id="tr01"></tr>
-                                </thead>                                
-                            </table>
-                            </div>
+                    <table id="tbl_result_anal01" class="tbl_type ver12">
+                        <thead>
+                            <tr id="tr01"></tr>
+                        </thead>
+                    </table>
+                </div>
 
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
                     <v-tab v-for="item in item" :key="item">{{ item }}</v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="activeTab">
-            <!-- 일자별 지수 탭1-->
+                    <!-- 일자별 지수 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
-                                <table id="tbl_result_daily" class="tbl_type ver12">
-                                 <thead>
-                                     <tr id="tr01"></tr>
-                                     <tr id="tr02"></tr> 
-                                </thead>                                
-                            </table>
+                                    <table id="tbl_result_daily" class="tbl_type ver12">
+                                        <thead>
+                                            <tr id="tr01"></tr>
+                                            <tr id="tr02"></tr>
+                                        </thead>
+                                    </table>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
 
-
-            <!-- 분석정보2-->
+                    <!-- 분석정보2-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <table id="tbl_result_anal02" class="tbl_type ver12">
-                                    <thead>
-                                        <tr id="tr01"></tr>
-                                    </thead>                                
+                                        <thead>
+                                            <tr id="tr01"></tr>
+                                        </thead>
                                     </table>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
                 </v-tabs-items>
-
             </v-card>
         </v-flex>
 
         <v-flex>
             <sharePopup02
-                v-if="share_modal_flag" 
-                
+                v-if="share_modal_flag"
                 :share_row_data="share_row_data"
-                 @fn_close_share_modal="fn_close_share_modal" 
-                 @fn_showProgress="fn_showProgress"></sharePopup02>
-			
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup02>
+
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
-        
     </v-layout>
 </template>
 
