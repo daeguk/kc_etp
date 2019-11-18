@@ -197,6 +197,7 @@ export default {
 
             ,   simul_result_mast           :   {}
             ,   arr_scen_in_grp             :   []      /* 그룹 내 시나리오 정보 */
+            ,   method_gubun                :   ""      /* 호출된 메소드 ( 선택비교 또는 그룹비교 체크 용) */
 
                 /* 결과 정보 */
             ,   arr_result_daily01          :   []      /* array 일자별 지수 */
@@ -272,6 +273,7 @@ export default {
             console.log( e );
             vm.fn_showProgress( false );
         });
+
 
 
         /* 코드에 속한 일자별 지수를 조회한다. */
@@ -704,6 +706,7 @@ export default {
                 try{
                     vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
                     vm.arr_scen_in_grp                  =   [ ...vm.paramData.arr_scen_in_grp ];
+                    vm.method_gubun                     =   vm.paramData.method_gubun;
 
                     resolve( { result : true } );
                 }catch(e) {

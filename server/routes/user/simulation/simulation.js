@@ -5747,8 +5747,7 @@ var applyShareUserInArr = function(req, res) {
                                             var v_temp  =   _.filter( rows, function(o) {
                                                 return      o.grp_cd    == item_sub.grp_cd 
                                                         &&  o.scen_cd   == item_sub.scen_cd 
-                                                        &&  o.email     == item.email
-                                                        &&  o.owner_yn  ==  "0";
+                                                        &&  o.email     == item.email;
                                             });
 
                                             if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
@@ -5766,7 +5765,6 @@ var applyShareUserInArr = function(req, res) {
                                                         "grp_cd"    :   item_sub.grp_cd
                                                     ,   "scen_cd"   :   item_sub.scen_cd
                                                     ,   "email"     :   item.email
-                                                    ,   "owner_yn"  :   "0"
                                                 });
                                             }
                                         });

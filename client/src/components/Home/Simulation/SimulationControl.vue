@@ -185,6 +185,7 @@ export default {
                 ,   arr_rebalance       :   []
                 ,   analyzeList         :   []
                 ,   arr_scen_in_grp     :   []
+                ,   method_gubun        :   ""
             } 
         ) {
             var vm = this;
