@@ -1790,17 +1790,16 @@ export default {
 
             param.prev_grp_cd   =   p_now_item.grp_cd;
             param.prev_scen_cd  =   p_now_item.scen_cd;
-            param.prev_grp_yn   =   p_now_item.grp_yn;
 
             param.grp_cd        =   p_item.grp_cd;
-            param.grp_yn        =   p_item.grp_yn;
+            param.org_grp_yn    =   p_item.grp_yn;
         
 
             return  await new Promise(function(resolve, reject) {
 
                 util.axiosCall(
                         {
-                                "url"       :   Config.base_url + "/user/simulation/changeGroup"
+                                "url"       :   Config.base_url + "/user/simulation/fnChangeGroup"
                             ,   "data"      :   param
                             ,   "method"    :   "post"
                         }

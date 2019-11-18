@@ -75,11 +75,14 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                 PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
                     if (err) {
                         log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
-                        resolve1( { result : false } );
+                        resolve1( { result : false
+                            ,   jsonFileName : jsonFileName
+                            ,   inputData : JSON.stringify(analyzeList)
+                        } );
                     }else{
                         //console.log('results: %j', results);
                         //console.log("####### 4) 파이선 호출 END");
-                        fs.unlinkSync(fileName);
+                        //fs.unlinkSync(fileName);
                         resolve1( { 
                                 result : true
                             ,   jsonFileName : jsonFileName
