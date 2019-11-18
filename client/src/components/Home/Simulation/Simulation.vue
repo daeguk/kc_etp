@@ -347,6 +347,7 @@ export default {
             ,   prev_scen_cd                :   ""          /* 시나리오 코드 */
             ,   scen_cd                     :   ""          /* 시나리오 코드 */
             ,   scen_order_no               :   ""          /* 시나리오 정렬순번 */
+            ,   org_grp_yn                  :   ""          /* 상위 그룹코드 */
 
             ,   grp_cd                      :   "*"         /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
@@ -1897,6 +1898,16 @@ export default {
                 }
             }
 
+            var v_temp  =   _.filter( vm.arr_grp_cd, {
+                "grp_cd"    :   vm.grp_cd
+            });
+
+            
+            if( !v_temp || v_temp.length != 1 ) {
+				vm.arr_show_error_message.push( "상위그룹 정보가 존재하지 않습니다." );
+                return  false;
+            }
+
 
             vm.fn_showWaitProgress( true );
 
@@ -1910,6 +1921,7 @@ export default {
                                 ,   "scen_order_no"         :   vm.scen_order_no            /* 시나리오 정렬순번 */
 
                                 ,   "grp_cd"                :   vm.grp_cd                   /* 상위 그룹코드 */
+                                ,   "org_grp_yn"            :   v_temp[0].grp_yn            /* 상위 그룹여부 */
                                 ,   "scen_name"             :   vm.scen_name                /* 시나리오명 */
                                 ,   "start_year"            :   vm.start_year               /* 시작년도 */
                                 ,   "rebalance_cycle_cd"    :   vm.rebalance_cycle_cd       /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
