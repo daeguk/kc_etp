@@ -23,11 +23,19 @@
                 <h4>
                     {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
+
                     <span class="btn_r">
-                    <v-btn small flat icon v-on:click="">
-                            <v-icon>share</v-icon>
-                        </v-btn>
-                    </span>
+						<v-btn
+							small 
+							flat 
+							icon
+
+							@click="fn_open_share_modal( v_item, v_index )"
+						>
+							<v-icon>share</v-icon>
+						</v-btn>
+                    </span>					
+
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulBack()">
                             <v-icon>reply</v-icon>
@@ -157,6 +165,13 @@
         </v-flex>
 
         <v-flex>
+            <sharePopup02
+                v-if="share_modal_flag" 
+                
+                :share_row_data="share_row_data"
+                 @fn_close_share_modal="fn_close_share_modal" 
+                 @fn_showProgress="fn_showProgress"></sharePopup02>
+			
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
         
@@ -176,6 +191,7 @@ import excel from "xlsx";
 
 import LineSimulationChartG  from "@/components/common/chart/LineSimulationChartG.vue";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import sharePopup02 from "@/components/common/popup/sharePopup02";
 
 var tbl_result_daily    =   null;
 var tbl_result_anal01   =   null;
@@ -215,12 +231,22 @@ export default {
 
             ,   chartFlag                   :   false
 
+            ,   v_item                      :   {
+						grp_cd		:	""
+					,	scen_cd		:	""
+                }
+            ,   v_index                     :   0
+            ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
+            ,   share_modal_flag            :   false
+            ,   share_row_index             :   -1
+
         };
     },
 
     components: {
         ConfirmDialog,
         LineSimulationChartG,
+        sharePopup02,
     },
 
     created() {
@@ -706,7 +732,10 @@ export default {
                 try{
                     vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
                     vm.arr_scen_in_grp                  =   [ ...vm.paramData.arr_scen_in_grp ];
+
                     vm.method_gubun                     =   vm.paramData.method_gubun;
+                    vm.v_item.grp_cd    				=   vm.paramData.simul_mast.grp_cd;
+                    vm.v_item.scen_cd   				=   vm.paramData.simul_mast.scen_cd;
 
                     resolve( { result : true } );
                 }catch(e) {
@@ -951,7 +980,45 @@ export default {
             
             return str.substring(0, i);
 
-        }
+        },
+
+        /*
+         * 공유하기 창을 오픈한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_open_share_modal: function( p_item, p_index ) {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            var v_param             =   {};
+
+            v_param                 =   p_item;
+            v_param.p_index         =   p_index;
+			v_param.method_gubun	=	vm.method_gubun;
+			v_param.arr_scen_in_grp	=	vm.arr_scen_in_grp;
+
+            vm.share_row_data       =   v_param;
+            vm.share_row_index      =   p_index;
+            vm.share_modal_flag     =   true;
+        },
+
+        /*
+         * 공유하기 창을 종료한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_close_share_modal: function() {
+            var vm = this;
+
+            vm.share_modal_flag     =   false;
+        },		
     },
     
 };

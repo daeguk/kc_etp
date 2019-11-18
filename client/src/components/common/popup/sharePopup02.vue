@@ -78,56 +78,6 @@
                                     </div>
                                 </div>
 
-                                <!--2table-->
-                                <div class="incode_pop pt-3">
-                                    <h6 class="pb-1">공유자 선택해제</h6>
-                                    <div class="table-box-wrap">
-                                        <div class="table-box" style="max-height:200px;">
-                                            <table class="tbl_type ver8 v2">
-                                                <caption>헤더 고정 테이블</caption>
-                                                <colgroup>
-                                                    <col width="20%" />
-                                                    <col width="50%" />
-                                                    <col width="30%" />
-                                                </colgroup>
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width:20%">이름</th>
-                                                        <th style="width:50%" class="txt_left">이메일</th>
-                                                        <th style="width:30%" class="txt_left"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr
-                                                        v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
-                                                    >
-                                                        <td
-                                                            class="txt_left"
-                                                            colspan="3"
-                                                        >공유된 공유자가 없습니다.</td>
-                                                    </tr>
-
-                                                    <tr
-                                                        v-for="( item_shared, index_shared ) in arr_user_list_shared"
-                                                        :key="index_shared"
-                                                    >
-                                                        <td class="txt_left">{{ item_shared.name }}</td>
-                                                        <td class="txt_left">{{ item_shared.email }}</td>
-                                                        <td class="txt_left">
-                                                            <v-btn
-                                                                depressed
-                                                                outline
-                                                                small
-                                                                color="primary"
-                                                                @click.stop="fn_apply_share_user_revoke_in_arr( item_shared )"
-                                                            >공유해제</v-btn>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
                             </v-card>
                         </div>
                     </v-dialog>
@@ -163,9 +113,7 @@ export default {
         ,   v_search	                :   ""
 
         ,   arr_user_list_for_share     :   []          /* array 모든 공유할 공유자 */
-        ,   arr_user_list_shared        :   []          /* array 모든 공유된 공유자 */
         ,   arr_checked_for_share       :   []          /* array 선택된 공유할 공유자 */
-        ,   arr_checked_shared          :   []          /* array 선택된 공유된 공유자 */
 
         ,   arr_user_list_for_share_cp  :   []          /* arr_user_list_for_share 복사본 */
     };
@@ -231,14 +179,6 @@ export default {
             /* 공유할 공유자를 조회한다. */
             vm.fn_get_user_list_for_share().then( function(e){
 
-                if( e && e.result  ) {
-
-                    /* 공유된 공유자를 조회한다. */
-                    return  vm.fn_get_user_list_shared();
-                }
-
-            }).then( function(e) {
-
                 vm.$emit( "fn_showProgress", false );
 
             });
@@ -252,6 +192,9 @@ export default {
         async fn_get_user_list_for_share() {
 
             var vm = this;
+
+			vm.arr_user_list_for_share      =   [];
+			vm.arr_user_list_for_share_cp   =   [];
             
             return  await new Promise(function(resolve, reject) {
 
@@ -269,9 +212,6 @@ export default {
 					resolve( { result : false } );
 
 				}else{
-
-                    vm.arr_user_list_for_share      =   [];
-                    vm.arr_user_list_for_share_cp   =   [];                    
 
 					var p_param         =   {};
 
@@ -337,93 +277,6 @@ export default {
             }).catch( function(e1) {
                 console.log( e1 );
             });             
-        },
-
-        /*
-         * 공유된 공유자를 조회한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        async fn_get_user_list_shared() {
-
-            var vm = this;
-
-
-            return  await new Promise(function(resolve, reject) {
-
-                if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
-
-                    if ( vm.$refs.confirm2.open(
-                            '확인',
-                            "기본정보가 존재하지 않습니다.",
-                            {}
-                            ,1
-                        )
-                    ) {
-                    }
-
-                    resolve( { result : false } );
-
-                }else{
-
-                    var p_param         =   {};
-
-                    p_param.grp_cd      =   vm.share_row_data.grp_cd;
-                    p_param.scen_cd     =   vm.share_row_data.scen_cd;                
-
-                    util.axiosCall(
-                            {
-                                    "url"       :   Config.base_url + "/user/simulation/getUserListShared"
-                                ,   "data"      :   p_param
-                                ,   "method"    :   "post"
-                            }
-                        ,   async function(response) {
-
-                                try{
-
-                                    if (response && response.data) {
-                                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                        if (!response.data.result) {
-
-                                            if( msg ) {
-
-                                                if ( vm.$refs.confirm2.open(
-                                                        '확인',
-                                                        msg,
-                                                        {}
-                                                        ,1
-                                                    )
-                                                ) {
-                                                }                                            
-                                            }
-
-                                            resolve( { result : false } );
-
-                                        }else{
-                                            
-                                            vm.arr_user_list_shared      =   response.data.arr_user_list_shared;                /* array 모든 공유된 공유자 */
-                                            resolve( { result : true } );
-                                        }
-
-                                    }else{
-                                        resolve( { result : false } );
-                                    }
-
-                                }catch(ex) {
-                                    console.log( "error", ex );
-                                    resolve( { result : false } );
-                                }
-                            }
-                        ,   function(error) {
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                                resolve( { result : false } );
-                            }
-                    );
-                }
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });
         },
 
         /*
@@ -554,135 +407,6 @@ export default {
             }).catch( function(e1) {
                 console.log( e1 );
             });
-        },
-
-        /*
-         * 선택된 사용자를 공유해제 한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        async fn_apply_share_user_revoke_in_arr( p_checkedItem ) {
-
-            var vm = this;
-
-            vm.arr_checked_shared       =   [];
-
-
-            if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
-
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        "기본정보가 존재하지 않습니다.",
-                        {}
-                        ,1
-                    )
-                ) {
-                }
-
-                return  false;
-            }
-
-
-            if( !p_checkedItem || !p_checkedItem.email ) {
-
-                if ( await vm.$refs.confirm2.open(
-                        '확인',
-                        '공유해제할 대상자가 선택되어야 합니다.',
-                        {}
-                        , 1
-                    )
-                ) {
-                }
-
-                return  false;
-
-            }
-
-
-            return  await new Promise( async function(resolve, reject) {
-
-                vm.arr_checked_shared.push( { 
-                    "email"     :   p_checkedItem.email 
-                });                
-
-
-                var p_param                     =   {};
-
-                p_param.grp_cd                  =   vm.share_row_data.grp_cd;
-                p_param.scen_cd                 =   vm.share_row_data.scen_cd;
-                p_param.arr_checked_shared      =   vm.arr_checked_shared;
-
-
-                vm.$emit( "fn_showProgress", true );
-
-                util.axiosCall(
-                        {
-                                "url"       :   Config.base_url + "/user/simulation/applyShareUserRevokeInArr"
-                            ,   "data"      :   p_param
-                            ,   "method"    :   "post"
-                        }
-                    ,   async function(response) {
-
-                            try{
-
-                                if (response && response.data) {
-                                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                    if (!response.data.result) {
-
-                                        vm.$emit( "fn_showProgress", false );
-
-                                        if( msg ) {
-
-                                            if ( vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {
-                                            }                                                
-                                        }
-
-                                        resolve( { result : false } );
-                                    }else{
-                                        vm.$emit( "fn_showProgress", false );
-
-                                        resolve( { result : true } );
-                                    }
-
-                                }else{
-                                    vm.$emit( "fn_showProgress", false );
-
-                                    resolve( { result : false } );
-                                }
-
-                            }catch(ex) {
-                                vm.$emit( "fn_showProgress", false );
-
-                                console.log( "error", ex );
-                                resolve( { result : false } );
-                            }
-                        }
-                    ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
-
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                            resolve( { result : false } );
-                        }
-                );
-
-            }).then( function(e) {
-
-                if( e && e.result ) {
-
-
-                    vm.v_search =   "";
-                    return  vm.fn_show_share();
-                }
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });     
         },
 
         /*
