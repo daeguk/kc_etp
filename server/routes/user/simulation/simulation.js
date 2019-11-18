@@ -4419,7 +4419,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 4. 변경전 시나리오의 그룹 정보를 조회한다. */
+                    /* 4. 변경전 시나리오의 상위 그룹 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -4696,7 +4696,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 11. 변경할 대상이 상위그룹인 경우 - 변경전 시나리오 공유자 정보를 조회한다. */
+                    /* 11. 변경할 대상이 상위 그룹이 있는 경우 - 변경전 시나리오 공유자 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4745,7 +4745,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 12. 변경할 대상이 상위그룹인 경우 - 변경할 그룹 공유자 정보를 조회한다. */
+                    /* 12. 변경할 대상이 상위 그룹이 있는 경우 - 변경할 그룹 공유자 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4757,7 +4757,7 @@ var fnChangeGroup = function(req, res) {
                             msg.v_simul_share_upper     =   [];
 
 
-                            /* 변경할 대상이 상위그룹인 경우 */
+                            /* 변경할 대상이 상위 그룹이 있는 경우 */
                             if( paramData.org_grp_yn == "1" ) {
 
                                 paramData.changeGrpCdYn     =   "0";
@@ -4796,7 +4796,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 13. 변경할 대상이 상위그룹인 경우 - 그룹 공유자 정보를 설정한다. */
+                    /* 13. 변경할 대상이 상위 그룹이 있는 경우 - 그룹 공유자 정보를 설정한다. */
                     function( msg, callback) {
 
                         try {
@@ -4809,10 +4809,10 @@ var fnChangeGroup = function(req, res) {
                             msg.arr_insert_list     =   [];
 
 
-                            /* 변경할 대상이 상위 그룹인 경우 - (변경전) 시나리오 공유자가 존재하는 경우  */
+                            /* 변경할 대상이 상위 그룹이 있는 경우 - (변경전) 시나리오 공유자가 존재하는 경우  */
                             if( typeof msg.v_simul_prev_share != "undefined" && msg.v_simul_prev_share.length > 0 ) {
 
-                                /* 변경할 대상이 상위 그룹인 경우 - (변경할) 그룹 공유자가 존재하는 경우  */
+                                /* 변경할 대상이 상위 그룹이 있는 경우 - (변경할) 그룹 공유자가 존재하는 경우  */
                                 if( typeof msg.v_simul_share_upper != "undefined" && msg.v_simul_share_upper.length > 0 ) {
 
                                     msg.v_simul_prev_share.forEach( function( item, index, array) {
