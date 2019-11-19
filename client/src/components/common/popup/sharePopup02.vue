@@ -74,7 +74,7 @@
                                         </div>
                                     </div>
                                     <div class="text-xs-center">
-                                        <v-btn depressed small color="primary" @click.stop="">공유하기</v-btn>
+                                        <v-btn depressed small color="primary" @click.stop="fn_apply_share_user_in_arr()">공유하기</v-btn>
                                     </div>
                                 </div>
 
@@ -321,7 +321,6 @@ export default {
                 }
 
                 return  false;
-
             }
 
 
@@ -334,13 +333,15 @@ export default {
 
                 p_param.grp_cd                  =   vm.share_row_data.grp_cd;
                 p_param.scen_cd                 =   vm.share_row_data.scen_cd;
+                p_param.method_gubun            =   vm.share_row_data.method_gubun;
+                p_param.arr_scen_in_grp         =   vm.share_row_data.arr_scen_in_grp;
                 p_param.arr_checked_for_share   =   vm.arr_checked_for_share;
 
                 vm.$emit( "fn_showProgress", true );
 
                 util.axiosCall(
                         {
-                                "url"       :   Config.base_url + "/user/simulation/applyShareUserInArr"
+                                "url"       :   Config.base_url + "/user/simulation/applyShareUserInResultGroup"
                             ,   "data"      :   p_param
                             ,   "method"    :   "post"
                         }
@@ -418,8 +419,6 @@ export default {
 
             vm.v_search = vm.v_search.toUpperCase();
 
-            vm.arr_user_list_for_share  =   [];            
-
             /* 이벤트 delay이로 부하 줄임 */
             var delay = (function(){
                 var timer = 0;
@@ -443,7 +442,11 @@ export default {
                     }
                 });
 
-                vm.arr_user_list_for_share  =   filterData;
+                vm.arr_user_list_for_share  =   [];
+
+                vm.$nextTick(function(e) {
+                    vm.arr_user_list_for_share  =   filterData;
+                });
 
             }, 1000 );
         },    

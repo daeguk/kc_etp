@@ -52,6 +52,15 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    <tr
+                                                        v-if="!arr_user_list_for_share || arr_user_list_for_share.length == 0"
+                                                    >
+                                                        <td
+                                                            class="txt_left"
+                                                            colspan="3"
+                                                        >공유자 내역이 없습니다.</td>
+                                                    </tr>
+                                                    
                                                     <tr v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
                                                         :key="'arr_user_list_for_share_' + index_for_share">
 
@@ -694,11 +703,10 @@ export default {
 
             vm.v_search = vm.v_search.toUpperCase();
 
-            vm.arr_user_list_for_share  =   [];            
-
             /* 이벤트 delay이로 부하 줄임 */
             var delay = (function(){
                 var timer = 0;
+
                 return function(callback, ms){
                     clearTimeout (timer);
                     timer = setTimeout(callback, ms);
@@ -709,7 +717,7 @@ export default {
 
                 var filterData = _.filter( vm.arr_user_list_for_share_cp, function(item, index, array) { 
 
-                    var nmIdx = item.name  ? item.name.toUpperCase().indexOf(vm.v_search)     : -1;        /* 이름 */
+                    var nmIdx = item.name  ? item.name.indexOf(vm.v_search)     : -1;        /* 이름 */
                     var cdIdx = item.email ? item.email.toUpperCase().indexOf(vm.v_search)    : -1;        /* 이메일 */
 
                     if (nmIdx > -1 || cdIdx > -1) {
@@ -719,7 +727,12 @@ export default {
                     }
                 });
 
-                vm.arr_user_list_for_share  =   filterData;
+
+                vm.arr_user_list_for_share  =   [];
+
+                vm.$nextTick(function(e) {
+                    vm.arr_user_list_for_share  =   filterData;
+                });
 
             }, 1000 );
         },    
