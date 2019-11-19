@@ -723,7 +723,7 @@ export default {
                     vm.arr_user_list_for_share  =   filterData;
                 });
 
-            }, 1000 );
+            }, 2000 );
         },    
   }
 }
