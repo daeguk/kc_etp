@@ -185,11 +185,18 @@
 
         <v-flex>
             <sharePopup02
-                v-if="share_modal_flag"
+                v-if="share_grp_modal_flag"
                 :share_row_data="share_row_data"
                 @fn_close_share_modal="fn_close_share_modal"
                 @fn_showProgress="fn_showProgress"
             ></sharePopup02>
+
+            <sharePopup03
+                v-if="share_scen_modal_flag"
+                :share_row_data="share_row_data"
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup03>            
 
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
@@ -210,6 +217,7 @@ import excel from "xlsx";
 import LineSimulationChartG  from "@/components/common/chart/LineSimulationChartG.vue";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import sharePopup02 from "@/components/common/popup/sharePopup02";
+import sharePopup03 from "@/components/common/popup/sharePopup03";
 
 var tbl_result_daily    =   null;
 var tbl_result_anal01   =   null;
@@ -255,8 +263,9 @@ export default {
                 }
             ,   v_index                     :   0
             ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
-            ,   share_modal_flag            :   false
             ,   share_row_index             :   -1
+            ,   share_grp_modal_flag        :   false
+            ,   share_scen_modal_flag       :   false
 
         };
     },
@@ -265,6 +274,7 @@ export default {
         ConfirmDialog,
         LineSimulationChartG,
         sharePopup02,
+        sharePopup03,
     },
 
     created() {
@@ -1011,9 +1021,17 @@ export default {
             vm.arr_show_error_message   =   [];
 
 
-            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+            if( !p_item || !vm.method_gubun || !vm.arr_scen_in_grp || vm.arr_scen_in_grp.length == 0  ) {
                 vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
                 return  false;
+            }
+
+            /* 그룹비교인 경우 */
+            if( vm.method_gubun == "getScenInGrpCd" ) {
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                    vm.arr_show_error_message.push( "[그룹비교] 기본정보가 존재하지 않습니다." );
+                    return  false;
+                }
             }
 
             var v_param             =   {};
@@ -1025,7 +1043,15 @@ export default {
 
             vm.share_row_data       =   v_param;
             vm.share_row_index      =   p_index;
-            vm.share_modal_flag     =   true;
+
+            /* 02 */
+            if( vm.method_gubun == "getScenInGrpCd" ) {
+                vm.share_grp_modal_flag     =   true;
+            }
+            /* 03 */
+            else if( vm.method_gubun == "getInfoCheckedScenCd" ) {
+                vm.share_scen_modal_flag    =   true;
+            }
         },
 
         /*
@@ -1035,7 +1061,8 @@ export default {
         fn_close_share_modal: function() {
             var vm = this;
 
-            vm.share_modal_flag     =   false;
+            vm.share_grp_modal_flag     =   false;
+            vm.share_scen_modal_flag    =   false;
         },		
     },
     

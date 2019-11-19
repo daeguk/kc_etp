@@ -1689,6 +1689,9 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
+            p_item.menu_grp             =   false;
+            p_item.menu                 =   false;
+
 
             if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
                 vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
