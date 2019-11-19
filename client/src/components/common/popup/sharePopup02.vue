@@ -36,7 +36,7 @@
                                 <div class="incode_pop">
                                     <h6>공유자 선택</h6>
                                     <div class="table-box-wrap">
-                                        <div class="table-box" style="max-height:200px;">
+                                        <div class="table-box" style="height:200px;">
                                             <table class="tbl_type ver8 v2">
                                                 <caption>헤더 고정 테이블</caption>
                                                 <colgroup>
