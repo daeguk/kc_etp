@@ -1069,7 +1069,7 @@ var modifyGroup = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation." + v_queryId + " success", paramData );
+                                        log.debug( "simulation." + v_queryId + " success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -2591,7 +2591,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -2650,7 +2650,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation." + v_queryId + " ( 시나리오 tm_simul_share ) success", paramData );
+                                    log.debug( "simulation." + v_queryId + " ( 시나리오 tm_simul_share ) success" );
                                 }
 
                                 callback(null, msg);
@@ -2757,7 +2757,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                         }
 
                                         if( rows ) {
-                                            log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success", paramData );
+                                            log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
                                         }
 
                                         paramData.arr_delete_list   =   [];
@@ -2802,7 +2802,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2847,7 +2847,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows  ) {
-                                        log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2892,7 +2892,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2937,7 +2937,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                     }
 
                                     callback(null);
@@ -3246,7 +3246,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulMast success", paramData );
+                                    log.debug( "simulation.deleteSimulMast success" );
                                 }
 
                                 callback(null, msg);
@@ -3282,7 +3282,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteTmSimulPortfolio success", paramData );
+                                    log.debug( "simulation.deleteTmSimulPortfolio success" );
                                 }
 
                                 callback(null, msg);
@@ -3318,7 +3318,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultAnal success", paramData );
+                                    log.debug( "simulation.deleteSimulResultAnal success" );
                                 }
 
                                 callback(null, msg);
@@ -3354,7 +3354,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultRebalance success", paramData );
+                                    log.debug( "simulation.deleteSimulResultRebalance success" );
                                 }
 
                                 callback(null, msg);
@@ -3390,7 +3390,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultDaily success", paramData );
+                                    log.debug( "simulation.deleteSimulResultDaily success" );
                                 }
 
                                 callback(null, msg);
@@ -3426,7 +3426,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultMast success", paramData );
+                                    log.debug( "simulation.deleteSimulResultMast success" );
                                 }
 
                                 callback(null, msg);
@@ -3465,7 +3465,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteAllTmSimulShareScen success", paramData );
+                                    log.debug( "simulation.deleteAllTmSimulShareScen success" );
                                 }
 
                                 callback(null);
@@ -3935,7 +3935,7 @@ var copyScenario = function(req, res) {
                                 }else{
 
                                     if( rows ) {
-                                        log.debug( "simulation.copyTmSimulMast success", paramData );
+                                        log.debug( "simulation.copyTmSimulMast success" );
                                     }
 
                                     callback(null, msg);
@@ -4132,7 +4132,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -4180,7 +4180,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr success" );
                                     }
 
                                     paramData.arr_update_list   =   [];
@@ -4224,7 +4224,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.copyTmSimulPortfolio success", paramData );
+                                        log.debug( "simulation.copyTmSimulPortfolio success" );
                                     }
 
                                     callback(null);
@@ -4588,7 +4588,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulPortfolioByChangeGroup ( 그룹변경 tm_simul_portfolio ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulPortfolioByChangeGroup ( 그룹변경 tm_simul_portfolio ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4767,7 +4767,7 @@ var fnChangeGroup = function(req, res) {
 
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -4808,7 +4808,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 시나리오 tm_simul_share ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 시나리오 tm_simul_share ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4905,7 +4905,7 @@ var fnChangeGroup = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success", paramData );
+                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
                                     }
 
                                     paramData.arr_delete_list   =   [];
@@ -4947,7 +4947,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4985,7 +4985,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success" );
                                 }
 
                                 callback(null, msg);
@@ -5023,7 +5023,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success" );
                                 }
 
                                 callback(null, msg);
@@ -5061,7 +5061,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                 }
 
                                 callback(null);
