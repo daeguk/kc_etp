@@ -6115,7 +6115,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 3. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    /* 3. 선택된 시나리오 또는 그룹에 속한 공유자들을 해제한다. */
                     function(msg, callback) {
 
                         try{
@@ -6171,6 +6171,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
+                                    }
+
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 선택된 시나리오 또는 그룹에 속한 공유자들을 해제 ) success" );
                                     }
 
                                     msg.arr_delete_list =   [];
@@ -6239,6 +6243,7 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                     if( !rows || rows.length == 0 ) {
 
+                                        /* 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 */
                                         paramData.arr_checked_shared.forEach( function( item, index, array) {
 
                                             msg.arr_delete_list.push({
@@ -6246,7 +6251,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                                                 ,   "scen_cd"   :   msg.upper_scen_cd
                                                 ,   "email"     :   item.email
                                             });
-                                        });                                        
+                                        });
 
                                     }else {
 
@@ -6258,6 +6263,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                                             });
 
 
+                                            /* 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 */
                                             if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
 
                                                 msg.arr_delete_list.push({
@@ -6288,7 +6294,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 5. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    /* 5. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 ) */
                     function(msg, callback) {
 
                         try{
@@ -6312,6 +6318,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
+                                    }
+
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 해제 ) success" );
                                     }
 
                                     callback(null);
