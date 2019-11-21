@@ -32,6 +32,7 @@ import  SimulationControl   from '@/components/Home/Simulation/SimulationControl
 import  SimulationList      from '@/components/Home/Simulation/SimulationList.vue'
 import  Simulation          from '@/components/Home/Simulation/Simulation.vue'
 import  SimulationResult    from '@/components/Home/Simulation/SimulationResult.vue'
+import  TimeSeries          from '@/components/Home/Simulation/TimeSeries.vue'
 
 // OperSupport
 import  OperSupportControl   from '@/components/Home/OperSupport/OperSupportControl.vue'
@@ -184,6 +185,12 @@ export const routes = [
       },
       {   path : 'simulation/simulationResult',
           component: SimulationResult,
+          meta: {
+            requiresAuth: false,
+          },
+      },
+      {   path : 'simulation/TimeSeries',
+          component: TimeSeries,
           meta: {
             requiresAuth: false,
           },
