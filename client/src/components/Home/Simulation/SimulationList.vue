@@ -18,7 +18,7 @@
                 </div>
 
                 <span>
-                    <v-btn depressed color="primary" @click="fn_showSenario()">Create Senario</v-btn>
+                    <v-btn depressed color="primary" @click="fn_showSenario()">시나리오 생성</v-btn>
                 </span>
                 <span>
                     <v-btn
@@ -26,7 +26,7 @@
                         outline
                         color="primary"
                         @click="fn_showCreateGroup();"
-                    >Create A Group</v-btn>
+                    >그룹 생성</v-btn>
                 </span>
 
                 <div style="display:inline" v-if="showCreateGroup=='Y'">
@@ -54,6 +54,14 @@
                         -->
                     </span>
                 </div>
+                <span>
+                    <v-btn
+                        depressed
+                        outline
+                        color="primary"
+                        
+                    ><router-link to="/simulation/TimeSeries" class="routerlink2">시계열 등록</router-link></v-btn>
+                </span>
                 <span class="btn_r">
                     <v-btn depressed color="primary" @click="fn_compare_checked_data()">비교하기</v-btn>
                 </span>

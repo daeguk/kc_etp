@@ -302,7 +302,7 @@
                         </div-->
                     </v-tab-item>
 
-                    <!--분석정보 -->
+                    <!--시계열 분석 -->
                     <v-tab-item>
                         <v-card flat>
                             <div class="btn_only_r">
@@ -362,6 +362,51 @@
                             </div>
                         </v-card>
                     </v-tab-item>
+
+                    <!--포트폴리오 분석 -->
+                    <v-tab-item>
+                        <v-card flat>
+                            
+                            <div class="table-box-wrap mar15">
+                                <div class="table-box" style="max-height:710px;">
+                                    <table class="tbl_type ver10">
+                                        <colgroup>
+                                            <col width="12%" />
+                                            <col width="12%" />
+                                            <col width="11%" />
+                                            <col width="20%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th style="width:12%" class="txt_left">시작일</th>
+                                                <th style="width:12%" class="txt_left">종료일</th>
+                                                <th style="width:11%" class="txt_left">코드</th>
+                                                <th style="width:20%" class="txt_left">종목</th>
+                                                <th style="width:15%" class="txt_right">start_weight</th>
+                                                <th style="width:15%" class="txt_right">end_weight</th>
+                                                <th style="width:15%" class="txt_right">기여율(%)</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="txt_left">2016.10.04</td>
+                                                <td class="txt_left">2016.12.08</td>
+                                                <td class="txt_left">140910</td>
+                                                <td class="txt_left">에이리츠</td>
+                                                <td class="txt_right">0.50%</td>
+                                                <td class="txt_right">0.47%</td>
+                                                <td class="txt_right">-6.54%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </v-card>
+                    </v-tab-item>                   
                 </v-tabs-items>
 
                 <v-card flat>
@@ -411,7 +456,8 @@ export default {
                     "일자별지수",
                     "리밸런싱내역",
                     "시뮬레이션 설정",
-                    "분석정보",
+                    "시계열 분석",
+                    "포트폴리오 분석",
                 ]
 
             ,   arr_show_error_message      :   []
