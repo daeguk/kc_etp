@@ -135,6 +135,7 @@ var getScenInGrpCd = function(req, res) {
                             msg = {};
                         }
 
+                        paramData.changeGrpCdYn     =   "0";
                         stmt = mapper.getStatement('simulation', 'getUserListInCheckedSimulation', paramData, format);
                         log.debug(stmt);
 
@@ -270,17 +271,21 @@ var getScenInGrpCd = function(req, res) {
                             var v_change_yn     =   false;
                             var v_result_msg    =   "";
 
+                            var v_share_check   =   false;
+
                             for( var i=0; i < rows.length; i++ ) {
                                 var item    =   rows[i];
 
-                                if( typeof msg.v_arr_share_in_grp != "undefined" ||  msg.v_arr_share_in_grp.length > 0 ) {
+                                if( typeof msg.v_arr_share_in_grp != "undefined" &&  msg.v_arr_share_in_grp.length > 0 ) {
                                     var v_temp  =   _.filter( msg.v_arr_share_in_grp, function(o) {
-                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd;
+                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
                                     });
 
                                     if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
                                         continue;
                                     }
+
+                                    v_share_check   =   true;
                                 }
 
                                 if( v_arr_result.length == 10 ) {
@@ -295,6 +300,14 @@ var getScenInGrpCd = function(req, res) {
                                     v_change_yn =   true;
                                 }
                             };
+
+                            if( !v_share_check ) {
+                                resultMsg.result    =   false;
+                                resultMsg.msg       =   "그룹 내 공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                resultMsg.err       =   "그룹 내 공유된 시나리오가 한건 이상 존재해야 합니다.";
+
+                                return callback(resultMsg);
+                            }
 
 
                             if( !v_arr_result || v_arr_result.length == 0 ) {

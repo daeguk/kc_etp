@@ -2058,7 +2058,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2096,7 +2095,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2135,7 +2133,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2291,7 +2288,7 @@ export default {
                                             resolve( { result : false } );
                                         }
                                     }
-                                ,   function(error) {
+                                ,   function(ex) {
                                         console.log( "error", ex );
 
                                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
