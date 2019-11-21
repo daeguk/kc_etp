@@ -2061,8 +2061,9 @@
 
          WHERE  1 = 1
 
-           AND  grp_cd          =   #{prev_grp_cd}
-           AND  scen_cd         =   #{prev_scen_cd}
+           AND  grp_cd          =   #{prev_upper_grp_cd}
+           AND  scen_cd         =   #{prev_upper_scen_cd}
+           AND  owner_yn        =   '0'
            
            AND  email           NOT IN  
                 (
@@ -2074,7 +2075,7 @@
                      WHERE  1 = 1
                      
                        AND  grp_cd          =   '*'
-                       AND  scen_cd         =   #{prev_grp_cd}
+                       AND  scen_cd         =   #{prev_upper_scen_cd}
 
                        AND  email           NOT IN
                             (
@@ -2098,7 +2099,7 @@
                       
                      WHERE  1 = 1
                      
-                       AND  grp_cd          =   #{prev_grp_cd}
+                       AND  grp_cd          =   #{prev_upper_scen_cd}
                        AND  ( grp_cd, scen_cd )   NOT IN
                             (
                                 ( #{prev_grp_cd} , #{prev_scen_cd} )
