@@ -1,7 +1,6 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
-
             <v-card flat>
                 <v-card-title primary-title>
                     <h3 class="headline" pb-0>
@@ -14,9 +13,18 @@
             </v-card>
 
             <v-card flat class="bot_pad1">
-                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
-                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                <div
+                    class="warning_box"
+                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                    <span
+                        class="margin_n"
+                        v-for="(item, index) in arr_show_error_message"
+                        :key="index"
+                    >
+                        <v-icon color="#ff4366">error_outline</v-icon>
+                        {{item}}
+                        <br />
                     </span>
                 </div>
 
@@ -27,215 +35,16 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
 
-
                     <span class="btn_r">
-                        <v-menu 
-                            :close-on-content-click="false"
-                            :value="v_item.show_share">
-
-                            <template
-                                v-slot:activator="{ on, attrs }"
-                            >
-                                <v-btn
-                                    small 
-                                    flat 
-                                    icon
-
-
-                                    @click="fn_show_share( v_item, v_index, 'scen' )"
-                                    v-bind="attrs"
-                                    v-on="on"
-                                >
-                                    <v-icon>share</v-icon>
-                                </v-btn>
-                            </template>
-
-
-                            <!--공유하기 팝업창--->
-                            <div style="width:500px; max-height:350px" v-if="v_item.show_share==true">
-
-                                <v-card
-                                    flat
-                                >
-                                    <h5>
-                                        <v-card-title class="ver2">
-                                            공유하기
-                                            <span class="pl-0"></span>
-                                            <v-spacer></v-spacer>
-                                            <v-btn
-                                                icon
-                                                @click="arr_user_list_for_share=[];v_item.show_share=false;"
-                                            >
-                                                <v-icon>close</v-icon>
-                                            </v-btn>
-                                        </v-card-title>
-                                    </h5>
-
-                                    <!--1table-->
-                                    <div class="simul_share_search">
-                                        <v-text-field
-                                            v-model="v_txt_search"
-                                            @keyup.stop="fn_filterAllData()"
-                                            append-icon="search"
-                                            label="Search"
-                                            single-line
-                                            hide-details
-                                        ></v-text-field>
-                                    </div>
-                                    <div class="incode_pop">
-                                        <h6>공유자 선택</h6>
-                                        <div class="table-box-wrap">
-                                            <div
-                                                class="table-box"
-                                                style="max-height:200px;"
-                                            >
-                                                <table
-                                                    class="tbl_type ver8 v2"
-                                                >
-                                                    <caption>헤더 고정 테이블</caption>
-                                                    <colgroup>
-                                                        <col
-                                                            width="10%"
-                                                        />
-                                                        <col
-                                                            width="30%"
-                                                        />
-                                                        <col
-                                                            width="60%"
-                                                        />
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                style="width:10%"
-                                                            ></th>
-                                                            <th
-                                                                style="width:30%"
-                                                                class="txt_left"
-                                                            >이름</th>
-                                                            <th
-                                                                style="width:60%"
-                                                                class="txt_left"
-                                                            >이메일</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr
-                                                            v-for="( item_for_share, index_for_share ) in arr_user_list_for_share"
-                                                            :key="index_for_share"
-                                                        >
-                                                            <td
-                                                                class="txt_left"
-                                                            >
-                                                                <v-checkbox
-                                                                    v-model="item_for_share.checked_for_share"
-                                                                    :name="'chk_share_' + index_for_share"
-                                                                    :value="fn_set_checked_share_value( item_for_share )"
-                                                                    color="primary"
-                                                                ></v-checkbox>
-                                                            </td>
-
-                                                            <td
-                                                                class="txt_left"
-                                                            >{{ item_for_share.name }}</td>
-                                                            <td
-                                                                class="txt_left"
-                                                            >{{ item_for_share.email }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="text-xs-center">
-                                            <v-btn
-                                                depressed
-                                                small
-                                                color="primary"
-                                                @click.stop="fn_apply_share_user_in_arr( v_item, v_index )"
-                                            >공유하기</v-btn>
-                                        </div>
-                                    </div>
-
-                                    <!--2table-->
-                                    <div class="incode_pop pt-3">
-                                        <h6 class="pb-1">공유자 선택해제</h6>
-                                        <div class="table-box-wrap">
-                                            <div
-                                                class="table-box"
-                                                style="max-height:200px;"
-                                            >
-                                                <table
-                                                    class="tbl_type ver8 v2"
-                                                >
-                                                    <caption>헤더 고정 테이블</caption>
-                                                    <colgroup>
-                                                        <col
-                                                            width="20%"
-                                                        />
-                                                        <col
-                                                            width="50%"
-                                                        />
-                                                        <col
-                                                            width="30%"
-                                                        />
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                style="width:20%"
-                                                            >이름</th>
-                                                            <th
-                                                                style="width:50%"
-                                                                class="txt_left"
-                                                            >이메일</th>
-                                                            <th
-                                                                style="width:30%"
-                                                                class="txt_left"
-                                                            ></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr
-                                                            v-if="!arr_user_list_shared || arr_user_list_shared.length == 0"
-                                                        >
-                                                            <td
-                                                                class="txt_left"
-                                                                colspan="3"
-                                                            >공유된 공유자가 없습니다.</td>
-                                                        </tr>
-
-                                                        <tr
-                                                            v-for="( item_shared, index_shared ) in arr_user_list_shared"
-                                                            :key="index_shared"
-                                                        >
-                                                            <td
-                                                                class="txt_left"
-                                                            >{{ item_shared.name }}</td>
-                                                            <td
-                                                                class="txt_left"
-                                                            >{{ item_shared.email }}</td>
-                                                            <td
-                                                                class="txt_left"
-                                                            >
-                                                                <v-btn
-                                                                    depressed
-                                                                    outline
-                                                                    small
-                                                                    color="primary"
-                                                                    @click="fn_apply_share_user_revoke_in_arr( v_item, v_index, item_shared )"
-                                                                >공유해제</v-btn>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </v-card>
-                            </div>
-                        </v-menu>
+                        <v-btn
+                            small
+                            flat
+                            icon
+                            @click="fn_open_share_modal( v_item, v_index, 'scen' )"
+                        >
+                            <v-icon>share</v-icon>
+                        </v-btn>
                     </span>
-
 
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulMod()">
@@ -244,55 +53,57 @@
                     </span>
                 </h4>
 
+                <!-- 그래프 영역-->
 
-            <!-- 그래프 영역-->
+                <div class="simul_g_w">
+                    <div class="simul_g_l">
+                        <!-- <div class="simul_graph"> -->
+                        <LineSimulationChart
+                            v-if="chartFlag"
+                            :arr_result_daily="arr_result_daily"
+                            :simul_result_mast="simul_result_mast"
+                            @fn_showMessageBox="fn_showMessageBox"
+                        ></LineSimulationChart>
+                        <ul>
+                            <li>
+                                <span class="rcolor1">●</span> Scenario
+                            </li>
+                            <li>
+                                <span class="rcolor2">●</span>
+                                {{ simul_result_mast.bench_index_nm2 }}
+                            </li>
+                        </ul>
+                        <!-- </div> -->
+                    </div>
+                    <div class="simul_g_r">
+                        <table class="tbl_type ver11 v2">
+                            <colgroup>
+                                <col width="38%" />
+                                <col width="31%" />
+                                <col width="31%" />
+                            </colgroup>
+                            <thead>
+                                <th></th>
+                                <th>Scenario</th>
+                                <th>{{ simul_result_mast.bench_index_nm2 }}</th>
+                            </thead>
 
-
-                            <div class="simul_g_w">
-                                <div class="simul_g_l">
-                            <!-- <div class="simul_graph"> -->
-                                <LineSimulationChart    v-if="chartFlag" 
-                                
-                                                        :arr_result_daily="arr_result_daily"
-                                                        :simul_result_mast="simul_result_mast"
-                                                        
-                                                        @fn_showMessageBox="fn_showMessageBox">
-                                </LineSimulationChart>
-                                <ul>
-                                    <li><span class="rcolor1">●</span> Scenario </li>
-                                    <li><span class="rcolor2">●</span> {{ simul_result_mast.bench_index_nm2 }}</li>
-                                </ul>
-                            <!-- </div> -->
-                                </div>
-                                <div class="simul_g_r">
-                                <table class="tbl_type ver11 v2">
-                                    <colgroup>
-                                        <col width="38%"/>
-                                        <col width="31%"/>
-                                        <col width="31%"/>
-                                    </colgroup>
-                                    <thead>
-                                        <th></th>
-                                        <th>Scenario</th>
-                                        <th>{{ simul_result_mast.bench_index_nm2 }}</th>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr v-for="( row, index ) in  fn_sort_arr_analyze_main" v-bind:key="row + '_' + index + '_main'" >
-                                            <th class="txt_left"  width="38%">
-                                                {{ row.anal_title          /* 분석지표 */ }}
-                                            </th>
-                                            <td class="txt_right" width="31%">
-                                                {{ row.backtest           /* Senario */ }}
-                                            </td>
-                                            <td class="txt_right" width="31%">
-                                                {{ row.benchmark          /* BM */ }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </div>
-                            </div>
+                            <tbody>
+                                <tr
+                                    v-for="( row, index ) in  fn_sort_arr_analyze_main"
+                                    v-bind:key="row + '_' + index + '_main'"
+                                >
+                                    <th class="txt_left" width="38%">{{ row.anal_title /* 분석지표 */ }}</th>
+                                    <td
+                                        class="txt_right"
+                                        width="31%"
+                                    >{{ row.backtest /* Senario */ }}</td>
+                                    <td class="txt_right" width="31%">{{ row.benchmark /* BM */ }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
@@ -300,9 +111,7 @@
                 </v-tabs>
 
                 <v-tabs-items v-model="activeTab">
-
-
-            <!-- 일자별 지수 탭1-->
+                    <!-- 일자별 지수 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -321,25 +130,44 @@
                                                     <col width="14%" />
                                                 </colgroup>
                                                 <thead>
-                                                    <tr >
+                                                    <tr>
                                                         <th class="txt_left">일자</th>
                                                         <th class="txt_right">Index</th>
                                                         <th class="txt_right">Balance</th>
                                                         <th class="txt_right">Return</th>
-                                                        <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
+                                                        <th
+                                                            class="txt_right"
+                                                        >{{ simul_result_mast.bench_index_nm }}</th>
                                                         <th class="txt_right">BM(1000환산)</th>
                                                         <th class="txt_right">BM return</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="( row, index ) in  fn_sort_arr_result_daily" v-bind:key="row + '_' + index" >
-                                                        <td class="txt_left">{{  row.fmt_F12506             /* 일자 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_INDEX_RATE         /* 지수 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_balance            /* balance */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_RETURN_VAL         /* return */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_data01          /* BM */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_1000_data       /* BM(1000환산) */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_bm_return_data     /* BM(return) */ }}</td>
+                                                    <tr
+                                                        v-for="( row, index ) in  fn_sort_arr_result_daily"
+                                                        v-bind:key="row + '_' + index"
+                                                    >
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F12506 /* 일자 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_INDEX_RATE /* 지수 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_balance /* balance */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_RETURN_VAL /* return */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_data01 /* BM */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_1000_data /* BM(1000환산) */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_bm_return_data /* BM(return) */ }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -350,8 +178,7 @@
                         </v-layout>
                     </v-tab-item>
 
-
-            <!-- 리밸런싱 내역 탭2-->
+                    <!-- 리밸런싱 내역 탭2-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
@@ -370,7 +197,6 @@
                                                 </colgroup>
 
                                                 <thead>
-                                                                   
                                                     <tr>
                                                         <th width="20%" class="txt_left">일자</th>
                                                         <th width="20%">Event</th>
@@ -380,17 +206,31 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-    
-                                                    <tr v-for="(row, index) in fn_sort_arr_result_rebalance" v-bind:key="(row + '_' + index)" :style="row.style_background">
-                                                        <td class="txt_left">{{ row.fmt_F12506              /* 일자 */ }}</td>
-                                                        <td><!--비중조절 div class="grav_icon"></div--> 
-                                                            <!--종목편출 div class="extr_icon"></div--> 
-                                                            <div :class='row.EVENT_FLAG == "20" ? "trans_icon" : ( row.EVENT_FLAG == "10" ? "grav_icon" : "extr_icon"  ) '></div>
+                                                    <tr
+                                                        v-for="(row, index) in fn_sort_arr_result_rebalance"
+                                                        v-bind:key="(row + '_' + index)"
+                                                        :style="row.style_background"
+                                                    >
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F12506 /* 일자 */ }}</td>
+                                                        <td>
+                                                            <!--비중조절 div class="grav_icon"></div-->
+                                                            <!--종목편출 div class="extr_icon"></div-->
+                                                            <div
+                                                                :class='row.EVENT_FLAG == "20" ? "trans_icon" : ( row.EVENT_FLAG == "10" ? "grav_icon" : "extr_icon"  ) '
+                                                            ></div>
                                                             {{ row.fmt_EVENT_FLAG /* EVENT */ }}
                                                         </td>
-                                                        <td class="txt_left">{{ row.fmt_F16002              /* 종목 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_BEFORE_IMPORTANCE  /* 변경전 */ }}</td>
-                                                        <td class="txt_right">{{ row.fmt_AFTER_IMPORTANCE   /* 변경후 */ }}</td>
+                                                        <td
+                                                            class="txt_left"
+                                                        >{{ row.fmt_F16002 /* 종목 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_BEFORE_IMPORTANCE /* 변경전 */ }}</td>
+                                                        <td
+                                                            class="txt_right"
+                                                        >{{ row.fmt_AFTER_IMPORTANCE /* 변경후 */ }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -401,39 +241,37 @@
                         </v-layout>
                     </v-tab-item>
 
-
-            <!--시뮬레이션 설정 탭3-->
+                    <!--시뮬레이션 설정 탭3-->
                     <v-tab-item>
                         <div class="table-box">
-                                <table class="tbl_type ver11">
-                                    <caption>헤더 고정 테이블</caption>
-                                    <colgroup>
-                                        <col width="35%" />
-                                        <col width="65%" />
-                                    </colgroup>
-                                        <tr>
-                                            <th style="width:35%">시작년도</th>
-                                            <td style="width:65%">{{  simul_result_mast.start_year  }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>리밸런싱주기</th>
-                                            <td>{{ simul_result_mast.fmt_rebalance }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>초기투자금액(KRW)</th>
-                                            <td>{{ simul_result_mast.fmt_init_invest_money }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>벤치마크 설정</th>
-                                            <td>{{ simul_result_mast.fmt_bench_mark_cd }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>비중설정방식</th>
-                                            <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
-                                        </tr>
-                                        
-                                </table>
-                            </div>
+                            <table class="tbl_type ver11">
+                                <caption>헤더 고정 테이블</caption>
+                                <colgroup>
+                                    <col width="35%" />
+                                    <col width="65%" />
+                                </colgroup>
+                                <tr>
+                                    <th style="width:35%">시작년도</th>
+                                    <td style="width:65%">{{ simul_result_mast.start_year }}</td>
+                                </tr>
+                                <tr>
+                                    <th>리밸런싱주기</th>
+                                    <td>{{ simul_result_mast.fmt_rebalance }}</td>
+                                </tr>
+                                <tr>
+                                    <th>초기투자금액(KRW)</th>
+                                    <td>{{ simul_result_mast.fmt_init_invest_money }}</td>
+                                </tr>
+                                <tr>
+                                    <th>벤치마크 설정</th>
+                                    <td>{{ simul_result_mast.fmt_bench_mark_cd }}</td>
+                                </tr>
+                                <tr>
+                                    <th>비중설정방식</th>
+                                    <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
+                                </tr>
+                            </table>
+                        </div>
                         <!--div class="simul_setup">
                             <h6>
                                 <span class="bullet"></span>리밸런싱
@@ -464,51 +302,53 @@
                         </div-->
                     </v-tab-item>
 
-
-            <!--분석정보 -->
-                    <v-tab-item >
+                    <!--시계열 분석 -->
+                    <v-tab-item>
                         <v-card flat>
-                        <div class="btn_only_r">
-                            <span class="btn_rr"><button type="button" class="exceldown_btn" id="jsonFileDownload" @click="fn_jsonFileDownload()" ></button></span>
-                        </div>
+                            <div class="btn_only_r">
+                                <span class="btn_rr">
+                                    <button
+                                        type="button"
+                                        class="exceldown_btn"
+                                        id="jsonFileDownload"
+                                        @click="fn_jsonFileDownload()"
+                                    ></button>
+                                </span>
+                            </div>
                             <div class="table-box-wrap mar15">
                                 <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
                                         <colgroup>
-                                            <col width="33%"/>
-                                            <col width="33%"/>
-                                            <col width="33%"/>
+                                            <col width="33%" />
+                                            <col width="33%" />
+                                            <col width="33%" />
                                         </colgroup>
                                         <thead>
                                             <tr>
                                                 <th class="txt_left">분석지표</th>
                                                 <th class="txt_right">백테스트</th>
-                                                <th class="txt_right">{{ simul_result_mast.bench_index_nm }}</th>
+                                                <th
+                                                    class="txt_right"
+                                                >{{ simul_result_mast.bench_index_nm }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-if="status != 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
-                                                <td colspan="3" style="align:center">
-                                                    처리중 오류가 발생하였습니다.
-                                                </td>
+                                            <tr
+                                                v-if="!arr_analyze || arr_analyze.length == 0"
+                                            >
+                                                <td
+                                                    colspan="3"
+                                                    style="align:center"
+                                                >처리중 오류가 발생하였습니다.</td>
                                             </tr>
 
-                                            <tr v-if="status == 'detail' && ( !arr_analyze || arr_analyze.length == 0 )" >
-                                                <td colspan="3" style="align:center">
-                                                    데이터가 존재하지 않습니다.
-                                                </td>
-                                            </tr>                                            
-
-                                            <tr v-for="( row, index ) in  arr_analyze" v-bind:key="row + '_' + index" >
-                                                <td class="txt_left">
-                                                    {{ row.anal_title          /* 분석지표 */ }}
-                                                </td>
-                                                <td class="txt_right">
-                                                    {{ row.backtest           /* 백테스트 */ }}
-                                                </td>
-                                                <td class="txt_right">
-                                                    {{ row.benchmark          /* 벤치마크 */ }}
-                                                </td>
+                                            <tr
+                                                v-for="( row, index ) in  arr_analyze"
+                                                v-bind:key="row + '_' + index"
+                                            >
+                                                <td class="txt_left">{{ row.anal_title /* 분석지표 */ }}</td>
+                                                <td class="txt_right">{{ row.backtest /* 백테스트 */ }}</td>
+                                                <td class="txt_right">{{ row.benchmark /* 벤치마크 */ }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -517,6 +357,50 @@
                         </v-card>
                     </v-tab-item>
 
+                    <!--포트폴리오 분석 -->
+                    <v-tab-item>
+                        <v-card flat>
+                            
+                            <div class="table-box-wrap mar15">
+                                <div class="table-box" style="max-height:710px;">
+                                    <table class="tbl_type ver10">
+                                        <colgroup>
+                                            <col width="12%" />
+                                            <col width="12%" />
+                                            <col width="11%" />
+                                            <col width="20%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th style="width:12%" class="txt_left">시작일</th>
+                                                <th style="width:12%" class="txt_left">종료일</th>
+                                                <th style="width:11%" class="txt_left">코드</th>
+                                                <th style="width:20%" class="txt_left">종목</th>
+                                                <th style="width:15%" class="txt_right">start_weight</th>
+                                                <th style="width:15%" class="txt_right">end_weight</th>
+                                                <th style="width:15%" class="txt_right">기여율(%)</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="txt_left">2016.10.04</td>
+                                                <td class="txt_left">2016.12.08</td>
+                                                <td class="txt_left">140910</td>
+                                                <td class="txt_left">에이리츠</td>
+                                                <td class="txt_right">0.50%</td>
+                                                <td class="txt_right">0.47%</td>
+                                                <td class="txt_right">-6.54%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </v-card>
+                    </v-tab-item>                   
                 </v-tabs-items>
 
                 <v-card flat>
@@ -524,14 +408,19 @@
                         <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
                     </div>
                 </v-card>
-
             </v-card>
         </v-flex>
 
         <v-flex>
+            <sharePopup01
+                v-if="share_modal_flag"
+                :share_row_data="share_row_data"
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup01>
+
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
-        
     </v-layout>
 </template>
 
@@ -548,6 +437,7 @@ import excel from "xlsx";
 
 import LineSimulationChart  from "@/components/common/chart/LineSimulationChart.vue";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import sharePopup01 from "@/components/common/popup/sharePopup01";
 
 export default {
 
@@ -560,7 +450,8 @@ export default {
                     "일자별지수",
                     "리밸런싱내역",
                     "시뮬레이션 설정",
-                    "분석정보",
+                    "시계열 분석",
+                    "포트폴리오 분석",
                 ]
 
             ,   arr_show_error_message      :   []
@@ -572,8 +463,7 @@ export default {
             ,   simul_result_mast           :   {}
             ,   arr_result_daily            :   []      /* array 일자별 지수 */
             ,   arr_result_rebalance        :   []      /* array 리밸런스 */
-            ,   arr_analyze_org             :   []      /* 분석정보 원본 */
-            ,   arr_analyze_temp            :   []      /* 분석정보#1 */
+
             ,   arr_analyze                 :   []      /* 분석정보#1 */
             ,   arr_analyze_main            :   []      /* 초기화면 */
             ,   arr_analyze_db              :   []      /* DB 에 저장하기 위한 정보 */
@@ -585,21 +475,20 @@ export default {
             ,   result_save_yn              :   "N"     /* 결과정보 저장유무 */
 
             ,   v_item                      :   {
-                    show_share      :   false
+						grp_cd		:	""
+					,	scen_cd		:	""
                 }
             ,   v_index                     :   0
-            ,   v_txt_search                :   ""          /* 검색 문자 */
-            ,   arr_user_list_for_share     :   []          /* array 모든 공유할 공유자 */
-            ,   arr_user_list_shared        :   []          /* array 모든 공유된 공유자 */
-            ,   arr_checked_for_share       :   []          /* array 선택된 공유할 공유자 */
-            ,   arr_checked_shared          :   []          /* array 선택된 공유된 공유자 */            
-
+            ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
+            ,   share_modal_flag            :   false
+            ,   share_row_index             :   -1
         };
     },
 
     components: {
         ConfirmDialog,
         LineSimulationChart,
+        sharePopup01		
     },
 
     created() {
@@ -676,6 +565,8 @@ export default {
         }).then( function(e) {
             return  step2();
         }).then( function(e) {
+            return  step3();
+        }).then( function(e) {
             vm.fn_showProgress( false );
         }).catch( function(e) {
             console.log( e );
@@ -689,12 +580,6 @@ export default {
             if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
 
                 if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
-
-                    /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
-                    // vm.fn_getSimulResultSaveYn( { 
-                    //         "grp_cd"    :   vm.paramData.grp_cd
-                    //     ,   "scen_cd"   :   vm.paramData.scen_cd
-                    // });
 
                     vm.v_item.grp_cd    =   vm.paramData.grp_cd;
                     vm.v_item.scen_cd   =   vm.paramData.scen_cd;
@@ -715,18 +600,10 @@ export default {
                         ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
                     ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                     ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
-                    ||  ( vm.paramData.analyzeList && vm.paramData.analyzeList.length > 0 )
-                    ||  ( vm.paramData.jsonFileName && vm.paramData.jsonFileName.length > 0 )
-                    ||  ( vm.paramData.inputData && vm.paramData.inputData.length > 0 )
                 ){
 
                     return  await new Promise(function(resolve, reject) {
 
-                        /* 시뮬레이션 결과 테이블에 저장되어 있는지 체크한다. */
-                        // vm.fn_getSimulResultSaveYn( { 
-                        //         "grp_cd"    :   vm.paramData.simul_mast.grp_cd
-                        //     ,   "scen_cd"   :   vm.paramData.simul_mast.scen_cd
-                        // });                                          
 
                     /*************************************************************************************************************
                     *   array 리밸런스 정보
@@ -811,23 +688,7 @@ export default {
 
                         vm.chartFlag   =   true;
 
-
-                        vm.inputData            =   vm.paramData.inputData;
-                        vm.jsonFileName         =   vm.paramData.jsonFileName;
-
-                        vm.arr_analyze_org      =   vm.paramData.analyzeList;
-                        try{
-                            if( vm.arr_analyze_org ) {
-                                vm.arr_analyze_temp =   JSON.parse( vm.arr_analyze_org );
-                            }
-                        }catch( e ) {
-                            vm.arr_analyze_temp =   "";
-                            vm.arr_analyze.push( { anal_title : "처리중 오류가 발생하였습니다." }  );
-                            console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
-                        }
-
                         vm.status               =   "insert";
-                        vm.fn_setAnal01();
 
                         resolve( { result : true } );
 
@@ -838,6 +699,30 @@ export default {
                 }
             }            
         }
+
+        /* daily 정보를 조회하여 파이선 호출 후 분석테이블에 저장한다. */
+        async function step3() {
+
+            var p_param =   {};
+
+            if( vm.paramData && Object.keys( vm.paramData ).length > 0 ) {
+
+                if( vm.paramData.grp_cd && vm.paramData.scen_cd  ) {
+
+                    p_param.grp_cd      =   vm.paramData.grp_cd;
+                    p_param.scen_cd     =   vm.paramData.scen_cd;
+
+                }else if( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 ) {
+
+                    p_param.grp_cd      =   vm.paramData.simul_mast.grp_cd;
+                    p_param.scen_cd     =   vm.paramData.simul_mast.scen_cd;
+                }
+
+                p_param.status          =   vm.status;
+            }
+
+            return  vm.fn_getAnalyze_timeseries( p_param );
+        }        
     },
 
     methods: {
@@ -977,30 +862,7 @@ export default {
                                         vm.chartFlag   =   true;
 
 
-                                    /*************************************************************************************************************
-                                    *   분석정보 #1
-                                    **************************************************************************************************************/
-                                        // if( response.data.arr_analyze && response.data.arr_analyze.length > 0 ) {
-
-                                            vm.status               =   "detail";
-                                            vm.arr_analyze          =   response.data.arr_analyze;
-                                            vm.arr_analyze_main     =   response.data.arr_analyze_main;
-                                        // }else{
-                                        //     vm.inputData            =   response.data.inputData;
-                                        //     vm.jsonFileName         =   response.data.jsonFileName;
-
-                                        //     vm.arr_analyze_org      =   response.data.analyzeList;
-
-                                        //     try{
-                                        //         if( vm.arr_analyze_org ) {                           
-                                        //             vm.arr_analyze_temp     =   JSON.parse( vm.arr_analyze_org );
-                                        //         }
-                                        //     }catch( e ) {
-                                        //         vm.arr_analyze_temp     =   "";
-                                        //         console.log( "analyzeList 파싱 중 오류가 발생되었습니다.", e );
-                                        //     }
-                                        //     vm.fn_setAnal01();
-                                        // }
+                                        vm.status               =   "detail";
 
                                         resolve( { result : true } );
                                     }
@@ -1300,751 +1162,92 @@ export default {
         },
 
         /*
-        * 분석정보를 설정한다.
-        * 2019-07-26  bkLove(촤병국)
-        */
-        fn_setAnal01() {
-
+         * daily 정보를 조회하여 파이선 호출 후 분석테이블에 저장한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        async fn_getAnalyze_timeseries( p_param ) {
             var vm = this;
 
-            vm.arr_analyze      =   [];
-            vm.arr_analyze_main =   [];
-            vm.arr_analyze_db   =   [];
-
-            if( vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0  ) {
-                var v_anal      =   {};
-                var v_anal01    =   {};
-                
-
-                /* 정수처리 */
-                v_anal                  =   vm.fn_getFindJson( "final_balance" );
-                v_anal.anal_title       =   "Final Balance";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "int"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "cagr" );
-                v_anal.anal_title       =   "CAGR";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   1
-                });
-
-
-                /*  수익률 ( 연도 )
-                    %처리. 100곱한후 소수점 6째자리에서 반올림 
-                */
-                v_anal                  =   vm.fn_getFindJson( "best_y", "rtn" );
-                v_anal01                =   vm.fn_getFindJson( "best_y", "year" );
-                v_anal.anal_title       =   "Best Year";
-                v_anal.backtest02       =   ( v_anal01.backtest     != "N/A"    ?   v_anal01.backtest   : "N/A" );
-                v_anal.benchmark02      =   ( v_anal01.benchmark    != "N/A"    ?   v_anal01.benchmark  : "N/A" );
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   v_anal01
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /*  수익률 ( 연도 )
-                    %처리. 100곱한후 소수점 6째자리에서 반올림 
-                */
-                v_anal                  =   vm.fn_getFindJson( "worst_y", "rtn" );
-                v_anal01                =   vm.fn_getFindJson( "worst_y", "year" );
-                v_anal.anal_title       =   "Worst Year";
-                v_anal.backtest02       =   ( v_anal01.backtest     != "N/A"    ?   v_anal01.backtest   : "N/A" );
-                v_anal.benchmark02      =   ( v_anal01.benchmark    != "N/A"    ?   v_anal01.benchmark  : "N/A" );
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   v_anal01
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "mdd" );
-                v_anal.anal_title       =   "MDD";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   6
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "sharpe_rto" );
-                v_anal.anal_title       =   "Sharpe Ratio";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   3
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "sortino_rto" );
-                v_anal.anal_title       =   "Sortino Ratio";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_market", "corr" );
-                v_anal.anal_title       =   "Market Correlation";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "arith_mean" );
-                v_anal.anal_title       =   "Arithmetic Mean (daily)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "annlzd_arith_mean" );
-                v_anal.anal_title       =   "Arithmetic Mean (annualized)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "geo_mean" );
-                v_anal.anal_title       =   "Geometric Mean (daily)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "annlzd_geo_mean" );
-                v_anal.anal_title       =   "Geometric Mean (annualized)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "stdev" );
-                v_anal.anal_title       =   "Volatility (daily)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "annlzd_stdev" );
-                v_anal.anal_title       =   "Volatility (annualized)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   2
-                });
-                vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Vol(annualized)";
-                vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Vol(annualized)";
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "down_dev" );
-                v_anal.anal_title       =   "Downside Deviation (daily)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
-                v_anal.anal_title       =   "Beta(vs market)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   4
-                });
-                vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Beta(KOSPI 기준)";
-                vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Beta(KOSPI 기준)";
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
-                v_anal.anal_title       =   "Alpha(vs market, annualized)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   vm.arr_analyze_main
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   5
-                });
-                vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Alpha(KOSPI 기준)";
-                vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Alpha(KOSPI 기준)";
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_market", "r2" );
-                v_anal.anal_title       =   "R2(vs market)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "beta" );
-                v_anal.anal_title       =   "Beta(vs benchmark)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
-                v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "r2" );
-                v_anal.anal_title       =   "R2(vs benchmark)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "skewness" );
-                v_anal.anal_title       =   "Skewness";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "kurtosis" );
-                v_anal.anal_title       =   "Excess Kurtosis";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "0"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "hist_var" );
-                v_anal.anal_title       =   "Historical VaR(5%)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "anal_var" );
-                v_anal.anal_title       =   "Analytical VaR(5%)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-
-
-                /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-                v_anal                  =   vm.fn_getFindJson( "c_var" );
-                v_anal.anal_title       =   "Conditional VaR(5%)";
-                vm.fn_set_analyze_data({ 
-                        p_arr_analyze       :   vm.arr_analyze
-                    ,   p_arr_analyze_db    :   vm.arr_analyze_db
-                    ,   p_arr_analyze_main  :   null
-
-                    ,   p_anal              :   v_anal 
-                    ,   p_anal01            :   {}
-
-                    ,   p_type              :   "number"
-                    ,   p_percent_yn        :   "1"
-                    ,   p_position          :   5
-                    ,   p_order_no          :   -1
-                });
-            }
-        },
-
-        /*
-        *   파싱된 분석정보를 설정한다.
-        *   2019-07-26  bkLove(촤병국)
-        */
-        fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:[], p_arr_analyze_main:[], p_anal:{}, p_anal01:{}, p_type:"", p_percent_yn:"0", p_position:5, p_order_no:-1 } ) {
-
-            var vm = this;
-
-            var v_result_data   =   {};
-
-            var v_data  =   {
-                    anal_title      :   ""
-                ,   backtest02      :   ""
-                ,   benchmark02     :   ""
-            };
-
-            if( typeof p_param.p_anal !="undefined" && Object.keys(p_param.p_anal).length > 0 && typeof p_param.p_anal.anal_title !="undefined" ) {
-                v_data.anal_title       =   p_param.p_anal.anal_title;
-            }
-
-            if( typeof p_param.p_anal01 != "undefined" && Object.keys(p_param.p_anal01).length > 0 ) {
-                v_data.backtest02       =   ( p_param.p_anal01.backtest     != "N/A"    ?   p_param.p_anal01.backtest   : "N/A" );
-                v_data.benchmark02      =   ( p_param.p_anal01.benchmark    != "N/A"    ?   p_param.p_anal01.benchmark  : "N/A" );
-            }
-
-
-        /*  analyze     START */
-            if( p_param.p_arr_analyze != null ) {
-
-                v_result_data   =   Object.assign( {}, v_data );
-
-                v_result_data.backtest         =   vm.fn_convert_data({
-                        p_data              :   p_param.p_anal.backtest
-                    ,   p_data01            :   v_data.backtest02
-                    ,   p_type              :   p_param.p_type
-                    ,   p_percent_yn        :   p_param.p_percent_yn
-                    ,   p_show_percent_yn   :   "1"
-                    ,   p_show_data01_yn    :   "1"
-                    ,   p_position          :   p_param.p_position
-                });
-
-                v_result_data.benchmark        =   vm.fn_convert_data({
-                        p_data              :   p_param.p_anal.benchmark
-                    ,   p_data01            :   v_data.benchmark02
-                    ,   p_type              :   p_param.p_type
-                    ,   p_percent_yn        :   p_param.p_percent_yn
-                    ,   p_show_percent_yn   :   "1"
-                    ,   p_show_data01_yn    :   "1"
-                    ,   p_position          :   p_param.p_position
-                });
-
-                p_param.p_arr_analyze.push( v_result_data );
-
-
-                /*  arr_analyze_main    START */
-                if( p_param.p_arr_analyze_main != null ) {
-                    v_result_data               =   Object.assign( {}, v_result_data );
-                    v_result_data.order_no      =   p_param.p_order_no;
-
-                    p_param.p_arr_analyze_main.push( v_result_data );
-                }
-                /*  arr_analyze_main    END */
-
-            }
-        /*  analyze     END */
-
-
-        /* arr_analyze_db   START */
-            if( p_param.p_arr_analyze != null ) {
-
-                v_result_data       =   Object.assign( {}, v_data );
-
-                v_result_data.title_anal_id     =   "";
-                if( p_param.p_order_no > 0 ) {
-                    v_result_data.title_anal_id =   v_result_data.anal_title;
-                }
-
-                v_result_data.title_order_no    =   p_param.p_order_no;
-                
-                v_result_data.backtest      =   vm.fn_convert_data({
-                        p_data              :   p_param.p_anal.backtest
-                    ,   p_data01            :   v_data.backtest02
-                    ,   p_type              :   p_param.p_type
-                    ,   p_percent_yn        :   p_param.p_percent_yn
-                    ,   p_show_percent_yn   :   "0"
-                    ,   p_show_data01_yn    :   "0"
-                    ,   p_position          :   p_param.p_position
-                });
-
-                v_result_data.backtest_year             =   "";
-                if( v_data.backtest02 != "" ) {
-                    v_result_data.backtest_year         =   v_data.backtest02;
-                }
-
-                v_result_data.backtest_percent_yn       =   "0";
-                if( typeof p_param.p_percent_yn != "undefined" ) {
-                    v_result_data.backtest_percent_yn   =   p_param.p_percent_yn;
-                }
-
-            
-                v_result_data.benchmark     =   vm.fn_convert_data({
-                        p_data              :   p_param.p_anal.benchmark
-                    ,   p_data01            :   v_data.benchmark02
-                    ,   p_type              :   p_param.p_type
-                    ,   p_percent_yn        :   p_param.p_percent_yn
-                    ,   p_show_percent_yn   :   "0"
-                    ,   p_show_data01_yn    :   "0"
-                    ,   p_position          :   p_param.p_position
-                });
-
-                v_result_data.benchmark_year            =   "";
-                if( v_data.benchmark02 != "" ) {
-                    v_result_data.benchmark_year        =   v_data.benchmark02;
-                }
-
-                v_result_data.benchmark_percent_yn      =   "0";
-                if( typeof p_param.p_percent_yn != "undefined" ) {
-                    v_result_data.benchmark_percent_yn  =   p_param.p_percent_yn;
-                }
-            }
-        /* arr_analyze_db   END */
-
-            p_param.p_arr_analyze_db.push( v_result_data );            
-        },
-
-
-        /*
-        *   구분 정보에 맞게 데이터를 노출한다.
-        *   2019-07-26  bkLove(촤병국)
-        */
-        fn_convert_data( p_param={ p_data : "", p_data01 : "", p_type : "", p_percent_yn : "0",  p_show_percent_yn : "0", p_position : 5, p_show_data01_yn : "0" } ) {
-
-            var v_data  =   "";
-
-            if( p_param.p_data == "N/A" ) {
-                v_data  =   p_param.p_data;
-            }else{
-                switch( p_param.p_type ) {
-
-                    case    "number"    :
-
-                                if( p_param.p_percent_yn == "0" ) {
-                                    v_data  =   Number( p_param.p_data ).toFixed( p_param.p_position );
-                                }else{
-                                    v_data  =   ( Number( p_param.p_data ) * 100 ).toFixed( p_param.p_position );
-                                }
-
-                                if( p_param.p_percent_yn == "1" && p_param.p_show_percent_yn == "1" ) {
-                                    v_data  +=  " %";
-                                }
-
-                                if( typeof p_param.p_show_data01_yn != "undefined" && p_param.p_show_data01_yn == "1" ) {
-                                    if( p_param.p_data01 != "" ) {
-                                        v_data    +=  " (";
-                                        v_data    +=  p_param.p_data01;
-                                        v_data    +=  ")";
-                                    }
-                                }
-
-                                break;
-
-                    case    "int"    :
-
-                                v_data  =   parseInt( Number( p_param.p_data ) );
-                                break;
-
-                    case    ""    :
-                                v_data  =   p_param.p_data;
-                                break;
-                }
-            }
-
-            return  v_data;
-        },        
-
-        /*
-        * key 에 일치하는 JSON 정보를 추출한다.
-        * 2019-07-26  bkLove(촤병국)
-        */
-        fn_getFindJson( p_strKey="", p_subKey="" ) {
-
-            var vm = this;
-            var returnJson  =   {
-                    backtest    :   ""
-                ,   benchmark   :   ""
-            };
-
-            if( p_strKey != "" && vm.arr_analyze_temp &&  Object.keys( vm.arr_analyze_temp ).length > 0 ) {
-
-                if( p_subKey != "" ) {
-                    if(     typeof vm.arr_analyze_temp[ "backtest" ]                        !=  "undefined"
-                        &&  vm.arr_analyze_temp[ "backtest" ]
-                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]            !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ]
-                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey]  !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey]
-                    ) {
-                        returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ][p_subKey];
-                    }else{
-                        returnJson.backtest     =   "N/A";
-                    }
-
-
-                    if(     typeof vm.arr_analyze_temp[ "benchmark" ]                       !=  "undefined"
-                        &&  vm.arr_analyze_temp[ "benchmark" ]
-                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]           !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]
-                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey] !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey]
-                    ) {
-                        returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ][p_subKey];
-                    }else{
-                        returnJson.benchmark    =   "N/A";
-                    }
-
+            vm.arr_show_error_message   =   [];
+
+            vm.arr_analyze              =   [];
+            vm.arr_analyze_main         =   [];
+            vm.inputData                =   [];
+            vm.jsonFileName             =   "";
+
+            return await new Promise(function(resolve, reject) {
+
+                if(     !p_param 
+                    ||  !p_param.grp_cd
+                    ||  !p_param.scen_cd
+                ) {
+                    vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                    resolve( { result : false } );
                 }else{
 
-                    if(     typeof vm.arr_analyze_temp[ "backtest" ]                !=  "undefined"
-                        &&  vm.arr_analyze_temp[ "backtest" ]
-                        &&  typeof vm.arr_analyze_temp[ "backtest" ][ p_strKey ]    !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "backtest" ][ p_strKey ]
-                    ) {
-                        returnJson.backtest     =   vm.arr_analyze_temp[ "backtest" ][ p_strKey ];
-                    }else{
-                        returnJson.backtest     =   "N/A";
-                    }
+                    util.axiosCall(
+                            {
+                                    "url"       :   Config.base_url + "/user/simulation/getAnalyze_timeseries"
+                                ,   "data"      :   p_param
+                                ,   "method"    :   "post"
+                            }
+                        ,   function(response) {
 
+                                try{
 
-                    if(     typeof vm.arr_analyze_temp[ "benchmark" ]               !=  "undefined"
-                        &&  vm.arr_analyze_temp[ "benchmark" ]
-                        &&  typeof vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]   !=  "undefined" 
-                        &&  vm.arr_analyze_temp[ "benchmark" ][ p_strKey ]
-                    ) {
-                        returnJson.benchmark    =   vm.arr_analyze_temp[ "benchmark" ][ p_strKey ];
-                    }else{
-                        returnJson.benchmark    =   "N/A";
-                    }
+                                    if (response && response.data) {
+                                        var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                        if( response.data.inputData ) {
+                                            vm.inputData            =   response.data.inputData;
+                                        }
+
+                                        if( response.data.jsonFileName ) {
+                                            vm.jsonFileName         =   response.data.jsonFileName;
+                                        }
+                                                                                
+
+                                        if (!response.data.result) {
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( msg );
+                                            }
+
+                                            resolve( { result : false } );
+                                        }else{
+
+                                            if( response.data.arr_analyze && response.data.arr_analyze.length > 0 ) {
+                                                vm.arr_analyze              =   response.data.arr_analyze;
+                                            }                                                
+
+                                            if( response.data.arr_analyze_main && response.data.arr_analyze_main.length > 0 ) {
+                                                vm.arr_analyze_main     =   response.data.arr_analyze_main;
+                                            }
+
+                                            resolve( { result : true } );
+                                        }
+                                    }else{
+
+                                        resolve( { result : false } );
+                                    }
+
+                                }catch(ex) {
+                                    resolve( { result : false } );
+                                    console.log( "error", ex );
+                                }
+                            }
+                        ,   function(error) {
+                                resolve( { result : false } );
+
+                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            }
+                    );
                 }
-            }
 
-            return  returnJson;
-
-        },
-
+            }).catch( function(e1) {
+                console.log( e1 );
+                resolve( { result : false } );
+            });
+        },        
 
         /*
         * json 원본을 다운로드 한다.
@@ -2162,7 +1365,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2200,7 +1402,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2239,7 +1440,6 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-                            vm.fn_showProgress( false );
                             console.log( "error", ex );
 
                             resolve( { result : false } );
@@ -2395,7 +1595,7 @@ export default {
                                             resolve( { result : false } );
                                         }
                                     }
-                                ,   function(error) {
+                                ,   function(ex) {
                                         console.log( "error", ex );
 
                                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
@@ -2660,20 +1860,11 @@ export default {
             });
         },
 
-
         /*
-         * 선택된 데이터를 설정한다.
-         * 2019-10-24  bkLove(촤병국)
+         * 공유하기 창을 오픈한다.
+         * 2019-07-26  bkLove(촤병국)
          */
-        fn_set_checked_share_value( p_param ) {
-            return  '{ "email" : "' + p_param.email + '" }';
-        },
-
-        /*
-         *  공유정보를 노출한다.
-         *  2019-10-24  bkLove(촤병국)
-         */
-        fn_show_share( p_item, p_index, p_gubun="scen" ) {
+        fn_open_share_modal: function( p_item, p_index, p_gubun="scen" ) {
 
             var vm = this;
 
@@ -2685,495 +1876,26 @@ export default {
                 return  false;
             }
 
+            var v_param             =   {};
 
-            vm.v_txt_search         =   "";
-            p_item.show_share       =   true;
+            v_param                 =   p_item;
+            v_param.p_index         =   p_index;
+            v_param.p_gubun         =   p_gubun;
 
-
-            if( p_item.show_share ) {
-
-                vm.fn_showProgress( true );
-
-                vm.fn_get_user_list_for_share( p_item, p_index ).then( function(e){
-
-                    if( e && e.result  ) {
-
-                        /* 공유된 공유자를 조회한다. */
-                        return  vm.fn_get_user_list_shared( p_item, p_index );
-                    }
-
-                }).then( function(e) {
-
-                    if( e && e.result  ) {
-                        vm.fn_showProgress( false );
-                    }
-
-                }).catch( function(e) {
-
-                    console.log(e);
-                    vm.fn_showProgress( false );
-                })
-            }
-        },        
-
-        /*
-         * 공유할 공유자를 조회한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        async fn_get_user_list_for_share( p_item, p_index ) {
-
-            var vm = this;
-
-            vm.arr_show_error_message   =   [];
-
-
-            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                vm.fn_showProgress( false );
-                return  false;
-            }            
-
-            
-            return  await new Promise(function(resolve, reject) {
-
-                vm.arr_user_list_for_share      =   [];
-                vm.arr_user_list_for_share_cp   =   [];
-
-                var p_param         =   {};
-
-                p_param.grp_cd      =   p_item.grp_cd;
-                p_param.scen_cd     =   p_item.scen_cd;
-
-
-                util.axiosCall(
-                        {
-                                "url"       :   Config.base_url + "/user/simulation/getUserListForShare"
-                            ,   "data"      :   p_param
-                            ,   "method"    :   "post"
-                        }
-                    ,   async function(response) {
-
-                            try{
-
-                                if (response && response.data) {
-                                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                    if (!response.data.result) {
-
-
-                                        if( msg ) {
-                                            vm.arr_show_error_message.push( msg );
-                                        }
-
-                                        resolve( { result : false } );
-                                    }else{
-
-                                        vm.arr_user_list_for_share      =   response.data.arr_user_list_for_share;          /* array 모든 공유할 공유자 */
-                                        vm.arr_user_list_for_share_cp   =   response.data.arr_user_list_for_share;          /* array 모든 공유할 공유자 */
-
-                                        resolve( { result : true } );
-                                    }
-
-                                }else{
-
-                                    resolve( { result : false } );
-                                }
-
-                            }catch(ex) {
-                                console.log( "error", ex );
-                                resolve( { result : false } );
-                            }
-                        }
-                    ,   function(error) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-
-                            resolve( { result : false } );
-                        }
-                );
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });             
+            vm.share_row_data       =   v_param;
+            vm.share_row_index      =   p_index;
+            vm.share_modal_flag     =   true;
         },
 
         /*
-         * 공유된 공유자를 조회한다.
-         * 2019-11-13  bkLove(촤병국)
+         * 공유하기 창을 종료한다.
+         * 2019-07-26  bkLove(촤병국)
          */
-        async fn_get_user_list_shared( p_item, p_index ) {
-
+        fn_close_share_modal: function() {
             var vm = this;
 
-            vm.arr_show_error_message   =   [];
-
-            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                vm.fn_showProgress( false );
-                return  false;
-            }
-
-
-            return  await new Promise(function(resolve, reject) {
-
-                var p_param         =   {};
-
-                p_param.grp_cd      =   p_item.grp_cd;
-                p_param.scen_cd     =   p_item.scen_cd;                
-
-                util.axiosCall(
-                        {
-                                "url"       :   Config.base_url + "/user/simulation/getUserListShared"
-                            ,   "data"      :   p_param
-                            ,   "method"    :   "post"
-                        }
-                    ,   async function(response) {
-
-                            try{
-
-                                if (response && response.data) {
-                                    var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                    if (!response.data.result) {
-
-                                        if( msg ) {
-                                            vm.arr_show_error_message.push( msg );
-                                        }
-
-                                        resolve( { result : false } );
-
-                                    }else{
-                                        
-                                        vm.arr_user_list_shared      =   response.data.arr_user_list_shared;                /* array 모든 공유된 공유자 */
-                                        resolve( { result : true } );
-                                    }
-
-                                }else{
-                                    resolve( { result : false } );
-                                }
-
-                            }catch(ex) {
-                                console.log( "error", ex );
-                                resolve( { result : false } );
-                            }
-                        }
-                    ,   function(error) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                            resolve( { result : false } );
-                        }
-                );
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });
+            vm.share_modal_flag     =   false;
         },
-
-        /*
-         * 선택된 사용자를 공유한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        async fn_apply_share_user_in_arr( p_item, p_index ) {
-
-            var vm = this;
-
-            var v_check =   false;
-
-            vm.arr_show_error_message   =   [];
-            vm.arr_checked_for_share    =   [];
-
-            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                vm.fn_showProgress( false );
-                return  false;
-            }
-
-
-            return  await new Promise( async function(resolve, reject) {
-
-                var temp    =   _.filter( vm.arr_user_list_for_share, function(o) {
-
-                    var v_json  =   null;
-                    
-                    if( typeof o.checked_for_share != "undefined" && o.checked_for_share != "" ) {
-                        try{
-                            v_json  =   JSON.parse(o.checked_for_share);
-                        }catch(e){
-                            console.log( e );
-                        }
-                    }
-
-                    return v_json != null && typeof v_json.email != "undefined" && v_json.email != "";
-                });
-
-
-                if( !temp || temp.length == 0 ) {
-
-                    if ( await vm.$refs.confirm2.open(
-                            '확인',
-                            '공유할 대상자가 1건 이상 선택되어야 합니다.',
-                            {}
-                            , 1
-                        )
-                    ) {
-                    }
-
-                }else{
-
-                    vm.arr_checked_for_share    =   _.map( temp, function(o) { 
-                        return JSON.parse(o.checked_for_share); 
-                    });
-
-
-                    if( !vm.arr_checked_for_share || vm.arr_checked_for_share.length == 0 ) {
-
-                        if ( await vm.$refs.confirm2.open(
-                                '확인',
-                                '공유할 대상자가 1건 이상 선택되어야 합니다.',
-                                {}
-                                , 1
-                            )
-                        ) {        
-                            
-                        }
-
-                    }else{
-                        v_check =   true;
-                    }
-                }
-
-
-                if( !v_check  ) {
-                    resolve( { result : false } );
-
-                }else{
-
-                    var p_param                     =   {};
-
-                    p_param.grp_cd                  =   p_item.grp_cd;
-                    p_param.scen_cd                 =   p_item.scen_cd;
-                    p_param.arr_checked_for_share   =   vm.arr_checked_for_share;
-
-                    vm.fn_showProgress( true );
-
-                    util.axiosCall(
-                            {
-                                    "url"       :   Config.base_url + "/user/simulation/applyShareUserInArr"
-                                ,   "data"      :   p_param
-                                ,   "method"    :   "post"
-                            }
-                        ,   async function(response) {
-
-                                try{
-
-                                    if (response && response.data) {
-                                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                        if (!response.data.result) {
-
-                                            vm.fn_showProgress( false );
-
-                                            if( msg ) {
-                                                vm.arr_show_error_message.push( msg );
-                                            }
-
-                                            resolve( { result : false } );
-                                        }else{
-
-
-                                            /* 공유할 공유자를 조회한다. */
-                                            vm.fn_get_user_list_for_share( p_item, p_index );
-
-                                            /* 공유된 공유자를 조회한다. */
-                                            vm.fn_get_user_list_shared( p_item, p_index );
-
-                                            vm.fn_showProgress( false );
-
-                                            resolve( { result : true } );
-                                        }
-
-                                    }else{
-
-                                        vm.fn_showProgress( false );
-
-                                        resolve( { result : false } );
-                                    }
-
-                                }catch(ex) {
-
-                                    vm.fn_showProgress( false );
-                                    console.log( "error", ex );
-                                    resolve( { result : false } );
-                                }
-                            }
-                        ,   function(error) {
-                                vm.fn_showProgress( false );
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                                resolve( { result : false } );
-                            }
-                    );
-                }
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });
-        },
-
-        /*
-         * 선택된 사용자를 공유해제 한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        async fn_apply_share_user_revoke_in_arr( p_item, p_index, p_checkedItem ) {
-
-            var vm = this;
-
-            var v_check =   false;
-
-            vm.arr_show_error_message   =   [];
-            vm.arr_checked_shared       =   [];
-
-            if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
-                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
-                vm.fn_showProgress( false );
-                return  false;
-            }            
-
-
-            return  await new Promise( async function(resolve, reject) {
-
-
-                if( !p_checkedItem || !p_checkedItem.email ) {
-
-                    if ( await vm.$refs.confirm2.open(
-                            '확인',
-                            '공유해제할 대상자가 선택되어야 합니다.',
-                            {}
-                            , 1
-                        )
-                    ) {
-                    }
-
-                }else{
-
-                    vm.arr_checked_shared.push( { 
-                        "email"     :   p_checkedItem.email 
-                    });
-
-                    v_check =   true;
-                }
-
-
-                if( !v_check  ) {
-                    resolve( { result : false } );
-
-                }else{
-
-                    var p_param                     =   {};
-
-                    p_param.grp_cd                  =   p_item.grp_cd;
-                    p_param.scen_cd                 =   p_item.scen_cd;
-                    p_param.arr_checked_shared      =   vm.arr_checked_shared;
-
-
-                    vm.fn_showProgress( true );
-
-                    util.axiosCall(
-                            {
-                                    "url"       :   Config.base_url + "/user/simulation/applyShareUserRevokeInArr"
-                                ,   "data"      :   p_param
-                                ,   "method"    :   "post"
-                            }
-                        ,   async function(response) {
-
-                                try{
-
-                                    if (response && response.data) {
-                                        var msg = ( response.data.msg ? response.data.msg : "" );
-
-                                        if (!response.data.result) {
-
-                                            vm.fn_showProgress( false );
-
-                                            if( msg ) {
-                                                vm.arr_show_error_message.push( msg );
-                                            }
-
-                                            resolve( { result : false } );
-                                        }else{
-
-                                            /* 공유할 공유자를 조회한다. */
-                                            vm.fn_get_user_list_for_share( p_item, p_index );
-
-                                            /* 공유된 공유자를 조회한다. */
-                                            vm.fn_get_user_list_shared( p_item, p_index );
-
-                                            vm.fn_showProgress( false );
-
-                                            resolve( { result : true } );
-                                        }
-
-                                    }else{
-                                        vm.fn_showProgress( false );
-
-                                        resolve( { result : false } );
-                                    }
-
-                                }catch(ex) {
-                                    vm.fn_showProgress( false );
-
-                                    console.log( "error", ex );
-                                    resolve( { result : false } );
-                                }
-                            }
-                        ,   function(error) {
-                                vm.fn_showProgress( false );
-
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                                resolve( { result : false } );
-                            }
-                    );
-                }
-
-            }).catch( function(e1) {
-                console.log( e1 );
-            });
-        },
-
-        /*
-         * 필터를 수행한다.
-         * 2019-11-13  bkLove(촤병국)
-         */
-        fn_filterAllData: function() {
-            var vm = this;
-
-            vm.v_txt_search = vm.v_txt_search.toUpperCase();
-
-            /* 이벤트 delay이로 부하 줄임 */
-            var delay = (function(){
-                var timer = 0;
-                return function(callback, ms){
-                    clearTimeout (timer);
-                    timer = setTimeout(callback, ms);
-                };
-            })();
-
-            delay(function(){
-
-                var filterData = _.filter( vm.arr_user_list_for_share_cp, function(o) { 
-
-                    var nmIdx = o.name  ? o.name.toUpperCase().indexOf(vm.v_txt_search)     : -1;        /* 이름 */
-                    var cdIdx = o.email ? o.email.toUpperCase().indexOf(vm.v_txt_search)    : -1;        /* 이메일 */
-
-                    if (nmIdx > -1 || cdIdx > -1) {
-                        return true; 
-                    } else {
-                        return false;
-                    }
-                });
-
-                vm.arr_user_list_for_share  =   [];
-                vm.arr_user_list_for_share  =   filterData;
-
-            }, 1000 );
-        },        
 
     }
     

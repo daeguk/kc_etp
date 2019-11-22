@@ -1,7 +1,6 @@
 <template>
     <v-layout row wrap class="content_margin etp_new">
         <v-flex grow>
-
             <v-card flat>
                 <v-card-title primary-title>
                     <h3 class="headline" pb-0>
@@ -14,20 +13,35 @@
             </v-card>
 
             <v-card flat class="bot_pad1">
-                <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                    <span class="margin_n" v-for="(item, index) in arr_show_error_message" :key="index">
-                        <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                <div
+                    class="warning_box"
+                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                    <span
+                        class="margin_n"
+                        v-for="(item, index) in arr_show_error_message"
+                        :key="index"
+                    >
+                        <v-icon color="#ff4366">error_outline</v-icon>
+                        {{item}}
+                        <br />
                     </span>
                 </div>
 
                 <h4>
                     {{ simul_result_mast.scen_name }}
                     <span class="sub_t">테스트 결과</span>
+
+                    <span class="excel_btn">
+                        <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
+                    </span>
+
                     <span class="btn_r">
-                    <v-btn small flat icon v-on:click="">
+                        <v-btn small flat icon @click="fn_open_share_modal( v_item, v_index )">
                             <v-icon>share</v-icon>
                         </v-btn>
                     </span>
+
                     <span class="btn_r">
                         <v-btn small flat icon v-on:click="fn_goSimulBack()">
                             <v-icon>reply</v-icon>
@@ -35,131 +49,161 @@
                     </span>
                 </h4>
 
+                <!-- 그래프 영역-->
 
-            <!-- 그래프 영역-->
+                <div class="simul_g_w">
+                    <div class="simul_g_l">
+                        <!-- <div class="simul_graph"> -->
+                        <LineSimulationChartG
+                            v-if="chartFlag"
+                            :arr_result_data="arr_result_daily01"
+                            :arr_result_header="arr_result_daily01_header"
+                            :arr_checked="arr_checked"
+                            :bm_header="bm_daily_header"
+                            @fn_showMessageBox="fn_showMessageBox"
+                        ></LineSimulationChartG>
+                        <!-- </div> -->
+                    </div>
 
+                    <div class="simul_g_r v2">
+                        <ul v-if="bm_daily_header=='BM (N/A)'">
+                            <li
+                                v-for="(item, index) in arr_result_daily01_header"
+                                v-bind:key="index"
+                            >
+                                <span
+                                    :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) "
+                                >●</span>
 
-                            <div class="simul_g_w">
-                                <div class="simul_g_l">
-                            <!-- <div class="simul_graph"> -->
-                                <LineSimulationChartG    v-if="chartFlag" 
-                                
-                                                        :arr_result_data    =   "arr_result_daily01"
-                                                        :arr_result_header  =   "arr_result_daily01_header"
-                                                        :arr_checked        =   "arr_checked"
-                                                        :bm_header          =   "bm_daily_header"
-                                                        
-                                                        @fn_showMessageBox="fn_showMessageBox">
-                                </LineSimulationChartG>
-                            <!-- </div> -->
-                                </div>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ item.scen_name }}</span>
+                                </v-tooltip>
 
-                                <div class="simul_g_r v2" >
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[index]"
+                                        :key="item.scen_cd"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
+                        </ul>
 
-                                    <ul v-if="bm_daily_header=='BM (N/A)'" >
-                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                            <span :class="'rcolor' + ( (index+1) < 10 ? '0'+(index+1) : (index+1) ) ">●</span> 
+                        <ul v-if="bm_daily_header!='BM (N/A)'">
+                            <li>
+                                <span class="rcolor01">●</span>
 
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ item.scen_name }}</span>
-                                            </v-tooltip>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( bm_daily_header, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ bm_daily_header }}</span>
+                                </v-tooltip>
 
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[index]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                            </span>
-                                        </li>
-                                    </ul>
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[0]"
+                                        key="bm"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
 
+                            <li
+                                v-for="(item, index) in arr_result_daily01_header"
+                                v-bind:key="index"
+                            >
+                                <span
+                                    :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) "
+                                >●</span>
 
-                                    <ul v-if="bm_daily_header!='BM (N/A)'" >
-                                        <li>
-                                            <span class="rcolor01">●</span> 
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
+                                    </template>
+                                    <span>{{ item.scen_name }}</span>
+                                </v-tooltip>
 
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( bm_daily_header, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ bm_daily_header }}</span>
-                                            </v-tooltip>
+                                <span class="checkbox">
+                                    <v-checkbox
+                                        v-model="arr_checked[index+1]"
+                                        :key="item.scen_cd"
+                                        checked="true"
+                                        unchecked="false"
+                                    ></v-checkbox>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
 
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[0]" key="bm"  checked="true" unchecked="false"></v-checkbox>
-                                            </span>
-                                        </li>
-
-
-                                        <li v-for="(item, index) in arr_result_daily01_header" v-bind:key="index">
-                                            <span :class="'rcolor' + ( (index+2) < 10 ? '0'+(index+2) : (index+2) ) ">●</span> 
-
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <span dark v-on="on">{{ fn_cutByte( item.scen_name, 28 ) }}</span>
-                                                </template>
-                                                <span>{{ item.scen_name }}</span>
-                                            </v-tooltip>
-
-                                            <span class="checkbox">
-                                                <v-checkbox v-model="arr_checked[index+1]" :key="item.scen_cd" checked="true" unchecked="false" ></v-checkbox>
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <table id="tbl_result_anal01" class="tbl_type ver12">
-                                 <thead>
-                                     <tr id="tr01"></tr>
-                                </thead>                                
-                            </table>
-                            </div>
+                    <table id="tbl_result_anal01" class="tbl_type ver12">
+                        <thead>
+                            <tr id="tr01"></tr>
+                        </thead>
+                    </table>
+                </div>
 
                 <v-tabs v-model="activeTab" centered light>
                     <v-tabs-slider></v-tabs-slider>
                     <v-tab v-for="item in item" :key="item">{{ item }}</v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="activeTab">
-            <!-- 일자별 지수 탭1-->
+                    <!-- 일자별 지수 탭1-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
-                                <table id="tbl_result_daily" class="tbl_type ver12">
-                                 <thead>
-                                     <tr id="tr01"></tr>
-                                     <tr id="tr02"></tr> 
-                                </thead>                                
-                            </table>
+                                    <table id="tbl_result_daily" class="tbl_type ver12">
+                                        <thead>
+                                            <tr id="tr01"></tr>
+                                            <tr id="tr02"></tr>
+                                        </thead>
+                                    </table>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
 
-
-            <!-- 분석정보2-->
+                    <!-- 분석정보2-->
                     <v-tab-item>
                         <v-layout row wrap>
                             <v-flex grow xs12>
                                 <v-card flat>
                                     <table id="tbl_result_anal02" class="tbl_type ver12">
-                                    <thead>
-                                        <tr id="tr01"></tr>
-                                    </thead>                                
+                                        <thead>
+                                            <tr id="tr01"></tr>
+                                        </thead>
                                     </table>
                                 </v-card>
                             </v-flex>
                         </v-layout>
                     </v-tab-item>
                 </v-tabs-items>
-
             </v-card>
         </v-flex>
 
         <v-flex>
+            <sharePopup02
+                v-if="share_grp_modal_flag"
+                :share_row_data="share_row_data"
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup02>
+
+            <sharePopup03
+                v-if="share_scen_modal_flag"
+                :share_row_data="share_row_data"
+                @fn_close_share_modal="fn_close_share_modal"
+                @fn_showProgress="fn_showProgress"
+            ></sharePopup03>            
+
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
-        
     </v-layout>
 </template>
 
@@ -176,6 +220,8 @@ import excel from "xlsx";
 
 import LineSimulationChartG  from "@/components/common/chart/LineSimulationChartG.vue";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
+import sharePopup02 from "@/components/common/popup/sharePopup02";
+import sharePopup03 from "@/components/common/popup/sharePopup03";
 
 var tbl_result_daily    =   null;
 var tbl_result_anal01   =   null;
@@ -197,6 +243,7 @@ export default {
 
             ,   simul_result_mast           :   {}
             ,   arr_scen_in_grp             :   []      /* 그룹 내 시나리오 정보 */
+            ,   method_gubun                :   ""      /* 호출된 메소드 ( 선택비교 또는 그룹비교 체크 용) */
 
                 /* 결과 정보 */
             ,   arr_result_daily01          :   []      /* array 일자별 지수 */
@@ -214,12 +261,24 @@ export default {
 
             ,   chartFlag                   :   false
 
+            ,   v_item                      :   {
+						grp_cd		:	""
+					,	scen_cd		:	""
+                }
+            ,   v_index                     :   0
+            ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
+            ,   share_row_index             :   -1
+            ,   share_grp_modal_flag        :   false
+            ,   share_scen_modal_flag       :   false
+
         };
     },
 
     components: {
         ConfirmDialog,
         LineSimulationChartG,
+        sharePopup02,
+        sharePopup03,
     },
 
     created() {
@@ -272,6 +331,7 @@ export default {
             console.log( e );
             vm.fn_showProgress( false );
         });
+
 
 
         /* 코드에 속한 일자별 지수를 조회한다. */
@@ -451,7 +511,6 @@ export default {
                         try{
                             var tableObj_anal01 = {
                                 serverSide: false,
-                                ordering: false,
                                 info: false, // control table information display field
                                 stateSave: true, //restore table state on page reload,
                                 lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "All"]],
@@ -484,12 +543,12 @@ export default {
                                 var v_arr_show_columnDef    =   [];
 
                                 v_daily_tr01_html       =   `<th class="txt_left"  width="200">분석지표</th>`;
-                                v_arr_show_column.push( { "data": "scen_name"  , "orderable": false, 'className': 'dt-body-left' } );
+                                v_arr_show_column.push( { "data": "scen_name"  , "orderable": true, 'className': 'dt-body-left' } );
 
                                 vm.arr_result_anal01_header.forEach(function(item, index, array){
                                     v_daily_tr01_html   +=  '<th class="txt_right" width="140">' + item.anal_id + '</th>';
 
-                                    v_arr_show_column.push( { "data": item.anal_id, "orderable": false, 'className': 'dt-body-right' } );
+                                    v_arr_show_column.push( { "data": item.anal_id, "orderable": true, 'className': 'dt-body-right' } );
 
                                     v_arr_show_columnDef.push({  
                                             "render": function ( data, type, row ) {
@@ -704,6 +763,10 @@ export default {
                 try{
                     vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
                     vm.arr_scen_in_grp                  =   [ ...vm.paramData.arr_scen_in_grp ];
+
+                    vm.method_gubun                     =   vm.paramData.method_gubun;
+                    vm.v_item.grp_cd    				=   vm.paramData.simul_mast.grp_cd;
+                    vm.v_item.scen_cd   				=   vm.paramData.simul_mast.scen_cd;
 
                     resolve( { result : true } );
                 }catch(e) {
@@ -925,6 +988,456 @@ export default {
         },
 
         /*
+        * 엑셀을 다운로드 한다.
+        * 2019-10-17  bkLove(촤병국)
+        */
+        fn_excelDown() {
+
+            var vm = this;
+
+            var options     =   {
+                    skipHeader          :   true
+                ,   origin              :   "A2"
+                ,   colStartIndex       :   0
+                ,   rowStartIndex       :   1
+                ,   colsInfo            :   {
+                            hidden  :   false
+                        ,   width   :   15
+                    }
+                ,   rowsInfo        :   {
+                            hidden  :   false
+                        ,   hpt     :   20
+                    }
+            };
+
+            if( !vm.simul_result_mast || !vm.simul_result_mast.scen_name ) {
+                vm.simul_result_mast.scen_name  =   "시뮬레이션 선택결과"
+            }
+
+            var excelInfo = {
+                    excelFileNm     :   vm.simul_result_mast.scen_name.replace( /(\\)|(")|(\/)|(:)|(\*)|(\?)|(<)|(>)|(\|)/g, "" )
+                ,   sheetNm         :   ""
+                ,   dataInfo        :   []
+
+                ,   arrHeaderNm     :   []
+                ,   arrHeaderKey    :   []
+
+                ,   arrColsInfo     :   []
+            };            
+
+
+            try{
+
+                var dataWS;
+                var wb = excel.utils.book_new();
+
+                vm.fn_showProgress( true );
+
+                step1().then( function(e){
+                    if( e && e.result ) {
+                        return  step2();
+                    }
+                }).then( function(e3) {
+                    return step3();
+                }).then( function(e4) {
+                    vm.fn_showProgress( false );
+                }).catch( function(e) {
+                    console.log( e );
+                    vm.fn_showProgress( false );
+                });
+                
+
+                /* 일자별 지수 */
+                async function    step1() {
+
+                    return  await new Promise(function(resolve, reject) {
+
+                        try{
+
+                            excelInfo.sheetNm           =   "일자별 지수";
+
+
+                            var arr_row2    =   [ 
+                                    {   "col_id"    :   "INDEX_RATE"        ,   "width" :   25  ,   "title" :   "지수"      }
+                                ,   {   "col_id"    :   "RETURN_VAL"        ,   "width" :   25  ,   "title" :   "등락"      }
+                            ];
+
+                            var v_excel_row_data    =   [];
+
+                            if( typeof vm.fn_sort_arr_result_daily01 != "undefined" && vm.fn_sort_arr_result_daily01.length > 0 ) {
+
+                                if( typeof vm.arr_result_daily01_header != "undefined" && vm.arr_result_daily01_header.length > 0 ) {
+
+                                    v_excel_row_data.push( [] );
+                                    v_excel_row_data.push( [] );
+
+                                    var v_row_data  =   [];
+                                    vm.fn_sort_arr_result_daily01.forEach( function( item, index, array ) {
+                                        v_row_data  =   [];
+
+                                        v_row_data.push( item.fmt_F12506 );
+                                        vm.arr_result_daily01_header.forEach( function( item1, index1, array1 ) {
+
+                                            if( typeof item1.grp_cd != "undefined" && item1.grp_cd && typeof item1.scen_cd != "undefined" && item1.scen_cd ) {
+
+                                                arr_row2.forEach( function( item2, index2, array2 ) {
+
+                                                    if( item2.col_id && typeof item2.col_id != "undefined" ) {
+
+                                                        if(  typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_" + item2.col_id ] != "undefined" ) {
+                                                            var v_col_data  =   item[ item1.grp_cd + "_" + item1.scen_cd + "_" + item2.col_id ];
+
+                                                            if( [ "RETURN_VAL" ].includes( item2.col_id ) ) {
+                                                                v_row_data.push( util.formatNumber(v_col_data * 100) + " %" );
+                                                            }else{
+                                                                v_row_data.push( v_col_data );
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+
+
+                                        if( typeof item[ "BM_RATE" ] != "undefined" ) {
+                                            v_row_data.push( item[ "BM_RATE" ] );
+                                        }
+
+                                        if( typeof item[ "BM_RETURN" ] != "undefined" ) {
+                                            v_row_data.push( item[ "BM_RETURN" ] );
+                                        }
+
+                                        v_excel_row_data.push( v_row_data );
+                                    })
+
+                                }
+                            }
+
+                            dataWS = excel.utils.aoa_to_sheet( v_excel_row_data );
+
+
+                            var v_arr_cols          =   [];
+                            var v_arr_merge_cell    =   [];
+                            if( typeof vm.arr_result_daily01_header != "undefined" && vm.arr_result_daily01_header.length > 0 ) {
+                                
+                                dataWS[ excel.utils.encode_cell( { r : 0, c: 0 } ) ]              =   { t:'s', v: "일자" };
+                                v_arr_merge_cell.push({
+                                        s : { r: 0 , c: 0 }
+                                    ,   e : { r: 1 , c: 0 }
+                                });
+                                v_arr_cols.push( { hidden : false, width : 12 } );
+                                                                                            
+                                for( var i=0; i < vm.arr_result_daily01_header.length; i++ ) {
+                                    var v_header    =   vm.arr_result_daily01_header[i];
+
+                                    dataWS[ excel.utils.encode_cell( { r : 0, c: ( i * arr_row2.length ) + 1 } ) ]          =   { t:'s', v: v_header.scen_name };
+                                    for( var j=0; j < arr_row2.length; j++ ) {
+                                        var v_rows2     =   arr_row2[j];
+
+                                        dataWS[ excel.utils.encode_cell( { r : 1 , c: (i * arr_row2.length) + j + 1 } ) ]   =   { t:'s', v: v_rows2.title };
+
+                                        v_arr_cols.push( { hidden : false, width : v_rows2.width } );
+                                    }
+
+                                    v_arr_merge_cell.push({
+                                            s : { r: 0 , c: ( i * arr_row2.length ) + 1 }
+                                        ,   e : { r: 0 , c: ( i * arr_row2.length ) + arr_row2.length }
+                                    });
+                                }
+
+
+                                dataWS[ excel.utils.encode_cell( { r : 0, c: ( vm.arr_result_daily01_header.length * arr_row2.length ) + 1 } ) ]            =   { t:'s', v: vm.bm_daily_header };
+                                for( var j=0; j < arr_row2.length; j++ ) {
+                                    var v_rows2     =   arr_row2[j];
+
+                                    dataWS[ excel.utils.encode_cell( { r : 1 , c: (vm.arr_result_daily01_header.length * arr_row2.length) + j + 1 } ) ]     =   { t:'s', v: v_rows2.title };
+                                    v_arr_cols.push( { hidden : false, width : v_rows2.width } );
+                                }
+
+                                v_arr_merge_cell.push({
+                                        s : { r: 0 , c: ( vm.arr_result_daily01_header.length * arr_row2.length ) + 1 }
+                                    ,   e : { r: 0 , c: ( vm.arr_result_daily01_header.length * arr_row2.length ) + arr_row2.length }
+                                });
+
+                                dataWS['!merges']   =   v_arr_merge_cell;
+                                dataWS['!cols']     =   v_arr_cols;
+                            }
+
+
+                            dataWS['!ref'] = excel.utils.encode_range({
+                                s: { c: 0, r: 0 },
+                                e: { c: ( arr_row2.length * vm.arr_result_daily01_header.length ) + arr_row2.length, r: v_excel_row_data.length + 2 }
+                            });                                                    
+
+
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                            
+                            resolve( { result : false } );
+                        }
+                    });
+                }
+                
+                /* 분석정보 */
+                async function    step2() {
+                    return  await new Promise(function(resolve, reject) {
+
+                        try{
+                            excelInfo.sheetNm           =   "분석정보";
+
+                            var arr_row2    =   [ 
+                                    {   "col_id"    :   "INDEX_RATE"        ,   "width" :   25  ,   "title" :   "지수"      }
+                                ,   {   "col_id"    :   "RETURN_VAL"        ,   "width" :   25  ,   "title" :   "등락"      }
+                            ];
+
+                            var v_excel_row_data    =   [];
+
+                            if( typeof vm.arr_result_anal02 != "undefined" && vm.arr_result_anal02.length > 0 ) {
+
+                                if( typeof vm.arr_result_anal02_header != "undefined" && vm.arr_result_anal02_header.length > 0 ) {
+
+                                    v_excel_row_data.push( [] );
+
+                                    var v_row_data  =   [];
+                                    vm.arr_result_anal02.forEach( function( item, index, array ) {
+                                        v_row_data  =   [];
+
+                                        v_row_data.push( item.anal_id );
+                                        vm.arr_result_anal02_header.forEach( function( item1, index1, array1 ) {
+
+                                            if( typeof item1.grp_cd != "undefined" && item1.grp_cd && typeof item1.scen_cd != "undefined" && item1.scen_cd ) {
+
+                                                if(  typeof item[ item1.grp_cd + "_" + item1.scen_cd  ] != "undefined" ) {
+                                                    var v_col_data  =   item[ item1.grp_cd + "_" + item1.scen_cd ];
+
+                                                    v_row_data.push( v_col_data );
+                                                }
+                                            }
+                                        });
+
+
+                                        if( typeof item[ "bm" ] != "undefined" ) {
+                                            v_row_data.push( item[ "bm" ] );
+                                        }
+
+                                        v_excel_row_data.push( v_row_data );
+                                    })
+
+                                }
+                            }
+
+                            dataWS = excel.utils.aoa_to_sheet( v_excel_row_data );
+
+
+                            var v_arr_cols          =   [];
+                            var v_arr_merge_cell    =   [];
+                            if( typeof vm.arr_result_anal02_header != "undefined" && vm.arr_result_anal02_header.length > 0 ) {
+                                
+                                dataWS[ excel.utils.encode_cell( { r : 0, c: 0 } ) ]              =   { t:'s', v: "분석지표" };
+                                v_arr_merge_cell.push({
+                                        s : { r: 0 , c: 0 }
+                                    ,   e : { r: 0 , c: 0 }
+                                });
+                                v_arr_cols.push( { hidden : false, width : 40 } );
+                                                                                            
+                                for( var i=0; i < vm.arr_result_anal02_header.length; i++ ) {
+                                    var v_header    =   vm.arr_result_anal02_header[i];
+
+                                    dataWS[ excel.utils.encode_cell( { r : 0, c: i + 1 } ) ]          =   { t:'s', v: v_header.scen_name };
+                                    v_arr_cols.push( { hidden : false, width : 30 } );
+
+                                    v_arr_merge_cell.push({
+                                            s : { r: 0 , c: i + 1 }
+                                        ,   e : { r: 0 , c: i + 1 }
+                                    });
+                                }
+
+
+                                dataWS[ excel.utils.encode_cell( { r : 0, c: vm.arr_result_anal02_header.length + 1 } ) ]            =   { t:'s', v: vm.bm_daily_header };
+                                v_arr_cols.push( { hidden : false, width : 30 } );
+                                v_arr_merge_cell.push({
+                                        s : { r: 0 , c:  vm.arr_result_anal02_header.length + 1 }
+                                    ,   e : { r: 0 , c:  vm.arr_result_anal02_header.length + 1 }
+                                });
+
+                                dataWS['!merges']   =   v_arr_merge_cell;
+                                dataWS['!cols']     =   v_arr_cols;
+                            }
+
+
+                            dataWS['!ref'] = excel.utils.encode_range({
+                                s: { c: 0, r: 0 },
+                                e: { c: vm.arr_result_anal02_header.length + 1, r: v_excel_row_data.length + 1 }
+                            });                                                    
+
+
+                            excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+
+                            resolve( { result : false } );
+                        }
+                    });
+                }
+
+                /* 파일 저장 */
+                async function    step3() {
+
+                    return  await new Promise(function(resolve, reject) {
+
+                        try{                
+                            excel.writeFile( wb, excelInfo.excelFileNm + "_"+ util.getToday() +  ".xlsx" );
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+
+                            resolve( { result : false } );
+                        }
+                    });
+                }
+
+            }catch(e){
+                console.log( "[error] SimulationResultGroup.vue -> fn_excelDown", e );
+            }
+        },
+
+        /*
+        * 시트정보를 설정한다.
+        * 2019-10-17  bkLove(촤병국)
+        */
+        fn_setSheetInfo( p_dataWS, p_options, p_excelInfo ) {
+
+            try{
+            
+            /* 설정할 컬럼 정보 */
+
+                /* 헤더 컬럼별 설정정보가 있는 경우 */
+                if( p_excelInfo.arrColsInfo && p_excelInfo.arrColsInfo.length > 0 ) {
+                    p_dataWS['!cols'] = [];
+
+                    for (var i = p_options.colStartIndex ; i < p_excelInfo.arrHeaderKey.length ; i++) {
+                        var colsInfo    =   {};
+
+                        colsInfo    =   Object.assign( colsInfo, p_options.colsInfo );
+
+                        /* arrColsInfo 갯수와 arrHeaderKey 갯수가 다를수 있기에 arrColsInfo 의 인덱스가 arrHeaderKey 인덱스 안에 포함되는 경우 */
+                        if( i < p_excelInfo.arrColsInfo.length ) {
+                            colsInfo    =   Object.assign( colsInfo, p_excelInfo.arrColsInfo[i] );
+                        }
+
+                        p_dataWS['!cols'][i] = colsInfo;
+                    }
+                }
+                /* 기본 컬럼 설정정보가 있는 경우 */
+                else if( p_excelInfo.colsInfo && Object.keys( p_excelInfo.colsInfo ).length > 0 ) {
+                    p_dataWS['!cols'] = [];
+
+                    for (var i = p_options.colStartIndex ; i < p_excelInfo.arrHeaderKey.length ; i++) {
+                        var colsInfo    =   Object.assign( {}, p_options.colsInfo, p_excelInfo.colsInfo );
+                        p_dataWS['!cols'][i] = colsInfo;
+                    }
+                }
+
+
+
+            /* 설정할 레코드 정보 */
+
+                /* 레코드별 설정정보가 있는 경우 */
+                if( p_excelInfo.arrRowsInfo && p_excelInfo.arrRowsInfo.length > 0 ) {
+                    p_dataWS['!rows'] = [];
+
+                    for (var i = 0, row= p_options.rowStartIndex; i < p_excelInfo.dataInfo.length; i++, row++) {
+                        var rowsInfo    =   {};
+
+                        rowsInfo    =   Object.assign( rowsInfo, p_options.rowsInfo );
+
+                        /* arrRowsInfo 갯수와 dataInfo 갯수가 다를수 있기에 arrRowsInfo 의 인덱스가 dataInfo 인덱스 안에 포함되는 경우 */
+                        if( i < p_excelInfo.arrRowsInfo.length ) {
+                            rowsInfo    =   Object.assign( rowsInfo, p_excelInfo.arrRowsInfo[i] );
+                        }
+
+                        p_dataWS['!rows'][row] = rowsInfo;
+                    }
+                }
+                /* 기본 레코드 설정정보가 있는 경우 */
+                else if( p_excelInfo.rowsInfo && Object.keys( p_excelInfo.rowsInfo ).length > 0 ) {
+                    p_dataWS['!rows'] = [];
+
+                    for (var i = p_options.colStartIndex ; i < p_excelInfo.arrHeaderKey.length ; i++) {
+                        var rowsInfo    =   Object.assign( {}, p_options.rowsInfo, p_excelInfo.rowsInfo );
+                        p_dataWS['!rows'][i] = rowsInfo;
+                    }
+                }
+
+            }catch(e){
+                console.log( "[error] SimulationResultGroup.vue -> fn_setSheetInfo", e );
+            }                
+        },
+
+
+        /*
+        * p_arr_header_key 정보를 기준으로 데이터를 설정한다.
+        * 2019-10-17  bkLove(촤병국)
+        */
+        fn_setExcelInfo( p_data_list, p_arr_header_key ) {
+
+            var v_execel_data_list  =   [];
+
+            try{
+
+                if( p_data_list && p_data_list.length >0 && p_arr_header_key && p_arr_header_key.length > 0 ) {
+
+                    /* key에 존재하는 데이터를 기준으로 원본 데이터 추출 */
+                    for( var i in p_data_list ) {
+
+                        var dataRow = p_data_list[i];
+                        
+                        var tempObj = {};
+                        var existCheck = _.filter( p_arr_header_key, function(o) {
+
+                            if ( typeof dataRow[o] != "undefined" ) {
+
+                                if( 
+                                    [  "fmt_balance",  "bm_data01", "bm_1000_data" ].includes( o ) 
+                                ) {
+                                    if( typeof dataRow[o] == "string" ) {
+                                        tempObj[o]  =   Number( util.NumtoStr( dataRow[o] ) );
+                                    }else{
+                                        tempObj[o]  =   Number( dataRow[o] );
+                                    }
+                                }
+                                else if( [ "INDEX_RATE", "RETURN_VAL", "F15028_S", "F15028_C"  ].includes(o) ){
+                                    tempObj[o]  =   String( dataRow[o] );
+                                }
+                                else{
+                                    tempObj[o]  =   dataRow[o];
+                                }
+                            }
+                        });
+
+                        if( Object.keys(tempObj).length > 0 ) {
+                            v_execel_data_list[i]   =   tempObj;
+                        }
+                    }
+                }
+
+                return  v_execel_data_list;
+
+            }catch(e){
+                console.log( "[error] SimulationResultGroup.vue -> fn_setExcelInfo", e );
+            }
+        },
+
+        /*
          * 문자열을 길이만큼 자른다.
          * 2019-09-06  bkLove(촤병국)
          */
@@ -948,7 +1461,62 @@ export default {
             
             return str.substring(0, i);
 
-        }
+        },
+
+        /*
+         * 공유하기 창을 오픈한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_open_share_modal: function( p_item, p_index ) {
+
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+
+            if( !p_item || !vm.method_gubun || !vm.arr_scen_in_grp || vm.arr_scen_in_grp.length == 0  ) {
+                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            /* 그룹비교인 경우 */
+            if( vm.method_gubun == "getScenInGrpCd" ) {
+                if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
+                    vm.arr_show_error_message.push( "[그룹비교] 기본정보가 존재하지 않습니다." );
+                    return  false;
+                }
+            }
+
+            var v_param             =   {};
+
+            v_param                 =   p_item;
+            v_param.p_index         =   p_index;
+			v_param.method_gubun	=	vm.method_gubun;
+			v_param.arr_scen_in_grp	=	vm.arr_scen_in_grp;
+
+            vm.share_row_data       =   v_param;
+            vm.share_row_index      =   p_index;
+
+            /* 02 */
+            if( vm.method_gubun == "getScenInGrpCd" ) {
+                vm.share_grp_modal_flag     =   true;
+            }
+            /* 03 */
+            else if( vm.method_gubun == "getInfoCheckedScenCd" ) {
+                vm.share_scen_modal_flag    =   true;
+            }
+        },
+
+        /*
+         * 공유하기 창을 종료한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_close_share_modal: function() {
+            var vm = this;
+
+            vm.share_grp_modal_flag     =   false;
+            vm.share_scen_modal_flag    =   false;
+        },		
     },
     
 };

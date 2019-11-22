@@ -71,6 +71,9 @@ var getInitGrpCd = function(req, res) {
         resultMsg.dataList      =   [{
                 grp_cd          :   initGrpInfo.INIT_GRP_CD
             ,   grp_name        :   "선택안함"
+
+            ,   org_grp_cd      :   initGrpInfo.INIT_GRP_CD
+            ,   grp_yn          :   "0"
         }];
 
         var format = { language: 'sql', indent: '' };
@@ -1066,7 +1069,7 @@ var modifyGroup = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation." + v_queryId + " success", paramData );
+                                        log.debug( "simulation." + v_queryId + " success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -2103,7 +2106,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 8. 상위 그룹정보를 조회한다. */
+                    /* 8. 변경전 시나리오의 상위 그룹 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -2112,26 +2115,33 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                 msg = {};
                             }
 
-                            msg.v_simul_grp =   {};
-                            stmt = mapper.getStatement('simulation', "getUpperGrp", paramData, format);
-                            log.debug(stmt);
+                            msg.v_simul_upper_grp       =   {};
 
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if ( rows && rows.length == 1 ) {
-                                    msg.v_simul_grp         =   rows[0];
-                                }
-
+                            /* 그룹변경이 없는 경우 */
+                            if( paramData.changeGrpCdYn == "0" ) {
                                 callback(null, msg);
-                            });
+
+                            }else{
+                                stmt = mapper.getStatement('simulation', "getUpperGrp", paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows && rows.length == 1 ) {
+                                        msg.v_simul_upper_grp       =   rows[0];
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
 
                         } catch (err) {
                             resultMsg.result = false;
@@ -2226,326 +2236,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 10. 그룹 공유자 정보를 조회한다. */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            msg.v_arr_simul_share   =   [];
-
-                            /* 상위그룹 정보가 존재하는 경우 */
-                            if(     typeof msg.v_simul_grp != "undefined"
-                                &&  Object.keys( msg.v_simul_grp ).length > 0
-                            ) {
-
-                                paramData.upper_grp_cd      =   msg.v_simul_grp.grp_cd
-                                paramData.upper_scen_cd     =   msg.v_simul_grp.scen_cd;
-                                stmt = mapper.getStatement('simulation', "getSimulShareUpperGrp", paramData, format);
-                                log.debug(stmt, paramData);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if( rows && rows.length > 0  ) {
-                                        msg.v_simul_share_upper_grp =   rows;
-                                    }                                    
-
-                                    callback(null, msg);
-                                });
-
-                            }else{
-                                callback(null, msg);
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 11. [tm_simul_share] 그룹 설정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-
-                            var v_queryId           =   "";
-
-                            msg.arr_insert_list     =   [];
-                            msg.arr_update_list     =   [];
-
-
-                            /* 그룹 정보가 존재하는 경우 */
-                            if( typeof msg.v_simul_upper_grp != "undefined" && Object.keys( msg.v_simul_upper_grp ).length > 0  ) {
-
-                                /* simul_share 수정 건 */
-                                if( typeof msg.v_simul_share_upper_grp != "undefined" && msg.v_simul_share_upper_grp.length > 0 ) {
-
-                                    /* 그룹변경이 아닌 경우 */
-                                    if( paramData.changeGrpCdYn == "0" ) {
-
-                                        msg.v_simul_share_upper_grp.forEach( function( item, index, array) {
-                                            msg.arr_update_list.push({
-                                                    "grp_cd"        :   item.grp_cd
-                                                ,   "scen_cd"       :   item.scen_cd
-                                                ,   "email"         :   item.email
-                                                ,   "owner_yn"      :   "1"
-                                            });
-                                        });
-
-                                        paramData.arr_update_list   =   msg.arr_update_list;
-                                        v_queryId                   =   "modifyShareUserInArr";
-
-                                    }
-                                    /* 그룹변경인 경우 */
-                                    else{
-
-                                        msg.v_simul_share_upper_grp.forEach( function( item, index, array) {
-                                            msg.arr_update_list.push({
-                                                    "grp_cd"        :   paramData.grp_cd
-                                                ,   "scen_cd"       :   paramData.scen_cd
-                                                ,   "prev_grp_cd"   :   item.grp_cd
-                                                ,   "prev_scen_cd"  :   item.scen_cd
-                                                ,   "email"         :   item.email
-                                                ,   "owner_yn"      :   "1"
-                                            });
-                                        });
-
-                                        paramData.arr_update_list   =   msg.arr_update_list;
-                                        v_queryId                   =   "modifyShareUserInArrByChangeGroup";
-                                    }
-                                }
-                                /* simul_share 등록 건 */
-                                else{
-                                    
-                                    /* 그룹변경이 아닌 경우 */
-                                    if( paramData.changeGrpCdYn == "0" ) {
-
-                                        msg.arr_insert_list.push({
-                                                "grp_cd"        :   msg.v_simul_upper_grp.grp_cd
-                                            ,   "scen_cd"       :   msg.v_simul_upper_grp.scen_cd
-                                            ,   "email"         :   paramData.user_id
-                                            ,   "owner_yn"      :   "1"
-                                        });
-
-                                    }
-                                    /* 그룹변경인 경우 */
-                                    else{
-
-                                        msg.arr_insert_list.push({
-                                                "grp_cd"        :   paramData.grp_cd
-                                            ,   "scen_cd"       :   paramData.scen_cd
-                                            ,   "email"         :   paramData.user_id
-                                            ,   "owner_yn"      :   "1"
-                                        });
-                                    }
-
-                                    paramData.arr_insert_list   =   msg.arr_insert_list;
-                                    v_queryId                   =   "saveShareUserInArr";
-                                }
-                            }                            
-
-
-                            if( v_queryId == "" ) {
-                                callback(null, msg);
-
-                            }else{
-                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
-                                log.debug(stmt, paramData);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if( rows ) {
-                                        log.debug( "[그룹] simulation." + v_queryId + " success", paramData );
-                                    }
-
-                                    paramData.arr_insert_list   =   [];
-                                    paramData.arr_update_list   =   [];
-
-                                    callback(null, msg);
-                                });
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 12. 시나리오 공유자 정보를 조회한다. */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            msg.v_arr_simul_share   =   [];
-
-                            stmt = mapper.getStatement('simulation', "getUserListInCheckedSimulation", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows && rows.length > 0  ) {
-                                    msg.v_arr_simul_share   =   rows;
-                                }                                    
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 13. [tm_simul_share] 시나리오 설정한다.  */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            var v_queryId           =   "";
-
-                            msg.arr_insert_list     =   [];
-                            msg.arr_update_list     =   [];
-
-
-                            /* simul_share 수정 건 */
-                            if( typeof msg.v_arr_simul_share != "undefined" && msg.v_arr_simul_share.length > 0 ) {
-
-                                /* 그룹변경이 아닌 경우 */
-                                if( paramData.changeGrpCdYn == "0" ) {
-
-                                    msg.v_arr_simul_share.forEach( function( item, index, array) {
-                                        msg.arr_update_list.push({
-                                                "grp_cd"        :   item.grp_cd
-                                            ,   "scen_cd"       :   item.scen_cd
-                                            ,   "email"         :   item.email
-                                            ,   "owner_yn"      :   "1"
-                                        });
-                                    });
-
-                                    paramData.arr_update_list   =   msg.arr_update_list;
-                                    v_queryId                   =   "modifyShareUserInArr";
-
-                                }
-                                /* 그룹변경인 경우 */
-                                else{
-
-                                    msg.v_arr_simul_share.forEach( function( item, index, array) {
-                                        msg.arr_update_list.push({
-                                                "grp_cd"        :   paramData.grp_cd
-                                            ,   "scen_cd"       :   paramData.scen_cd
-                                            ,   "prev_grp_cd"   :   item.grp_cd
-                                            ,   "prev_scen_cd"  :   item.scen_cd
-                                            ,   "email"         :   item.email
-                                            ,   "owner_yn"      :   "1"
-                                        });
-                                    });
-
-                                    paramData.arr_update_list   =   msg.arr_update_list;
-                                    v_queryId                   =   "modifyShareUserInArrByChangeGroup";
-                                }
-                            }
-                            /* simul_share 등록 건 */
-                            else{
-                                
-                                msg.arr_insert_list.push({
-                                        "grp_cd"        :   paramData.grp_cd
-                                    ,   "scen_cd"       :   paramData.scen_cd
-                                    ,   "email"         :   paramData.user_id
-                                    ,   "owner_yn"      :   "1"
-                                });
-
-                                paramData.arr_insert_list   =   msg.arr_insert_list;
-                                v_queryId                   =   "saveShareUserInArr";
-                            }
-
-
-                            if( v_queryId == "" ) {
-                                callback(null, msg);
-
-                            }else{
-                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
-                                log.debug(stmt, paramData);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if( rows ) {
-                                        log.debug( "[시나리오] simulation." + v_queryId + " success", paramData );
-                                    }
-
-                                    paramData.arr_insert_list   =   [];
-                                    paramData.arr_update_list   =   [];
-
-                                    callback(null, msg);
-                                });
-                            }
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 14. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
+                    /* 10. 수정일 경우 이미 등록된 tm_simul_portfolio 를 삭제한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2586,7 +2277,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 15. tm_simul_portfolio 에 저장한다. */
+                    /* 11. tm_simul_portfolio 에 저장한다. */
                     function( msg, callback) {
 
                         try {
@@ -2705,7 +2396,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                         return callback(resultMsg);
                                     }
 
-                                    log.debug( "simulation.saveTmSimulPortfolio" );
+                                    log.debug( "simulation.saveTmSimulPortfolio", paramData );
                                     delete msg.arrInsertDtl;
                                     callback(null, msg);
                                 });                                
@@ -2719,9 +2410,373 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                             return callback(resultMsg);
                         }
+                    },
+
+                    /* 12. 변경할 대상이 상위 그룹이 있는 경우 - 변경전 시나리오 공유자 정보를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.v_simul_prev_share      =   [];
+
+
+                            if( paramData.changeGrpCdYn == "0" ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                /* 변경할 대상이 상위그룹인 경우 */
+                                if( paramData.org_grp_yn == "1" ) {
+
+                                    paramData.changeGrpCdYn     =   "1";
+                                    stmt = mapper.getStatement('simulation', "getUserListInCheckedSimulation", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0  ) {
+                                            msg.v_simul_prev_share      =   rows;
+                                        }                                    
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);
+                                }
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 13. 변경할 대상이 상위 그룹이 있는 경우 - 변경할 그룹 공유자 정보를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.v_simul_share_upper     =   [];
+
+
+                            if( paramData.changeGrpCdYn == "0" ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                /* 변경할 대상이 상위 그룹이 있는 경우 */
+                                if( paramData.org_grp_yn == "1" ) {
+
+                                    paramData.changeGrpCdYn     =   "0";
+                                    paramData.upper_grp_cd      =   "*";
+                                    paramData.upper_scen_cd     =   paramData.grp_cd;
+                                    stmt = mapper.getStatement('simulation', "getSimulShareUpperGrp", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0  ) {
+                                            msg.v_simul_share_upper     =   rows;
+                                        }                                    
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);
+                                }
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 14. 변경할 대상이 상위 그룹이 있는 경우 - 그룹 공유자 정보를 설정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.arr_insert_list     =   [];
+
+
+                            if( paramData.changeGrpCdYn == "1" ) {
+
+                                /* 변경할 대상이 상위 그룹이 있는 경우 - (변경전) 시나리오 공유자가 존재하는 경우  */
+                                if( typeof msg.v_simul_prev_share != "undefined" && msg.v_simul_prev_share.length > 0 ) {
+
+                                    /* 변경할 대상이 상위 그룹이 있는 경우 - (변경할) 그룹 공유자가 존재하는 경우  */
+                                    if( typeof msg.v_simul_share_upper != "undefined" && msg.v_simul_share_upper.length > 0 ) {
+
+                                        msg.v_simul_prev_share.forEach( function( item, index, array) {
+
+                                            var v_check_data    =   _.filter( msg.v_simul_share_upper, {
+                                                    'email'     :   item.email
+                                            });
+
+                                            if( typeof v_check_data == "undefined" || v_check_data.length == 0 ) {
+
+                                                msg.arr_insert_list.push({
+                                                        "grp_cd"        :   paramData.upper_grp_cd
+                                                    ,   "scen_cd"       :   paramData.upper_scen_cd
+                                                    ,   "email"         :   item.email
+                                                    ,   "owner_yn"      :   item.owner_yn
+                                                });                                            
+                                            }
+
+                                        });
+
+                                        paramData.arr_insert_list   =   msg.arr_insert_list;
+                                        
+                                    }else{
+                                        paramData.arr_insert_list  =    msg.v_simul_prev_share;
+                                    }
+                                }
+                            }
+
+
+                            if( !paramData.arr_insert_list || paramData.arr_insert_list.length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+                                stmt = mapper.getStatement('simulation', "saveShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( rows ) {
+                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success" );
+                                    }
+
+                                    paramData.arr_insert_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 15. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.v_arr_simul_share_not_in_group      =   [];
+
+
+                            if( paramData.changeGrpCdYn == "0" ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                /* 변경전 대상이 상위그룹이 있는 경우 */
+                                if( typeof msg.v_simul_upper_grp == "undefined" || Object.keys( msg.v_simul_upper_grp ).length == 0 ) {
+                                    callback(null, msg);
+
+                                }else{
+
+                                    paramData.prev_upper_grp_cd     =   msg.v_simul_upper_grp.grp_cd;
+                                    paramData.prev_upper_scen_cd    =   msg.v_simul_upper_grp.scen_cd;
+                                    stmt = mapper.getStatement('simulation', "getSimulShareNotInGroupForDelelete", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0 ) {
+                                            msg.v_arr_simul_share_not_in_group  =   rows;
+                                        }
+
+                                        callback(null, msg);
+                                    });
+                                }
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 16. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            if( paramData.changeGrpCdYn == "0" ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                /* 변경전 대상이 상위그룹이 있는 경우 */
+                                if( typeof msg.v_arr_simul_share_not_in_group == "undefined" || msg.v_arr_simul_share_not_in_group.length == 0 ) {
+                                    callback(null, msg);
+
+                                }else{
+
+                                    paramData.arr_delete_list   =   msg.v_arr_simul_share_not_in_group;
+                                    stmt = mapper.getStatement('simulation', "deleteShareUserInArr", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows ) {
+                                            log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
+                                        }
+
+                                        paramData.arr_delete_list   =   [];
+
+                                        callback(null, msg);
+                                    });
+                                }
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
                     },                    
 
-                    /* 16. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
+                    /* 17. 그룹변경인 경우 [tm_simul_share] 시나리오 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            var v_queryId   =   "";
+
+
+                            if( paramData.changeGrpCdYn == "0" ) {
+
+                                /* 등록인 경우 */
+                                if( paramData.status  ==  "insert" ) {
+
+                                    paramData.owner_yn  = "1";
+                                    v_queryId   =   "saveTmSimulShareScen";
+
+                                }else{
+                                    v_queryId   =   "modifyTmSimulShareScenByChangeGroup";
+                                }
+                            }else{
+                                v_queryId       =   "modifyTmSimulShareScenByChangeGroup";
+                            }
+
+                            stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation." + v_queryId + " ( 시나리오 tm_simul_share ) success" );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 18. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2747,7 +2802,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2766,7 +2821,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },                    
 
-                    /* 17. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
+                    /* 19. 그룹변경인 경우 [tm_simul_result_anal] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2792,7 +2847,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows  ) {
-                                        log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2811,7 +2866,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 18. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
+                    /* 20. 그룹변경인 경우 [tm_simul_result_daily] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2837,7 +2892,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success" );
                                     }
 
                                     callback(null, msg);
@@ -2856,7 +2911,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         }
                     },
 
-                    /* 19. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
+                    /* 21. 그룹변경인 경우 [tm_simul_result_rebalance] 수정한다.  */
                     function( msg, callback) {
 
                         try {
@@ -2882,15 +2937,67 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                        log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                     }
 
-                                    callback(null);
+                                    callback(null, msg);
                                 });
 
                             }else{
-                                callback(null);
+                                callback(null, msg);
                             }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 22. 백테스트 수행 후 결과를 저장한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            paramData.moduleId              =   "runBacktestWithSaveBasicInfo";
+
+                            paramData.transaction           =   {};
+                            paramData.transaction.mapper    =   mapper;
+                            paramData.transaction.pool      =   pool;
+                            paramData.transaction.conn      =   conn;
+
+                            /* 백테스트 수행 후 결과를 저장한다. */
+                            simulationBacktest.saveBacktestResult( req, res, paramData ).then( function(e) {
+
+                                if( e && e.resultMsg && e.resultMsg.result ) {
+                                    resultMsg   =   e.resultMsg;
+
+                                    e.resultMsg.msg = "성공적으로 저장하였습니다.";
+                                    e.resultMsg.err = null;
+
+                                    callback(null);
+                                }else{
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = config.MSG.error01;
+
+                                    callback(resultMsg);
+                                }
+
+                            }).catch( function(expetion){
+
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            });                            
 
                         } catch (err) {
                             resultMsg.result = false;
@@ -2911,60 +3018,63 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         conn.commit();
                     }
 
+                    res.json(resultMsg);
+                    res.end();
 
-                    if( resultMsg.result ) {
 
-                        try{
+                    // if( resultMsg.result ) {
 
-                            paramData.moduleId      =   "runBacktestWithSaveBasicInfo";
+                    //     try{
 
-                            /* 백테스트를 수행한다. */
-                            simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
+                    //         paramData.moduleId      =   "runBacktestWithSaveBasicInfo";
 
-                                if( e && e.resultMsg ) {
-                                    resultMsg   =   e.resultMsg;
+                    //         /* 백테스트를 수행한다. */
+                    //         simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
 
-                                    if( e.resultMsg.result ) {
-                                        e.resultMsg.msg = "성공적으로 저장하였습니다.";
-                                        e.resultMsg.err = null;
-                                    }
-                                }else{
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = config.MSG.error01;
-                                }
+                    //             if( e && e.resultMsg ) {
+                    //                 resultMsg   =   e.resultMsg;
 
-                                res.json(resultMsg);
-                                res.end();
+                    //                 if( e.resultMsg.result ) {
+                    //                     e.resultMsg.msg = "성공적으로 저장하였습니다.";
+                    //                     e.resultMsg.err = null;
+                    //                 }
+                    //             }else{
+                    //                 resultMsg.result = false;
+                    //                 resultMsg.msg = config.MSG.error01;
+                    //                 resultMsg.err = config.MSG.error01;
+                    //             }
 
-                            }).catch( function(expetion){
+                    //             res.json(resultMsg);
+                    //             res.end();
 
-                                log.debug( expetion, paramData );
+                    //         }).catch( function(expetion){
 
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = expetion;
+                    //             log.debug( expetion, paramData );
 
-                                res.json( resultMsg );
-                                res.end();
-                            });
+                    //             resultMsg.result = false;
+                    //             resultMsg.msg = config.MSG.error01;
+                    //             resultMsg.err = expetion;
 
-                        }catch( e ) {
+                    //             res.json( resultMsg );
+                    //             res.end();
+                    //         });
 
-                            log.debug( e, paramData );
+                    //     }catch( e ) {
 
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = expetion;
+                    //         log.debug( e, paramData );
 
-                            res.json(resultMsg);
-                            res.end();                            
-                        }
+                    //         resultMsg.result = false;
+                    //         resultMsg.msg = config.MSG.error01;
+                    //         resultMsg.err = expetion;
 
-                    }else{
-                        res.json(resultMsg);
-                        res.end();                        
-                    }
+                    //         res.json(resultMsg);
+                    //         res.end();                            
+                    //     }
+
+                    // }else{
+                    //     res.json(resultMsg);
+                    //     res.end();                        
+                    // }
                 });
             });
         });
@@ -3171,11 +3281,55 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 2. tm_simul_mast 를 삭제한다. */
+                    /* 2. 상위 그룹 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.v_simul_upper_grp       =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation', 'getUpperGrp', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    msg.v_simul_upper_grp     =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. tm_simul_mast 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulMast', paramData, format);
                             log.debug(stmt);
@@ -3191,7 +3345,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulMast success", paramData );
+                                    log.debug( "simulation.deleteSimulMast success" );
                                 }
 
                                 callback(null, msg);
@@ -3207,11 +3361,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 3. tm_simul_portfolio 를 삭제한다. */
+                    /* 4. tm_simul_portfolio 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
                             log.debug(stmt);
@@ -3227,7 +3383,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteTmSimulPortfolio success", paramData );
+                                    log.debug( "simulation.deleteTmSimulPortfolio success" );
                                 }
 
                                 callback(null, msg);
@@ -3243,11 +3399,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 4. tm_simul_result_anal 을 삭제한다. */
+                    /* 5. tm_simul_result_anal 을 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultAnal', paramData, format);
                             log.debug(stmt);
@@ -3263,7 +3421,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultAnal success", paramData );
+                                    log.debug( "simulation.deleteSimulResultAnal success" );
                                 }
 
                                 callback(null, msg);
@@ -3279,11 +3437,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 5. tm_simul_result_rebalance 를 삭제한다. */
+                    /* 6. tm_simul_result_rebalance 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultRebalance', paramData, format);
                             log.debug(stmt);
@@ -3299,7 +3459,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultRebalance success", paramData );
+                                    log.debug( "simulation.deleteSimulResultRebalance success" );
                                 }
 
                                 callback(null, msg);
@@ -3315,11 +3475,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 6. tm_simul_result_daily 를 삭제한다. */
+                    /* 7. tm_simul_result_daily 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultDaily', paramData, format);
                             log.debug(stmt);
@@ -3335,7 +3497,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultDaily success", paramData );
+                                    log.debug( "simulation.deleteSimulResultDaily success" );
                                 }
 
                                 callback(null, msg);
@@ -3351,11 +3513,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 7. tm_simul_result_mast 를 삭제한다. */
+                    /* 8. tm_simul_result_mast 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultMast', paramData, format);
                             log.debug(stmt);
@@ -3371,7 +3535,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteSimulResultMast success", paramData );
+                                    log.debug( "simulation.deleteSimulResultMast success" );
                                 }
 
                                 callback(null, msg);
@@ -3387,7 +3551,110 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 8. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
+                    /* 9. 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.v_arr_simul_share_not_in_group      =   [];
+
+
+                            /* 상위그룹이 있는 경우 */
+                            if( typeof msg.v_simul_upper_grp == "undefined" || Object.keys( msg.v_simul_upper_grp ).length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.prev_grp_cd           =   paramData.grp_cd;
+                                paramData.prev_scen_cd          =   paramData.scen_cd;
+
+                                paramData.prev_upper_grp_cd     =   msg.v_simul_upper_grp.grp_cd;
+                                paramData.prev_upper_scen_cd    =   msg.v_simul_upper_grp.scen_cd;
+                                stmt = mapper.getStatement('simulation', "getSimulShareNotInGroupForDelelete", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        msg.v_arr_simul_share_not_in_group  =   rows;
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            /* 변경전 대상이 상위그룹이 있는 경우 */
+                            if( typeof msg.v_arr_simul_share_not_in_group == "undefined" || msg.v_arr_simul_share_not_in_group.length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_delete_list   =   msg.v_arr_simul_share_not_in_group;
+                                stmt = mapper.getStatement('simulation', "deleteShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
+                                    }
+
+                                    paramData.arr_delete_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -3410,7 +3677,7 @@ var deleteAllSimul = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.deleteAllTmSimulShareScen success", paramData );
+                                    log.debug( "simulation.deleteAllTmSimulShareScen success" );
                                 }
 
                                 callback(null);
@@ -3880,7 +4147,7 @@ var copyScenario = function(req, res) {
                                 }else{
 
                                     if( rows ) {
-                                        log.debug( "simulation.copyTmSimulMast success", paramData );
+                                        log.debug( "simulation.copyTmSimulMast success" );
                                     }
 
                                     callback(null, msg);
@@ -3913,6 +4180,7 @@ var copyScenario = function(req, res) {
 
                             }else{
 
+                                paramData.upper_scen_cd     =   paramData.grp_cd;
                                 stmt = mapper.getStatement('simulation', "getScenarioUpperGrp", paramData, format);
                                 log.debug(stmt, paramData);
 
@@ -3937,7 +4205,11 @@ var copyScenario = function(req, res) {
 
                                         /* 상위 그룹 */
                                         msg.v_simul_upper_grp       =   rows[0];
-                                    }                                    
+                                    }
+
+                                    if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                        paramData.upper_scen_cd =   "";
+                                    }
 
                                     callback(null, msg);
                                 });
@@ -4072,7 +4344,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -4120,7 +4392,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr success" );
                                     }
 
                                     paramData.arr_update_list   =   [];
@@ -4164,7 +4436,7 @@ var copyScenario = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.copyTmSimulPortfolio success", paramData );
+                                        log.debug( "simulation.copyTmSimulPortfolio success" );
                                     }
 
                                     callback(null);
@@ -4459,7 +4731,7 @@ var fnChangeGroup = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                    
+                    },
 
                     /* 5. 그룹변경인 경우 [tm_simul_mast] 수정한다. */
                     function( msg, callback) {
@@ -4528,7 +4800,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulPortfolioByChangeGroup ( 그룹변경 tm_simul_portfolio ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulPortfolioByChangeGroup ( 그룹변경 tm_simul_portfolio ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4707,7 +4979,7 @@ var fnChangeGroup = function(req, res) {
 
 
                                     if( rows ) {
-                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success", paramData );
+                                        log.debug( "simulation.saveShareUserInArr ( 기존 시나리오 공유자 -> 그룹 공유자 ) success" );
                                     }
 
                                     paramData.arr_insert_list   =   [];
@@ -4725,45 +4997,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 10. 그룹변경인 경우 [tm_simul_share] 시나리오 수정한다. */
-                    function( msg, callback) {
-
-                        try {
-
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }
-
-                            stmt = mapper.getStatement('simulation', "modifyTmSimulShareScenByChangeGroup", paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 시나리오 tm_simul_share ) success", paramData );
-                                }
-
-                                callback(null, msg);
-                            });
-
-                        } catch (err) {
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            return callback(resultMsg);
-                        }
-                    },
-
-                    /* 11. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    /* 10. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4782,8 +5016,8 @@ var fnChangeGroup = function(req, res) {
 
                             }else{
 
-                                paramData.prev_grp_cd   =   msg.v_simul_upper_grp.grp_cd;
-                                paramData.prev_scen_cd  =   msg.v_simul_upper_grp.scen_cd;
+                                paramData.prev_upper_grp_cd     =   msg.v_simul_upper_grp.grp_cd;
+                                paramData.prev_upper_scen_cd    =   msg.v_simul_upper_grp.scen_cd;
                                 stmt = mapper.getStatement('simulation', "getSimulShareNotInGroupForDelelete", paramData, format);
                                 log.debug(stmt, paramData);
 
@@ -4814,7 +5048,7 @@ var fnChangeGroup = function(req, res) {
                         }
                     },
 
-                    /* 12. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    /* 11. 변경전 대상이 상위 그룹이 있는 경우 - 변경전 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -4845,7 +5079,7 @@ var fnChangeGroup = function(req, res) {
                                     }
 
                                     if( rows ) {
-                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success", paramData );
+                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
                                     }
 
                                     paramData.arr_delete_list   =   [];
@@ -4861,7 +5095,45 @@ var fnChangeGroup = function(req, res) {
 
                             return callback(resultMsg);
                         }
-                    },                    
+                    },
+
+                    /* 12. 그룹변경인 경우 [tm_simul_share] 시나리오 수정한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulShareScenByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulShareScenByChangeGroup ( 시나리오 tm_simul_share ) success" );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
 
                     /* 13. 그룹변경인 경우 [tm_simul_result_mast] 수정한다.  */
                     function( msg, callback) {
@@ -4887,7 +5159,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultMastByChangeGroup ( 그룹변경 tm_simul_result_mast ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4925,7 +5197,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultAnalByChangeGroup ( 그룹변경 tm_simul_result_anal ) success" );
                                 }
 
                                 callback(null, msg);
@@ -4963,7 +5235,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultDailyByChangeGroup ( 그룹변경 tm_simul_result_daily ) success" );
                                 }
 
                                 callback(null, msg);
@@ -5001,7 +5273,7 @@ var fnChangeGroup = function(req, res) {
                                 }
 
                                 if( rows ) {
-                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success", paramData );
+                                    log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                 }
 
                                 callback(null);
@@ -5549,10 +5821,12 @@ var applyShareUserInArr = function(req, res) {
                                 }else{
 
                                     var v_queryId   =   "getScenarioUpperGrp";
+                                    paramData.upper_scen_cd     =   paramData.grp_cd;
 
                                     /* 그룹인 경우 */
                                     if( msg.v_simul_mast.grp_yn == "1" ) {
                                         v_queryId   =   "getScenarioInGrp";
+                                        paramData.upper_scen_cd =   paramData.scen_cd;
                                     }
 
                                     stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
@@ -5603,6 +5877,10 @@ var applyShareUserInArr = function(req, res) {
                                                     msg.v_simul_upper_grp       =   rows[0];
                                                 }
                                             }
+                                        }
+
+                                        if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                            paramData.upper_scen_cd =   "";
                                         }
 
                                         callback(null, msg);
@@ -5692,8 +5970,7 @@ var applyShareUserInArr = function(req, res) {
                                             var v_temp  =   _.filter( rows, function(o) {
                                                 return      o.grp_cd    == item_sub.grp_cd 
                                                         &&  o.scen_cd   == item_sub.scen_cd 
-                                                        &&  o.email     == item.email
-                                                        &&  o.owner_yn  ==  "0";
+                                                        &&  o.email     == item.email;
                                             });
 
                                             if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
@@ -5711,7 +5988,6 @@ var applyShareUserInArr = function(req, res) {
                                                         "grp_cd"    :   item_sub.grp_cd
                                                     ,   "scen_cd"   :   item_sub.scen_cd
                                                     ,   "email"     :   item.email
-                                                    ,   "owner_yn"  :   "0"
                                                 });
                                             }
                                         });
@@ -5976,10 +6252,12 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                 }else{
                                     var v_queryId   =   "getScenarioUpperGrp";
+                                    paramData.upper_scen_cd     =   paramData.grp_cd;
 
                                     /* 그룹인 경우 */
                                     if( msg.v_simul_mast.grp_yn == "1" ) {
                                         v_queryId   =   "getScenarioInGrp";
+                                        paramData.upper_scen_cd =   paramData.scen_cd;
                                     }
 
                                     stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
@@ -6030,6 +6308,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                                             }
                                         }
 
+                                        if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                            paramData.upper_scen_cd =   "";
+                                        }
+
                                         callback(null, msg);
                                     });
                                 }
@@ -6045,7 +6327,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 3. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    /* 3. 선택된 시나리오 또는 그룹에 속한 공유자들을 해제한다. */
                     function(msg, callback) {
 
                         try{
@@ -6101,6 +6383,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                                         resultMsg.err = err;
 
                                         return callback(resultMsg);
+                                    }
+
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 선택된 시나리오 또는 그룹에 속한 공유자들을 해제 ) success" );
                                     }
 
                                     msg.arr_delete_list =   [];
@@ -6169,6 +6455,7 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                     if( !rows || rows.length == 0 ) {
 
+                                        /* 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 */
                                         paramData.arr_checked_shared.forEach( function( item, index, array) {
 
                                             msg.arr_delete_list.push({
@@ -6176,7 +6463,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                                                 ,   "scen_cd"   :   msg.upper_scen_cd
                                                 ,   "email"     :   item.email
                                             });
-                                        });                                        
+                                        });
 
                                     }else {
 
@@ -6188,6 +6475,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                                             });
 
 
+                                            /* 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 */
                                             if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
 
                                                 msg.arr_delete_list.push({
@@ -6218,7 +6506,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 5. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    /* 5. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 ) */
                     function(msg, callback) {
 
                         try{
@@ -6244,6 +6532,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                                         return callback(resultMsg);
                                     }
 
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 해제 ) success" );
+                                    }
+
                                     callback(null);
                                 });
                                 
@@ -6260,6 +6552,1480 @@ var applyShareUserRevokeInArr = function(req, res) {
                             callback(resultMsg);
                         }
                     },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 해제하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+
+/*
+ * 결과화면( 그룹비교 또는 선택 비교 ) 에서 공유할 공유자를 조회한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var getUserListForShareInResultGroup = function(req, res) {
+
+    try {
+        log.debug('simulation.getUserListForShareInResultGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getUserListForShareInResultGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.arr_user_list_for_share   =   [];
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. 공유할 모든 대상자를 조회한다. */
+                function(callback) {
+
+                    try{
+                        var msg = {};
+
+                        stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "대상자가 존재하지 않습니다.";
+                                resultMsg.err = "대상자가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+
+                            if( rows && rows.length > 0 ) {
+                                resultMsg.arr_user_list_for_share   =   rows;
+                            }
+
+                            callback(null);
+
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+
+                    resultMsg.result        =   true;
+                    resultMsg.msg           =   "";
+                    resultMsg.err           =   null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_user_list_for_share   =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 결과화면( 그룹비교 ) 에서 그룹에 공유된 공유자를 조회한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var getUserListSharedInGroup = function(req, res) {
+
+    try {
+        log.debug('simulation.getUserListSharedInGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.getUserListSharedInGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.arr_user_list_shared      =   [];
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        Promise.using(pool.connect(), conn => {
+
+            async.waterfall([
+
+                /* 1. 상위 그룹 정보를 조회한다. */
+                function(callback) {
+
+                    try{
+                        var msg         =   {};
+
+                        msg.v_simul_upper_grp   =   {};
+
+                        paramData.upper_scen_cd =   paramData.scen_cd;
+                        stmt = mapper.getStatement('simulation', 'getScenarioUpperGrp', paramData, format);
+                        log.debug(stmt, paramData);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "그룹정보가 존재하지 않습니다.";
+                                resultMsg.err = "그룹정보가 존재하지 않습니다.";
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( rows && rows.length > 1 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "그룹정보가 2건 이상 존재합니다.";
+                                resultMsg.err = "그룹정보가 2건 이상 존재합니다.";
+
+                                return callback(resultMsg);
+                            }                            
+
+                            if( rows && rows.length == 1 ) {
+                                msg.v_simul_upper_grp        =   rows[0];
+                            }
+
+                            callback(null, msg);
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 2. 그룹에 공유된 대상자를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        msg.arr_simul_share_upper   =   [];
+
+
+                        /* 상위 그룹 체크 */
+                        if( typeof msg.v_simul_upper_grp == "undefined" || Object.keys(msg.v_simul_upper_grp).length == 0 ) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "그룹정보가 존재하지 않습니다.";
+                            resultMsg.err = "그룹정보가 존재하지 않습니다.";
+
+                            callback(resultMsg);
+                        }
+                        else{
+
+                            paramData.changeGrpCdYn     =   "0";
+                            paramData.upper_grp_cd      =   paramData.grp_cd;
+                            paramData.upper_scen_cd     =   paramData.scen_cd;
+
+                            stmt = mapper.getStatement('simulation', 'getSimulShareUpperGrp', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+                                    resultMsg.err = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows && rows.length > 0 ) {
+                                    msg.arr_simul_share_upper   =   rows;
+                                }
+                                    
+                                callback(null, msg);
+
+                            });
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 3. 공유할 대상자를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+
+                        /* 상위 그룹 공유 데이터 체크 */
+                        if( typeof msg.arr_simul_share_upper == "undefined" || msg.arr_simul_share_upper.length == 0 ) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+                            resultMsg.err = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+
+                            callback(resultMsg);
+                        }
+                        else{
+
+                            stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "대상자가 존재하지 않습니다.";
+                                    resultMsg.err = "대상자가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if( rows && rows.length > 0 ) {
+
+                                    msg.arr_simul_share_upper.forEach( function( item, index, array ) {
+
+                                        if( item.owner_yn   ==   '0' ) {
+
+                                            var v_check_data    =   _.filter( rows, {
+                                                    'email'     :   item.email
+                                            });
+
+                                            if( typeof v_check_data != "undefined" && v_check_data.length == 1 ) {
+                                                resultMsg.arr_user_list_shared.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "name"      :   v_check_data[0].name
+                                                    ,   "owner_yn"  :   "0"                                                    
+                                                });
+                                            }
+                                        }
+
+                                    });
+
+                                    if( resultMsg.arr_user_list_shared.length > 0 ) {
+                                        resultMsg.arr_user_list_shared  =   _.orderBy( resultMsg.arr_user_list_shared, [ "name" ], [ "asc" ] );
+                                    }
+                                }
+                                    
+                                callback(null);
+
+                            });
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+
+                    resultMsg.result        =   true;
+                    resultMsg.msg           =   "";
+                    resultMsg.err           =   null;
+                }
+
+                res.json(resultMsg);
+                res.end();
+
+            });
+        });
+
+    } catch (expetion) {
+
+        log.error(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_user_list_shared      =   [];
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 결과화면( 그룹비교 또는 선택 비교 )에서 공유 대상자를 적용한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var applyShareUserInResultGroup = function(req, res) {
+
+    try {
+        log.debug('simulation.applyShareUserInResultGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.applyShareUserInResultGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.share_count    =  0;
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 그룹하위 또는 선택된 시나리오가 존재하는지 조회한다. */
+                    function(callback) {
+
+                        try{
+
+                            var msg         =   {};
+                            var v_queryId   =   "";
+
+
+                            msg.v_arr_simul_mast    =   [];
+
+                            /* 선택비교 */
+                            if( paramData.method_gubun == "getInfoCheckedScenCd" ) {
+                                v_queryId   =   "getSimulMastInArr";
+                            }
+                            /* 그룹비교 */
+                            else if( paramData.method_gubun == "getScenInGrpCd" ) {
+                                paramData.upper_scen_cd     =   paramData.scen_cd;
+                                v_queryId   =   "getScenarioInGrp";
+                            }
+
+
+                            if( v_queryId == "" ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "시나리오 기본 정보가 존재하지 않습니다.";
+                                resultMsg.err = "시나리오 기본 정보가 존재하지 않습니다.";
+
+                                callback(resultMsg);
+
+                            }else{
+                      
+                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "시나리오 정보가 한건 이상 존재해야 합니다.";
+                                        resultMsg.err = "시나리오 정보가 한건 이상 존재해야 합니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        msg.v_arr_simul_mast    =   rows;
+                                    }
+
+                                    if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                        paramData.upper_scen_cd =   "";
+                                    }                                    
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 그룹하위 또는 선택된 시나리오의 공유정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.arr_insert_list         =   [];
+                            msg.arr_update_list         =   [];
+
+
+                            if(     typeof msg.v_arr_simul_mast == "undefined"
+                                ||  msg.v_arr_simul_mast.length == 0
+                            ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "시나리오 정보가 한건 이상 존재해야 합니다.";
+                                resultMsg.err = "시나리오 정보가 한건 이상 존재해야 합니다.";
+
+                                callback(resultMsg);
+
+                            }else{
+
+                                var v_queryId   =   "";
+
+
+                                /* 선택비교 */
+                                if( paramData.method_gubun == "getInfoCheckedScenCd" ) {
+                                    paramData.arr_data_list     =   paramData.arr_scen_in_grp;
+                                    v_queryId   =   "getSimulShareInArr";
+                                }
+                                /* 그룹비교 */
+                                else if( paramData.method_gubun == "getScenInGrpCd" ) {
+                                    paramData.upper_scen_cd     =   paramData.scen_cd;
+                                    v_queryId   =   "getSimulShareInGrp";
+                                }
+
+                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        
+                                        resultMsg.msg = "시나리오 공유 정보가 한건 이상 존재해야 합니다.";
+                                        resultMsg.err = "시나리오 공유 정보가 한건 이상 존재해야 합니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    for( var j=0; j < paramData.arr_scen_in_grp.length; j++ ) {
+                                        
+                                        var v_row   =   paramData.arr_scen_in_grp[j];
+
+                                        /* 결과에 노출된 시나오 기준으로 소유자 또는 본인 email 이 공유 테이블에 존재하는지 체크  */
+                                        var v_temp  =   _.filter( rows, function(o) {
+                                            return      ( o.owner_yn == "1" && o.grp_cd == v_row.grp_cd && o.scen_cd == v_row.scen_cd )
+                                                    ||  ( o.email == paramData.email && o.grp_cd == v_row.grp_cd && o.scen_cd == v_row.scen_cd );
+                                        });
+
+                                        if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                            resultMsg.result = false;
+                                            
+                                            resultMsg.msg = "현재 사용자가 공유자 정보에 존재하지 않습니다.";
+                                            resultMsg.err = "현재 사용자가 공유자 정보에 존재하지 않습니다.";
+
+                                            return callback(resultMsg);
+                                        }   
+                                    }
+
+
+                                    /* 공유할 email 이 없으면 insert, 존재하면 update */
+                                    for( var i=0; i < paramData.arr_checked_for_share.length; i++ ) {
+                                        
+                                        var v_check_row =   paramData.arr_checked_for_share[i];
+
+
+                                        for( var j=0; j < msg.v_arr_simul_mast.length; j++ ) {
+
+                                            var v_row   =   msg.v_arr_simul_mast[j];
+
+                                            var v_temp  =   _.filter( rows, function(o) {
+                                                return  ( o.email == v_check_row.email && o.grp_cd == v_row.grp_cd && o.scen_cd == v_row.scen_cd );
+                                            });
+
+                                            if( typeof v_temp != "undefined" && v_temp.length > 1 ) {
+                                                resultMsg.result = false;
+                                                
+                                                resultMsg.msg = "공유자 정보에 2건 이상 존재합니다.";
+                                                resultMsg.err = "공유자 정보에 2건 이상 존재합니다.";
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+
+                                                msg.arr_insert_list.push({
+                                                        "grp_cd"    :   v_row.grp_cd
+                                                    ,   "scen_cd"   :   v_row.scen_cd
+                                                    ,   "email"     :   v_check_row.email
+                                                    ,   "owner_yn"  :   "0"
+                                                });
+
+                                            }else{
+
+                                                msg.arr_update_list.push({
+                                                        "grp_cd"    :   v_row.grp_cd
+                                                    ,   "scen_cd"   :   v_row.scen_cd
+                                                    ,   "email"     :   v_check_row.email
+                                                });
+                                            }
+                                        }
+                                    }
+                                    
+
+                                    if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                        paramData.upper_scen_cd =   "";
+                                    }
+
+                                    if( typeof paramData.arr_data_list != "undefined" ) {
+                                        paramData.arr_data_list =   [];
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 그룹하위 또는 선택된 시나리오의 공유정보를 등록한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if(     typeof msg.arr_insert_list == "undefined"
+                                ||  msg.arr_insert_list.length == 0
+                            ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_insert_list   =   msg.arr_insert_list;
+                                stmt = mapper.getStatement('simulation', "saveShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( rows ) {
+                                        log.debug( "simulation.saveShareUserInArr ( 그룹하위 또는 선택된 사니리오 ) success" );
+                                    }
+
+                                    msg.arr_insert_list         =   [];
+                                    paramData.arr_insert_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. 그룹하위 또는 선택된 시나리오의 공유정보를 수정한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if(     typeof msg.arr_update_list == "undefined"
+                                ||  msg.arr_update_list.length == 0
+                            ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_update_list   =   msg.arr_update_list;
+                                stmt = mapper.getStatement('simulation', "modifyShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( rows ) {
+                                        log.debug( "simulation.modifyShareUserInArr ( 그룹하위 또는 선택된 사니리오 ) success" );
+                                    }
+
+                                    msg.arr_update_list         =   [];
+                                    paramData.arr_update_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. 상위 그룹 또는 선택된 시나리오의 상위그룹이 존재하는지 체크한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.arr_simul_mast_upper    =   [];
+
+                            var v_queryId   =   "";
+
+                            /* 선택비교 */
+                            if( paramData.method_gubun == "getInfoCheckedScenCd" ) {
+                                v_queryId   =   "getSimulMastUpperInArr";
+                            }
+                            /* 그룹비교 */
+                            else if( paramData.method_gubun == "getScenInGrpCd" ) {
+                                paramData.upper_scen_cd     =   paramData.scen_cd;
+                                v_queryId   =   "getScenarioUpperGrp";
+                            }
+
+
+                            if( v_queryId == "" ) {
+                                callback(null, msg);
+
+                            }else{
+                      
+                                stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        msg.arr_simul_mast_upper    =   rows;
+                                    }
+
+                                    if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                        paramData.upper_scen_cd =   "";
+                                    }                                    
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. 상위 그룹 또는 선택된 시나리오의 상위그룹의 공유정보가 존재하는지 체크한다.  */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.arr_simul_share_upper   =   [];
+
+
+                            if(     typeof msg.arr_simul_mast_upper == "undefined"
+                                ||  msg.arr_simul_mast_upper.length == 0
+                            ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_data_list     =   msg.arr_simul_mast_upper;
+                                stmt = mapper.getStatement('simulation', "getSimulShareInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( !rows || rows.length == 0  ) {
+
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "선택된 시나리오 그룹 정보가 존재하지 않습니다.";
+                                        resultMsg.err = "선택된 시나리오 그룹 정보가 존재하지 않습니다.";
+
+                                        return callback(resultMsg);
+
+                                    }
+
+
+                                    if( rows && rows.length > 0  ) {
+
+                                        /* 공유할 email 이 없으면 insert, 존재하면 update */
+                                        for( var i=0; i < paramData.arr_checked_for_share.length; i++ ) {
+                                            
+                                            var v_check_row =   paramData.arr_checked_for_share[i];
+
+
+                                            for( var j=0; j < msg.arr_simul_mast_upper.length; j++ ) {
+
+                                                var v_row   =   msg.arr_simul_mast_upper[j];
+
+                                                var v_temp  =   _.filter( rows, function(o) {
+                                                    return  ( o.email == v_check_row.email && o.grp_cd == v_row.grp_cd && o.scen_cd == v_row.scen_cd );
+                                                });
+
+                                                if( typeof v_temp != "undefined" && v_temp.length > 1 ) {
+                                                    resultMsg.result = false;
+                                                    
+                                                    resultMsg.msg = "공유자 정보에 그룹정보가 2건 이상 존재합니다.";
+                                                    resultMsg.err = "공유자 정보에 그룹정보가 2건 이상 존재합니다.";
+
+                                                    return callback(resultMsg);
+                                                }
+
+                                                if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+
+                                                    msg.arr_insert_list.push({
+                                                            "grp_cd"    :   v_row.grp_cd
+                                                        ,   "scen_cd"   :   v_row.scen_cd
+                                                        ,   "email"     :   v_check_row.email
+                                                        ,   "owner_yn"  :   "0"
+                                                    });
+
+                                                }else{
+
+                                                    msg.arr_update_list.push({
+                                                            "grp_cd"    :   v_row.grp_cd
+                                                        ,   "scen_cd"   :   v_row.scen_cd
+                                                        ,   "email"     :   v_check_row.email
+                                                    });
+                                                }
+                                            }
+                                        }
+
+                                        msg.arr_simul_share_upper   =   rows;
+                                    }
+
+                                    if( typeof paramData.arr_data_list != "undefined" ) {
+                                        paramData.arr_data_list     =   [];
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. 상위 그룹 또는 선택된 시나리오의 상위그룹의 공유정보를 등록한다.  */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if(     typeof msg.arr_insert_list == "undefined"
+                                ||  msg.arr_insert_list.length == 0
+                            ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_insert_list   =   msg.arr_insert_list;
+                                stmt = mapper.getStatement('simulation', "saveShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( rows ) {
+                                        log.debug( "simulation.saveShareUserInArr ( 상위 그룹 또는 선택된 시나리오의 상위그룹 ) success" );
+                                    }
+
+                                    msg.arr_insert_list         =   [];
+                                    paramData.arr_insert_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 7. 상위 그룹 또는 선택된 시나리오의 상위그룹의 공유정보를 수정한다.  */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if(     typeof msg.arr_update_list == "undefined"
+                                ||  msg.arr_update_list.length == 0
+                            ) {
+                                callback(null);
+
+                            }else{
+
+                                paramData.arr_update_list   =   msg.arr_update_list;
+                                stmt = mapper.getStatement('simulation', "modifyShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+
+                                    if( rows ) {
+                                        log.debug( "simulation.modifyShareUserInArr ( 상위 그룹 또는 선택된 시나리오의 상위그룹 ) success" );
+                                    }
+
+                                    msg.arr_update_list         =   [];
+                                    paramData.arr_update_list   =   [];
+
+                                    callback(null);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 공유하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 결과화면( 그룹비교 )에서 공유 대상자를 해제한다.
+ * 2019-11-13  bkLove(촤병국)
+ */
+var applyShareUserRevokeInGroup = function(req, res) {
+
+    try {
+        log.debug('simulation.applyShareUserRevokeInGroup 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulation.applyShareUserRevokeInGroup  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        resultMsg.share_count    =  0;
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+     
+        Promise.using(pool.connect(), conn => {
+
+            conn.beginTransaction(txerr => {
+
+                if (txerr) {
+                    return log.error(txerr);
+                }
+
+                async.waterfall([
+
+                    /* 1. 상위 그룹 정보를 조회한다. */
+                    function(callback) {
+
+                        try{
+                            var msg         =   {};
+
+                            msg.v_simul_upper_grp   =   {};
+
+                            paramData.upper_scen_cd =   paramData.scen_cd;
+                            stmt = mapper.getStatement('simulation', 'getScenarioUpperGrp', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "그룹정보가 존재하지 않습니다.";
+                                    resultMsg.err = "그룹정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length > 1 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "그룹정보가 2건 이상 존재합니다.";
+                                    resultMsg.err = "그룹정보가 2건 이상 존재합니다.";
+
+                                    return callback(resultMsg);
+                                }                            
+
+                                if( rows && rows.length == 1 ) {
+                                    msg.v_simul_upper_grp        =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 그룹에 공유된 대상자를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.arr_simul_share_upper   =   [];
+                            msg.arr_delete_list         =   [];
+
+
+                            /* 상위 그룹 체크 */
+                            if( typeof msg.v_simul_upper_grp == "undefined" || Object.keys(msg.v_simul_upper_grp).length == 0 ) {
+
+                                resultMsg.result = false;
+                                resultMsg.msg = "그룹정보가 존재하지 않습니다.";
+                                resultMsg.err = "그룹정보가 존재하지 않습니다.";
+
+                                callback(resultMsg);
+                            }
+                            else{
+
+                                paramData.changeGrpCdYn     =   "0";
+                                paramData.upper_grp_cd      =   paramData.grp_cd;
+                                paramData.upper_scen_cd     =   paramData.scen_cd;
+
+                                stmt = mapper.getStatement('simulation', 'getSimulShareUpperGrp', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+                                        resultMsg.err = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        msg.arr_simul_share_upper   =   rows;
+
+                                        /* 해제할 공유자 정보 */
+                                        paramData.arr_checked_shared.forEach( function( item, index, array) {
+
+                                            var v_temp  =   _.filter( rows, function(o){
+                                                return  o.owner_yn == "0" && msg.v_simul_upper_grp.grp_cd == o.grp_cd && msg.v_simul_upper_grp.scen_cd == o.scen_cd && item.email == o.email;
+                                            });
+
+                                            if( typeof v_temp != "undefined" && v_temp.length > 0 ) {
+                                                msg.arr_delete_list.push({
+                                                        "grp_cd"    :   msg.v_simul_upper_grp.grp_cd
+                                                    ,   "scen_cd"   :   msg.v_simul_upper_grp.scen_cd
+                                                    ,   "email"     :   item.email
+                                                });
+                                            }
+                                        });
+                                    }
+                                        
+                                    callback(null, msg);
+
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 상위 그룹 공유자를 해제한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if( typeof msg.arr_delete_list == "undefined" || msg.arr_delete_list.length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_delete_list   =   msg.arr_delete_list;
+                                stmt = mapper.getStatement('simulation', 'deleteShareUserInArr', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    msg.arr_delete_list =   [];
+
+                                    callback(null, msg);
+                                });
+
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 4. 상위 그룹에 속한 공유자 정보를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.arr_delete_list =   [];
+
+                            paramData.upper_scen_cd =   paramData.scen_cd;
+                            stmt = mapper.getStatement('simulation', 'getSimulShareInGrp', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if( rows && rows.length > 0  ) {
+
+                                    paramData.arr_checked_shared.forEach( function( item, index, array) {
+
+                                        /* 그룹 하위 공유자 */
+                                        var v_temp  =   _.filter( rows, function(o) {
+                                            return  o.owner_yn == "0" && item.email == o.email;
+                                        });
+
+                                        if( typeof v_temp != "undefined" && v_temp.length > 0 ) {
+
+                                            v_temp.forEach( function( o ) {
+                                                msg.arr_delete_list.push({
+                                                        "grp_cd"    :   o.grp_cd
+                                                    ,   "scen_cd"   :   o.scen_cd
+                                                    ,   "email"     :   item.email
+                                                });
+                                            });
+                                        }
+                                    });
+                                }
+
+                                if( typeof paramData.upper_scen_cd != "undefined" ) {
+                                    paramData.upper_scen_cd =   "";
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. 상위그룹에 속한 공유자를 해제한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if( typeof msg.arr_delete_list == "undefined" || msg.arr_delete_list.length == 0 ) {
+                                callback(null);
+
+                            }else{
+
+                                paramData.arr_delete_list   =   msg.arr_delete_list;
+                                stmt = mapper.getStatement('simulation', 'deleteShareUserInArr', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    msg.arr_delete_list =   [];
+
+                                    callback(null);
+                                });
+
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    }
 
                 ], function(err) {
 
@@ -6340,3 +8106,8 @@ module.exports.getUserListForShare = getUserListForShare;
 module.exports.getUserListShared = getUserListShared;
 module.exports.applyShareUserInArr = applyShareUserInArr;
 module.exports.applyShareUserRevokeInArr = applyShareUserRevokeInArr;
+module.exports.applyShareUserInResultGroup = applyShareUserInResultGroup;
+module.exports.getUserListForShareInResultGroup = getUserListForShareInResultGroup;
+
+module.exports.getUserListSharedInGroup = getUserListSharedInGroup;
+module.exports.applyShareUserRevokeInGroup = applyShareUserRevokeInGroup;

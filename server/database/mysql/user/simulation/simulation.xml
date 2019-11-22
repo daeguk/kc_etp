@@ -296,8 +296,6 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
-
-           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
 
@@ -314,8 +312,6 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{grp_cd}                   /* 그룹코드(상위코드) */
            AND  scen_cd                     =   #{scen_cd}                  /* 시나리오 코드 */
-
-           AND  reg_id                      =   #{user_id}                  /* 등록자 ID */
     ]]>
     </delete>
 
@@ -369,8 +365,6 @@
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
            AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
-
-           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
 
          LIMIT  2
     </select>    
@@ -555,6 +549,35 @@
                 ,   tm_simul_mast.serial_no                                 AS  serial_no                   /* 변경 순번 */
                 ,   tm_simul_mast.stock_gubun                               AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
 
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val01
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd01            /* 벤치마크 인덱스 코드 ( F16013 ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val02
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd02            /* 벤치마크 인덱스 코드 ( large_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val03
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd03            /* 벤치마크 인덱스 코드( middle_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_dtl_name
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_nm              /* 벤치마크 인덱스 명 */                
+
           FROM  tm_simul_mast
 
           JOIN  tm_simul_share
@@ -627,8 +650,6 @@
          WHERE  1 = 1
            AND  tm_simul_portfolio.grp_cd           =   #{grp_cd}       /* 그룹코드(상위코드) */
            AND  tm_simul_portfolio.scen_cd          =   #{scen_cd}      /* 시나리오 코드 */
-
-           AND  tm_simul_portfolio.reg_id           =   #{user_id}      /* 등록자 ID */
 
          ORDER  BY      tm_simul_portfolio.scen_cd
                     ,   tm_simul_portfolio.rebalance_date
@@ -779,8 +800,6 @@
          WHERE  1 = 1
            AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
            AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
-
-           AND  reg_id                      =   #{user_id}                      /* 등록자 ID */
     ]]>
     </update>
 
@@ -845,8 +864,6 @@
           FROM  tm_simul_portfolio
 
          WHERE  1 = 1
-
-           AND  tm_simul_portfolio.reg_id               =   #{user_id}          /* 등록자 ID */
     ]]>
 
         <if   test= ' changeGrpCdYn == "1" ' >
@@ -1793,6 +1810,70 @@
     </select>
 
     <!--
+    *   선택된 시나리오들의 마스터 정보를 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulMastInArr">
+
+        SELECT      /* simulation.getSimulMastInArr  선택된 시나리오들의 마스터 정보를 조회한다. */
+
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+
+          FROM  tm_simul_mast
+
+         WHERE  1 = 1
+
+           AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd ) IN
+                (
+                <foreach    collection="arr_scen_in_grp"   item="item"    index="index"   separator=" ," >
+                    ( #{item.grp_cd}, #{item.scen_cd} )
+                </foreach>
+                )
+
+    </select>
+
+    <!--
+    *   선택된 시나리오들의 상위 그룹을 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getSimulMastUpperInArr">
+
+        SELECT      /* simulation.getSimulMastUpperInArr  선택된 시나리오들의 상위 그룹을 조회한다.. */
+
+                    tm_simul_mast.grp_cd                                    AS  grp_cd                      /* 그룹코드(상위코드) */
+                ,   tm_simul_mast.scen_cd                                   AS  scen_cd                     /* 시나리오 코드 */
+                ,   tm_simul_mast.scen_name                                 AS  scen_name                   /* 시나리오명 */
+                ,   tm_simul_mast.scen_depth                                AS  scen_depth                  /* 시나리오 DEPTH */
+                ,   tm_simul_mast.grp_yn                                    AS  grp_yn                      /* 그룹여부(1-그룹) */
+
+          FROM  tm_simul_mast
+         WHERE  1 = 1
+           AND  tm_simul_mast.grp_cd    =   '*'
+           AND  tm_simul_mast.grp_yn    =   '1'
+           AND  tm_simul_mast.scen_cd   IN
+                (
+                    SELECT  DISTINCT
+                            tm_simul_mast.grp_cd                            AS  grp_cd                      /* 그룹코드(상위코드) */
+            
+                      FROM  tm_simul_mast
+            
+                     WHERE  1 = 1
+            
+                       AND  ( tm_simul_mast.grp_cd, tm_simul_mast.scen_cd ) IN
+                            (
+                    <foreach    collection="arr_scen_in_grp"   item="item"    index="index"   separator=" ," >
+                                ( #{item.grp_cd}, #{item.scen_cd} )
+                    </foreach>
+                            )        
+                )
+
+    </select>
+
+    <!--
     *   신규 등록할 공유정보 설정한다.
     *   2019-07-26  bkLove(촤병국)
     -->
@@ -1955,7 +2036,7 @@
 
          WHERE  1 = 1
            AND  tm_simul_mast.grp_cd                =   '*'                 /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.scen_cd               =   #{grp_cd}           /* 시나리오코드 */
+           AND  tm_simul_mast.scen_cd               =   #{upper_scen_cd}    /* 시나리오코드 */
            AND  tm_simul_mast.grp_yn                =   '1'                 /* 그룹여부 */
 
     </select>
@@ -1984,7 +2065,7 @@
                       FROM  tm_simul_mast
 
                      WHERE  1 = 1
-                       AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
+                       AND  tm_simul_mast.grp_cd                =   #{upper_scen_cd}    /* 그룹코드(상위코드) */
                        AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
                 )
 
@@ -2009,8 +2090,9 @@
 
          WHERE  1 = 1
 
-           AND  grp_cd          =   #{prev_grp_cd}
-           AND  scen_cd         =   #{prev_scen_cd}
+           AND  grp_cd          =   #{prev_upper_grp_cd}
+           AND  scen_cd         =   #{prev_upper_scen_cd}
+           AND  owner_yn        =   '0'
            
            AND  email           NOT IN  
                 (
@@ -2022,7 +2104,7 @@
                      WHERE  1 = 1
                      
                        AND  grp_cd          =   '*'
-                       AND  scen_cd         =   #{prev_grp_cd}
+                       AND  scen_cd         =   #{prev_upper_scen_cd}
 
                        AND  email           NOT IN
                             (
@@ -2046,7 +2128,7 @@
                       
                      WHERE  1 = 1
                      
-                       AND  grp_cd          =   #{prev_grp_cd}
+                       AND  grp_cd          =   #{prev_upper_scen_cd}
                        AND  ( grp_cd, scen_cd )   NOT IN
                             (
                                 ( #{prev_grp_cd} , #{prev_scen_cd} )
