@@ -13,6 +13,7 @@ module.exports = {
     user: "kc_etp",
     password: "kc_etp",
     database: "kc_etp",
+    format: {language:'sql', indent: ''},
     /*db_model: [
         { file: './mysql/user/member_model', modelName: 'UserMember' },
         { file: './mysql/user/etpregister_model', modelName: 'EtpRegister' },
