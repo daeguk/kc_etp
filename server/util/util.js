@@ -69,6 +69,9 @@ module.exports = {
     str = str + '';
     return str.length >= len ? str : str + new Array(len-str.length+1).join(' ');
   },
+  formatDate: function(inDate) {
+    return inDate.substring(0, 4) + "." + inDate.substring(4,6) + "." + inDate.substring(6,8);
+  },  
 
 
 
