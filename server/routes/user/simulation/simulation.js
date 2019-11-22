@@ -2940,12 +2940,64 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                         log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                     }
 
-                                    callback(null);
+                                    callback(null, msg);
                                 });
 
                             }else{
-                                callback(null);
+                                callback(null, msg);
                             }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 22. 백테스트 수행 후 결과를 저장한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            paramData.moduleId              =   "runBacktestWithSaveBasicInfo";
+
+                            paramData.transaction           =   {};
+                            paramData.transaction.mapper    =   mapper;
+                            paramData.transaction.pool      =   pool;
+                            paramData.transaction.conn      =   conn;
+
+                            /* 백테스트 수행 후 결과를 저장한다. */
+                            simulationBacktest.saveBacktestResult( req, res, paramData ).then( function(e) {
+
+                                if( e && e.resultMsg && e.resultMsg.result ) {
+                                    resultMsg   =   e.resultMsg;
+
+                                    e.resultMsg.msg = "성공적으로 저장하였습니다.";
+                                    e.resultMsg.err = null;
+
+                                    callback(null);
+                                }else{
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = config.MSG.error01;
+
+                                    callback(resultMsg);
+                                }
+
+                            }).catch( function(expetion){
+
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            });                            
 
                         } catch (err) {
                             resultMsg.result = false;
@@ -2966,60 +3018,63 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         conn.commit();
                     }
 
+                    res.json(resultMsg);
+                    res.end();
 
-                    if( resultMsg.result ) {
 
-                        try{
+                    // if( resultMsg.result ) {
 
-                            paramData.moduleId      =   "runBacktestWithSaveBasicInfo";
+                    //     try{
 
-                            /* 백테스트를 수행한다. */
-                            simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
+                    //         paramData.moduleId      =   "runBacktestWithSaveBasicInfo";
 
-                                if( e && e.resultMsg ) {
-                                    resultMsg   =   e.resultMsg;
+                    //         /* 백테스트를 수행한다. */
+                    //         simulationBacktest.runBacktest( req, res, paramData ).then( function(e) {
 
-                                    if( e.resultMsg.result ) {
-                                        e.resultMsg.msg = "성공적으로 저장하였습니다.";
-                                        e.resultMsg.err = null;
-                                    }
-                                }else{
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = config.MSG.error01;
-                                }
+                    //             if( e && e.resultMsg ) {
+                    //                 resultMsg   =   e.resultMsg;
 
-                                res.json(resultMsg);
-                                res.end();
+                    //                 if( e.resultMsg.result ) {
+                    //                     e.resultMsg.msg = "성공적으로 저장하였습니다.";
+                    //                     e.resultMsg.err = null;
+                    //                 }
+                    //             }else{
+                    //                 resultMsg.result = false;
+                    //                 resultMsg.msg = config.MSG.error01;
+                    //                 resultMsg.err = config.MSG.error01;
+                    //             }
 
-                            }).catch( function(expetion){
+                    //             res.json(resultMsg);
+                    //             res.end();
 
-                                log.debug( expetion, paramData );
+                    //         }).catch( function(expetion){
 
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = expetion;
+                    //             log.debug( expetion, paramData );
 
-                                res.json( resultMsg );
-                                res.end();
-                            });
+                    //             resultMsg.result = false;
+                    //             resultMsg.msg = config.MSG.error01;
+                    //             resultMsg.err = expetion;
 
-                        }catch( e ) {
+                    //             res.json( resultMsg );
+                    //             res.end();
+                    //         });
 
-                            log.debug( e, paramData );
+                    //     }catch( e ) {
 
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = expetion;
+                    //         log.debug( e, paramData );
 
-                            res.json(resultMsg);
-                            res.end();                            
-                        }
+                    //         resultMsg.result = false;
+                    //         resultMsg.msg = config.MSG.error01;
+                    //         resultMsg.err = expetion;
 
-                    }else{
-                        res.json(resultMsg);
-                        res.end();                        
-                    }
+                    //         res.json(resultMsg);
+                    //         res.end();                            
+                    //     }
+
+                    // }else{
+                    //     res.json(resultMsg);
+                    //     res.end();                        
+                    // }
                 });
             });
         });

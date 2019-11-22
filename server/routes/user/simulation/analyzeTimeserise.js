@@ -99,11 +99,118 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
             }
         });
     });
+}
 
-    
+/*
+ * arr_daily (일자별 지수) 를 파일 생성한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var writeFileArrDaily   =   async function(arr_daily, bench_mark_cd) {
 
+    var analyzeList = [];
+
+    arr_daily.forEach(function(item) {
+        let analyzeObj = {};
+        if (typeof item.F12506 != 'undefined') {
+            analyzeObj.date = util.format('%s-%s-%s', item.F12506.substr(0, 4), item.F12506.substr(4, 2), item.F12506.substr(6, 2));
+            analyzeObj.backtest = item.INDEX_RATE;
+            analyzeObj.riskfree   = item.F15175;
+            if (bench_mark_cd != '0') {
+                analyzeObj.benchmark = item.bm_data01;
+            }
+            analyzeObj.kospi = item.KOSPI_F15001;
+            analyzeObj.F15028_S = item.tot_F15028_S;
+            analyzeObj.F15028_C = item.tot_F15028_C;
+            analyzeList.push(analyzeObj);
+        }
+    });
+
+    var curDate = new Date().getTime();
+    var dir = config.uploadFolder+"/analyze";
+    !fs.existsSync(dir) && fs.mkdirSync(dir);
+
+    var fileName = dir+"/timeserise_"+curDate+".json";
+    var jsonFileName = "timeserise_"+curDate+".json";
     
+    return await new Promise(function(resolve, reject) {
+
+        /* 파일에 write 한다. */
+        fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
+            if (error) {
+                log.debug( "파일 write 중 오류가 발생되었습니다.", error );
+
+                resolve( { 
+                        result : false
+                    ,   jsonFileName : jsonFileName
+                    ,   inputData : JSON.stringify(analyzeList)
+                });
+            } else {                
+                resolve( { 
+                        result : true 
+                    ,   jsonFileName : jsonFileName
+                    ,   inputData : ""
+                });
+            }
+        });
+    })
+}
+
+/*
+ * 파이선 호출을 통해 분석정보를 조회한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var getAnalyzeByPython   =   async function( paramData ) {
+
+    return  await new Promise( function(resolve, reject) {
+
+        var dir = config.uploadFolder+"/analyze";
+
+        if( typeof paramData.jsonFileName == "undefined" || paramData.jsonFileName == "" ) {        
+            resolve( { 
+                    result : false
+                ,   msg : "파일정보가 존재하지 않습니다."
+                ,   err : ""
+                ,   jsonData : []
+            });
+        }        
+
+        var options = {
+            mode: 'text',
+            pythonPath: config.python_path,
+            pythonOptions: ['-u'],
+            scriptPath: '',
+            args: [ dir + "/" + paramData.jsonFileName ]
+        };
+            
+        log.debug("[PYTHON] 시작");
+
+        PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
+            if (err) {
+                log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
+                resolve( { 
+                        result : false
+                    ,   results : []
+                } );
+
+                log.debug("[PYTHON] error 완료");
+            }else{
+                //console.log('results: %j', results);
+                //console.log("####### 4) 파이선 호출 END");
+                //fs.unlinkSync(fileName);
+                resolve( { 
+                        result : true
+                    ,   results : results 
+                });    
+                    
+                log.debug("[PYTHON] success 완료");
+            }
+        });
+
+    });
+
 }
 
 
 module.exports.getAnalyze_timeseries = getAnalyze_timeseries;
+module.exports.writeFileArrDaily = writeFileArrDaily;
+module.exports.getAnalyzeByPython = getAnalyzeByPython;
