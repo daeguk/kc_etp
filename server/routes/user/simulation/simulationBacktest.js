@@ -461,9 +461,13 @@ var runBacktest = async function(req, res, paramData) {
                             resultMsg.arr_daily             =   [ ...v_resultSimulData.arr_daily];
                             resultMsg.arr_rebalance         =   [ ...v_resultSimulData.arr_rebalance];
 
-                            if( paramData.moduleId &&  [ "saveBacktestResult2", "getSimulJongmoForExcel" ].includes( paramData.moduleId ) ) {
+                            if( paramData.moduleId &&  [ "getSimulJongmoForExcel" ].includes( paramData.moduleId ) ) {
                                 resultMsg.dailyJongmokObj   =   v_resultSimulData.dailyJongmokObj;
-                                resultMsg.dailyObj          =   v_resultSimulData.dailyObj;
+                            }                            
+
+                            if( paramData.moduleId &&  [ "runBacktestWithSaveBasicInfo" ].includes( paramData.moduleId ) ) {
+//                              resultMsg.dailyObj          =   v_resultSimulData.dailyObj;
+                                resultMsg.arr_contribute    =   v_resultSimulData.arr_contribute;
                             }
 
                             resultMsg.err           =   null;
@@ -1298,8 +1302,11 @@ var saveBacktestResult = async function(req, res, paramData) {
                                         if( e.resultMsg.dailyObj && Object.keys( e.resultMsg.dailyObj ).length > 0 ) {
                                             v_resultSimulData.dailyObj          =   e.resultMsg.dailyObj;
                                         }
-                                        
 
+                                        v_resultSimulData.arr_contribute        =   {};
+                                        if( e.resultMsg.arr_contribute && Object.keys( e.resultMsg.arr_contribute ).length > 0 ) {
+                                            v_resultSimulData.arr_contribute    =   e.resultMsg.arr_contribute;
+                                        }
 
                                         if( resultMsg.simul_mast && resultMsg.simul_mast.serial_no != null ) {
                                             paramData.serial_no     =   resultMsg.simul_mast.serial_no;
@@ -1991,7 +1998,6 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                     if (err) {
                         log.debug(err, stmt, paramData);
-                        // conn.rollback();
 
                     } else {
                         resultMsg.result = true;
@@ -2001,16 +2007,12 @@ var saveBacktestResult = async function(req, res, paramData) {
                         resultMsg.grp_cd	=	paramData.grp_cd;
                         resultMsg.scen_cd	=	paramData.scen_cd;
 
-                        // conn.commit();
-
                     }
 
                     resolve( { 
                             result : true
                         ,   resultMsg : resultMsg 
                     });
-                    // res.json(resultMsg);
-                    // res.end();
 
                 });
             }
@@ -2026,10 +2028,7 @@ var saveBacktestResult = async function(req, res, paramData) {
             resolve( { 
                     result : false
                 ,   resultMsg : resultMsg 
-            });            
-
-            // res.json(resultMsg);
-            // res.end();
+            });
         }
 
     }).catch( function(expetion){
@@ -4192,6 +4191,7 @@ var	fn_get_simulation_data  =   function(
 			,   dailyObj            :   v_dailyObj
 			,   arr_daily           :   v_arr_daily
 			,   arr_rebalance       :   v_arr_rebalance
+            ,   arr_contribute      :   v_arr_contribute
 		};
 	};
 
