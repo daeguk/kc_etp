@@ -2137,6 +2137,8 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
 /*
 *  시뮬레이션 이력정보로 백테스트 수행결과를 반환한다.
 *  2019-08-14  bkLove(촤병국)
+*  2018-09-10  리밸런싱일별 종목 변경처리, 
+*  2018-10-10  기여도 계산 
 */
 var	fn_get_simulation_data  =   function( 
 			p_simul_mast                /* 시뮬레이션 기본 마스터 정보 */
@@ -2163,6 +2165,10 @@ var	fn_get_simulation_data  =   function(
         var v_rebalanceObj              =   {};
 
         var JongmokImportDateList       = [];           /* 종목별 편입 일자*/
+        var v_arr_contribute            = [];           /* 기여도 계산일자*/
+        var v_startDate                   = "";
+        var v_endDate                     = "";
+        var v_before_startDate            = "";
 	
 		try{
 			if ( p_simul_hist_data && p_simul_hist_data.length > 0 ) {
@@ -2171,7 +2177,10 @@ var	fn_get_simulation_data  =   function(
 
 					v_first_F12506  =   p_simul_hist_data[0].F12506;
 					v_prev_F12506   =   p_simul_hist_data[0].F12506;
-					v_before_F12506 =   p_simul_hist_data[0].F12506;
+                    v_before_F12506 =   p_simul_hist_data[0].F12506;
+                    
+                    v_startDate   = v_first_F12506;
+                    v_before_startDate = v_first_F12506;
 				}
 
 
@@ -2220,17 +2229,62 @@ var	fn_get_simulation_data  =   function(
 						v_next_F12506   =   p_simul_hist_data[i].F12506;
 					}
 
-                    /* 리밸런싱 날짜별로 포트 폴리오 변경*/
-                    var findIndex  = _.findIndex(p_arrRebalanceDate, {'F12506':p_simul_hist_data[i].F12506});
-
-                    if (findIndex != -1) {
-                        p_simulPortfolio = p_simulPortfolioList[p_simul_hist_data[i].F12506];
-                    }
-
+                   
 					/* 입회일자가 달라지는 경우 */
 					if(     v_next_F12506 != p_simul_hist_data[i].F12506
 						||  i == p_simul_hist_data.length-1 
 					) {
+
+                        /* 리밸런싱 날짜별로 포트 폴리오 변경*/
+                        var findIndex  = _.findIndex(p_arrRebalanceDate, {'F12506':p_simul_hist_data[i].F12506});
+
+                        if (findIndex != -1) {
+                            
+                            /* 리밸런싱 날짜별로 포트 폴리오 변경*/
+                            p_simulPortfolio = p_simulPortfolioList[p_simul_hist_data[i].F12506];
+                            
+                            /* 기여도 계산 날짜 세팅*/
+                            v_endDate = v_before_F12506
+                            if (typeof v_arr_contribute[ p_simul_hist_data[i].F12506 ] == "undefined") {
+                                /* 초기화 */
+                                v_arr_contribute[p_simul_hist_data[i].F12506] = {
+                                    'start_date': '',                    /* 기여도 계산 시작일 */
+                                    'before_date': '',       /* 기여도 계산 직전일 */
+                                    'end_date' : '',              /* 기여도 계산 종료일 */
+                                }
+                            }
+
+                            
+                            if (typeof v_arr_contribute[ p_simul_hist_data[p_simul_hist_data.length-1].F12506] == "undefined") {
+                                /* 초기화 */
+                                v_arr_contribute[p_simul_hist_data[p_simul_hist_data.length-1].F12506] = {
+                                    'start_date': '',                    /* 기여도 계산 시작일 */
+                                    'before_date': '',       /* 기여도 계산 직전일 */
+                                    'end_date' : '',              /* 기여도 계산 종료일 */
+                                }
+                            }
+
+                            v_arr_contribute[p_simul_hist_data[i].F12506].start_date = v_startDate; /* 기여도 계산 시작일 */
+                            v_arr_contribute[p_simul_hist_data[i].F12506].before_date = v_before_startDate; /* 기여도 계산 직전일 */
+                            
+                            if (p_arrRebalanceDate[p_arrRebalanceDate.length - 1].F12506 == p_simul_hist_data[i].F12506) {
+                                v_arr_contribute[p_simul_hist_data[i].F12506].end_date = v_endDate;
+
+                                /* 마지막 리밸런싱일 부터 현재 날짜까지 추가 */
+                                v_arr_contribute[p_simul_hist_data[p_simul_hist_data.length-1].F12506].start_date = p_simul_hist_data[i].F12506;
+                                v_arr_contribute[p_simul_hist_data[p_simul_hist_data.length-1].F12506].before_date = v_before_F12506; /* 기여도 계산 직전일 */
+                                v_arr_contribute[p_simul_hist_data[p_simul_hist_data.length-1].F12506].end_date = p_simul_hist_data[p_simul_hist_data.length-1].F12506;     /* 기여도 계산 종료일 */
+                            } else {
+                                v_arr_contribute[p_simul_hist_data[i].F12506].end_date = v_endDate;     /* 기여도 계산 종료일 */
+                            }
+                            v_startDate = p_simul_hist_data[i].F12506;
+
+                            if (i == 0) {
+                                v_before_startDate = p_simul_hist_data[i].F12506;
+                            } else {
+                                v_before_startDate = v_before_F12506;
+                            }
+                        }
 
 						/* 비교시가총액 변동 발생 여부 */
 						v_dailyObj[ p_simul_hist_data[i].F12506 ].change_yn   =   "N";
@@ -2313,8 +2367,8 @@ var	fn_get_simulation_data  =   function(
                         prev_rebalance_F12506   =   p_arrRebalanceDate[i].F12506;
                     }
                     
-
-
+                    
+                    
                     var v_rebalance_cnt = 0;
                     for( var i=0;i < Object.keys( v_dailyJongmokObj ).length; i++ ) {
 
@@ -2335,12 +2389,9 @@ var	fn_get_simulation_data  =   function(
                         var findIndex  = _.findIndex(p_arrRebalanceDate, {'F12506':v_F12506});
 
                         if (findIndex != -1) {
-                            p_simulPortfolio = p_simulPortfolioList[v_F12506];
+                            p_simulPortfolio = p_simulPortfolioList[v_F12506];                            
                         }
-// if( [ "20171228" ].includes( v_F12506 ) ) {
-//     log.debug( "v_F12506", v_F12506, "v_daily.tot_F15028_3", v_daily.tot_F15028_3 );
-// }
-
+                        
 
                         try{
 
@@ -2371,7 +2422,7 @@ var	fn_get_simulation_data  =   function(
                                     ,   v_prev_jongmok                                              /* 이전 종목 */
                                     ,   v_daily                                                     /* 현재 daily */
                                     ,   v_prev_daily                                                /* 이전 daily */
-                                    ,   v_rebalanceObj
+                                    ,   v_rebalanceObj                                    
                                 );
                                 
 
@@ -2404,7 +2455,7 @@ var	fn_get_simulation_data  =   function(
                                         ,   v_prev_jongmok                                              /* 이전 종목 */
                                         ,   v_daily                                                     /* 현재 daily */
                                         ,   v_prev_daily                                                /* 이전 daily */
-                                        ,   v_rebalanceObj
+                                        ,   v_rebalanceObj                                        
                                     );
 
                                     fn_set_rebalanceDate_history(v_rebalance_cnt, v_F12506, v_rebalanceObj, v_jongmok, v_prev_jongmok, v_key, JongmokImportDateList, p_simulPortfolio);
@@ -2443,7 +2494,7 @@ var	fn_get_simulation_data  =   function(
                                         ,   v_prev_jongmok                                              /* 이전 종목 */
                                         ,   v_daily                                                     /* 현재 daily */
                                         ,   v_prev_daily                                                /* 이전 daily */
-                                        ,   v_rebalanceObj
+                                        ,   v_rebalanceObj                                        
                                     );
                                 }
 
@@ -2458,6 +2509,36 @@ var	fn_get_simulation_data  =   function(
                         if( i > 0 ) {
                             v_prev_index    =   i;
                         }
+                    }
+
+                    /* 기여도 계산*/      
+                    try {      
+                        v_arr_contribute.forEach(function(contributeItem) {
+                            
+                            contributeItem.jongmok = v_dailyJongmokObj[contributeItem.start_date];
+                            
+                            let start_dailyObj = _.find(v_arr_daily, ['F12506', contributeItem.before_date]);
+                            let end_dailyObj = _.find(v_arr_daily, ['F12506', contributeItem.end_date]);
+
+                            let startIndex = start_dailyObj.INDEX_RATE;
+                            let endIndex = end_dailyObj.INDEX_RATE;
+
+                            for (var jongmokIndex = 0; jongmokIndex < Object.keys( contributeItem.jongmok ).length; jongmokIndex++) {
+
+
+                                var jongmokKey  =   Object.keys(contributeItem.jongmok)[jongmokIndex];
+
+                                contributeItem.jongmok[jongmokKey].START_WEIGH = v_dailyJongmokObj[contributeItem.start_date][jongmokKey].AFTER_IMPORTANCE;
+                                contributeItem.jongmok[jongmokKey].END_WEIGH = v_dailyJongmokObj[contributeItem.end_date][jongmokKey].AFTER_IMPORTANCE;
+
+
+                                contributeItem.jongmok[jongmokKey].CONTRIBUTE_RATE = ((endIndex *  contributeItem.jongmok[jongmokKey].END_WEIGH) - (startIndex * contributeItem.jongmok[jongmokKey].START_WEIGH)) / startIndex * 100;
+
+                            };
+                            
+                        });
+                    }catch(e) {
+                        log.debug( "error", e );
                     }
 
 
