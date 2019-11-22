@@ -3281,11 +3281,55 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 2. tm_simul_mast 를 삭제한다. */
+                    /* 2. 상위 그룹 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            msg.v_simul_upper_grp       =   {};
+
+                            paramData.changeGrpCdYn     =   "0";
+                            stmt = mapper.getStatement('simulation', 'getUpperGrp', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if (rows && rows.length == 1) {
+                                    msg.v_simul_upper_grp     =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. tm_simul_mast 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulMast', paramData, format);
                             log.debug(stmt);
@@ -3317,11 +3361,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 3. tm_simul_portfolio 를 삭제한다. */
+                    /* 4. tm_simul_portfolio 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteTmSimulPortfolio', paramData, format);
                             log.debug(stmt);
@@ -3353,11 +3399,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 4. tm_simul_result_anal 을 삭제한다. */
+                    /* 5. tm_simul_result_anal 을 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultAnal', paramData, format);
                             log.debug(stmt);
@@ -3389,11 +3437,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },                    
 
-                    /* 5. tm_simul_result_rebalance 를 삭제한다. */
+                    /* 6. tm_simul_result_rebalance 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultRebalance', paramData, format);
                             log.debug(stmt);
@@ -3425,11 +3475,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 6. tm_simul_result_daily 를 삭제한다. */
+                    /* 7. tm_simul_result_daily 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultDaily', paramData, format);
                             log.debug(stmt);
@@ -3461,11 +3513,13 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 7. tm_simul_result_mast 를 삭제한다. */
+                    /* 8. tm_simul_result_mast 를 삭제한다. */
                     function(msg, callback) {
 
                         try{
-                            var msg         =   {};
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             stmt = mapper.getStatement('simulation', 'deleteSimulResultMast', paramData, format);
                             log.debug(stmt);
@@ -3497,7 +3551,110 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 8. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
+                    /* 9. 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.v_arr_simul_share_not_in_group      =   [];
+
+
+                            /* 상위그룹이 있는 경우 */
+                            if( typeof msg.v_simul_upper_grp == "undefined" || Object.keys( msg.v_simul_upper_grp ).length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.prev_grp_cd           =   paramData.grp_cd;
+                                paramData.prev_scen_cd          =   paramData.scen_cd;
+
+                                paramData.prev_upper_grp_cd     =   msg.v_simul_upper_grp.grp_cd;
+                                paramData.prev_upper_scen_cd    =   msg.v_simul_upper_grp.scen_cd;
+                                stmt = mapper.getStatement('simulation', "getSimulShareNotInGroupForDelelete", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0 ) {
+                                        msg.v_arr_simul_share_not_in_group  =   rows;
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 10. 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            /* 변경전 대상이 상위그룹이 있는 경우 */
+                            if( typeof msg.v_arr_simul_share_not_in_group == "undefined" || msg.v_arr_simul_share_not_in_group.length == 0 ) {
+                                callback(null, msg);
+
+                            }else{
+
+                                paramData.arr_delete_list   =   msg.v_arr_simul_share_not_in_group;
+                                stmt = mapper.getStatement('simulation', "deleteShareUserInArr", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows ) {
+                                        log.debug( "simulation.deleteShareUserInArr ( 변경전 그룹에 속하지 않는 삭제 대상 ) success" );
+                                    }
+
+                                    paramData.arr_delete_list   =   [];
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -4574,7 +4731,7 @@ var fnChangeGroup = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                    
+                    },
 
                     /* 5. 그룹변경인 경우 [tm_simul_mast] 수정한다. */
                     function( msg, callback) {
