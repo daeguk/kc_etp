@@ -259,6 +259,8 @@
                 ,   tm_simul_result_daily.F15028_C                              AS  F15028_C                /* 비교시총 */
                 ,   tm_simul_result_daily.INDEX_RATE                            AS  INDEX_RATE              /* 지수 */
                 ,   tm_simul_result_daily.RETURN_VAL                            AS  RETURN_VAL              /* 결과 */
+                ,   tm_simul_result_daily.BM_RATE                               AS  BM_RATE                 /* 벤치마크 지수 */
+                ,   tm_simul_result_daily.BM_RETURN                             AS  BM_RETURN               /* 벤치마크 결과 */
                 
           FROM  tm_simul_result_daily
          WHERE  1 = 1

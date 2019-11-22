@@ -1956,9 +1956,9 @@ export default {
                                     var arr_daily       =   response.data.arr_daily;
                                     var arr_rebalance   =   response.data.arr_rebalance;
                                     var simul_mast    	=   response.data.simul_mast;
-                                    var analyzeList     =   response.data.analyzeList;
-                                    var jsonFileName    =   response.data.jsonFileName;
-                                    var inputData       =   response.data.inputData;
+                                    // var analyzeList     =   response.data.analyzeList;
+                                    // var jsonFileName    =   response.data.jsonFileName;
+                                    // var inputData       =   response.data.inputData;
 
                                     if( simul_mast ) {
                                         vm.prev_grp_cd      =   simul_mast.grp_cd;           /* 그룹 코드 */
@@ -1973,9 +1973,9 @@ export default {
                                             ,   arr_daily           :   arr_daily
                                             ,   arr_rebalance       :   arr_rebalance
                                             ,   simul_mast          :   simul_mast
-                                            ,   analyzeList         :   analyzeList
-                                            ,   jsonFileName        :   jsonFileName
-                                            ,   inputData           :   inputData
+                                            // ,   analyzeList         :   analyzeList
+                                            // ,   jsonFileName        :   jsonFileName
+                                            // ,   inputData           :   inputData
                                         }
                                     );
                                 }

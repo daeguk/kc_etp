@@ -192,6 +192,7 @@ module.exports = {
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getBacktestResult'                , method: 'getBacktestResult'                   , session: 'check', type: 'post' },     // 백테스트 결과 조회
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getSimulJongmoForExcel'           , method: 'getSimulJongmoForExcel'              , session: 'check', type: 'post' },     // 엑셀 다운로드용 시뮬레이션 종목정보 조회
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getSimulResultSaveYn'             , method: 'getSimulResultSaveYn'                , session: 'check', type: 'post' },     // 시뮬레이션 결과 테이블에 저장되어 있는지 체크
+        { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getAnalyze_timeseries'            , method: 'getAnalyze_timeseries'               , session: 'check', type: 'post' },     // daily 조회하여 파이선 호출후 분석테이블 저장
 
 
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'                  , method: 'uploadPortfolio'                     , session: 'check', type: 'post' },     // 포트폴리오 업로드

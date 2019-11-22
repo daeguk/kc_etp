@@ -347,7 +347,7 @@ var runBacktest = async function(req, res, paramData) {
                                     ||  paramData.bench_index_cd02 == ""
                                     ||  paramData.bench_index_cd03 == "" 
                                 ) {
-                                    callback(null, msg);
+                                    callback(null);
 
                                 }else{
 
@@ -369,7 +369,7 @@ var runBacktest = async function(req, res, paramData) {
                                             fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
                                         }
 
-                                        callback(null, msg);
+                                        callback(null);
                                     });
                                 }
                                     
@@ -385,61 +385,61 @@ var runBacktest = async function(req, res, paramData) {
                         },
 
                         /* 5. arr_daily (일자별 지수) 를 파일 생성한다.*/
-                        function(msg, callback) {
+                        // function(msg, callback) {
 
-                            try{
+                        //     try{
 
-                                if( !msg || Object.keys( msg ).length == 0 ) {
-                                    msg = {};
-                                }
+                        //         if( !msg || Object.keys( msg ).length == 0 ) {
+                        //             msg = {};
+                        //         }
 
 
-                                if( paramData.moduleId && paramData.moduleId == "runBacktestWithSaveBasicInfo" ) {
+                        //         if( paramData.moduleId && paramData.moduleId == "runBacktestWithSaveBasicInfo" ) {
 
-                                    /* arr_daily (일자별 지수) 를 파일 생성한다. */
-                                    if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
+                        //             /* arr_daily (일자별 지수) 를 파일 생성한다. */
+                        //             if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
 
-                                        log.debug( "분석정보 파일생성 #1  START");
-                                        simulAnalyze.writeFileArrDaily(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
-                                            if( e && e.result ) {
-                                                if( e.results && e.results.length > 0 ) {
-                                                    resultMsg.jsonFileName  =   e.jsonFileName;
-                                                    resultMsg.inputData  =   e.inputData;                                            
-                                                }
+                        //                 log.debug( "분석정보 파일생성 #1  START");
+                        //                 simulAnalyze.writeFileArrDaily(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
+                        //                     if( e && e.result ) {
+                        //                         if( e.results && e.results.length > 0 ) {
+                        //                             resultMsg.jsonFileName  =   e.jsonFileName;
+                        //                             resultMsg.inputData  =   e.inputData;                                            
+                        //                         }
 
-                                                log.debug( "분석정보 파일생성 success #1 END");
+                        //                         log.debug( "분석정보 파일생성 success #1 END");
 
-                                                callback(null);
-                                            }else{
+                        //                         callback(null);
+                        //                     }else{
 
-                                                resultMsg.result = false;
-                                                resultMsg.jsonFileName  =   e.jsonFileName;
-                                                resultMsg.msg = config.MSG.error01;
-                                                resultMsg.err = "[error] simulAnalyze.writeFileArrDaily 파일 생성 중 오류가 발생하였습니다.";
+                        //                         resultMsg.result = false;
+                        //                         resultMsg.jsonFileName  =   e.jsonFileName;
+                        //                         resultMsg.msg = config.MSG.error01;
+                        //                         resultMsg.err = "[error] simulAnalyze.writeFileArrDaily 파일 생성 중 오류가 발생하였습니다.";
 
-                                                log.debug( "분석정보 파일생성 error #1 END");
-                                                return callback(resultMsg);
+                        //                         log.debug( "분석정보 파일생성 error #1 END");
+                        //                         return callback(resultMsg);
 
-                                            }
-                                        });
+                        //                     }
+                        //                 });
 
-                                    }else{
-                                        callback(null);
-                                    }
+                        //             }else{
+                        //                 callback(null);
+                        //             }
 
-                                }else{
-                                    callback(null);
-                                }
+                        //         }else{
+                        //             callback(null);
+                        //         }
 
-                            } catch (err) {
+                        //     } catch (err) {
 
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = err;
+                        //         resultMsg.result = false;
+                        //         resultMsg.msg = config.MSG.error01;
+                        //         resultMsg.err = err;
 
-                                callback(null);
-                            }
-                        },
+                        //         callback(null);
+                        //     }
+                        // },
 
                     ], function(err) {
 
@@ -522,11 +522,13 @@ var runBacktest = async function(req, res, paramData) {
 
 
 /*
- * 파이선 호출을 통해 분석정보를 조회하여 분석테이블에 저장한다.
+ * daily 정보를 조회하여 파이선 호출 후 분석테이블에 저장한다.
  * 2019-10-24  bkLove(촤병국)
  */
 var getAnalyze_timeseries = function(req, res) {
+
     try {
+
         log.debug('simulationBacktest.getAnalyze_timeseries 호출됨.');
 
         var pool = req.app.get("pool");
@@ -565,83 +567,58 @@ var getAnalyze_timeseries = function(req, res) {
 
                 async.waterfall([
 
-                    /* 1. 파이선 호출을 통해 분석정보를 조회한다.*/
-                    function(allback) {
-
-                        try{
-
-                            var msg         =   {};
-
-                            if( typeof paramData.jsonFileName == "undefined" || paramData.jsonFileName == "" ) {
-
-                                resultMsg.result        =   false;
-                                resultMsg.msg           =   config.MSG.error01;
-                                resultMsg.err           =   "파이선 호출을 위한 input 데이터 파일 정보가 존재하지 않습니다.";
-
-                                callback(resultMsg);
-
-                            }else{
-
-                                log.debug( "분석정보 #1 조회 from 파이선 START");
-                                simulAnalyze.getAnalyzeByPython( paramData ).then( function(e) {
-
-                                    if( e && e.result ) {
-
-                                        if( e.results && e.results.length > 0 ) {
-
-                                            fn_setAnal01.call(this)
-                                            msg.analyzeList   =   e.results;
-                                        }
-
-                                        callback(null, msg);
-                                    }else{
-
-                                        resultMsg.result = true;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = "[error] simulAnalyze.getAnalyzeByPython 파이선 호출 중 오류가 발생되었습니다.";
-
-                                        msg.analyzeList     =   [];
-
-                                        callback(null, msg);
-                                    }
-                                });
-
-                                log.debug( "분석정보 #1 조회 from 파이선 END");
-                            }
-
-                        } catch (err) {
-
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
-
-                            callback(null);
-                        }
-                    },
-
-                    /* 2. (백테스트) tm_simul_result_anal 분석정보를 삭제한다. */
-                    function(msg, callback) {
+                    /* 1. 시뮬레이션 마스터 정보를 조회한다. */
+                    function(callback) {
 
                         try {
 
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
-                            }                            
+                            var msg                 =   {};
 
-                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultAnal', paramData, format);
-                            log.debug(stmt);
+                            msg.v_simul_mast        =   {};
 
-                            conn.query(stmt, function(err, rows) {
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
 
-                                    return callback(resultMsg);
-                                }
+                            if(     !paramData
+                                ||  !paramData.grp_cd
+                                ||  !paramData.scen_cd 
+                            ) {
 
-                                callback(null, msg);
-                            });
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = "기본정보가 존재하지 않습니다.";
+
+                                callback( resultMsg );
+
+                            }else{
+
+                                paramData.changeGrpCdYn     =   "0";
+                                stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    /* 삭제된 경우 */
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = "시나리오가 삭제 되었습니다.";
+                                        resultMsg.err = "시나리오가 삭제 되었습니다.";
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length == 1 ) {
+                                        msg.v_simul_mast        =   rows[0];
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
 
                         } catch (err) {
 
@@ -656,21 +633,413 @@ var getAnalyze_timeseries = function(req, res) {
                         }
                     },
 
-                    /* 3. (백테스트) tm_simul_result_anal 분석정보를 저장한다. */
+                    /* 2. tm_simul_result_daily 데이터를 조회한다.*/
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            msg.v_arr_result_daily      =   [];
+
+                            if( typeof msg.v_simul_mast == "undefined" || Object.keys( msg.v_simul_mast ).length == 0 ) {
+
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = "기본정보가 존재하지 않습니다.";
+
+                                callback( resultMsg );
+                            }else{
+
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulResultDaily', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if( rows && rows.length > 0  ) {
+                                        msg.v_arr_result_daily      =   rows;
+
+                                        paramData.first_date = rows[0].F12506;
+
+                                        /* 일자별 지수에 balance 정보를 설정한다. */
+                                        fn_set_balance( msg.v_arr_result_daily, msg.v_simul_mast );                                        
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. tm_simul_result_daily 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if( typeof msg.v_arr_result_daily == "undefined" || msg.v_arr_result_daily.length == 0 ) {
+
+                                callback( null, msg );
+
+                            }else{
+
+                                paramData.bench_mark_cd     =   msg.v_simul_mast.bench_mark_cd;
+                                paramData.bench_index_cd01  =   msg.v_simul_mast.bench_index_cd01;
+                                paramData.bench_index_cd02  =   msg.v_simul_mast.bench_index_cd02;
+                                paramData.bench_index_cd03  =   msg.v_simul_mast.bench_index_cd03;
+
+                                if(     paramData.bench_mark_cd     == ""
+                                    ||  paramData.bench_index_cd01  == ""
+                                    ||  paramData.bench_index_cd02  == ""
+                                    ||  paramData.bench_index_cd03  == ""
+                                ) {
+
+                                    callback( null, msg );
+
+                                }else{
+
+                                    stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                                    log.debug(stmt);
+
+                                    conn.query(stmt, function(err, rows) {
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0  ) {
+
+                                            /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                            fn_set_bench_mark( msg.v_arr_result_daily, rows );
+                                        }
+
+                                        callback(null, msg);
+                                    });
+                                }
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },                                        
+
+                    /* 4. input data를 파일생성 후 파이선을 호출한다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            resultMsg.jsonFileName        =   "";
+                            resultMsg.inputData           =   "";
+
+
+                            msg.arr_analyze_db      =   [];
+
+                            if( typeof msg.v_arr_result_daily == "undefined" || msg.v_arr_result_daily.length == 0 ) {
+
+                                callback( null, msg );
+
+                            }else{
+
+
+                                log.debug( "분석정보 #1 조회 from 파이선 START");
+
+                                simulAnalyze.getAnalyze_timeseries( msg.v_arr_result_daily, paramData.bench_mark_cd).then( function(e) {
+
+                                    if( e && e.result ) {
+
+                                        if( e.results && e.results.length > 0 ) {
+
+                                            resultMsg.jsonFileName  =   e.jsonFileName;
+                                            resultMsg.inputData     =   e.inputData;
+                                            
+                                            var v_arr_analyze_org   =   e.results;
+                                            try{
+
+                                                if( v_arr_analyze_org && v_arr_analyze_org.length > 0 ) {
+
+                                                    log.debug( "파이선 호출결과 파일명 ==>", resultMsg.jsonFileName );
+                                                    log.debug( "파이선 호출결과 원본 ==>", v_arr_analyze_org );
+
+                                                    var v_arr_analyze_json          =   JSON.parse( v_arr_analyze_org );
+                                                    var v_anal_return               =   fn_setAnal01( v_arr_analyze_json );
+
+                                                    resultMsg.arr_analyze           =   v_anal_return.arr_analyze;
+                                                    resultMsg.arr_analyze_main      =   v_anal_return.arr_analyze_main;
+                                                    msg.arr_analyze_db              =   v_anal_return.arr_analyze_db;
+
+                                                    callback( null, msg );
+                                                }
+
+                                            }catch( e ) {
+
+                                                log.error( e );
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                resultMsg.err = "파싱 중 오류가 발생되었습니다.";
+
+                                                return callback( resultMsg );
+                                            }                                            
+                                        }
+
+                                    }else{
+
+                                        if( e ) {
+                                            resultMsg.jsonFileName  =   e.jsonFileName;
+                                            resultMsg.inputData     =   e.inputData;
+                                        }
+
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+
+
+                                        return callback(null, msg);
+
+                                    }
+                                });
+                                log.debug( "분석정보 #1 조회 from 파이선 END");
+
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(null, msg);
+                        }
+                    },
+
+                    /* 5. 분석정보를 저장한다. */
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+
+                            /* 상세조회가 아닌 경우에만 분석정보 저장 */
+                            if( ![ "detail" ].includes( paramData.status ) ) {
+
+                                paramData.transaction           =   {};
+                                paramData.transaction.mapper    =   mapper;
+                                paramData.transaction.pool      =   pool;
+                                paramData.transaction.conn      =   conn;
+
+
+                                paramData.arr_analyze_db        =   msg.arr_analyze_db;
+
+                                /* 분석정보를 저장한다. */
+                                fnSaveTmSimulResultAnal.call( this, req, res, paramData ).then( function(e) {
+
+                                    if( e && e.resultMsg && e.resultMsg.result ) {
+
+                                        callback( null );
+
+                                    }else{
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = config.MSG.error01;
+
+                                        callback( resultMsg );
+                                    }
+
+                                });
+
+                            }else{
+                                callback( null );
+                            }              
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+                        conn.rollback();
+
+                    } else {
+
+                        resultMsg.result        =   true;
+                        resultMsg.msg           =   "성공적으로 조회하였습니다.";
+                        resultMsg.err           =   null;
+
+                        conn.commit();
+                    }
+
+                    res.json(resultMsg);
+                    res.end();
+
+                });
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 분석정보를 저장한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var fnSaveTmSimulResultAnal = async function(req, res, paramData) {
+
+    return await new Promise(function(resolve, reject) {
+
+        try {
+            log.debug('simulationBacktest.fnSaveTmSimulResultAnal 호출됨.');
+
+
+            if(     !paramData || Object.keys( paramData ).length == 0 
+                ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
+                ||  !paramData.transaction.mapper
+                ||  !paramData.transaction.pool
+                ||  !paramData.transaction.conn
+            ) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+                resultMsg.err = config.MSG.error01;
+
+                resolve( { 
+                        result : false
+                    ,   resultMsg : resultMsg 
+                });                
+
+            }else{       
+
+                var mapper      =   paramData.transaction.mapper;
+                var pool        =   paramData.transaction.pool;
+                var conn        =   paramData.transaction.conn;
+                var resultMsg   =   {};
+
+
+                var format = { language: 'sql', indent: '' };
+                var stmt = "";
+
+
+                async.waterfall([
+
+                    /* 1. (백테스트) tm_simul_result_anal 분석정보를 삭제한다. */
+                    function(callback) {
+
+                        try {
+
+                            var msg =   {};                           
+
+                            if( !paramData.grp_cd || !paramData.scen_cd ) {
+
+                                callback(null, msg);
+                            }else{
+                                stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultAnal', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. (백테스트) tm_simul_result_anal 분석정보를 저장한다. */
                     function(msg, callback) {
 
                         if( !msg || Object.keys( msg ).length == 0 ) {
                             msg = {};
                         }
 
-                        if( typeof msg.analyzeList == "undefined" || msg.analyzeList.length == 0 ) {
+                        if( typeof paramData.arr_analyze_db == "undefined" || paramData.arr_analyze_db.length == 0 ) {
 
                             callback(null);
 
                         }else{
 
                             var divideList  =   [];
-                            async.forEachOfLimit( msg.analyzeList, 1, function(subList, i, innerCallback) {
+                            async.forEachOfLimit( paramData.arr_analyze_db, 1, function(subList, i, innerCallback) {
 
                                 async.waterfall([
 
@@ -684,7 +1053,7 @@ var getAnalyze_timeseries = function(req, res) {
                                     function(sub_msg, innerCallback) {
 
                                         var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
-                                        if( divideList && ( divideList.length == divide_size || i == msg.analyzeList.length-1 ) ) {
+                                        if( divideList && ( divideList.length == divide_size || i == paramData.arr_analyze_db.length-1 ) ) {
                                             try {
                                                 paramData.dataLists =   divideList;
                                                 stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultAnal', paramData, format);
@@ -741,7 +1110,7 @@ var getAnalyze_timeseries = function(req, res) {
                                 }
 
                                 log.debug("simulationBacktest.saveTmSimulResultAnal");
-                                paramData.arr_analyze    =   [];
+                                paramData.arr_analyze_db    =   [];
 
                                 callback(null);
                             });
@@ -753,25 +1122,43 @@ var getAnalyze_timeseries = function(req, res) {
 
                     if (err) {
                         log.debug(err, stmt, paramData);
-                        conn.rollback();
+
+                        resolve( { 
+                                result : false
+                            ,   resultMsg : resultMsg 
+                        });                        
 
                     } else {
 
                         resultMsg.result        =   true;
-                        resultMsg.msg           =   "성공적으로 조회하였습니다.";
+                        resultMsg.msg           =   "";
                         resultMsg.err           =   null;
 
-                        conn.commit();
+                        resolve( { 
+                                result : true
+                            ,   resultMsg : resultMsg 
+                        });
+
                     }
 
-                    res.json(resultMsg);
-                    res.end();
-
                 });
-            });
-        });
+            }
 
-    } catch (expetion) {
+        } catch (expetion) {
+
+            log.debug(expetion, paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+            resultMsg.err = expetion;
+
+            resolve( { 
+                    result : false
+                ,   resultMsg : resultMsg 
+            });
+        }
+
+    }).catch( function(expetion){
 
         log.debug(expetion, paramData);
 
@@ -779,11 +1166,11 @@ var getAnalyze_timeseries = function(req, res) {
         resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
-        resultMsg.result_save_yn            =   "N";
-
-        res.json(resultMsg);
-        res.end();
-    }
+        resolve( { 
+                result : false
+            ,   resultMsg : resultMsg 
+        });
+    });
 }
 
 
@@ -2550,6 +2937,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
     arr_analyze_db      =   [];
 
     if( p_arr_analyze_temp &&  Object.keys( p_arr_analyze_temp ).length > 0  ) {
+
         var v_anal      =   {};
         var v_anal01    =   {};
         
@@ -2557,7 +2945,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
         /* 정수처리 */
         v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "final_balance" );
         v_anal.anal_title       =   "Final Balance";
-        vm.fn_set_analyze_data({ 
+        fn_set_analyze_data({ 
                 p_arr_analyze       :   arr_analyze
             ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
@@ -2575,7 +2963,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
         v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "cagr" );
         v_anal.anal_title       =   "CAGR";
-        vm.fn_set_analyze_data({ 
+        fn_set_analyze_data({ 
                 p_arr_analyze       :   arr_analyze
             ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   arr_analyze_main
@@ -2621,7 +3009,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
         v_anal.anal_title       =   "Worst Year";
         v_anal.backtest02       =   ( v_anal01.backtest     != "N/A"    ?   v_anal01.backtest   : "N/A" );
         v_anal.benchmark02      =   ( v_anal01.benchmark    != "N/A"    ?   v_anal01.benchmark  : "N/A" );
-        n_set_analyze_data({ 
+        fn_set_analyze_data({ 
                 p_arr_analyze       :   arr_analyze
             ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
@@ -2727,11 +3115,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   fn_getFindJson( "annlzd_arith_mean" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "annlzd_arith_mean" );
         v_anal.anal_title       =   "Arithmetic Mean (annualized)";
         fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2745,11 +3133,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "geo_mean" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "geo_mean" );
         v_anal.anal_title       =   "Geometric Mean (daily)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2763,11 +3151,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "annlzd_geo_mean" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "annlzd_geo_mean" );
         v_anal.anal_title       =   "Geometric Mean (annualized)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2781,11 +3169,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "stdev" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "stdev" );
         v_anal.anal_title       =   "Volatility (daily)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2799,12 +3187,12 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "annlzd_stdev" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "annlzd_stdev" );
         v_anal.anal_title       =   "Volatility (annualized)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
-            ,   p_arr_analyze_main  :   vm.arr_analyze_main
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
+            ,   p_arr_analyze_main  :   arr_analyze_main
 
             ,   p_anal              :   v_anal 
             ,   p_anal01            :   {}
@@ -2814,16 +3202,16 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_position          :   5
             ,   p_order_no          :   2
         });
-        vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Vol(annualized)";
-        vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Vol(annualized)";
+        arr_analyze_main[ arr_analyze_main.length-1 ].anal_title      =   "Vol(annualized)";
+        arr_analyze_db[ arr_analyze_db.length-1 ].title_anal_id       =   "Vol(annualized)";
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "down_dev" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "down_dev" );
         v_anal.anal_title       =   "Downside Deviation (daily)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2837,12 +3225,12 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_market", "beta" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_market", "beta" );
         v_anal.anal_title       =   "Beta(vs market)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
-            ,   p_arr_analyze_main  :   vm.arr_analyze_main
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
+            ,   p_arr_analyze_main  :   arr_analyze_main
 
             ,   p_anal              :   v_anal 
             ,   p_anal01            :   {}
@@ -2852,17 +3240,17 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_position          :   5
             ,   p_order_no          :   4
         });
-        vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Beta(KOSPI 기준)";
-        vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Beta(KOSPI 기준)";
+        arr_analyze_main[ arr_analyze_main.length-1 ].anal_title      =   "Beta(KOSPI 기준)";
+        arr_analyze_db[ arr_analyze_db.length-1 ].title_anal_id       =   "Beta(KOSPI 기준)";
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_market", "alpha" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_market", "alpha" );
         v_anal.anal_title       =   "Alpha(vs market, annualized)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
-            ,   p_arr_analyze_main  :   vm.arr_analyze_main
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
+            ,   p_arr_analyze_main  :   arr_analyze_main
 
             ,   p_anal              :   v_anal 
             ,   p_anal01            :   {}
@@ -2872,16 +3260,16 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_position          :   5
             ,   p_order_no          :   5
         });
-        vm.arr_analyze_main[ vm.arr_analyze_main.length-1 ].anal_title      =   "Alpha(KOSPI 기준)";
-        vm.arr_analyze_db[ vm.arr_analyze_db.length-1 ].title_anal_id       =   "Alpha(KOSPI 기준)";
+        arr_analyze_main[ arr_analyze_main.length-1 ].anal_title      =   "Alpha(KOSPI 기준)";
+        arr_analyze_db[ arr_analyze_db.length-1 ].title_anal_id       =   "Alpha(KOSPI 기준)";
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_market", "r2" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_market", "r2" );
         v_anal.anal_title       =   "R2(vs market)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2895,11 +3283,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "beta" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_benchmark", "beta" );
         v_anal.anal_title       =   "Beta(vs benchmark)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2913,11 +3301,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "alpha" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_benchmark", "alpha" );
         v_anal.anal_title       =   "Alpha(vs benchmark, annualized)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2931,11 +3319,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "vs_benchmark", "r2" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "vs_benchmark", "r2" );
         v_anal.anal_title       =   "R2(vs benchmark)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2949,11 +3337,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "skewness" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "skewness" );
         v_anal.anal_title       =   "Skewness";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2967,11 +3355,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "kurtosis" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "kurtosis" );
         v_anal.anal_title       =   "Excess Kurtosis";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -2985,11 +3373,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "hist_var" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "hist_var" );
         v_anal.anal_title       =   "Historical VaR(5%)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -3003,11 +3391,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "anal_var" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "anal_var" );
         v_anal.anal_title       =   "Analytical VaR(5%)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -3021,11 +3409,11 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
 
 
         /* %처리. 100곱한후 소수점 6째자리에서 반올림 */
-        v_anal                  =   vm.fn_getFindJson( "c_var" );
+        v_anal                  =   fn_getFindJson( p_arr_analyze_temp, "c_var" );
         v_anal.anal_title       =   "Conditional VaR(5%)";
-        vm.fn_set_analyze_data({ 
-                p_arr_analyze       :   vm.arr_analyze
-            ,   p_arr_analyze_db    :   vm.arr_analyze_db
+        fn_set_analyze_data({ 
+                p_arr_analyze       :   arr_analyze
+            ,   p_arr_analyze_db    :   arr_analyze_db
             ,   p_arr_analyze_main  :   null
 
             ,   p_anal              :   v_anal 
@@ -3036,6 +3424,13 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_position          :   5
             ,   p_order_no          :   -1
         });
+
+
+        return  {
+                arr_analyze         :   arr_analyze
+            ,   arr_analyze_main    :   arr_analyze_main
+            ,   arr_analyze_db      :   arr_analyze_db
+        }
     }
 }
 
@@ -3969,3 +4364,4 @@ module.exports.getBacktestResult = getBacktestResult;
 module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
 module.exports.getSimulResultSaveYn = getSimulResultSaveYn;
 module.exports.getAnalyze_timeseries = getAnalyze_timeseries;
+module.exports.fnSaveTmSimulResultAnal = fnSaveTmSimulResultAnal;

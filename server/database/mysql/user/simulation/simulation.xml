@@ -549,6 +549,35 @@
                 ,   tm_simul_mast.serial_no                                 AS  serial_no                   /* 변경 순번 */
                 ,   tm_simul_mast.stock_gubun                               AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
 
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val01
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd01            /* 벤치마크 인덱스 코드 ( F16013 ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val02
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd02            /* 벤치마크 인덱스 코드 ( large_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_val03
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_cd03            /* 벤치마크 인덱스 코드( middle_type ) */
+                ,   (
+
+                        SELECT  tm_code_dtl.com_dtl_name
+                          FROM  tm_code_dtl
+                         WHERE  tm_code_dtl.com_mst_cd      =   'COM008'
+                           AND  tm_code_dtl.com_dtl_cd      =   tm_simul_mast.bench_mark_cd
+                    )                                                       AS  bench_index_nm              /* 벤치마크 인덱스 명 */                
+
           FROM  tm_simul_mast
 
           JOIN  tm_simul_share
