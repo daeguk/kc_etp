@@ -16,6 +16,10 @@
       UPDATE tm_user_member SET login_date = now() 
         WHERE email = #{email}
     </update>
+    <insert id="insertUserLog">
+      INSERT INTO tm_user_log (email, login_date)
+      VALUES (#{email}, now())
+    </insert>
     <!--
     * 사용자 회원가입 처리
     -->

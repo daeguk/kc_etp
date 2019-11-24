@@ -16,7 +16,6 @@ var bodyParser = require('body-parser'),
     fs = require('fs');
     // errorHandler = require('errorhandler');
 
-
 // 에러 핸들러 모듈 사용 
 // express-error-handler 못 가져옴 (이유를 모르겠슴)
 var expressErrorHandler = require('express-error-handler');
@@ -33,18 +32,12 @@ var config = require('./config/config');
 // 모듈로 분리한 설정 파일 불러오기
 var cron = require('./config/cron_scheduler');
 
-
-
-// 모듈로 분리한 데이터베이스 파일 불러오기
-//var mydb = require('./database/mysql_con');
-
 // 모듈로 분리한 라우팅 파일 불러오기
 var route_loader = require('./routes/route_loader');
 
 // connectionPool 객체
 const Pool = require("./database/pool");
 const pool = new Pool();
-
 
 // 익스프레스 객체 생성
 var app = express();
@@ -120,7 +113,6 @@ app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
 */
 
-
 // cron 작업 등록
 cron.init(app); 
 
@@ -144,19 +136,11 @@ process.on('SIGTERM', function() {
 
 app.on('close', function() {
     console.log("Express 서버 객체가 종료됩니다.");
-    /*if (mydb.db) {
-        mydb.db.close();
-    }*/
 });
 
 // 시작된 서버 객체를 리턴받도록 합니다. 
 var server = http.createServer(app).listen(app.get('port'), function(req, res) {
     console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
-
-    
-    // MYSQL 초기화
-    //mydb.init(app);
-
 });
 
 server.timeout = 350000;

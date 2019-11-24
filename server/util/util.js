@@ -73,21 +73,19 @@ module.exports = {
     return inDate.substring(0, 4) + "." + inDate.substring(4,6) + "." + inDate.substring(6,8);
   },  
 
-
-
-    /*
-    *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
-    *   written by bkLove(최병국)   2019-06-25
-    */
-    fn_replaceSpecialChar : function( options ) {
-        log.debug( "변경 전=>", options );
-        for( var i in options ) {
-            if( options[i] && typeof options[i] === "string" ) {
-                if( options[i].indexOf( "\\" ) > -1 ) {
-                    options[i] = options[i].replace( /\\/g, "\\\\" );
-                }
-            }
+  /*
+  *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+  *   written by bkLove(최병국)   2019-06-25
+  */
+  fn_replaceSpecialChar : function( options ) {
+    // log.debug( "변경 전=>", options );
+    for( var i in options ) {
+      if( options[i] && typeof options[i] === "string" ) {
+        if( options[i].indexOf( "\\" ) > -1 ) {
+          options[i] = options[i].replace( /\\/g, "\\\\" );
         }
-        log.debug( "변경 후=>", options );
+      }
     }
+    // log.debug( "변경 후=>", options );
+  }
 }

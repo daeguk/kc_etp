@@ -26,20 +26,20 @@ function cronRegister(app) {
 }
 
 function dailyCronJob(app) {
-    var database = app.get('database');
+    // var database = app.get('database');
 
-    if (database.db) {
-        database.UserModel.initTodayVisit(function(err, result) {
-            if (err) {
-                console.log("initTodayVisit.... ERROR " + err);
-            } else {
-				console.dir("initTodayVisit.... OK : ");
-				console.log(result);
-            }
-        });
-    } else {
-		console.dir("initTodayVisit DB ERROR");
-    }
+    // if (database.db) {
+    //     database.UserModel.initTodayVisit(function(err, result) {
+    //         if (err) {
+    //             console.log("initTodayVisit.... ERROR " + err);
+    //         } else {
+		// 		console.dir("initTodayVisit.... OK : ");
+		// 		console.log(result);
+    //         }
+    //     });
+    // } else {
+		// console.dir("initTodayVisit DB ERROR");
+    // }
 }
 
 module.exports = cron_scheduler;

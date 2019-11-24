@@ -10,8 +10,6 @@ const Promise = require("bluebird");
 const util = require("util");
 const ibatisMapper = require("mybatis-mapper");
 
-var etpStmts = [];
-
 Promise.promisifyAll(mysql);
 Promise.promisifyAll(require("mysql/lib/Connection").prototype);
 Promise.promisifyAll(require("mysql/lib/Pool").prototype);
