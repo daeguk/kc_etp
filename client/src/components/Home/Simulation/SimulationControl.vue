@@ -183,7 +183,6 @@ export default {
                 ,   simul_mast          :   {}
                 ,   arr_daily           :   []
                 ,   arr_rebalance       :   []
-                ,   analyzeList         :   []
                 ,   arr_scen_in_grp     :   []
                 ,   method_gubun        :   ""
             } 

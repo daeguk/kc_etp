@@ -405,7 +405,7 @@
 
                 <v-card flat>
                     <div class="text-xs-center mt-1">
-                        <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
+                        <v-btn depressed color="primary" @click.stop="fn_goSimulBack()">목록으로</v-btn>
                     </div>
                 </v-card>
             </v-card>
@@ -1896,6 +1896,16 @@ export default {
 
             vm.share_modal_flag     =   false;
         },
+
+        /*
+         * 시뮬레이션 목록화면으로 이동한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_goSimulBack: function() {
+            var vm = this;
+
+            vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
+        },		
 
     }
     

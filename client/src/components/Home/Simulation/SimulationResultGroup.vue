@@ -184,6 +184,12 @@
                         </v-layout>
                     </v-tab-item>
                 </v-tabs-items>
+
+                <v-card flat>
+                    <div class="text-xs-center mt-1">
+                        <v-btn depressed color="primary" @click.stop="fn_goSimulBack()">목록으로</v-btn>
+                    </div>
+                </v-card>				
             </v-card>
         </v-flex>
 
@@ -1087,11 +1093,15 @@ export default {
                                                         if(  typeof item[ item1.grp_cd + "_" + item1.scen_cd + "_" + item2.col_id ] != "undefined" ) {
                                                             var v_col_data  =   item[ item1.grp_cd + "_" + item1.scen_cd + "_" + item2.col_id ];
 
-                                                            if( [ "RETURN_VAL" ].includes( item2.col_id ) ) {
-                                                                v_row_data.push( util.formatNumber(v_col_data * 100) + " %" );
-                                                            }else{
-                                                                v_row_data.push( v_col_data );
-                                                            }
+															if( v_col_data > 0 ) {
+																if( [ "RETURN_VAL" ].includes( item2.col_id ) ) {
+																	v_row_data.push( util.formatNumber(v_col_data * 100) + " %" );
+																}else{
+																	v_row_data.push( v_col_data );
+																}
+															}else{
+																v_row_data.push( "" );
+															}
                                                         }
                                                     }
                                                 });
