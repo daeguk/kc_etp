@@ -3270,6 +3270,11 @@ export default {
             }
 
 
+            vm.fn_initRecords();
+
+            /* 최초 5개의 레코드를 노출한다. */
+            vm.fn_addRecords( 0, 5 );            
+
             return  new Promise(function(resolve, reject) {
 
                 let formData = new FormData();
@@ -3300,7 +3305,7 @@ export default {
 
                                     if( !response.data.result ) {
                                         var errorList = [];
-                                        if( !response.data.record_check ) {
+                                        if( !response.data.count_check  || !response.data.record_check ) {
 
                                             if( response.data.errorList && response.data.errorList.length > 0 ) {
                                                 errorList    =   response.data.errorList;

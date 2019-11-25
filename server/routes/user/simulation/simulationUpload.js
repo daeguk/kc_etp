@@ -120,7 +120,7 @@ var uploadPortfolio = function(req, res) {
                 ,   p_rebalance_file_yn :   "0"     /* 리밸런싱 샘플파일 유무 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   1
+                ,   p_startIndex        :   0
             };                
 
             /* 엑셀파일을 파싱한다. */
@@ -130,7 +130,7 @@ var uploadPortfolio = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length == 0) {
+            if (dataLists.length <= 1) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
@@ -146,13 +146,20 @@ var uploadPortfolio = function(req, res) {
                     &&  typeof dataLists[0].col02 != "undefined"
                     &&  typeof dataLists[0].col03 != "undefined"
                 ) {
-                    var col01   =   dataLists[0].col01;
+                    if( typeof dataLists[1].col01 != "undefined" ) {
 
-                    if( col01 != "" && new String( col01 ).length == 8 ) {
-                        v_param.p_rebalance_file_yn     =   "1";
+                        var col01   =   dataLists[1].col01;
+
+                        if( col01 != "" && String( col01 ).length == 8 ) {
+                            v_param.p_rebalance_file_yn     =   "1";
+                        }
                     }
                 }
 
+
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
 
                 if( dataLists.length == 1 ) {
 
@@ -273,7 +280,14 @@ var uploadPortfolio = function(req, res) {
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
 
-                if( !v_param.p_record_check ) {
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
+                if( !v_param.p_count_check ) {
+                    resultMsg.errorList.push( { msg: resultMsg.msg } );
+                }else if( !v_param.p_record_check ) {
+
                     for (var i = 0; i < dataLists.length; i++) {
                         var data = dataLists[i];
 
@@ -291,7 +305,8 @@ var uploadPortfolio = function(req, res) {
 
                 deleteFile(reqParam);
 
-                resultMsg.record_Check          =   v_param.p_record_check;
+                resultMsg.record_check          =   v_param.p_record_check;
+                resultMsg.count_check           =   v_param.p_count_check;
                 resultMsg.p_rebalance_file_yn   =   v_param.p_rebalance_file_yn;
                 resultMsg.result = false;
 
@@ -1056,9 +1071,9 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                         }else{
 
                             try{
-                                var year    =   Number( new String( p_param.p_data ).substring(0, 4));
-                                var month   =   Number( new String( p_param.p_data ).substring(4, 6));
-                                var day     =   Number( new String( p_param.p_data ).substring(6, 8));
+                                var year    =   Number( String( p_param.p_data ).substring(0, 4));
+                                var month   =   Number( String( p_param.p_data ).substring(4, 6));
+                                var day     =   Number( String( p_param.p_data ).substring(6, 8));
 
                                 var date    =   new Date( year, month-1, day );
 
