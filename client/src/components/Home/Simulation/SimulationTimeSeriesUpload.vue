@@ -1,25 +1,26 @@
 <template>
-    <v-layout row wrap class="content_margin etp_new" >
+    <v-layout row wrap class="content_margin etp_new">
         <v-flex grow xs12>
             <v-card flat height="800px">
-                <v-card-title primary-title  >
-                    <h3 class="headline w100" pb-0 >
+                <v-card-title primary-title>
+                    <h3 class="headline w100" pb-0>
                         PORTFOLIO SIMULATION |
-                        <span   class="grey--text">KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
-                   
-                     <span class="btn_r">
-                     <v-btn small flat icon v-on:click="fn_refresh()">
-                        <v-icon >refresh</v-icon>
-                    </v-btn>
-                    </span>
-                    <span class="btn_r">
-                     <v-btn small flat icon v-on:click="fn_goList()">
-                        <v-icon >reply</v-icon>
-                    </v-btn>
-                    </span>
-                     </h3>
-                </v-card-title>
+                        <span
+                            class="grey--text"
+                        >KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
 
+                        <span class="btn_r">
+                            <v-btn small flat icon v-on:click="fn_refresh()">
+                                <v-icon>refresh</v-icon>
+                            </v-btn>
+                        </span>
+                        <span class="btn_r">
+                            <v-btn small flat icon v-on:click="fn_goList()">
+                                <v-icon>reply</v-icon>
+                            </v-btn>
+                        </span>
+                    </h3>
+                </v-card-title>
 
                 <v-card class="register_wrap pt0" flat xs12 color="lighten-1">
                     <h4>조건 설정</h4>
@@ -29,25 +30,28 @@
                             <v-subheader class="subheader_r">상위그룹</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select   :items="arr_grp_cd" 
-
-                                        item-text="grp_name" 
-                                        item-value="grp_cd" 
-
-                                        @change="fn_resetErrorMessage();"
-
-                                        v-model="grp_cd"
-                                        outline>
-                            </v-select>
+                            <v-select
+                                :items="arr_grp_cd"
+                                item-text="grp_name"
+                                item-value="grp_cd"
+                                @change="fn_resetErrorMessage();"
+                                v-model="grp_cd"
+                                outline
+                            ></v-select>
                         </v-flex>
-                    </v-layout>                    
+                    </v-layout>
 
                     <v-layout row>
                         <v-flex xs2>
                             <v-subheader class="subheader_r">시나리오명</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-text-field   outline     v-model="scen_name"     @blur="fn_resetErrorMessage();"   maxlength="50"></v-text-field>
+                            <v-text-field
+                                outline
+                                v-model="scen_name"
+                                @blur="fn_resetErrorMessage();"
+                                maxlength="50"
+                            ></v-text-field>
                         </v-flex>
                     </v-layout>
 
@@ -56,16 +60,14 @@
                             <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <v-select   :items="arr_bench_mark_cd" 
-                                        
-                                        item-text="com_dtl_name" 
-                                        item-value="com_dtl_cd"
-                                        
-                                        v-model="bench_mark_cd" 
-                                        outline  
-                                        
-                                        @change="fn_resetErrorMessage();">
-                            </v-select>
+                            <v-select
+                                :items="arr_bench_mark_cd"
+                                item-text="com_dtl_name"
+                                item-value="com_dtl_cd"
+                                v-model="bench_mark_cd"
+                                outline
+                                @change="fn_resetErrorMessage();"
+                            ></v-select>
                         </v-flex>
                     </v-layout>
                     <v-layout row xs12>
@@ -73,26 +75,41 @@
                             <v-subheader class="subheader_r">시계열 업로드</v-subheader>
                         </v-flex>
                         <v-flex xs2>
-                            <input type='text' class='upload-name'   disabled />
+                            <input
+                                type="text"
+                                class="upload-name"
+                                disabled
+                                :value="time_series_file_nm"
+                            />
                         </v-flex>
                         <v-flex xs2>
-                            <label  class="upload-hidden"  v-on:click="" >업로드</label>
-                            <input type="file" name="timeSeriesUpload" ref="timeSeriesUpload" style="display:none;">
+                            <label class="upload-hidden" v-on:click="fn_fileClick()">업로드</label>
+                            <input
+                                type="file"
+                                name="timeSeriesUpload"
+                                ref="timeSeriesUpload"
+                                style="display:none;"
+                            />
                         </v-flex>
                     </v-layout>
                 </v-card>
-                     <div class="savebtn01" >                                                 
-                            <v-btn depressed color="primary" @click="" >저장하기</v-btn>
-                        </div>
 
+                <div class="savebtn01">
 
+                    <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
+                        <span v-for="(item, index) in arr_show_error_message" :key="index">
+                            <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
+                        </span>
+                    </div>
+
+                    <v-btn depressed color="primary" @click.stop="fn_uploadTimeSeries()">저장하기</v-btn>
+                </div>
             </v-card>
         </v-flex>
 
         <v-flex>
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
-
     </v-layout>
 </template>
 
@@ -136,6 +153,7 @@ export default {
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
             ,   bench_index_cd03            :   ""          /* 벤치마크 인덱스 코드 ( middle_type ) */
             ,   bench_index_nm              :   ""          /* 벤치마크 인덱스 코드명 */
+            ,   time_series_file_nm         :   ""          /* 파일명 */
 
             ,   limit : {
                     max_size : 1                            /* 파일 사이즈 (Mb) */
@@ -163,7 +181,6 @@ export default {
         this.$refs.timeSeriesUpload.addEventListener(
             "change",
             async function(evt) {
-                var vm          =   this;
                 let file        =   this.$refs.timeSeriesUpload.files[0];
 
                 var flag    =   true;
@@ -179,12 +196,37 @@ export default {
                         flag = false;
                     }
 
+                }).then( function(e){
+
+                    if( e && e.result ) {
+
+                        vm.time_series_file_nm          =   file.name;
+                    }else{
+                        flag    =   false;
+                    }
+
+
+                    if( !flag ) {
+                        vm.time_series_file_nm          =   "";
+                        vm.$refs.timeSeriesUpload.value =   null;
+
+                        if( vm.$refs.timeSeriesUpload.files ) {
+                            vm.$refs.timeSeriesUpload.files  =   null;
+                        }
+                    }
+
                 }).catch( function(e) {
 
                     if( e && e.result ) {
 
                     }else{
-                        flag = false;
+
+                        vm.time_series_file_nm          =   "";
+                        vm.$refs.timeSeriesUpload.value =   null;
+
+                        if( vm.$refs.timeSeriesUpload.files ) {
+                            vm.$refs.timeSeriesUpload.files  =   null;
+                        }
                     }
                 });
 
@@ -232,6 +274,7 @@ export default {
 					vm.bench_index_cd03            	=   "";         /* 벤치마크 인덱스 코드 ( middle_type ) */
 					vm.bench_index_nm              	=   "";         /* 벤치마크 인덱스 코드명 */
 
+                    vm.time_series_file_nm          =   "";
                     vm.$refs.timeSeriesUpload.value  =   null;
 
                     if( vm.$refs.timeSeriesUpload.files ) {
@@ -478,46 +521,78 @@ export default {
                 return  false;
             }
 
-
-
             if( !vm.scen_name || vm.scen_name.length == 0 ) {
                 vm.arr_show_error_message.push( "[조건설정] 시나리오명을 입력해 주세요." );
+            }
+
+            if( !vm.$refs.timeSeriesUpload.value || vm.$refs.timeSeriesUpload.value == null ) {
+                vm.arr_show_error_message.push( "[조건설정] 시계열을 업로드 해주세요." );
             }
 
         },        
 
         /*
-         * 포트폴리오 엑셀을 업로드 한다.
+         * 시계열 엑셀을 업로드 한다.
          * 2019-07-26  bkLove(촤병국)
          */    
-        fn_uploadPortfolio( file ) {
+        fn_uploadTimeSeries() {
             var vm = this;
+
+            var p_param     =   {};
 
             vm.arr_show_error_message   =   [];
 
 
+            /* 마스트 정보를 밸리데이션 체크한다. */
+            vm.fn_validationSimulMast();
+
+        /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
                 return  false;
             }
 
-
+            var check       =   true;
             return  new Promise(function(resolve, reject) {
 
-                let formData = new FormData();
-                var check   =   true;
 
-                formData.append("files", file);
+                /* 벤치마크가 설정된 경우 */
+                if( vm.bench_mark_cd != "0" ) {
+                    if( vm.arr_bench_mark_cd && vm.arr_bench_mark_cd.length > 0  ) {
+                        var existCheck = _.filter( vm.arr_bench_mark_cd, function(o) {
+                            if ( o.com_dtl_cd == vm.bench_mark_cd ) {
+                                return  o;
+                            }
+                        });
+                        
+                        if( existCheck && existCheck.length == 1 ) {
+                            p_param.bench_index_cd01    =   existCheck[0].com_val01;        /* F16013 */
+                            p_param.bench_index_cd02    =   existCheck[0].com_val02;        /* middle_type */
+                            p_param.bench_index_cd03    =   existCheck[0].com_val03;        /* large_type */
+                            p_param.bench_index_nm      =   existCheck[0].com_dtl_name;
+                        }
+                    }
+                }
+
+                p_param.grp_cd              =   vm.grp_cd;
+                p_param.scen_name           =   vm.scen_name;
+                p_param.bench_mark_cd       =   vm.bench_mark_cd;
+
+                var formData    =   new FormData();
+
+                formData.append( "files", vm.$refs.timeSeriesUpload.files[0] );
+                formData.append( "data", JSON.stringify( p_param ) );                
+
 
                 vm.fn_showProgress( true );
 
 
                 util.axiosCall(
                         {
-                                "url"           :   Config.base_url + "/user/simulation/uploadPortfolio"
-                            ,   "data"          :   formData
-                            ,   "method"        :   "post"
-                            ,   "paramKey"      :   ""
-                            ,   "headers"       :   {   "Content-Type": "multipart/form-data"   }
+                                "url"       :   Config.base_url + "/user/simulation/uploadTimeSeries"
+                            ,   "data"      :   formData
+                            ,   "method"    :   "post"
+                            ,   "paramKey"  :   ""
+                            ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                         }
                     ,   async function(response) {
                             vm.fn_showProgress( false );
