@@ -83,7 +83,7 @@
                             />
                         </v-flex>
                         <v-flex xs2>
-                            <label class="upload-hidden" v-on:click="fn_fileClick()">업로드</label>
+                            <label class="upload-hidden" @click="/*fn_fileClick()*/">업로드</label>
                             <input
                                 type="file"
                                 name="timeSeriesUpload"
