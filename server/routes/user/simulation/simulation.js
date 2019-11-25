@@ -276,6 +276,7 @@ var getInitData = function(req, res) {
         resultMsg.arr_stock_gubun               =   [];     /* 초기설정 주식수구분 array */
 
         resultMsg.arrMsg                        =   [];
+        resultMsg.result                        =   true;
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -340,6 +341,8 @@ var getInitData = function(req, res) {
                         }
                     }
 
+                    var v_index  =  -1;
+
 
                     /* 초기설정 시작년도 array */
                     if( resultMsg.arr_start_year.length == 0 ) {
@@ -348,52 +351,72 @@ var getInitData = function(req, res) {
                         resultMsg.arrMsg.push( resultMsg.msg );
                     }
 
+
                     /* 초기설정 리밸런싱주기 array */
-                    if( resultMsg.arr_rebalance_cycle_cd.length == 0 ) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다.";
-                        resultMsg.arrMsg.push( resultMsg.msg );
+                    if( resultMsg.result ) {
+                        v_index  = _.findIndex( paramData.arrComMstCd, function(o) {
+                            return  o == "COM006"
+                        });
+                        if( v_index > -1 && resultMsg.arr_rebalance_cycle_cd.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "초기 데이터 [리밸런싱주기] 값이 존재하지 않습니다.";
+                            resultMsg.arrMsg.push( resultMsg.msg );
+                        }
                     }
 
                     /* 초기설정 리밸런싱일자 array */
-                    if( resultMsg.arr_rebalance_date_cd.length == 0 ) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다.";
-                        resultMsg.arrMsg.push( resultMsg.msg );
+                    if( resultMsg.result ) {
+                        v_index  = _.findIndex( paramData.arrComMstCd, function(o) {
+                            return  o == "COM007"
+                        });
+                        if( v_index > -1 && resultMsg.arr_rebalance_date_cd.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "초기 데이터 [리밸런싱일자] 값이 존재하지 않습니다.";
+                            resultMsg.arrMsg.push( resultMsg.msg );
+                        }
                     }
 
                     /* 초기설정 벤치마크 array */
-                    if( resultMsg.arr_bench_mark_cd.length == 0 ) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "초기 데이터 [벤치마크] 값이 존재하지 않습니다.";
-                        resultMsg.arrMsg.push( resultMsg.msg );
+                    if( resultMsg.result ) {
+                        v_index  = _.findIndex( paramData.arrComMstCd, function(o) {
+                            return  o == "COM008"
+                        });
+                        if( v_index > -1 && resultMsg.arr_bench_mark_cd.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "초기 데이터 [벤치마크] 값이 존재하지 않습니다.";
+                            resultMsg.arrMsg.push( resultMsg.msg );
+                        }
                     }
 
                     /* 초기설정 비중설정방식 array */
-                    if( resultMsg.arr_importance_method_cd.length == 0 ) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "초기 데이터 [비중설정방식] 값이 존재하지 않습니다.";
-                        resultMsg.arrMsg.push( resultMsg.msg );
+                    if( resultMsg.result ) {
+                        v_index  = _.findIndex( paramData.arrComMstCd, function(o) {
+                            return  o == "COM009"
+                        });
+                        if( v_index > -1 && resultMsg.arr_importance_method_cd.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "초기 데이터 [비중설정방식] 값이 존재하지 않습니다.";
+                            resultMsg.arrMsg.push( resultMsg.msg );
+                        }
                     }
 
                     /* 초기설정 주식수구분 array */
-                    if( resultMsg.arr_stock_gubun.length == 0 ) {
-                        resultMsg.result = false;
-                        resultMsg.msg = "초기 데이터 [주식수 구분] 값이 존재하지 않습니다.";
-                        resultMsg.arrMsg.push( resultMsg.msg );
-                    }                    
+                    if( resultMsg.result ) {
+                        v_index  = _.findIndex( paramData.arrComMstCd, function(o) {
+                            return  o == "COM013"
+                        });
+                        if( v_index > -1 && resultMsg.arr_stock_gubun.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "초기 데이터 [주식수 구분] 값이 존재하지 않습니다.";
+                            resultMsg.arrMsg.push( resultMsg.msg );
+                        }
+                    }
                     
 
-                    if(     resultMsg.arr_start_year.length             >   0
-                        &&  resultMsg.arr_rebalance_cycle_cd.length     >   0
-                        &&  resultMsg.arr_rebalance_date_cd.length      >   0
-                        &&  resultMsg.arr_bench_mark_cd.length          >   0
-                        &&  resultMsg.arr_importance_method_cd.length   >   0
-                        &&  resultMsg.arr_stock_gubun.length            >   0
-                    ) {
+                    if( resultMsg.result ) {
                         resultMsg.result = true;
                         resultMsg.msg = "";
-                    }                    
+                    }
 
                     res.json(resultMsg);
                     res.end();
