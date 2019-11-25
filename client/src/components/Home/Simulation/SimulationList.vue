@@ -59,8 +59,10 @@
                         depressed
                         outline
                         color="primary"
+
+                        @click.stop="fn_show_simulation_time_series_upload()"
                         
-                    ><router-link to="/simulation/TimeSeries" class="routerlink2">시계열 등록</router-link></v-btn>
+                    >시계열 등록</v-btn>
                 </span>
                 <span class="btn_r">
                     <v-btn depressed color="primary" @click="fn_compare_checked_data()">비교하기</v-btn>
@@ -1726,6 +1728,16 @@ export default {
 
             vm.share_modal_flag     =   false;
         },
+
+        /*
+         * 시나리오 버튼 클릭시
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_show_simulation_time_series_upload : function() {
+            var vm = this;
+
+            vm.$emit("fn_showSimulation", { showSimulationId : 4 } );
+        },        
     }  
 };
 </script>
