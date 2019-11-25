@@ -237,8 +237,16 @@
         DELETE  /* simulationBacktest.deleteTmSimulResultDaily      [tm_simul_result_daily] 테이블을 삭제한다. */
           FROM  tm_simul_result_daily
          WHERE  1 = 1
-           AND  tm_simul_result_daily.grp_cd        =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND  tm_simul_result_daily.scen_cd       =   #{scen_cd}      /* 시나리오코드 */
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_result_daily.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_result_daily.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
+        </if>
     </delete>
 
 
@@ -336,8 +344,16 @@
         DELETE  /* simulationBacktest.deleteTmSimulResultRebalance      [tm_simul_result_rebalance] 테이블을 삭제한다. */
           FROM  tm_simul_result_rebalance
          WHERE  1 = 1
-           AND  tm_simul_result_rebalance.grp_cd        =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND  tm_simul_result_rebalance.scen_cd       =   #{scen_cd}      /* 시나리오코드 */
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_result_rebalance.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_result_rebalance.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_result_rebalance.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_rebalance.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
+        </if>
     </delete>
 
 
@@ -545,9 +561,16 @@
                     END                                                                 AS  dtl_status      /* 상태 */
 
           FROM  (        
+                <if   test= ' changeGrpCdYn == "1" ' >
+                    SELECT      #{prev_grp_cd}                                          AS  grp_cd          /* 그룹코드(상위코드) */
+                            ,   #{prev_scen_cd}                                         AS  scen_cd         /* 시나리오코드 */
+                    FROM  DUAL
+                </if>
+                <if   test= ' changeGrpCdYn == "0" ' >
                     SELECT      #{grp_cd}                                               AS  grp_cd          /* 그룹코드(상위코드) */
                             ,   #{scen_cd}                                              AS  scen_cd         /* 시나리오코드 */
                     FROM  DUAL
+                </if>
                 )       base
 
           LEFT  JOIN    tm_simul_result_mast
@@ -590,16 +613,29 @@
     * 2019-07-26  bkLove(촤병국)
     -->
     <update     id="modifyTmSimulResultMast">
-    <![CDATA[
+
         UPDATE      /* simulationBacktest.modifyTmSimulResultMast          [tm_simul_result_mast] 테이블을 수정한다. */
                     tm_simul_result_mast
 
            SET      serial_no               =   #{serial_no}                    /* 변경 순번 */
 
+        <if   test= ' changeGrpCdYn == "1" ' >
+                ,   grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                       /* 시나리오코드 */
+        </if>           
+
          WHERE  1 = 1
-           AND  grp_cd                      =   #{grp_cd}                       /* 그룹코드(상위코드) */
-           AND  scen_cd                     =   #{scen_cd}                      /* 시나리오 코드 */
-    ]]>
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_result_mast.grp_cd             =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_result_mast.scen_cd            =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_result_mast.grp_cd             =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_mast.scen_cd            =   #{scen_cd}          /* 시나리오코드 */
+        </if>
+
     </update>
 
 
@@ -669,8 +705,16 @@
         DELETE  /* simulationBacktest.deleteTmSimulResultAnal      [tm_simul_result_anal] 테이블을 삭제한다. */
           FROM  tm_simul_result_anal
          WHERE  1 = 1
-           AND  tm_simul_result_anal.grp_cd             =   #{grp_cd}       /* 그룹코드(상위코드) */
-           AND  tm_simul_result_anal.scen_cd            =   #{scen_cd}      /* 시나리오코드 */
+
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_result_anal.grp_cd             =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_result_anal.scen_cd            =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_result_anal.grp_cd             =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_anal.scen_cd            =   #{scen_cd}          /* 시나리오코드 */
+        </if>
     </delete>
 
     <!--
