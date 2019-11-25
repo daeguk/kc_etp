@@ -3015,7 +3015,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                         conn.rollback();
                     } else {
                         resultMsg.result        =   true;
-                       conn.commit();
+                        conn.commit();
                     }
 
                     res.json(resultMsg);
