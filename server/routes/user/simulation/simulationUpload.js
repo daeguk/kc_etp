@@ -1766,10 +1766,6 @@ var uploadTimeSeries = function(req, res) {
 									}else{
 
 										paramData.grp_yn            =   "0";
-										if( paramData.grp_cd != "*" ) {
-											paramData.grp_yn        =   '1';    /* 그룹여부(1-그룹) */
-										}
-
 										stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
 										log.debug(stmt, paramData);
 
@@ -1810,18 +1806,21 @@ var uploadTimeSeries = function(req, res) {
 										msg = {};
 									}
 
+
                                     if( typeof msg.p_start_year != "undefined" ) {
 									    paramData.start_year        =   msg.p_start_year;   /* 시작년도 */
                                     }
 									paramData.rebalance_cycle_cd    =   null;               /* 리밸런싱 주기 */
 									paramData.rebalance_date_cd     =   null;               /* 리밸런싱 일자 코드 */
 
-									paramData.scen_depth     		=   "1";                /* 시나리오 DEPTH */
-									paramData.init_invest_money		=   null;               /* 초기투자금액 */
+									paramData.scen_depth     		=   "2";                /* 시나리오 DEPTH */
+									paramData.init_invest_money		=   1000000;            /* 초기투자금액 */
 									paramData.importance_method_cd	=   "1";                /* 비중설정방식 (COM009) */
 									paramData.serial_no     		=   1;		            /* 변경 순번 */
 									paramData.stock_gubun			=   null;  	            /* 주식수 구분 (COM013) */
-									
+                                    paramData.time_series_upload_yn =   "1";                /* 시계열 업로드 여부 */
+
+
 									stmt = mapper.getStatement('simulation', "saveTmSimulMast", paramData, format);
 									log.debug(stmt, paramData);
 
@@ -1884,7 +1883,46 @@ var uploadTimeSeries = function(req, res) {
 								}
 							},
 
-							/* 6. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                            /* 6. [tm_simul_share] 시나리오 등록한다. */
+                            function( msg, callback) {
+
+                                try {
+
+                                    if( !msg || Object.keys( msg ).length == 0 ) {
+                                        msg = {};
+                                    }
+
+                                    paramData.owner_yn  = "1";
+                                    stmt = mapper.getStatement('simulation', "saveTmSimulShareScen", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows ) {
+                                            log.debug( "simulation.saveTmSimulShareScen success" );
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                } catch (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+                            },
+
+							/* 7. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
 							function(msg, callback) {
 
 								try{
@@ -2003,7 +2041,7 @@ var uploadTimeSeries = function(req, res) {
 								}
 							},							
 
-							/* 7. [tm_simul_result_daily] 테이블에 등록한다. */
+							/* 8. [tm_simul_result_daily] 테이블에 등록한다. */
 							function(msg, callback) {
 
 								if( !msg || Object.keys( msg ).length == 0 ) {
@@ -2082,7 +2120,7 @@ var uploadTimeSeries = function(req, res) {
                                             return callback(resultMsg);
                                         }
 
-                                        log.debug( "simulationBacktest.saveTmSimulResultContribute" );
+                                        log.debug( "simulationBacktest.saveTmSimulResultDaily" );
 
                                         callback(null, msg);
                                     });
@@ -2110,6 +2148,9 @@ var uploadTimeSeries = function(req, res) {
 								resultMsg.result = true;
 								resultMsg.msg = "";
 								resultMsg.err = null;
+
+                                resultMsg.grp_cd    =   paramData.grp_cd;
+                                resultMsg.scen_cd   =   paramData.scen_cd;
 
 								conn.commit();
 							}
