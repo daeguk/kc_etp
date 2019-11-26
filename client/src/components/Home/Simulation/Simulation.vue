@@ -3305,9 +3305,12 @@ export default {
 
                                     if( !response.data.result ) {
                                         var errorList = [];
-                                        if( !response.data.count_check  || !response.data.record_check ) {
 
-                                            if( response.data.errorList && response.data.errorList.length > 0 ) {
+                                        if(     ( typeof response.data.count_check  != "undefined"  && !response.data.count_check )
+                                            ||  ( typeof response.data.record_check != "undefined"  && !response.data.record_check ) 
+                                        ) {
+
+                                            if( typeof response.data.errorList != "undefined" && response.data.errorList.length > 0 ) {
                                                 errorList    =   response.data.errorList;
 
                                                 for( var i=0; i < errorList.length; i++ ) {
@@ -3323,13 +3326,10 @@ export default {
                                                 }
                                             }
                                         }else{
-                                            if( await vm.$refs.confirm2.open(
-                                                        ''
-                                                    ,   response.data.msg
-                                                    ,   {}
-                                                    ,   1
-                                                )
-                                            ) {
+                                            var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( msg );
                                             }
                                         }
 
