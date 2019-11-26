@@ -2189,6 +2189,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                             if( paramData.status  ==  "insert" ) {
 
+                                paramData.time_series_upload_yn     =   "0";
                                 paramData.serial_no     =   msg.now_serial_no + 1;
 
                             }else if( paramData.status  ==  "modify" ) {
@@ -3520,7 +3521,45 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 9. 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
+                    /* 9. tm_simul_result_contribute 를 삭제한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', 'deleteSimulResultContribute', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.deleteSimulResultContribute success" );
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 10. 그룹에 속하지 않는 삭제 대상 공유자를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -3574,7 +3613,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 10. 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
+                    /* 11. 그룹에 속하지 않는 삭제 대상 공유자를 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -3623,7 +3662,7 @@ var deleteAllSimul = function(req, res) {
                         }
                     },
 
-                    /* 11. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
+                    /* 12. 사용자에 상관없이 [tm_simul_share] 시나리오별 삭제한다. */
                     function( msg, callback) {
 
                         try {
@@ -5245,7 +5284,7 @@ var fnChangeGroup = function(req, res) {
                                     log.debug( "simulation.modifyTmSimulResultRebalanceByChangeGroup ( 그룹변경 tm_simul_result_rebalance ) success" );
                                 }
 
-                                callback(null);
+                                callback(null, msg);
                             });
 
                         } catch (err) {
@@ -5256,6 +5295,44 @@ var fnChangeGroup = function(req, res) {
                             return callback(resultMsg);
                         }
                     },
+
+                    /* 17. 그룹변경인 경우 [tm_simul_result_contribute] 수정한다.  */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            stmt = mapper.getStatement('simulation', "modifyTmSimulResultContributeByChangeGroup", paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if( rows ) {
+                                    log.debug( "simulation.modifyTmSimulResultContributeByChangeGroup ( 그룹변경 tm_simul_result_contribute ) success" );
+                                }
+
+                                callback(null);
+                            });
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },                    
 
                 ], function(err) {
 

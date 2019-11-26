@@ -69,6 +69,8 @@
                     )                                                   AS  bench_index_nm              /* 벤치마크 인덱스 명 */
                 
                 ,   tm_simul_mast.importance_method_cd                  AS  importance_method_cd        /* 비중설정방식 (COM009) */
+                ,   tm_simul_mast.stock_gubun                           AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                ,   tm_simul_mast.time_series_upload_yn                 AS  time_series_upload_yn       /* 시계열 업로드 여부 */
                         
                 ,   tm_simul_portfolio.F16013                           AS  F16013                      /* 구성종목코드 */       
                 ,   tm_simul_portfolio.importance                       AS  importance                  /* 비중 */
