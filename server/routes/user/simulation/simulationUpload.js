@@ -162,10 +162,6 @@ var uploadPortfolio = function(req, res) {
                 }
 
 
-                if( dataLists.length > 0 ) {
-                    dataLists.splice( 0, 1 );
-                }
-
                 if( dataLists.length == 1 ) {
 
                     v_param.p_index         =   0;
@@ -284,10 +280,6 @@ var uploadPortfolio = function(req, res) {
 
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
-
-                if( dataLists.length > 0 ) {
-                    dataLists.splice( 0, 1 );
-                }
 
                 if( !v_param.p_count_check ) {
                     resultMsg.errorList.push( { msg: resultMsg.msg } );
@@ -938,8 +930,8 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.date          =   String( p_record_data.col01 );
-                    p_record_data.index_rate    =   Number( p_record_data.col02 );
+                    p_record_data.F12506        =   String( p_record_data.col01 );
+                    p_record_data.INDEX_RATE    =   Number( p_record_data.col02 );
                 }
 
             }else{
@@ -1383,7 +1375,7 @@ var uploadTimeSeries = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length == 0) {
+            if (dataLists.length == 1) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
@@ -1391,7 +1383,11 @@ var uploadTimeSeries = function(req, res) {
 
             } else {
 
-                if( dataLists.length == 1 ) {
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
+                if( dataLists.length == 2 ) {
 
                     v_param.p_index             =   0;
 
@@ -1462,6 +1458,10 @@ var uploadTimeSeries = function(req, res) {
 
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
+
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
 
                 if( !v_param.p_count_check ) {
                     resultMsg.errorList.push( { msg: resultMsg.msg } );
@@ -1863,10 +1863,64 @@ var uploadTimeSeries = function(req, res) {
 											return callback(resultMsg);
 										}
 
-										if ( rows || rows.length > 0 ) {
+										if ( rows && rows.length > 0 ) {
 
 											/* 일자별 지수에 밴치마크 정보를 설정한다. */
-											fn_set_bench_mark( dataLists, rows );
+                                            var v_prev_index    =   0;
+                                            for( var i=0; i < dataLists.length; i++ ) {
+
+                                                var v_daily         =   dataLists[i];
+                                                var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"       ? {} : dataLists[ v_prev_index ] );
+
+                                                var v_index         =   -1;
+                                                var v_bm            =   {};
+
+
+                                                v_index         =   _.findIndex( rows, { "F12506" : v_daily.F12506  });
+                                                if( v_index > -1 ) {
+                                                    v_bm        =   ( typeof rows[v_index] == "undefined"       ? {} : rows[v_index] );
+                                                }
+
+                                                if( typeof v_bm != "undefined" && Object.keys( v_bm ).length > 0 ) {
+                                                    v_daily.bm_data01       =   Number( v_bm.F15001 );
+                                                    v_daily.F15175          =   Number( v_bm.F15175 );
+                                                    v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
+
+
+                                                    /* 최초인 경우 */
+                                                    if( i == 0 ) {
+
+                                                        v_daily.bm_1000_data    =   1000;
+                                                        v_daily.bm_return_data  =   Number(
+                                                            (
+                                                                ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
+                                                            ).toFixed(17)
+                                                        );
+
+                                                    }else{
+
+                                                        /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
+                                                        v_daily.bm_1000_data    =   Number(
+                                                            (
+                                                                    Number( v_prev_daily.bm_1000_data ) *
+                                                                    ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                                                            ).toFixed(17)
+                                                        );
+
+                                                        /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
+                                                        v_daily.bm_return_data  =   Number(
+                                                            (
+                                                                    ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
+                                                            ).toFixed(17)
+                                                        );
+                                                    }
+                                                }
+
+                                                if( i > 0 ) {
+                                                    v_prev_index    =   i;
+                                                }
+                                            }
+
 										}
 
 										callback(null, msg);
@@ -1889,7 +1943,6 @@ var uploadTimeSeries = function(req, res) {
 									msg = {};
 								}
 
-console.log( "dataLists", dataLists );
 								var divideList  =   [];
 								async.forEachOfLimit( dataLists, 1, function(subList, i, innerCallback) {
 

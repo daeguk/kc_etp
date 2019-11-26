@@ -373,7 +373,7 @@ var runBacktest = async function(req, res, paramData) {
                                         return callback(resultMsg);
                                     }
 
-                                    if ( rows || rows.length > 0 ) {
+                                    if ( rows && rows.length > 0 ) {
                                         /* 일자별 지수에 밴치마크 정보를 설정한다. */
                                         fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
                                     }
