@@ -84,402 +84,411 @@ var runBacktest = async function(req, res, paramData) {
                 resultMsg.inputData             =   [];        
 
 
-                    async.waterfall([
+                async.waterfall([
 
-                        /* 1 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
-                        function(callback) {
+                    /* 1 저장시 입력했던 정보로 백테스트 기본정보를 조회한다. */
+                    function(callback) {
 
-                            try{
-                                var msg = {};
+                        try{
+                            var msg = {};
 
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
-                                log.debug(stmt);
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
+                            log.debug(stmt);
 
-                                conn.query(stmt, function(err, rows) {
+                            conn.query(stmt, function(err, rows) {
 
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
 
-                                        return callback(resultMsg);
-                                    }
-
-
-                                    if ( !rows || rows.length == 0 ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
-                                        resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
-
-                                        return callback(resultMsg);
-                                    }
-
-
-                                    var v_simul_mast                            =   {};
-                                    var v_simulPortfolio                        =   rows;
-
-                                    for( var i in rows ) {
-                                        //v_simulPortfolio[ rows[i].F16013 ]      =   rows[i];
-
-                                        /* 마스터 정보 설정 */
-                                        if( i == 0 ) {
-
-                                            v_simul_mast.grp_cd                 =   rows[0].grp_cd;                 /* 그룹코드(상위코드) */
-                                            v_simul_mast.scen_cd                =   rows[0].scen_cd;                /* 시나리오 코드 */
-
-                                            v_simul_mast.scen_name              =   rows[0].scen_name               /* 시나리오명 */
-                                            v_simul_mast.start_year             =   rows[0].start_year;             /* 시작년도 */
-                                            v_simul_mast.rebalance_cycle_cd     =   rows[0].rebalance_cycle_cd;     /* 리밸런싱주기 (COM006) */
-                                            v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
-                                            v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
-                                            v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
-                                            v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01;       /* 벤치마크 인덱스 코드 ( F16013 ) */
-                                            v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02;       /* 벤치마크 인덱스 코드 ( large_type ) */
-                                            v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
-                                            v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */                                        
-                                            v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
-
-                                            v_simul_mast.serial_no              =   rows[0].serial_no               /* 변경 순번 */
-                                        }
-                                    }                                
-
-                                    msg.v_simul_mast        =   v_simul_mast;
-                                    msg.v_simulPortfolio    =   v_simulPortfolio;
-
-                                    callback( null, msg );
-                                });
-
-                            } catch (err) {
-
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = err;
-
-                                callback(resultMsg);
-                            }
-                        },
-
-                        /* 2. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
-                        function(msg, callback) {
-
-                            try{
-
-                                if( !msg || Object.keys( msg ).length == 0 ) {
-                                    msg = {};
-                                }
-
-                            
-                                stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
-                                log.debug(stmt);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-
-                                    if ( !rows || rows.length == 0 ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
-                                        resultMsg.err = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
-
-                                        return callback(resultMsg);
-                                    } else {
-                                        /*=================================== 
-                                        * 1. 포트 폴리오를 리밸런싱일별로 Array화 한다,
-                                            2. 이력 데이터를 조회할 파라메터 생성
-                                        ======================================*/
-
-                                        var v_simulPortfolioList = [];
-                                        var firstRebalenceDate = "";
-
-                                        rows.forEach(function(item, index) {
-                                            
-                                            if (index == 0) firstRebalenceDate = item.F12506;
-                                            var simulPortfolio = _.filter(msg.v_simulPortfolio, {'rebalance_date': item.F12506});
-                                            var simulPortfolioObj = [];
-
-                                            simulPortfolio.forEach(function(portfolio) {
-                                                simulPortfolioObj[ portfolio.F16013 ] = portfolio;
-                                            });
-
-                                            v_simulPortfolioList[item.F12506] = simulPortfolioObj;
-                                        });
-                                    }
-
-                                    /* 엑셀 업로드시 시뮬레이션 시작일을 첫 리밸런싱일로 세팅 */
-                                    if (msg.v_simul_mast.rebalance_date_cd == "" && msg.v_simul_mast.rebalance_cycle_cd == "") {
-                                        paramData.first_date = firstRebalenceDate;
-                                    } else {
-                                        paramData.first_date = msg.v_simul_mast.start_year + "0101";
-                                    }
-
-                                    msg.v_arrRebalanceDate      =   rows;
-                                    msg.v_simulPortfolioList    =   v_simulPortfolioList;
-                                    msg.v_simulPortfolio        =   v_simulPortfolioList[firstRebalenceDate];   //  첫 리밸런싱 까지 포트 폴리오로 사용
-                                    msg.firstRebalenceDate      =   firstRebalenceDate;                         //  첫리밸런싱 일자
-
-                                    callback( null, msg );
-                                });
-
-                            } catch (err) {
-
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = err;
-
-                                callback(resultMsg);
-                            }
-                        },                    
-
-                        /* 3. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
-                        function(msg, callback) {
-                            var temp_kspjong_hist = [];
-                            var kspjong_hist = [];
-                            try{
-
-                                if( !msg || Object.keys( msg ).length == 0 ) {
-                                    msg = {};
-                                }
-
-                            
-
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd', paramData, format);
-                                log.debug(stmt);
-
-                                conn.query(stmt, function(err, rows) {
-
-                                    if (err) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = err;
-
-                                        return callback(resultMsg);
-                                    }
-
-                                    if ( !rows || rows.length == 0  ) {
-                                        resultMsg.result = false;
-                                        resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
-                                        resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
-
-                                        return callback(resultMsg);
-                                    } else {
-
-                                        //paramData.first_date = rows[0].F12506;
-
-                                        temp_kspjong_hist = rows;
-                                        
-
-                                        kspjong_hist = fn_history_filter(
-                                                temp_kspjong_hist           /*DB에서 조회된 종목별 히스토리*/
-                                            ,   msg.v_simulPortfolio        /* 시작일 포트롤리오 */
-                                            ,   msg.v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
-                                            ,   msg.v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
-                                        );
-                        
-                                    }
-
-
-                            /*************************************************************************************************************
-                            *   시뮬레이션 이력정보로 백테스트 수행
-                            **************************************************************************************************************/
-                                    v_resultSimulData   =   fn_get_simulation_data(
-                                            msg.v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
-                                        ,   kspjong_hist                /* 일자별 종목 이력 데이터 */
-                                        ,   msg.v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
-                                        ,   msg.v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
-                                        ,   msg.v_simulPortfolioList    /*리밸런싱 날짜별 포트 폴리오*/
-                                    );
-
-                                    resultMsg.simul_mast    =   msg.v_simul_mast;
-
-                                    delete msg.v_arrRebalanceDate;
-                                    delete msg.v_simulPortfolio;
-                                    delete msg.v_simulPortfolioList;
-
-                                    callback( null, msg );
-                                });
-
-                            } catch (err) {
-
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = err;
-
-                                resultMsg.dailyJongmokObj   =   {};
-                                resultMsg.dailyObj          =   {};
-
-                                callback(resultMsg);
-                            }
-                        },
-
-                        /* 4. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
-                        function(msg, callback) {
-
-                            try{
-
-                                if( !msg || Object.keys( msg ).length == 0 ) {
-                                    msg = {};
-                                }                            
-
-
-                                if( msg.v_simul_mast && Object.keys(msg.v_simul_mast).length > 0 ) {
-                                    if( msg.v_simul_mast.bench_index_cd01 ) {
-                                        paramData.bench_index_cd01  =   msg.v_simul_mast.bench_index_cd01;
-                                    }
-
-                                    if( msg.v_simul_mast.bench_index_cd02 ) {
-                                        paramData.bench_index_cd02  =   msg.v_simul_mast.bench_index_cd02;
-                                    }
-
-                                    if( msg.v_simul_mast.bench_index_cd03 ) {
-                                        paramData.bench_index_cd03  =   msg.v_simul_mast.bench_index_cd03;
-                                    }                                                                
+                                    return callback(resultMsg);
                                 }
 
 
-                                if(     paramData.bench_index_cd01 == ""
-                                    ||  paramData.bench_index_cd02 == ""
-                                    ||  paramData.bench_index_cd03 == "" 
-                                ) {
-                                    callback(null);
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 기본 데이터가 존재하지 않습니다.";
 
-                                }else{
-
-                                    stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
-                                    log.debug(stmt);
-
-                                    conn.query(stmt, function(err, rows) {
-
-                                        if (err) {
-                                            resultMsg.result = false;
-                                            resultMsg.msg = config.MSG.error01;
-                                            resultMsg.err = err;
-
-                                            return callback(resultMsg);
-                                        }
-
-                                        if ( rows || rows.length > 0 ) {
-                                            /* 일자별 지수에 밴치마크 정보를 설정한다. */
-                                            fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
-                                        }
-
-                                        callback(null);
-                                    });
+                                    return callback(resultMsg);
                                 }
-                                    
-                                
-                            } catch (err) {
-
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = err;
-
-                                callback(resultMsg);
-                            }
-                        },
-
-                        /* 5. arr_daily (일자별 지수) 를 파일 생성한다.*/
-                        // function(msg, callback) {
-
-                        //     try{
-
-                        //         if( !msg || Object.keys( msg ).length == 0 ) {
-                        //             msg = {};
-                        //         }
 
 
-                        //         if( paramData.moduleId && paramData.moduleId == "runBacktestWithSaveBasicInfo" ) {
+                                var v_simul_mast                            =   {};
+                                var v_simulPortfolio                        =   rows;
 
-                        //             /* arr_daily (일자별 지수) 를 파일 생성한다. */
-                        //             if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
 
-                        //                 log.debug( "분석정보 파일생성 #1  START");
-                        //                 simulAnalyze.writeFileArrDaily(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
-                        //                     if( e && e.result ) {
-                        //                         if( e.results && e.results.length > 0 ) {
-                        //                             resultMsg.jsonFileName  =   e.jsonFileName;
-                        //                             resultMsg.inputData  =   e.inputData;                                            
-                        //                         }
+                                if( typeof paramData.prev_grp_cd != "undefined" && paramData.prev_grp_cd != "" ) {
+                                    v_simul_mast.prev_grp_cd                =   paramData.prev_grp_cd;          /* 이전 그룹코드(상위코드) */
+                                }
 
-                        //                         log.debug( "분석정보 파일생성 success #1 END");
+                                if( typeof paramData.prev_scen_cd != "undefined" && paramData.prev_scen_cd != "" ) {
+                                    v_simul_mast.prev_scen_cd               =   paramData.prev_scen_cd;         /* 이전 그룹코드(상위코드) */
+                                }
 
-                        //                         callback(null);
-                        //                     }else{
+                                for( var i in rows ) {
+                                    //v_simulPortfolio[ rows[i].F16013 ]      =   rows[i];
 
-                        //                         resultMsg.result = false;
-                        //                         resultMsg.jsonFileName  =   e.jsonFileName;
-                        //                         resultMsg.msg = config.MSG.error01;
-                        //                         resultMsg.err = "[error] simulAnalyze.writeFileArrDaily 파일 생성 중 오류가 발생하였습니다.";
+                                    /* 마스터 정보 설정 */
+                                    if( i == 0 ) {
 
-                        //                         log.debug( "분석정보 파일생성 error #1 END");
-                        //                         return callback(resultMsg);
+                                        v_simul_mast.grp_cd                 =   rows[0].grp_cd;                 /* 그룹코드(상위코드) */
+                                        v_simul_mast.scen_cd                =   rows[0].scen_cd;                /* 시나리오 코드 */
 
-                        //                     }
-                        //                 });
+                                        v_simul_mast.scen_name              =   rows[0].scen_name               /* 시나리오명 */
+                                        v_simul_mast.start_year             =   rows[0].start_year;             /* 시작년도 */
+                                        v_simul_mast.rebalance_cycle_cd     =   rows[0].rebalance_cycle_cd;     /* 리밸런싱주기 (COM006) */
+                                        v_simul_mast.rebalance_date_cd      =   rows[0].rebalance_date_cd;      /* 리밸런싱일자 (COM007) */
+                                        v_simul_mast.init_invest_money      =   rows[0].init_invest_money;      /* 초기투자금액 */
+                                        v_simul_mast.bench_mark_cd          =   rows[0].bench_mark_cd;          /* 벤치마크 (COM008) */
+                                        v_simul_mast.bench_index_cd01       =   rows[0].bench_index_cd01;       /* 벤치마크 인덱스 코드 ( F16013 ) */
+                                        v_simul_mast.bench_index_cd02       =   rows[0].bench_index_cd02;       /* 벤치마크 인덱스 코드 ( large_type ) */
+                                        v_simul_mast.bench_index_cd03       =   rows[0].bench_index_cd03;       /* 벤치마크 인덱스 코드 ( middle_type ) */
+                                        v_simul_mast.bench_index_nm         =   rows[0].bench_index_nm;         /* 벤치마크 인덱스 코드명 */                                        
+                                        v_simul_mast.importance_method_cd   =   rows[0].importance_method_cd;   /* 비중설정방식 (COM009) */
 
-                        //             }else{
-                        //                 callback(null);
-                        //             }
+                                        v_simul_mast.serial_no              =   rows[0].serial_no               /* 변경 순번 */
+                                    }
+                                }                                
 
-                        //         }else{
-                        //             callback(null);
-                        //         }
+                                msg.v_simul_mast        =   v_simul_mast;
+                                msg.v_simulPortfolio    =   v_simulPortfolio;
 
-                        //     } catch (err) {
-
-                        //         resultMsg.result = false;
-                        //         resultMsg.msg = config.MSG.error01;
-                        //         resultMsg.err = err;
-
-                        //         callback(null);
-                        //     }
-                        // },
-
-                    ], function(err) {
-
-                        if (err) {
-                            log.debug(err, stmt, paramData);
-
-                            resolve( { 
-                                    result : false
-                                ,   resultMsg : resultMsg 
-                            });                        
-
-                        } else {
-
-                            resultMsg.result        =   true;
-
-                            /* 일자별 지수에 balance 정보를 설정한다. */
-                            fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
-
-                            resultMsg.arr_daily             =   [ ...v_resultSimulData.arr_daily];
-                            resultMsg.arr_rebalance         =   [ ...v_resultSimulData.arr_rebalance];
-
-                            if( paramData.moduleId &&  [ "getSimulJongmoForExcel" ].includes( paramData.moduleId ) ) {
-                                resultMsg.dailyJongmokObj   =   v_resultSimulData.dailyJongmokObj;
-                            }                            
-
-                            if( paramData.moduleId &&  [ "runBacktestWithSaveBasicInfo" ].includes( paramData.moduleId ) ) {
-//                              resultMsg.dailyObj          =   v_resultSimulData.dailyObj;
-                                resultMsg.arr_contribute    =   v_resultSimulData.arr_contribute;
-                            }
-
-                            resultMsg.err           =   null;
-
-                            resolve( { 
-                                    result : true
-                                ,   resultMsg : resultMsg 
+                                callback( null, msg );
                             });
 
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 저장시 입력했던 정보로 리밸런싱 일자를 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                        
+                            stmt = mapper.getStatement('simulationBacktest', 'getRebalanceDateByScenCd', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 리밸런싱 일자 정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                } else {
+                                    /*=================================== 
+                                    * 1. 포트 폴리오를 리밸런싱일별로 Array화 한다,
+                                        2. 이력 데이터를 조회할 파라메터 생성
+                                    ======================================*/
+
+                                    var v_simulPortfolioList = [];
+                                    var firstRebalenceDate = "";
+
+                                    rows.forEach(function(item, index) {
+                                        
+                                        if (index == 0) firstRebalenceDate = item.F12506;
+                                        var simulPortfolio = _.filter(msg.v_simulPortfolio, {'rebalance_date': item.F12506});
+                                        var simulPortfolioObj = [];
+
+                                        simulPortfolio.forEach(function(portfolio) {
+                                            simulPortfolioObj[ portfolio.F16013 ] = portfolio;
+                                        });
+
+                                        v_simulPortfolioList[item.F12506] = simulPortfolioObj;
+                                    });
+                                }
+
+                                /* 엑셀 업로드시 시뮬레이션 시작일을 첫 리밸런싱일로 세팅 */
+                                if (msg.v_simul_mast.rebalance_date_cd == "" && msg.v_simul_mast.rebalance_cycle_cd == "") {
+                                    paramData.first_date = firstRebalenceDate;
+                                } else {
+                                    paramData.first_date = msg.v_simul_mast.start_year + "0101";
+                                }
+
+                                msg.v_arrRebalanceDate      =   rows;
+                                msg.v_simulPortfolioList    =   v_simulPortfolioList;
+                                msg.v_simulPortfolio        =   v_simulPortfolioList[firstRebalenceDate];   //  첫 리밸런싱 까지 포트 폴리오로 사용
+                                msg.firstRebalenceDate      =   firstRebalenceDate;                         //  첫리밸런싱 일자
+
+                                callback( null, msg );
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
+
+                    /* 3. (백테스트) 백테스트 실행시 이력정보를 조회한다. */
+                    function(msg, callback) {
+                        var temp_kspjong_hist = [];
+                        var kspjong_hist = [];
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                        
+
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulHistListByScenCd', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0  ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+                                    resultMsg.err = "[백테스트] 시뮬레이션 할 이력 데이터가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                } else {
+
+                                    //paramData.first_date = rows[0].F12506;
+
+                                    temp_kspjong_hist = rows;
+                                    
+
+                                    kspjong_hist = fn_history_filter(
+                                            temp_kspjong_hist           /*DB에서 조회된 종목별 히스토리*/
+                                        ,   msg.v_simulPortfolio        /* 시작일 포트롤리오 */
+                                        ,   msg.v_simulPortfolioList    /* 리밸런싱일별 포트 폴리오*/    
+                                        ,   msg.v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
+                                    );
+                    
+                                }
+
+
+                        /*************************************************************************************************************
+                        *   시뮬레이션 이력정보로 백테스트 수행
+                        **************************************************************************************************************/
+                                v_resultSimulData   =   fn_get_simulation_data(
+                                        msg.v_simul_mast            /* 시뮬레이션 기본 마스터 정보 */
+                                    ,   kspjong_hist                /* 일자별 종목 이력 데이터 */
+                                    ,   msg.v_arrRebalanceDate      /* 리밸런싱 일자 정보 */
+                                    ,   msg.v_simulPortfolio        /* [tm_simul_portfolio] 기준 종목 데이터 */
+                                    ,   msg.v_simulPortfolioList    /*리밸런싱 날짜별 포트 폴리오*/
+                                );
+
+                                resultMsg.simul_mast    =   msg.v_simul_mast;
+
+                                delete msg.v_arrRebalanceDate;
+                                delete msg.v_simulPortfolio;
+                                delete msg.v_simulPortfolioList;
+
+                                callback( null, msg );
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            resultMsg.dailyJongmokObj   =   {};
+                            resultMsg.dailyObj          =   {};
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+
+                            if( msg.v_simul_mast && Object.keys(msg.v_simul_mast).length > 0 ) {
+                                if( msg.v_simul_mast.bench_index_cd01 ) {
+                                    paramData.bench_index_cd01  =   msg.v_simul_mast.bench_index_cd01;
+                                }
+
+                                if( msg.v_simul_mast.bench_index_cd02 ) {
+                                    paramData.bench_index_cd02  =   msg.v_simul_mast.bench_index_cd02;
+                                }
+
+                                if( msg.v_simul_mast.bench_index_cd03 ) {
+                                    paramData.bench_index_cd03  =   msg.v_simul_mast.bench_index_cd03;
+                                }                                                                
+                            }
+
+
+                            if(     paramData.bench_index_cd01 == ""
+                                ||  paramData.bench_index_cd02 == ""
+                                ||  paramData.bench_index_cd03 == "" 
+                            ) {
+                                callback(null);
+
+                            }else{
+
+                                stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                                log.debug(stmt);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( rows && rows.length > 0 ) {
+                                        /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                        fn_set_bench_mark( v_resultSimulData.arr_daily, rows );
+                                    }
+
+                                    callback(null);
+                                });
+                            }
+                                
+                            
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 5. arr_daily (일자별 지수) 를 파일 생성한다.*/
+                    // function(msg, callback) {
+
+                    //     try{
+
+                    //         if( !msg || Object.keys( msg ).length == 0 ) {
+                    //             msg = {};
+                    //         }
+
+
+                    //         if( paramData.moduleId && paramData.moduleId == "runBacktestWithSaveBasicInfo" ) {
+
+                    //             /* arr_daily (일자별 지수) 를 파일 생성한다. */
+                    //             if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
+
+                    //                 log.debug( "분석정보 파일생성 #1  START");
+                    //                 simulAnalyze.writeFileArrDaily(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
+                    //                     if( e && e.result ) {
+                    //                         if( e.results && e.results.length > 0 ) {
+                    //                             resultMsg.jsonFileName  =   e.jsonFileName;
+                    //                             resultMsg.inputData  =   e.inputData;                                            
+                    //                         }
+
+                    //                         log.debug( "분석정보 파일생성 success #1 END");
+
+                    //                         callback(null);
+                    //                     }else{
+
+                    //                         resultMsg.result = false;
+                    //                         resultMsg.jsonFileName  =   e.jsonFileName;
+                    //                         resultMsg.msg = config.MSG.error01;
+                    //                         resultMsg.err = "[error] simulAnalyze.writeFileArrDaily 파일 생성 중 오류가 발생하였습니다.";
+
+                    //                         log.debug( "분석정보 파일생성 error #1 END");
+                    //                         return callback(resultMsg);
+
+                    //                     }
+                    //                 });
+
+                    //             }else{
+                    //                 callback(null);
+                    //             }
+
+                    //         }else{
+                    //             callback(null);
+                    //         }
+
+                    //     } catch (err) {
+
+                    //         resultMsg.result = false;
+                    //         resultMsg.msg = config.MSG.error01;
+                    //         resultMsg.err = err;
+
+                    //         callback(null);
+                    //     }
+                    // },
+
+                ], function(err) {
+
+                    if (err) {
+                        log.debug(err, stmt, paramData);
+
+                        resolve( { 
+                                result : false
+                            ,   resultMsg : resultMsg 
+                        });                        
+
+                    } else {
+
+                        resultMsg.result        =   true;
+
+                        /* 일자별 지수에 balance 정보를 설정한다. */
+                        fn_set_balance( v_resultSimulData.arr_daily, resultMsg.simul_mast );
+
+                        resultMsg.arr_daily             =   [ ...v_resultSimulData.arr_daily];
+                        resultMsg.arr_rebalance         =   [ ...v_resultSimulData.arr_rebalance];
+
+                        if( paramData.moduleId &&  [ "getSimulJongmoForExcel" ].includes( paramData.moduleId ) ) {
+                            resultMsg.dailyJongmokObj   =   v_resultSimulData.dailyJongmokObj;
+                        }                            
+
+                        if( paramData.moduleId &&  [ "runBacktestWithSaveBasicInfo" ].includes( paramData.moduleId ) ) {
+//                          resultMsg.dailyObj          =   v_resultSimulData.dailyObj;
+                            resultMsg.arr_contribute    =   v_resultSimulData.arr_contribute;
                         }
 
-                    });
+                        resultMsg.err           =   null;
+
+                        resolve( { 
+                                result : true
+                            ,   resultMsg : resultMsg 
+                        });
+
+                    }
+
+                });
             }
 
 
@@ -575,6 +584,7 @@ var getAnalyze_timeseries = function(req, res) {
                     function(callback) {
 
                         try {
+                            
 
                             var msg                 =   {};
 
@@ -593,8 +603,7 @@ var getAnalyze_timeseries = function(req, res) {
                                 callback( resultMsg );
 
                             }else{
-
-                                paramData.changeGrpCdYn     =   "0";
+                                paramData.changeGrpCdYn  =   "0";
                                 stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
                                 log.debug(stmt);
 
@@ -863,7 +872,7 @@ var getAnalyze_timeseries = function(req, res) {
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
-                            }                            
+                            }
 
 
                             /* 상세조회가 아닌 경우에만 분석정보 저장 */
@@ -994,7 +1003,25 @@ var fnSaveTmSimulResultAnal = async function(req, res, paramData) {
 
                         try {
 
-                            var msg =   {};                           
+                            var msg =   {};
+                            
+                            if( typeof paramData.changeGrpCdYn == "undefined" ) {
+                                paramData.changeGrpCdYn  =   "0";
+                            }
+
+
+                            /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
+                            if(     typeof paramData.prev_scen_cd   !=  "undefined"
+                                &&  typeof paramData.prev_grp_cd    !=  "undefined"
+
+                                &&  paramData.prev_scen_cd          !=  ""
+                                &&  paramData.prev_grp_cd           !=  ""
+
+                                &&  paramData.prev_grp_cd           !=  paramData.grp_cd 
+                            ) {
+                                paramData.changeGrpCdYn  =   "1";
+                            }
+
 
                             if( !paramData.grp_cd || !paramData.scen_cd ) {
 
@@ -1195,28 +1222,7 @@ var saveBacktestResult = async function(req, res, paramData) {
         try {
             log.debug('simulationBacktest.saveBacktestResult 호출됨.');
 
-            // var pool = req.app.get("pool");
-            // var mapper = req.app.get("mapper");
             var resultMsg = {};
-
-            // /* 1. body.data 값이 있는지 체크 */
-            // if (!req.body.data) {
-            //     log.error("[error] simulationBacktest.saveBacktestResult  req.body.data no data.", req.body.data);
-
-            //     resultMsg.result = false;
-            //     resultMsg.msg = config.MSG.error01;
-
-            //     throw resultMsg;
-            // }
-
-            // var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-            // paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
-            // paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
-            // paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
-            // paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
-            // paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
-
 
             if(     !paramData || Object.keys( paramData ).length == 0 
                 ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
@@ -1352,6 +1358,22 @@ var saveBacktestResult = async function(req, res, paramData) {
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
                             }
+
+                            paramData.changeGrpCdYn  =   "0";
+
+
+                            /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
+                            if(     typeof paramData.prev_scen_cd   !=  "undefined"
+                                &&  typeof paramData.prev_grp_cd    !=  "undefined"
+
+                                &&  paramData.prev_scen_cd          !=  ""
+                                &&  paramData.prev_grp_cd           !=  ""
+
+                                &&  paramData.prev_grp_cd           !=  paramData.grp_cd 
+                            ) {
+                                paramData.changeGrpCdYn  =   "1";
+                            }
+
 
                             stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultMastCheck', paramData, { language: 'sql', indent: '  ' });
                             log.debug(stmt, paramData);
@@ -1599,7 +1621,7 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                             if( !msg || Object.keys( msg ).length == 0 ) {
                                 msg = {};
-                            }                            
+                            }
 
                             stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultDaily', paramData, format);
                             log.debug(stmt);
@@ -1856,143 +1878,177 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 log.debug("simulationBacktest.saveTmSimulResultRebalance");
                                 arr_result_rebalance    =   [];
 
-                                callback(null);
+                                callback(null, msg);
                             });
+
+                        }else{
+                            callback(null, msg);
+                        }
+
+                    },
+
+                    /* 10. (백테스트) tm_simul_result_contribute 결과를 삭제한다. */
+                    function(msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }                            
+
+                            stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultContribute', paramData, format);
+                            log.debug(stmt);
+
+                            conn.query(stmt, function(err, rows) {
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+
+                            if( !resultMsg.err ) {
+                                resultMsg.err = err;
+                            }
+
+                            return callback(resultMsg);
+                        }
+                    },
+
+                    /* 11. (백테스트) tm_simul_result_contribute 결과를 저장한다. */
+                    function(msg, callback) {
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        var arr_result_contribute    =   [];
+
+                        if( v_resultSimulData.arr_contribute && v_resultSimulData.arr_contribute.length > 0 ) {
+
+                            v_resultSimulData.arr_contribute.forEach( function( item, index, array ) {
+
+                                var v_tempItem              =   {};
+
+                                v_tempItem.F12506           =   String( index );
+                                v_tempItem.F12506_S         =   item.start_date;
+                                v_tempItem.F12506_E         =   item.end_date;
+
+                                if( typeof item.jongmok != "undefined" && Object.keys( item.jongmok ).length > 0 ) {
+
+                                    for( var i=0; i < Object.keys( item.jongmok ).length; i++ ) {
+                                        var v_F16013        =   Object.keys( item.jongmok )[i];
+                                        var v_subItem       =   item.jongmok[ v_F16013 ];
+
+                                        v_tempItem.F16013   =   v_F16013;
+                                        if( typeof v_subItem != "undefined" && Object.keys( v_subItem ).length > 0 ) {
+
+                                            v_tempItem.START_WEIGHT         =   v_subItem.START_WEIGH;
+                                            v_tempItem.END_WEIGHT           =   v_subItem.END_WEIGH;
+                                            v_tempItem.CONTRIBUTE_RATE      =   v_subItem.CONTRIBUTE_RATE;
+
+                                            arr_result_contribute.push( v_tempItem );
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        if( arr_result_contribute && arr_result_contribute.length > 0 ) {
+
+                            callback(null);
+
+                            // var divideList  =   [];
+                            // async.forEachOfLimit( arr_result_contribute, 1, function(subList, i, innerCallback) {
+
+                            //     async.waterfall([
+
+                            //         function(innerCallback) {
+
+                            //             divideList.push( subList );
+                                        
+                            //             innerCallback(null, paramData);
+                            //         },
+
+                            //         function(sub_msg, innerCallback) {
+
+                            //             var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                            //             if( divideList && ( divideList.length == divide_size || i == arr_result_contribute.length-1 ) ) {
+                            //                 try {
+                            //                     paramData.dataLists =   divideList;
+                            //                     stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultContribute', paramData, format);
+
+                            //                     conn.query(stmt, function(err, rows) {
+                            //                         if (err) {
+                            //                             resultMsg.result = false;
+                            //                             resultMsg.msg = config.MSG.error01;
+                            //                             resultMsg.err = err;
+
+                            //                             return innerCallback(resultMsg);
+                            //                         }
+
+                            //                         innerCallback(null);
+                            //                     });
+
+                            //                     divideList  =   [];
+
+                            //                 } catch (err) {
+
+                            //                     resultMsg.result = false;
+                            //                     resultMsg.msg = config.MSG.error01;
+
+                            //                     if( !resultMsg.err ) {
+                            //                         resultMsg.err = err;
+                            //                     }
+
+                            //                     return innerCallback(resultMsg);
+                            //                 }
+
+                            //             }else{
+                            //                 innerCallback(null);
+                            //             }
+                            //         }
+
+                            //     ], function(err) {
+
+                            //         if( err ) {
+                            //             resultMsg.result = false;
+                            //             resultMsg.msg = config.MSG.error01;
+                            //             if( !resultMsg.err ) {
+                            //                 resultMsg.err = err;
+                            //             }
+
+                            //             return innerCallback(resultMsg);
+                            //         }
+
+                            //         innerCallback(null);
+                            //     });                                            
+
+                            // }, function(err) {
+                            //     if (err) {
+                            //         return callback(resultMsg);
+                            //     }
+
+                            //     log.debug("simulationBacktest.saveTmSimulResultContribute");
+                            //     arr_result_rebalance    =   [];
+
+                            //     callback(null);
+                            // });
 
                         }else{
                             callback(null);
                         }
 
-                    },
-
-                    // /* 10. (백테스트) tm_simul_result_anal 분석정보를 삭제한다. */
-                    // function(msg, callback) {
-
-                    //     try {
-
-                    //         if( !msg || Object.keys( msg ).length == 0 ) {
-                    //             msg = {};
-                    //         }                            
-
-                    //         stmt = mapper.getStatement('simulationBacktest', 'deleteTmSimulResultAnal', paramData, format);
-                    //         log.debug(stmt);
-
-                    //         conn.query(stmt, function(err, rows) {
-                    //             if (err) {
-                    //                 resultMsg.result = false;
-                    //                 resultMsg.msg = config.MSG.error01;
-                    //                 resultMsg.err = err;
-
-                    //                 return callback(resultMsg);
-                    //             }
-
-                    //             callback(null, msg);
-                    //         });
-
-                    //     } catch (err) {
-
-                    //         resultMsg.result = false;
-                    //         resultMsg.msg = config.MSG.error01;
-
-                    //         if( !resultMsg.err ) {
-                    //             resultMsg.err = err;
-                    //         }
-
-                    //         return callback(resultMsg);
-                    //     }
-                    // },
-
-                    // /* 11. (백테스트) tm_simul_result_anal 분석정보를 저장한다. */
-                    // function(msg, callback) {
-
-                    //     if( !msg || Object.keys( msg ).length == 0 ) {
-                    //         msg = {};
-                    //     }
-
-                    //     if( paramData.arr_analyze && paramData.arr_analyze.length > 0 ) {
-
-                    //         var divideList  =   [];
-                    //         async.forEachOfLimit( paramData.arr_analyze, 1, function(subList, i, innerCallback) {
-
-                    //             async.waterfall([
-
-                    //                 function(innerCallback) {
-                    //                     subList.show_order_no   =   i;
-                    //                     divideList.push( subList );
-                                        
-                    //                     innerCallback(null, paramData);
-                    //                 },
-
-                    //                 function(sub_msg, innerCallback) {
-
-                    //                     var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
-                    //                     if( divideList && ( divideList.length == divide_size || i == paramData.arr_analyze.length-1 ) ) {
-                    //                         try {
-                    //                             paramData.dataLists =   divideList;
-                    //                             stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultAnal', paramData, format);
-
-                    //                             conn.query(stmt, function(err, rows) {
-                    //                                 if (err) {
-                    //                                     resultMsg.result = false;
-                    //                                     resultMsg.msg = config.MSG.error01;
-                    //                                     resultMsg.err = err;
-
-                    //                                     return callback(resultMsg);
-                    //                                 }
-
-                    //                                 innerCallback(null);
-                    //                             });
-
-                    //                             divideList  =   [];
-
-                    //                         } catch (err) {
-
-                    //                             resultMsg.result = false;
-                    //                             resultMsg.msg = config.MSG.error01;
-
-                    //                             if( !resultMsg.err ) {
-                    //                                 resultMsg.err = err;
-                    //                             }
-
-                    //                             return callback(resultMsg);
-                    //                         }
-
-                    //                     }else{
-                    //                         innerCallback(null);
-                    //                     }
-                    //                 }
-
-                    //             ], function(err) {
-
-                    //                 if( err ) {
-                    //                     resultMsg.result = false;
-                    //                     resultMsg.msg = config.MSG.error01;
-                    //                     if( !resultMsg.err ) {
-                    //                         resultMsg.err = err;
-                    //                     }
-
-                    //                     return callback(resultMsg);
-                    //                 }
-
-                    //                 innerCallback(null);
-                    //             });                                            
-
-                    //         }, function(err) {
-                    //             if (err) {
-                    //                 return callback(resultMsg);
-                    //             }
-
-                    //             log.debug("simulationBacktest.saveTmSimulResultAnal");
-                    //             paramData.arr_analyze    =   [];
-
-                    //             callback(null);
-                    //         });
-
-                    //     }else{
-                    //         callback(null);
-                    //     }
-
-                    // },
+                    },                    
 
                 ], function(err) {
 
@@ -2608,7 +2664,7 @@ var getSimulJongmoForExcel = function(req, res) {
                             var arr_result_data     =   _.uniqBy( msg.arr_daily_jongmok, "F12506" ).map( function(o) {
                                 return  { 
                                         "F12506"            :   o.F12506                /* 입회일자 */
-                                    ,   "fmt_F12506"        :   util.formatDate( new String( o.F12506 ) )       /* 입회일자 */
+                                    ,   "fmt_F12506"        :   util.formatDate( String( o.F12506 ) )       /* 입회일자 */
                                 };
                             });
 

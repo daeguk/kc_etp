@@ -46,6 +46,15 @@
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationResultGroup>
 
+        <!-- 시계열 업로드 화면 -->
+        <SimulationTimeSeriesUpload   v-if="showSimulationId == 4"
+
+                                :paramData  =   "paramData"
+
+                                @fn_showProgress="fn_showProgress"
+                                @fn_showSimulation="fn_showSimulation">
+        </SimulationTimeSeriesUpload>        
+
         <v-flex>
             <ProgressBar ref="progress2"></ProgressBar>
             <WaitProgressBar ref="wait_progress"></WaitProgressBar>
@@ -72,6 +81,7 @@ import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import SimulationList from "@/components/Home/Simulation/SimulationList.vue";
 import SimulationResult from "@/components/Home/Simulation/SimulationResult.vue";
 import SimulationResultGroup from "@/components/Home/Simulation/SimulationResultGroup.vue";
+import SimulationTimeSeriesUpload from "@/components/Home/Simulation/SimulationTimeSeriesUpload.vue";
 
 
 var table01 = null;
@@ -100,6 +110,7 @@ export default {
         ,   SimulationList
         ,   SimulationResult
         ,   SimulationResultGroup
+        ,   SimulationTimeSeriesUpload
     },
     
     created() {
@@ -183,7 +194,6 @@ export default {
                 ,   simul_mast          :   {}
                 ,   arr_daily           :   []
                 ,   arr_rebalance       :   []
-                ,   analyzeList         :   []
                 ,   arr_scen_in_grp     :   []
                 ,   method_gubun        :   ""
             } 
@@ -216,7 +226,13 @@ export default {
                 case    3:
                         vm.activeTab            =   3;
                         vm.showSimulationId     =   3;
-                        break;                        
+                        break;
+
+                        /* 시계열 업로드 화면 */
+                case    4:
+                        vm.activeTab            =   1;
+                        vm.showSimulationId     =   4;
+                        break;
             }
         }
     }

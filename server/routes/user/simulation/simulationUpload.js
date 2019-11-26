@@ -16,6 +16,8 @@ var Promise = require("bluebird");
 var async = require('async');
 var _ = require("lodash");
 
+var simulModule = require('./simulModule');
+
 var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs');
@@ -25,6 +27,11 @@ var log = config.logger;
 
 var limit = {
     max_size      :   1       /* 포트폴리오 (Mb) */
+};
+
+var initGrpInfo         =   {
+        INIT_GRP_CD         :   "*"                             /* 그룹코드 최초값 */
+    ,   INIT_INCRE_GRP_CD   :   100000                          /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 };
 
 
@@ -130,7 +137,7 @@ var uploadPortfolio = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length == 0) {
+            if (dataLists.length <= 1) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
@@ -146,10 +153,13 @@ var uploadPortfolio = function(req, res) {
                     &&  typeof dataLists[0].col02 != "undefined"
                     &&  typeof dataLists[0].col03 != "undefined"
                 ) {
-                    var col01   =   dataLists[0].col01;
+                    if( typeof dataLists[1].col01 != "undefined" ) {
 
-                    if( col01 != "" && new String( col01 ).length == 8 ) {
-                        v_param.p_rebalance_file_yn     =   "1";
+                        var col01   =   dataLists[1].col01;
+
+                        if( col01 != "" && String( col01 ).length == 8 ) {
+                            v_param.p_rebalance_file_yn     =   "1";
+                        }
                     }
                 }
 
@@ -273,7 +283,10 @@ var uploadPortfolio = function(req, res) {
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
 
-                if( !v_param.p_record_check ) {
+                if( !v_param.p_count_check ) {
+                    resultMsg.errorList.push( { msg: resultMsg.msg } );
+                }else if( !v_param.p_record_check ) {
+
                     for (var i = 0; i < dataLists.length; i++) {
                         var data = dataLists[i];
 
@@ -291,7 +304,8 @@ var uploadPortfolio = function(req, res) {
 
                 deleteFile(reqParam);
 
-                resultMsg.record_Check          =   v_param.p_record_check;
+                resultMsg.record_check          =   v_param.p_record_check;
+                resultMsg.count_check           =   v_param.p_count_check;
                 resultMsg.p_rebalance_file_yn   =   v_param.p_rebalance_file_yn;
                 resultMsg.result = false;
 
@@ -884,47 +898,14 @@ var uploadPortfolio = function(req, res) {
  * 2019-09-06  bkLove(촤병국)
  */
 
-function    fn_excel_record_check( p_param={ p_column_check : true, p_record_check : true, p_rebalance_file_yn : "0", p_index : 0, p_startIndex : 0 }, p_record_data={} ){
+function    fn_excel_record_check( p_param={ p_column_check : true, p_record_check : true, p_rebalance_file_yn : "0", p_index : 0, p_startIndex : 0, p_time_series_yn : "0" }, p_record_data={} ){
 
     try{
 
         if( p_record_data && Object.keys( p_record_data ).length > 0 ) {
 
-            /* 리밸런싱 파일이 아닌 경우 */
-            if( p_param.p_rebalance_file_yn == "0" ) {
-
-                /* CODE 체크 */
-                p_param.p_column                =   "CODE";
-                p_param.p_data                  =   p_record_data.col01;
-                fn_excel_column_check( p_param, p_record_data );
-
-                if( !p_param.p_column_check ) {
-                    p_param.p_record_check      =   false;
-                }else{
-
-                    /* ALLOCATION 값이 비이 있을시 0으로 디폴트값 설정 */
-                    if( typeof p_record_data.col02 == "undefined" || p_record_data.col02 == "" ) {
-                        p_record_data.col02 =   "0";
-                    }
-
-                    /* ALLOCATION 체크 */
-                    p_param.p_column            =   "ALLOCATION";
-                    p_param.p_data              =   p_record_data.col02;
-                    fn_excel_column_check( p_param, p_record_data );
-
-                    if( !p_param.p_column_check ) {
-                        p_param.p_record_check      =   false;
-                    }
-                }
-
-                if( p_param.p_column_check ) {
-                    p_record_data.code          =   String( p_record_data.col01 );
-                    p_record_data.allocation    =   String( p_record_data.col02 );
-                }
-
-            }
-            /* 리밸런싱 파일인 경우 */
-            else{
+            /* 시계열 업로드 파일인 경우 */
+            if( typeof p_param.p_time_series_yn != "undefined" && p_param.p_time_series_yn == "1" ) {
 
                 /* DATE 체크 */
                 p_param.p_column                =   "DATE";
@@ -935,9 +916,35 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                     p_param.p_record_check      =   false;
                 }else{
 
-                    /* CODE 체크 */
-                    p_param.p_column            =   "CODE";
+                    /* INDEX_RATE 값이 비이 있을시 0으로 디폴트값 설정 */
+                    if( typeof p_record_data.col02 == "undefined" || p_record_data.col02 == "" ) {
+                        p_record_data.col02 =   "0";
+                    }
+
+                    /* INDEX_RATE 체크 */
+                    p_param.p_column            =   "INDEX_RATE";
                     p_param.p_data              =   p_record_data.col02;
+                    fn_excel_column_check( p_param, p_record_data );
+
+                    if( !p_param.p_column_check ) {
+                        p_param.p_record_check      =   false;
+                    }
+                }
+
+                if( p_param.p_column_check ) {
+                    p_record_data.date          =   String( p_record_data.col01 );
+                    p_record_data.F12506        =   p_record_data.date;
+                    p_record_data.INDEX_RATE    =   Number( p_record_data.col02 );
+                }
+
+            }else{
+
+                /* 리밸런싱 파일이 아닌 경우 */
+                if( p_param.p_rebalance_file_yn == "0" ) {
+
+                    /* CODE 체크 */
+                    p_param.p_column                =   "CODE";
+                    p_param.p_data                  =   p_record_data.col01;
                     fn_excel_column_check( p_param, p_record_data );
 
                     if( !p_param.p_column_check ) {
@@ -945,25 +952,68 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                     }else{
 
                         /* ALLOCATION 값이 비이 있을시 0으로 디폴트값 설정 */
-                        if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
-                            p_record_data.col03 =   "0";
+                        if( typeof p_record_data.col02 == "undefined" || p_record_data.col02 == "" ) {
+                            p_record_data.col02 =   "0";
                         }
 
                         /* ALLOCATION 체크 */
                         p_param.p_column            =   "ALLOCATION";
-                        p_param.p_data              =   p_record_data.col03;
+                        p_param.p_data              =   p_record_data.col02;
                         fn_excel_column_check( p_param, p_record_data );
 
                         if( !p_param.p_column_check ) {
                             p_param.p_record_check      =   false;
-                        }                    
+                        }
                     }
-                }
 
-                if( p_param.p_column_check ) {
-                    p_record_data.date          =   String( p_record_data.col01 );
-                    p_record_data.code          =   String( p_record_data.col02 );
-                    p_record_data.allocation    =   Number( p_record_data.col03 );
+                    if( p_param.p_column_check ) {
+                        p_record_data.code          =   String( p_record_data.col01 );
+                        p_record_data.allocation    =   String( p_record_data.col02 );
+                    }
+
+                }
+                /* 리밸런싱 파일인 경우 */
+                else{
+
+                    /* DATE 체크 */
+                    p_param.p_column                =   "DATE";
+                    p_param.p_data                  =   p_record_data.col01;
+                    fn_excel_column_check( p_param, p_record_data );
+
+                    if( !p_param.p_column_check ) {
+                        p_param.p_record_check      =   false;
+                    }else{
+
+                        /* CODE 체크 */
+                        p_param.p_column            =   "CODE";
+                        p_param.p_data              =   p_record_data.col02;
+                        fn_excel_column_check( p_param, p_record_data );
+
+                        if( !p_param.p_column_check ) {
+                            p_param.p_record_check      =   false;
+                        }else{
+
+                            /* ALLOCATION 값이 비이 있을시 0으로 디폴트값 설정 */
+                            if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
+                                p_record_data.col03 =   "0";
+                            }
+
+                            /* ALLOCATION 체크 */
+                            p_param.p_column            =   "ALLOCATION";
+                            p_param.p_data              =   p_record_data.col03;
+                            fn_excel_column_check( p_param, p_record_data );
+
+                            if( !p_param.p_column_check ) {
+                                p_param.p_record_check      =   false;
+                            }                    
+                        }
+                    }
+
+                    if( p_param.p_column_check ) {
+                        p_record_data.date          =   String( p_record_data.col01 );
+                        p_record_data.code          =   String( p_record_data.col02 );
+                        p_record_data.allocation    =   Number( p_record_data.col03 );
+                    }
                 }
             }
         }
@@ -1047,18 +1097,33 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                             p_record_data.result    =   false;
                             p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 존재하지 않습니다.";
 
-                        }else if( String( p_param.p_data ).length != 8 ) {
+                        }else if( !( String( p_param.p_data ).length == 8 || String( p_param.p_data ).length == 10 ) ) {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result    =   false;
-                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 8자리만 입력가능합니다.";   
+                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 8자리 또는 10자리만 입력가능합니다.";   
 
                         }else{
 
                             try{
-                                var year    =   Number( new String( p_param.p_data ).substring(0, 4));
-                                var month   =   Number( new String( p_param.p_data ).substring(4, 6));
-                                var day     =   Number( new String( p_param.p_data ).substring(6, 8));
+
+                                var year    =   null;
+                                var month   =   null;
+                                var day     =   null;
+
+
+                                p_record_data.col01     =   p_record_data.col01.replace( /(\.)|(\-)|(\/)/g, "" );
+                                p_param.p_data          =   p_record_data.col01;
+
+                                if( String( p_param.p_data ).length == 8 ) {
+                                    year    =   Number( String( p_param.p_data ).substring(0, 4));
+                                    month   =   Number( String( p_param.p_data ).substring(4, 6));
+                                    day     =   Number( String( p_param.p_data ).substring(6, 8));
+                                }else if( String( p_param.p_data ).length == 10 ) {
+                                    year    =   Number( String( p_param.p_data ).substring(0, 4));
+                                    month   =   Number( String( p_param.p_data ).substring(5, 7));
+                                    day     =   Number( String( p_param.p_data ).substring(8, 10));
+                                }
 
                                 var date    =   new Date( year, month-1, day );
 
@@ -1077,7 +1142,45 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                             }
                         }
 
-                        break;            
+                        break;
+
+                case    "INDEX_RATE"  :
+
+                        if (typeof p_param.p_data == "undefined") {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼이 존재하지 않습니다.";
+
+                        }else{
+                        
+                            try{
+                                var temp = Number( p_param.p_data );
+
+                                if( isNaN( temp ) ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 숫자형만 입력해 주세요.";                                
+                                }
+                            }catch(e) {
+                                p_param.p_column_check          =   false;
+
+                                p_record_data.result            =   false;
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 숫자형만 입력해 주세요.";
+                            }
+
+                            if( p_param.p_column_check ) {
+                                if ( Number( p_param.p_data ) < 0 || Number( p_param.p_data ) > 10000 ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 0 ~ 10000 사이만 입력해 주세요.";
+                                }
+                            }
+                        }
+
+                        break;
 
             }
         }
@@ -1179,4 +1282,905 @@ function dirExists(absoluteDir) {
 }
 
 
+/*
+ * 시계열을 업로드 한다.
+ * 2019-09-06  bkLove(촤병국)
+ */
+var uploadTimeSeries = function(req, res) {
+    log.debug('simulationUpload.uploadTimeSeries 호출됨.');
+
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var resultMsg = {};
+    var reqParam = {
+        uploadFolder: config.uploadFolder,
+        save_file_name: '',
+        user_id: req.session.user_id,
+    };
+
+    var storage = multer.diskStorage({
+
+        // 서버에 저장할 폴더
+        destination: function(req, file, cb) {
+
+            if (!dirExists(reqParam.uploadFolder)) {
+                fs.mkdirSync(reqParam.uploadFolder);
+            }
+
+            cb(null, reqParam.uploadFolder);
+        },
+
+        /* 서버에 저장 */
+        filename: function(req, file, cb) {
+
+            log.debug("file" + JSON.stringify(file));
+
+            var fileLen = file.originalname.length;
+            var lastDot = file.originalname.lastIndexOf(".");
+            var fileName = file.originalname.substring(0, lastDot);
+            var fileExt = file.originalname.substring(lastDot, fileLen).toLowerCase();
+
+            reqParam.save_file_name = fileName + "_" + Date.now() + "" + fileExt;
+
+            cb(null, reqParam.save_file_name);
+        }
+    });
+
+
+    var upload = multer({ storage: storage }).single('files');
+
+    upload(req, res, function(err) {
+
+        log.debug("#1 simulationUpload.uploadTimeSeries upload start");
+
+        if (err) {
+            log.error("#1 simulationUpload.uploadTimeSeries upload Error", err);
+        }
+
+
+        /* 리밸런싱일별 포트폴리오 */
+        resultMsg.errorList             =   [];
+        resultMsg.arr_rebalance_date    =   [];
+
+        try {
+            reqParam.org_file_name = req.file.originalname;
+            reqParam.mime_type = req.file.mimetype;
+            reqParam.file_size = req.file.size;
+
+
+            fn_sizeCheck( req.file, "file", resultMsg );
+
+            var paramData = JSON.parse(req.body.data);
+
+            paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+            paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+            paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+            paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+            paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );            
+
+
+            var arrExcelDate            =   [];     /* 엑셀에서 업로드한 일자정보 */
+
+            var v_param = {
+                    p_count_check       :   true    /* 엑셀 건수 체크 */
+                ,   p_column_check      :   true    /* 엑셀 컬럼 체크 */
+                ,   p_record_check      :   true    /* 엑셀 레코드 체크 */
+                ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
+                ,   p_index             :   0       /* 엑셀 index */
+                ,   p_startIndex        :   0
+                ,   p_time_series_yn    :   "1"
+            };                
+
+            /* 엑셀파일을 파싱한다. */
+            var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
+            var sheet_name_list = workbook.SheetNames;
+            var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { header: ["col01", "col02"], range: v_param.p_startIndex });        
+
+
+            /* 엑셀 건수 체크 */
+            if (dataLists.length <= 1) {
+                v_param.p_count_check   =   false;
+
+                resultMsg.result        =   false;
+                resultMsg.msg           =   "레코드는 1건 이상 존재해야 합니다.";
+
+            } else {
+
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
+                if( dataLists.length == 2 ) {
+
+                    v_param.p_index             =   0;
+
+                    /* 엑셀 레코드 밸리데이션을 수행한다. */
+                    fn_excel_record_check( v_param, dataLists[0] );
+                }else{
+
+                    var dateCheck       =   [];
+                    for (var i = 0; i < dataLists.length-1; i++) {
+                        var data = dataLists[i];
+
+                        /* 엑셀 레코드 밸리데이션을 수행한다. */
+                        v_param.p_index             =   i;
+                        fn_excel_record_check( v_param, data );
+
+
+                        /* 날짜 */
+                        dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
+                            return  item.date == String( data.date );
+                        });
+
+                        if( !dateCheck || dateCheck.length == 0 ) {
+                            arrExcelDate.push( { date : data.date } );
+                        }
+
+                        for (var j = i+1; j < dataLists.length; j++) {
+                            var data2 = dataLists[j];
+
+                            /* 엑셀 레코드 밸리데이션을 수행한다. */
+                            v_param.p_index             =   j;
+                            fn_excel_record_check( v_param, data2 );                            
+
+                            if( v_param.p_record_check ) {
+
+                                if( data.date == data2.date ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼이 중복 존재합니다.";
+                                }
+                            }
+                        }
+
+                        data.row_no         =   i + v_param.p_startIndex;
+                        data.rebalancing    =   "0";                /* 리밸런싱 여부(Y,N)-COM010 */
+                        data.F15028_S       =   0;                  /* 기준시총 */
+                        data.F15028_C       =   0;                  /* 비교시총 */
+
+                        /* 마지막 전 인덱스인 경우 */
+                        if( i == dataLists.length-2 ) {
+
+                            /* 마지막 레코드에 row_no 추가 */
+                            data                =   dataLists[i+1];
+                            data.row_no         =   i + v_param.p_startIndex + 1;
+                            data.rebalancing    =   "0";            /* 리밸런싱 여부(Y,N)-COM010 */
+                            data.F15028_S       =   0;              /* 기준시총 */
+                            data.F15028_C       =   0;              /* 비교시총 */
+
+                            /* 날짜 */
+                            dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
+                                return  item.date == String( data.date );
+                            });
+
+                            if( !dateCheck || dateCheck.length == 0 ) {
+                                arrExcelDate.push( { date : data.date } );
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
+            if ( !v_param.p_count_check || !v_param.p_record_check ) {
+
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
+                if( !v_param.p_count_check ) {
+                    resultMsg.errorList.push( { msg: resultMsg.msg } );
+                }else if( !v_param.p_record_check ) {
+
+                    for (var i = 0; i < dataLists.length; i++) {
+                        var data = dataLists[i];
+
+                        /* 오류가 존재하는 경우 */
+                        if( typeof data.result != "undefined" && typeof data.msg != "undefined" && !data.result ) {
+                            resultMsg.errorList.push( data );
+
+                            /* 10 개 까지만 결과정보에 보관한다. */
+                            if( resultMsg.errorList.length == 10  ) {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                deleteFile(reqParam);
+
+                resultMsg.record_check          =   v_param.p_record_check;
+                resultMsg.count_check           =   v_param.p_count_check;
+                resultMsg.result = false;
+
+                res.json(resultMsg);
+                res.end();
+
+            } else {
+
+
+                var format = { language: 'sql', indent: '' };
+                var stmt = "";
+				Promise.using(pool.connect(), conn => {
+
+					conn.beginTransaction(txerr => {
+
+						if (txerr) {
+							return log.error(txerr);
+						}            
+
+						async.waterfall([
+
+                            /* 1. 시나리오명이 존재하는지 체크한다. */
+                            function(callback) {
+
+                                try{
+                                    var msg         =   {};
+                                    var exist_yn    =   "Y";
+
+                                    paramData.status    =   "insert";
+                                    stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if ( rows && rows.length == 1) {
+                                            exist_yn   =   rows[0].exist_yn;
+                                        }
+
+                                        if( exist_yn == "Y" ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg   = "시나리오명이 이미 존재합니다.";
+                                            resultMsg.err   = "시나리오명이 이미 존재합니다.";
+
+                                            return callback(resultMsg);                                    
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                } catch (err) {
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg);
+                                }
+                            },                            
+
+							/* 2. tm_date_manage 를 조회하여 일자를 체크한다. */
+							function( msg, callback ) {
+
+								try {
+									
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
+
+									paramData.start_year             =   "2000";     /* 시작년도 */
+									paramData.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
+									paramData.rebalance_date_cd      =   "0";        /* 리밸런싱 일자 코드 */
+
+									stmt = mapper.getStatement( "simulation", "getRebalanceDate", paramData, format);
+									log.debug(stmt, paramData);
+
+									conn.query(stmt, function(err, rows) {
+										try {
+
+											resultMsg.result = true;
+											resultMsg.msg = "";                    
+
+											if (err) {
+												log.error(err, stmt, paramData);
+
+												resultMsg.result = false;
+												resultMsg.msg = config.MSG.error01;
+												resultMsg.err = err;
+
+												return callback(resultMsg);
+											}
+											else if ( !rows || rows.length == 0 )  {
+
+												log.error(err, stmt, paramData);
+
+												resultMsg.result = false;
+												resultMsg.msg = config.MSG.error01;
+												resultMsg.err = "[error] simulation.getRebalanceDate 일자 기본정보가 없습니다.";
+
+												return callback(resultMsg);
+											}
+
+
+
+										/**********************************************************************************************
+										 * 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 START
+										 **********************************************************************************************/
+											var arrOrgDate  =   [];
+											for( var i=0 ; i < rows.length; i++ ) {
+												arrOrgDate.push({
+													date    :   rows[i].F12506
+												})
+											}
+
+											var arrDiffDate =   _.differenceWith( arrExcelDate, arrOrgDate, _.isEqual );
+
+											if( arrDiffDate && arrDiffDate.length > 0 ) {
+
+												for( var i=0 ; i < arrDiffDate.length; i++ ) {
+
+													if( Number( arrDiffDate[i].date ) < 20000101 ) {
+														resultMsg.errorList.push( { 
+																result  :   false
+															,   msg     :   "2000 년도 이전 날짜 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+														});
+													}
+													else if( arrDiffDate[i].date > util.getTodayDate() ) {
+														resultMsg.errorList.push( { 
+																result  :   false
+															,   msg     :   "현재일 이후 날짜 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+														});
+													}
+													else{
+														resultMsg.errorList.push( { 
+																result  :   false
+															,   msg     :   "영업일에 포함되지 않은 일자 ( " + arrDiffDate[i].date + " )  가 존재합니다."
+														});
+													}                                                    
+
+													/* 10 개 까지만 결과정보에 보관한다. */
+													if( resultMsg.errorList.length == 10  ) {
+														break;
+													}
+												}
+											}
+											
+
+											if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+												resultMsg.result = false;
+												
+												return  callback(resultMsg);
+											}
+										/**********************************************************************************************
+										 * 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 END
+										 **********************************************************************************************/
+
+
+											log.debug( 
+													"\n"
+												,   "#############################################################"
+												,   "\n"
+												,   "arrExcelDate"
+												,   "\n"
+												,   arrExcelDate
+												,   "\n"
+												,   "#############################################################" 
+											);
+
+
+											/* 엑셀 업로드를 통해 start_year 년도 추출 */
+											if( arrExcelDate && arrExcelDate.length > 0 ) {
+
+												var v_min_obj   =   _.minBy( arrExcelDate, function(o){
+													return  o.date
+												});
+
+												if( v_min_obj && Object.keys( v_min_obj ).length > 0 ) {
+													if( v_min_obj.date && v_min_obj.date.length > 4 ) {
+														msg.p_start_year    =   v_min_obj.date.substring( 0, 4 );
+													}
+
+                                                    msg.first_date  =   v_min_obj.date;
+												}
+											}                                        
+
+
+											callback(null, msg);
+
+										} catch (err) {
+
+											resultMsg.result = false;
+											resultMsg.msg = config.MSG.error01;
+											resultMsg.err = err;
+
+											return  callback(resultMsg);
+										}
+
+									});
+
+								} catch (err) {
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},
+
+							/* 2. 시뮬레이션 시나리오 코드를 채번한다. */
+							function(msg, callback) {
+
+								try{
+
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
+
+									paramData.init_incre_grp_cd      =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
+									stmt = mapper.getStatement('simulation', "getScenCd1", paramData, format);
+									log.debug(stmt, paramData);
+
+									conn.query(stmt, function(err, rows) {
+
+										if (err) {
+											resultMsg.result = false;
+											resultMsg.msg = config.MSG.error01;
+											resultMsg.err = err;
+
+											return callback(resultMsg);
+										}
+
+										if (rows && rows.length == 1) {
+											paramData.scen_cd = rows[0].scen_cd;
+										}
+
+										callback(null, msg);
+									});
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},
+
+							/* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+							function(msg, callback) {
+
+								try{
+
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}                            
+
+									if( !paramData.grp_cd || !paramData.scen_cd ) {
+										resultMsg.result = false;
+										resultMsg.msg = config.MSG.error01;
+										resultMsg.err = config.MSG.error01;
+
+										callback( resultMsg );
+
+									}else{
+
+										paramData.grp_yn            =   "0";
+										stmt = mapper.getStatement('simulation', 'getScenOrderNo', paramData, format);
+										log.debug(stmt, paramData);
+
+										conn.query(stmt, function(err, rows) {
+
+											if (err) {
+												resultMsg.result = false;
+												resultMsg.msg = config.MSG.error01;
+												resultMsg.err = err;
+
+												return callback(resultMsg);
+											}
+
+											if (rows && rows.length == 1) {
+												paramData.scen_order_no     =   rows[0].scen_order_no;
+											}
+
+											callback(null, msg);
+										});
+									}
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},
+
+							/* 4. 시뮬레이션 기본 정보를 저장한다. */
+							function( msg, callback ) {
+
+								try{
+
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
+
+
+                                    if( typeof msg.p_start_year != "undefined" ) {
+									    paramData.start_year        =   msg.p_start_year;   /* 시작년도 */
+                                    }
+									paramData.rebalance_cycle_cd    =   null;               /* 리밸런싱 주기 */
+									paramData.rebalance_date_cd     =   null;               /* 리밸런싱 일자 코드 */
+
+									paramData.scen_depth     		=   "2";                /* 시나리오 DEPTH */
+									paramData.init_invest_money		=   1000000;            /* 초기투자금액 */
+									paramData.importance_method_cd	=   "1";                /* 비중설정방식 (COM009) */
+									paramData.serial_no     		=   1;		            /* 변경 순번 */
+									paramData.stock_gubun			=   null;  	            /* 주식수 구분 (COM013) */
+                                    paramData.time_series_upload_yn =   "1";                /* 시계열 업로드 여부 */
+
+
+									stmt = mapper.getStatement('simulation', "saveTmSimulMast", paramData, format);
+									log.debug(stmt, paramData);
+
+									conn.query(stmt, function(err, rows) {
+
+										if (err) {
+											resultMsg.result = false;
+											resultMsg.msg = config.MSG.error01;
+											resultMsg.err = err;
+
+											return callback(resultMsg);
+										}
+
+										callback(null, msg);
+										
+									});
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},
+
+							/* 5. [tm_simul_result_mast] 테이블에 등록한다. */
+							function(msg, callback) {
+
+								try{
+
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
+
+									stmt = mapper.getStatement('simulationBacktest', "saveTmSimulResultMast", paramData, { language: 'sql', indent: '  ' });
+									log.debug(stmt, paramData);
+
+									conn.query(stmt, function(err, rows) {
+
+										if (err) {
+											resultMsg.result = false;
+											resultMsg.msg = config.MSG.error01;
+											resultMsg.err = err;
+
+											return callback(resultMsg);
+										}
+
+										callback(null, msg);
+									});
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},
+
+                            /* 6. [tm_simul_share] 시나리오 등록한다. */
+                            function( msg, callback) {
+
+                                try {
+
+                                    if( !msg || Object.keys( msg ).length == 0 ) {
+                                        msg = {};
+                                    }
+
+                                    paramData.owner_yn  = "1";
+                                    stmt = mapper.getStatement('simulation', "saveTmSimulShareScen", paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows ) {
+                                            log.debug( "simulation.saveTmSimulShareScen success" );
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                } catch (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+                            },
+
+							/* 7. td_kspjong_hist 테이블 기준 td_index_hist 테이블에서 bench_mark 와 일치하는 정보를 조회한다.*/
+							function(msg, callback) {
+
+								try{
+
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
+
+                                    if( typeof msg.first_date == "undefined" || msg.first_date == "" ) {
+										resultMsg.result = false;
+										resultMsg.msg = "최초일이 존재하지 않습니다.";
+										resultMsg.err = config.MSG.error01;
+
+										callback( resultMsg );
+
+                                    }else{
+
+                                        paramData.first_date    =   msg.first_date;
+                                        stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if ( rows && rows.length > 0 ) {
+
+                                                /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                                var v_prev_index    =   0;
+                                                for( var i=0; i < dataLists.length; i++ ) {
+
+                                                    var v_daily         =   dataLists[i];
+                                                    var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"       ? {} : dataLists[ v_prev_index ] );
+
+                                                    var v_index         =   -1;
+                                                    var v_bm            =   {};
+
+
+
+                                                    v_daily.RETURN_VAL    =   Number(
+                                                        simulModule.fn_calc_data(
+                                                                "RETURN_VAL"
+                                                            ,   {}
+                                                            ,   {       
+                                                                        INDEX_RATE          :   v_daily.INDEX_RATE          /* 당일 지수 */
+                                                                    ,   BEFORE_INDEX_RATE   :   v_prev_daily.INDEX_RATE     /* 전일 지수 */
+                                                                }
+                                                        )
+                                                    );
+
+                                                    v_index         =   _.findIndex( rows, { "F12506" : v_daily.F12506  });
+                                                    if( v_index > -1 ) {
+                                                        v_bm        =   ( typeof rows[v_index] == "undefined"       ? {} : rows[v_index] );
+                                                    }
+
+                                                    if( typeof v_bm != "undefined" && Object.keys( v_bm ).length > 0 ) {
+
+                                                        v_daily.bm_data01       =   Number( v_bm.F15001 );
+                                                        v_daily.F15175          =   Number( v_bm.F15175 );
+                                                        v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
+
+
+                                                        /* 최초인 경우 */
+                                                        if( i == 0 ) {
+
+                                                            v_daily.bm_1000_data    =   1000;
+                                                            v_daily.bm_return_data  =   Number(
+                                                                (
+                                                                    ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
+                                                                ).toFixed(17)
+                                                            );
+
+                                                        }else{
+
+                                                            /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
+                                                            v_daily.bm_1000_data    =   Number(
+                                                                (
+                                                                        Number( v_prev_daily.bm_1000_data ) *
+                                                                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                                                                ).toFixed(17)
+                                                            );
+
+                                                            /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
+                                                            v_daily.bm_return_data  =   Number(
+                                                                (
+                                                                        ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
+                                                                ).toFixed(17)
+                                                            );
+                                                        }
+                                                    }
+
+                                                    if( i > 0 ) {
+                                                        v_prev_index    =   i;
+                                                    }
+                                                }
+
+                                            }
+
+                                            callback(null, msg);
+                                        });
+                                    }
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+							},							
+
+							/* 8. [tm_simul_result_daily] 테이블에 등록한다. */
+							function(msg, callback) {
+
+								if( !msg || Object.keys( msg ).length == 0 ) {
+									msg = {};
+								}
+
+                                try{
+                                    var divideList  =   [];
+                                    async.forEachOfLimit( dataLists, 1, function(subList, i, innerCallback) {
+
+                                        async.waterfall([
+
+                                            function(innerCallback) {
+
+                                                divideList.push( subList );
+                                                
+                                                innerCallback(null, paramData);
+                                            },
+
+                                            function(sub_msg, innerCallback) {
+
+                                                var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                                                if( divideList && ( divideList.length == divide_size || i == v_resultSimulData.arr_daily.length-1 ) ) {
+                                                    try {
+                                                        paramData.dataLists =   divideList;
+                                                        stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultDaily', paramData, format);
+
+                                                        conn.query(stmt, function(err, rows) {
+                                                            if (err) {
+                                                                resultMsg.result = false;
+                                                                resultMsg.msg = config.MSG.error01;
+                                                                resultMsg.err = err;
+
+                                                                return innerCallback(resultMsg);
+                                                            }
+
+                                                            innerCallback(null);
+                                                        });
+
+                                                        divideList  =   [];
+
+                                                    } catch (err) {
+
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = config.MSG.error01;
+
+                                                        if( !resultMsg.err ) {
+                                                            resultMsg.err = err;
+                                                        }
+
+                                                        return innerCallback(resultMsg);
+                                                    }
+
+                                                }else{
+                                                    innerCallback(null);
+                                                }
+                                            }
+
+                                        ], function(err) {
+
+                                            if( err ) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
+
+                                                return innerCallback(resultMsg);
+                                            }
+
+                                            innerCallback(null);
+                                        });                                            
+
+                                    }, function(err) {
+                                        if (err) {
+                                            return callback(resultMsg);
+                                        }
+
+                                        log.debug( "simulationBacktest.saveTmSimulResultDaily" );
+
+                                        callback(null, msg);
+                                    });
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
+
+							},
+
+						], function(err) {
+
+							deleteFile(reqParam);
+
+							if (err) {
+								log.error(err, paramData);
+
+								conn.rollback();
+							} else {
+								resultMsg.result = true;
+								resultMsg.msg = "";
+								resultMsg.err = null;
+
+                                resultMsg.grp_cd    =   paramData.grp_cd;
+                                resultMsg.scen_cd   =   paramData.scen_cd;
+
+								conn.commit();
+							}
+
+							res.json(resultMsg);
+							res.end();
+						});
+					}); 
+                });
+            }
+
+        } catch (expetion) {
+
+            log.error(expetion, paramData);
+
+            deleteFile(reqParam);
+
+            resultMsg.result = false;
+            if( !resultMsg.msg ) {
+                resultMsg.msg = config.MSG.error01;
+            }
+            resultMsg.err = expetion;
+
+            res.json(resultMsg);
+            res.end();
+        }
+    });
+};
+
+
+
 module.exports.uploadPortfolio = uploadPortfolio;
+module.exports.uploadTimeSeries = uploadTimeSeries;

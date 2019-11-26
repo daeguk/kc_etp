@@ -28,11 +28,11 @@ import  sampleChart   from '@/components/Sample/test.vue'
 import  sampleUpload   from '@/components/Sample/fileUpload.vue'
 
 // simulation
-import  SimulationControl   from '@/components/Home/Simulation/SimulationControl.vue'
-import  SimulationList      from '@/components/Home/Simulation/SimulationList.vue'
-import  Simulation          from '@/components/Home/Simulation/Simulation.vue'
-import  SimulationResult    from '@/components/Home/Simulation/SimulationResult.vue'
-import  TimeSeries          from '@/components/Home/Simulation/TimeSeries.vue'
+import  SimulationControl           from '@/components/Home/Simulation/SimulationControl.vue'
+import  SimulationList              from '@/components/Home/Simulation/SimulationList.vue'
+import  Simulation                  from '@/components/Home/Simulation/Simulation.vue'
+import  SimulationResult            from '@/components/Home/Simulation/SimulationResult.vue'
+import  SimulationTimeSeriesUpload  from '@/components/Home/Simulation/SimulationTimeSeriesUpload.vue'
 
 // OperSupport
 import  OperSupportControl   from '@/components/Home/OperSupport/OperSupportControl.vue'
@@ -189,8 +189,8 @@ export const routes = [
             requiresAuth: false,
           },
       },
-      {   path : 'simulation/TimeSeries',
-          component: TimeSeries,
+      {   path : 'simulation/SimulationTimeSeriesUpload',
+          component: SimulationTimeSeriesUpload,
           meta: {
             requiresAuth: false,
           },

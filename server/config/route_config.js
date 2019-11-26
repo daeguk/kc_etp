@@ -196,6 +196,7 @@ module.exports = {
 
 
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'                  , method: 'uploadPortfolio'                     , session: 'check', type: 'post' },     // 포트폴리오 업로드
+        { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadTimeSeries'                 , method: 'uploadTimeSeries'                    , session: 'check', type: 'post' },     // 시계열 업로드
 
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getScenInGrpCd'                   , method: 'getScenInGrpCd'                      , session: 'check', type: 'post' },     // 그룹코드에 속한 시나리오 조회
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getInfoCheckedScenCd'             , method: 'getInfoCheckedScenCd'                , session: 'check', type: 'post' },     // 선택된 시나리오 코드들에 대한 정보 조회

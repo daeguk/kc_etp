@@ -405,7 +405,7 @@
 
                 <v-card flat>
                     <div class="text-xs-center mt-1">
-                        <v-btn depressed color="primary" @click.stop="fn_saveBacktestResult()">저장하기</v-btn>
+                        <v-btn depressed color="primary" @click.stop="fn_goSimulBack()">목록으로</v-btn>
                     </div>
                 </v-card>
             </v-card>
@@ -714,8 +714,16 @@ export default {
 
                 }else if( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 ) {
 
-                    p_param.grp_cd      =   vm.paramData.simul_mast.grp_cd;
-                    p_param.scen_cd     =   vm.paramData.simul_mast.scen_cd;
+                    p_param.grp_cd          =   vm.paramData.simul_mast.grp_cd;
+                    p_param.scen_cd         =   vm.paramData.simul_mast.scen_cd;
+
+                    if( typeof vm.paramData.simul_mast.prev_grp_cd != "undefined" ) {
+                        p_param.prev_grp_cd     =   vm.paramData.simul_mast.prev_grp_cd;
+                    }
+
+                    if( typeof vm.paramData.simul_mast.prev_scen_cd != "undefined" ) {
+                        p_param.prev_scen_cd    =   vm.paramData.simul_mast.prev_scen_cd;
+                    }
                 }
 
                 p_param.status          =   vm.status;
@@ -1896,6 +1904,16 @@ export default {
 
             vm.share_modal_flag     =   false;
         },
+
+        /*
+         * 시뮬레이션 목록화면으로 이동한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_goSimulBack: function() {
+            var vm = this;
+
+            vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
+        },		
 
     }
     
