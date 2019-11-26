@@ -125,7 +125,7 @@ var uploadPortfolio = function(req, res) {
                 ,   p_rebalance_file_yn :   "0"     /* 리밸런싱 샘플파일 유무 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   0
+                ,   p_startIndex        :   1
             };                
 
             /* 엑셀파일을 파싱한다. */
@@ -1364,7 +1364,7 @@ var uploadTimeSeries = function(req, res) {
                 ,   p_record_check      :   true    /* 엑셀 레코드 체크 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   1
+                ,   p_startIndex        :   0
                 ,   p_time_series_yn    :   "1"
             };                
 
