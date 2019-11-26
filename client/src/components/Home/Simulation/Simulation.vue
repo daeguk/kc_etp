@@ -3315,6 +3315,12 @@ export default {
                                                         vm.arr_show_error_message.push( errorList[i].msg );
                                                     }
                                                 }
+                                            }else{
+                                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                                if( msg ) {
+                                                    vm.arr_show_error_message.push( msg );
+                                                }
                                             }
                                         }else{
                                             if( await vm.$refs.confirm2.open(

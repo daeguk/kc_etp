@@ -603,7 +603,7 @@ export default {
 
                                     if( !response.data.result ) {
                                         var errorList = [];
-                                        if( !response.data.record_check ) {
+                                        if( !response.data.count_check  || !response.data.record_check ) {
 
                                             if( response.data.errorList && response.data.errorList.length > 0 ) {
                                                 errorList    =   response.data.errorList;
@@ -612,6 +612,12 @@ export default {
                                                     if( !errorList[i].result && errorList[i].msg ) {
                                                         vm.arr_show_error_message.push( errorList[i].msg );
                                                     }
+                                                }
+                                            }else{
+                                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                                if( msg ) {
+                                                    vm.arr_show_error_message.push( msg );
                                                 }
                                             }
                                         }else{

@@ -16,6 +16,8 @@ var Promise = require("bluebird");
 var async = require('async');
 var _ = require("lodash");
 
+var simulModule = require('./simulModule');
+
 var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs');
@@ -930,7 +932,8 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.F12506        =   String( p_record_data.col01 );
+                    p_record_data.date          =   String( p_record_data.col01 );
+                    p_record_data.F12506        =   p_record_data.date;
                     p_record_data.INDEX_RATE    =   Number( p_record_data.col02 );
                 }
 
@@ -1356,7 +1359,7 @@ var uploadTimeSeries = function(req, res) {
             paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );            
 
 
-            var arrExcelRebalanceDate   =   [];     /* 엑셀에서 업로드한 일자정보 */
+            var arrExcelDate            =   [];     /* 엑셀에서 업로드한 일자정보 */
 
             var v_param = {
                     p_count_check       :   true    /* 엑셀 건수 체크 */
@@ -1375,7 +1378,7 @@ var uploadTimeSeries = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length == 1) {
+            if (dataLists.length <= 1) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
@@ -1396,7 +1399,6 @@ var uploadTimeSeries = function(req, res) {
                 }else{
 
                     var dateCheck       =   [];
-                    var jongmokCheck    =   [];
                     for (var i = 0; i < dataLists.length-1; i++) {
                         var data = dataLists[i];
 
@@ -1406,12 +1408,12 @@ var uploadTimeSeries = function(req, res) {
 
 
                         /* 날짜 */
-                        dateCheck   =   arrExcelRebalanceDate.filter( function( item, index, array ) {
+                        dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
                             return  item.date == String( data.date );
                         });
 
                         if( !dateCheck || dateCheck.length == 0 ) {
-                            arrExcelRebalanceDate.push( { date : data.date } );
+                            arrExcelDate.push( { date : data.date } );
                         }
 
                         for (var j = i+1; j < dataLists.length; j++) {
@@ -1432,23 +1434,28 @@ var uploadTimeSeries = function(req, res) {
                             }
                         }
 
-                        data.row_no = i + v_param.p_startIndex;
+                        data.row_no         =   i + v_param.p_startIndex;
+                        data.rebalancing    =   "0";                /* 리밸런싱 여부(Y,N)-COM010 */
+                        data.F15028_S       =   0;                  /* 기준시총 */
+                        data.F15028_C       =   0;                  /* 비교시총 */
 
                         /* 마지막 전 인덱스인 경우 */
                         if( i == dataLists.length-2 ) {
 
                             /* 마지막 레코드에 row_no 추가 */
-                            data        =   dataLists[i+1];
-                            data.row_no =   i + v_param.p_startIndex + 1;
-
+                            data                =   dataLists[i+1];
+                            data.row_no         =   i + v_param.p_startIndex + 1;
+                            data.rebalancing    =   "0";            /* 리밸런싱 여부(Y,N)-COM010 */
+                            data.F15028_S       =   0;              /* 기준시총 */
+                            data.F15028_C       =   0;              /* 비교시총 */
 
                             /* 날짜 */
-                            dateCheck   =   arrExcelRebalanceDate.filter( function( item, index, array ) {
+                            dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
                                 return  item.date == String( data.date );
                             });
 
                             if( !dateCheck || dateCheck.length == 0 ) {
-                                arrExcelRebalanceDate.push( { date : data.date } );
+                                arrExcelDate.push( { date : data.date } );
                             }
                         }
                     }
@@ -1506,12 +1513,60 @@ var uploadTimeSeries = function(req, res) {
 
 						async.waterfall([
 
-							/* 1. tm_date_manage 를 조회하여 일자를 체크한다. */
-							function( callback ) {
+                            /* 1. 시나리오명이 존재하는지 체크한다. */
+                            function(callback) {
+
+                                try{
+                                    var msg         =   {};
+                                    var exist_yn    =   "Y";
+
+                                    paramData.status    =   "insert";
+                                    stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if ( rows && rows.length == 1) {
+                                            exist_yn   =   rows[0].exist_yn;
+                                        }
+
+                                        if( exist_yn == "Y" ) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg   = "시나리오명이 이미 존재합니다.";
+                                            resultMsg.err   = "시나리오명이 이미 존재합니다.";
+
+                                            return callback(resultMsg);                                    
+                                        }
+
+                                        callback(null, msg);
+                                    });
+
+                                } catch (err) {
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg);
+                                }
+                            },                            
+
+							/* 2. tm_date_manage 를 조회하여 일자를 체크한다. */
+							function( msg, callback ) {
 
 								try {
 									
-									var msg         =   {};
+									if( !msg || Object.keys( msg ).length == 0 ) {
+										msg = {};
+									}
 
 									paramData.start_year             =   "2000";     /* 시작년도 */
 									paramData.rebalance_cycle_cd     =   "0";        /* 리밸런싱 주기 */
@@ -1551,7 +1606,6 @@ var uploadTimeSeries = function(req, res) {
 										/**********************************************************************************************
 										 * 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 START
 										 **********************************************************************************************/
-
 											var arrOrgDate  =   [];
 											for( var i=0 ; i < rows.length; i++ ) {
 												arrOrgDate.push({
@@ -1559,7 +1613,7 @@ var uploadTimeSeries = function(req, res) {
 												})
 											}
 
-											var arrDiffDate =   _.differenceWith( arrExcelRebalanceDate, arrOrgDate, _.isEqual );
+											var arrDiffDate =   _.differenceWith( arrExcelDate, arrOrgDate, _.isEqual );
 
 											if( arrDiffDate && arrDiffDate.length > 0 ) {
 
@@ -1597,51 +1651,36 @@ var uploadTimeSeries = function(req, res) {
 												
 												return  callback(resultMsg);
 											}
-
 										/**********************************************************************************************
 										 * 2000년 이전, 현재일자 이후, 영업일에 포함되는지 체크 END
 										 **********************************************************************************************/
-
-											for( var i=0; i < rows.length; i++ ) {
-
-												var filterData  =   _.filter(  arrExcelRebalanceDate, function(o) {
-													return  o.date  ==   rows[i].F12506
-												});
-
-
-												if( filterData && filterData.length > 0 ) {
-
-													resultMsg.arr_rebalance_date.push( { 
-															"text"  :   rows[i].fmt_F12506
-														,   "value" :   rows[i].F12506 
-													});
-												}
-											}
 
 
 											log.debug( 
 													"\n"
 												,   "#############################################################"
 												,   "\n"
-												,   "resultMsg.arr_rebalance_date"
+												,   "arrExcelDate"
 												,   "\n"
-												,   resultMsg.arr_rebalance_date
+												,   arrExcelDate
 												,   "\n"
 												,   "#############################################################" 
 											);
 
 
 											/* 엑셀 업로드를 통해 start_year 년도 추출 */
-											if( resultMsg.arr_rebalance_date && resultMsg.arr_rebalance_date.length > 0 ) {
+											if( arrExcelDate && arrExcelDate.length > 0 ) {
 
-												var v_min_obj   =   _.minBy( resultMsg.arr_rebalance_date, function(o){
-													return  o.value
+												var v_min_obj   =   _.minBy( arrExcelDate, function(o){
+													return  o.date
 												});
 
 												if( v_min_obj && Object.keys( v_min_obj ).length > 0 ) {
-													if( v_min_obj.value && v_min_obj.value.length > 4 ) {
-														msg.p_start_year    =   v_min_obj.value.substring( 0, 4 );
+													if( v_min_obj.date && v_min_obj.date.length > 4 ) {
+														msg.p_start_year    =   v_min_obj.date.substring( 0, 4 );
 													}
+
+                                                    msg.first_date  =   v_min_obj.date;
 												}
 											}                                        
 
@@ -1676,7 +1715,6 @@ var uploadTimeSeries = function(req, res) {
 									if( !msg || Object.keys( msg ).length == 0 ) {
 										msg = {};
 									}
-
 
 									paramData.init_incre_grp_cd      =   initGrpInfo.INIT_INCRE_GRP_CD;      /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
 									stmt = mapper.getStatement('simulation', "getScenCd1", paramData, format);
@@ -1723,7 +1761,7 @@ var uploadTimeSeries = function(req, res) {
 										resultMsg.msg = config.MSG.error01;
 										resultMsg.err = config.MSG.error01;
 
-										callback( resultMsg, msg );
+										callback( resultMsg );
 
 									}else{
 
@@ -1772,11 +1810,17 @@ var uploadTimeSeries = function(req, res) {
 										msg = {};
 									}
 
-									paramData.scen_depth     		=   "1";    /* 시나리오 DEPTH */
-									paramData.init_invest_money		=   null;   /* 초기투자금액 */
-									paramData.importance_method_cd	=   "1";    /* 비중설정방식 (COM009) */
-									paramData.serial_no     		=   1;		/* 변경 순번 */
-									paramData.stock_gubun			=   null;  	/* 주식수 구분 (COM013) */
+                                    if( typeof msg.p_start_year != "undefined" ) {
+									    paramData.start_year        =   msg.p_start_year;   /* 시작년도 */
+                                    }
+									paramData.rebalance_cycle_cd    =   null;               /* 리밸런싱 주기 */
+									paramData.rebalance_date_cd     =   null;               /* 리밸런싱 일자 코드 */
+
+									paramData.scen_depth     		=   "1";                /* 시나리오 DEPTH */
+									paramData.init_invest_money		=   null;               /* 초기투자금액 */
+									paramData.importance_method_cd	=   "1";                /* 비중설정방식 (COM009) */
+									paramData.serial_no     		=   1;		            /* 변경 순번 */
+									paramData.stock_gubun			=   null;  	            /* 주식수 구분 (COM013) */
 									
 									stmt = mapper.getStatement('simulation', "saveTmSimulMast", paramData, format);
 									log.debug(stmt, paramData);
@@ -1847,84 +1891,107 @@ var uploadTimeSeries = function(req, res) {
 
 									if( !msg || Object.keys( msg ).length == 0 ) {
 										msg = {};
-									}                            
+									}
+
+                                    if( typeof msg.first_date == "undefined" || msg.first_date == "" ) {
+										resultMsg.result = false;
+										resultMsg.msg = "최초일이 존재하지 않습니다.";
+										resultMsg.err = config.MSG.error01;
+
+										callback( resultMsg );
+
+                                    }else{
+
+                                        paramData.first_date    =   msg.first_date;
+                                        stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
+                                        log.debug(stmt);
+
+                                        conn.query(stmt, function(err, rows) {
+
+                                            if (err) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if ( rows && rows.length > 0 ) {
+
+                                                /* 일자별 지수에 밴치마크 정보를 설정한다. */
+                                                var v_prev_index    =   0;
+                                                for( var i=0; i < dataLists.length; i++ ) {
+
+                                                    var v_daily         =   dataLists[i];
+                                                    var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"       ? {} : dataLists[ v_prev_index ] );
+
+                                                    var v_index         =   -1;
+                                                    var v_bm            =   {};
 
 
-									stmt = mapper.getStatement('simulationBacktest', 'getSimulBenchMark', paramData, format);
-									log.debug(stmt);
 
-									conn.query(stmt, function(err, rows) {
+                                                    v_daily.RETURN_VAL    =   Number(
+                                                        simulModule.fn_calc_data(
+                                                                "RETURN_VAL"
+                                                            ,   {}
+                                                            ,   {       
+                                                                        INDEX_RATE          :   v_daily.INDEX_RATE          /* 당일 지수 */
+                                                                    ,   BEFORE_INDEX_RATE   :   v_prev_daily.INDEX_RATE     /* 전일 지수 */
+                                                                }
+                                                        )
+                                                    );
 
-										if (err) {
-											resultMsg.result = false;
-											resultMsg.msg = config.MSG.error01;
-											resultMsg.err = err;
+                                                    v_index         =   _.findIndex( rows, { "F12506" : v_daily.F12506  });
+                                                    if( v_index > -1 ) {
+                                                        v_bm        =   ( typeof rows[v_index] == "undefined"       ? {} : rows[v_index] );
+                                                    }
 
-											return callback(resultMsg);
-										}
+                                                    if( typeof v_bm != "undefined" && Object.keys( v_bm ).length > 0 ) {
 
-										if ( rows && rows.length > 0 ) {
-
-											/* 일자별 지수에 밴치마크 정보를 설정한다. */
-                                            var v_prev_index    =   0;
-                                            for( var i=0; i < dataLists.length; i++ ) {
-
-                                                var v_daily         =   dataLists[i];
-                                                var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"       ? {} : dataLists[ v_prev_index ] );
-
-                                                var v_index         =   -1;
-                                                var v_bm            =   {};
+                                                        v_daily.bm_data01       =   Number( v_bm.F15001 );
+                                                        v_daily.F15175          =   Number( v_bm.F15175 );
+                                                        v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
 
 
-                                                v_index         =   _.findIndex( rows, { "F12506" : v_daily.F12506  });
-                                                if( v_index > -1 ) {
-                                                    v_bm        =   ( typeof rows[v_index] == "undefined"       ? {} : rows[v_index] );
-                                                }
+                                                        /* 최초인 경우 */
+                                                        if( i == 0 ) {
 
-                                                if( typeof v_bm != "undefined" && Object.keys( v_bm ).length > 0 ) {
-                                                    v_daily.bm_data01       =   Number( v_bm.F15001 );
-                                                    v_daily.F15175          =   Number( v_bm.F15175 );
-                                                    v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
+                                                            v_daily.bm_1000_data    =   1000;
+                                                            v_daily.bm_return_data  =   Number(
+                                                                (
+                                                                    ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
+                                                                ).toFixed(17)
+                                                            );
 
+                                                        }else{
 
-                                                    /* 최초인 경우 */
-                                                    if( i == 0 ) {
+                                                            /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
+                                                            v_daily.bm_1000_data    =   Number(
+                                                                (
+                                                                        Number( v_prev_daily.bm_1000_data ) *
+                                                                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
+                                                                ).toFixed(17)
+                                                            );
 
-                                                        v_daily.bm_1000_data    =   1000;
-                                                        v_daily.bm_return_data  =   Number(
-                                                            (
-                                                                ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
-                                                            ).toFixed(17)
-                                                        );
+                                                            /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
+                                                            v_daily.bm_return_data  =   Number(
+                                                                (
+                                                                        ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
+                                                                ).toFixed(17)
+                                                            );
+                                                        }
+                                                    }
 
-                                                    }else{
-
-                                                        /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
-                                                        v_daily.bm_1000_data    =   Number(
-                                                            (
-                                                                    Number( v_prev_daily.bm_1000_data ) *
-                                                                    ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
-                                                            ).toFixed(17)
-                                                        );
-
-                                                        /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
-                                                        v_daily.bm_return_data  =   Number(
-                                                            (
-                                                                    ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
-                                                            ).toFixed(17)
-                                                        );
+                                                    if( i > 0 ) {
+                                                        v_prev_index    =   i;
                                                     }
                                                 }
 
-                                                if( i > 0 ) {
-                                                    v_prev_index    =   i;
-                                                }
                                             }
 
-										}
-
-										callback(null, msg);
-									});
+                                            callback(null, msg);
+                                        });
+                                    }
 
 								} catch (err) {
 
@@ -1943,83 +2010,91 @@ var uploadTimeSeries = function(req, res) {
 									msg = {};
 								}
 
-								var divideList  =   [];
-								async.forEachOfLimit( dataLists, 1, function(subList, i, innerCallback) {
+                                try{
+                                    var divideList  =   [];
+                                    async.forEachOfLimit( dataLists, 1, function(subList, i, innerCallback) {
 
-									async.waterfall([
+                                        async.waterfall([
 
-										function(innerCallback) {
-											subList.F15028_S  =   subList.tot_F15028_S;
-											subList.F15028_C  =   subList.tot_F15028_C;
+                                            function(innerCallback) {
 
-											divideList.push( subList );
-											
-											innerCallback(null, paramData);
-										},
+                                                divideList.push( subList );
+                                                
+                                                innerCallback(null, paramData);
+                                            },
 
-										function(sub_msg, innerCallback) {
+                                            function(sub_msg, innerCallback) {
 
-											var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
-											if( divideList && ( divideList.length == divide_size || i == v_resultSimulData.arr_daily.length-1 ) ) {
-												try {
-													paramData.dataLists =   divideList;
-													stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultDaily', paramData, format);
+                                                var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                                                if( divideList && ( divideList.length == divide_size || i == v_resultSimulData.arr_daily.length-1 ) ) {
+                                                    try {
+                                                        paramData.dataLists =   divideList;
+                                                        stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultDaily', paramData, format);
 
-													conn.query(stmt, function(err, rows) {
-														if (err) {
-															resultMsg.result = false;
-															resultMsg.msg = config.MSG.error01;
-															resultMsg.err = err;
+                                                        conn.query(stmt, function(err, rows) {
+                                                            if (err) {
+                                                                resultMsg.result = false;
+                                                                resultMsg.msg = config.MSG.error01;
+                                                                resultMsg.err = err;
 
-															return innerCallback(resultMsg);
-														}
+                                                                return innerCallback(resultMsg);
+                                                            }
 
-														innerCallback(null);
-													});
+                                                            innerCallback(null);
+                                                        });
 
-													divideList  =   [];
+                                                        divideList  =   [];
 
-												} catch (err) {
+                                                    } catch (err) {
 
-													resultMsg.result = false;
-													resultMsg.msg = config.MSG.error01;
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = config.MSG.error01;
 
-													if( !resultMsg.err ) {
-														resultMsg.err = err;
-													}
+                                                        if( !resultMsg.err ) {
+                                                            resultMsg.err = err;
+                                                        }
 
-													return innerCallback(resultMsg);
-												}
+                                                        return innerCallback(resultMsg);
+                                                    }
 
-											}else{
-												innerCallback(null);
-											}
-										}
+                                                }else{
+                                                    innerCallback(null);
+                                                }
+                                            }
 
-									], function(err) {
+                                        ], function(err) {
 
-										if( err ) {
-											resultMsg.result = false;
-											resultMsg.msg = config.MSG.error01;
-											if( !resultMsg.err ) {
-												resultMsg.err = err;
-											}
+                                            if( err ) {
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
 
-											return innerCallback(resultMsg);
-										}
+                                                return innerCallback(resultMsg);
+                                            }
 
-										innerCallback(null);
-									});                                            
+                                            innerCallback(null);
+                                        });                                            
 
-								}, function(err) {
-									if (err) {
-										return callback(resultMsg);
-									}
+                                    }, function(err) {
+                                        if (err) {
+                                            return callback(resultMsg);
+                                        }
 
-									log.debug( "simulationBacktest.saveTmSimulResultContribute" );
+                                        log.debug( "simulationBacktest.saveTmSimulResultContribute" );
 
-									callback(null, msg);
-								});
+                                        callback(null, msg);
+                                    });
+
+								} catch (err) {
+
+									resultMsg.result = false;
+									resultMsg.msg = config.MSG.error01;
+									resultMsg.err = err;
+
+									callback(resultMsg);
+								}
 
 							},
 
@@ -2028,7 +2103,6 @@ var uploadTimeSeries = function(req, res) {
 							deleteFile(reqParam);
 
 							if (err) {
-								resultMsg.arr_rebalance_date        =   [];
 								log.error(err, paramData);
 
 								conn.rollback();
@@ -2058,8 +2132,6 @@ var uploadTimeSeries = function(req, res) {
                 resultMsg.msg = config.MSG.error01;
             }
             resultMsg.err = expetion;
-
-            resultMsg.arr_rebalance_date        =   [];
 
             res.json(resultMsg);
             res.end();
