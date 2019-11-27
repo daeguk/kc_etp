@@ -136,18 +136,22 @@ export default {
 
     data() {
         return {
-                
+
+
                 arr_show_error_message      :   []          /* 에러 메시지 노출 정보 */
 
             ,   arr_grp_cd                  :   []          /* 상위 그룹정보 */
             ,   arr_bench_mark_cd           :   []          /* 초기설정 벤치마크 array */
 
+            ,   prev_grp_cd                 :   ""          /* 상위 그룹코드 (변경전) */
+            ,   prev_scen_cd                :   ""          /* 시나리오 코드 (변경전) */
             ,   scen_cd                     :   ""          /* 시나리오 코드 */
             ,   scen_order_no               :   ""          /* 시나리오 정렬순번 */
             ,   org_grp_yn                  :   ""          /* 상위 그룹코드 */
 
             ,   grp_cd                      :   "*"         /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
+            ,   org_scen_name               :   ""          /* 시나리오명 원본 */
             ,   bench_mark_cd               :   "1"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   bench_index_cd01            :   ""          /* 벤치마크 인덱스 코드 ( F16013 ) */
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
@@ -184,6 +188,8 @@ export default {
                 let file        =   this.$refs.timeSeriesUpload.files[0];
 
                 var flag    =   true;
+
+                vm.arr_show_error_message   =   [];
 
                 /* 엑셀 유형인지 파일을 체크한다. */
                 await vm.fn_checkFile( file ).then( async function(e) {
@@ -281,8 +287,15 @@ export default {
                         vm.$refs.timeSeriesUpload.files  =   null;
                     }
 
-                    /* next 시나리오명을 조회한다. */
-                    vm.fn_getNextScenName();
+                    /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+                    if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+                        &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+                    ) {
+                        vm.scen_name    =   vm.org_scen_name;
+                    }else{
+                        /* next 시나리오명을 조회한다. */
+                        vm.fn_getNextScenName();
+                    }
 				}
 			}
 
@@ -296,15 +309,32 @@ export default {
 
             var vm = this;
 
+
             /* 상위 그룹정보를 조회한다. */
-            vm.fn_initGrpCd();
+            vm.fn_initGrpCd().then( async function(e) {
 
-            /* 초기 설정 데이터를 조회한다. */
-            vm.fn_initData();
+                if( e && e.result ) {
 
-            /* next 시나리오명을 조회한다. */
-            vm.fn_getNextScenName();
+                    /* 초기 설정 데이터를 조회한다. */
+                    await vm.fn_initData().then( async function(e1) {
 
+                        if( e1 && e1.result ) {
+
+                            /* 목록에서 넘겨받은 key 값이 존재하는 경우 등록된 내용을 조회하여 설정한다. */
+                            if(     vm.paramData && Object.keys( vm.paramData ).length > 0 
+                                &&  vm.paramData.grp_cd && vm.paramData.scen_cd 
+                            ) {
+                                /* 시뮬레이션 마스터 정보를 조회한다. */
+                                vm.fn_getSimulMast( vm.paramData );
+
+                            }else{
+                                /* next 시나리오명을 조회한다. */
+                                vm.fn_getNextScenName();
+                            }
+                        }
+                    });
+                }
+            });
         },        
 
         /*
@@ -495,6 +525,64 @@ export default {
             });                
         },
 
+        /*
+         * 시뮬레이션 마스터 정보를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_getSimulMast( v_paramData ) {
+            var vm = this;
+
+            vm.arr_show_error_message   =   [];
+
+            vm.fn_showProgress( true );
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/simulation/getSimulMast"
+                        ,   "data"      :   v_paramData
+                        ,   "method"    :   "post"
+                    }
+                ,   function(response) {
+                        vm.fn_showProgress( false );
+
+                        try{
+                            if (response && response.data) {
+                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                if (!response.data.result) {
+                                    if( msg ) {
+                                        vm.arr_show_error_message.push( msg );
+                                    }
+                                }else{
+                                    var mastInfo = response.data.mastInfo;
+
+                                    if( mastInfo && Object.keys( mastInfo ).length > 0 ) {
+                                        vm.prev_grp_cd              =   mastInfo.grp_cd;                /* 상위 그룹코드 (변경전) */
+                                        vm.prev_scen_cd             =   mastInfo.scen_cd;               /* 시나리오 코드 (변경전) */
+
+                                        vm.scen_cd                  =   mastInfo.scen_cd;               /* 시나리오 코드 */
+                                        vm.scen_order_no            =   mastInfo.scen_order_no;         /* 시나리오 정렬순번 */
+
+                                        vm.grp_cd                   =   mastInfo.grp_cd;                /* 상위 그룹코드 */
+                                        vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
+                                        vm.org_scen_name            =   mastInfo.scen_name;             /* 시나리오명 */
+                                        
+                                        vm.bench_mark_cd            =   ( vm.bench_mark_cd == 0 ? "1" : vm.bench_mark_cd );
+                                    }
+                                }
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                        }
+                    }
+                ,   function(error) {
+                        vm.fn_showProgress( false );
+                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    }
+            );
+        },        
+
 
         /*
          * 마스트 정보를 밸리데이션 체크한다.
@@ -573,9 +661,27 @@ export default {
                     }
                 }
 
+                var v_temp  =   _.filter( vm.arr_grp_cd, {
+                    "grp_cd"    :   vm.grp_cd
+                });
+
+                
+                if( !v_temp || v_temp.length != 1 ) {
+                    vm.arr_show_error_message.push( "상위그룹 정보가 존재하지 않습니다." );
+                    return  false;
+                }
+
+
+                p_param.prev_grp_cd         =   vm.prev_grp_cd;
+                p_param.prev_scen_cd        =   vm.prev_scen_cd;
+                p_param.scen_cd             =   vm.scen_cd;
+                p_param.scen_order_no       =   vm.scen_order_no;
+                p_param.org_grp_yn          =   v_temp[0].grp_yn;
+
                 p_param.grp_cd              =   vm.grp_cd;
                 p_param.scen_name           =   vm.scen_name;
                 p_param.bench_mark_cd       =   vm.bench_mark_cd;
+                
 
                 var formData    =   new FormData();
 
