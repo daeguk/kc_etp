@@ -53,6 +53,9 @@ ol, ul{padding:0 !important;}
 .routerlink {
     color: #6c6c7d;
 }
+.routerlink2 {
+    color: #85c406;
+}
 
 /* SCROLL */
 
@@ -1006,6 +1009,7 @@ input[type='file']{
 .sub_tabletitle{font-size: 14px; display: block; font-weight: normal;}
 .t_head{margin-top:10px;display: block;}
 .po_txt_pad{padding-left:67px;line-height:20px; font-weight: normal !important;}
+.savebtn01{border-top:1px solid #eeeeee; margin:20px; text-align: center; padding-top:25px;}
 
 
 
