@@ -358,10 +358,12 @@
                         </v-card>
                     </v-tab-item>
 
+
                     <!--포트폴리오 분석 -->
                     <v-tab-item v-if='!(typeof simul_result_mast.time_series_upload_yn != "undefined" && simul_result_mast.time_series_upload_yn == "1")' >
-                        <v-card flat>
-                            
+
+                        <v-card flat>    
+                            지수변동 1000.00 -> 934.59 (-6.54%)
                             <div class="table-box-wrap mar15">
                                 <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
@@ -400,6 +402,49 @@
                                     </table>
                                 </div>
                             </div>
+                        </v-card>
+
+                        <v-card flat>
+                            지수변동 1000.00 -> 934.59 (-6.54%)
+                            <div class="table-box-wrap mar15">
+                                <div class="table-box" style="max-height:710px;">
+                                    <table class="tbl_type ver10">
+                                        <colgroup>
+                                            <col width="12%" />
+                                            <col width="12%" />
+                                            <col width="11%" />
+                                            <col width="20%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th style="width:12%" class="txt_left">시작일</th>
+                                                <th style="width:12%" class="txt_left">종료일</th>
+                                                <th style="width:11%" class="txt_left">코드</th>
+                                                <th style="width:20%" class="txt_left">종목</th>
+                                                <th style="width:15%" class="txt_right">start_weight</th>
+                                                <th style="width:15%" class="txt_right">end_weight</th>
+                                                <th style="width:15%" class="txt_right">기여율(%)</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="txt_left">2016.10.04</td>
+                                                <td class="txt_left">2016.12.08</td>
+                                                <td class="txt_left">140910</td>
+                                                <td class="txt_left">에이리츠</td>
+                                                <td class="txt_right">0.50%</td>
+                                                <td class="txt_right">0.47%</td>
+                                                <td class="txt_right">-6.54%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
                         </v-card>
                     </v-tab-item>                   
                 </v-tabs-items>

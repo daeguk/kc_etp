@@ -1948,6 +1948,8 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 var v_tempItem              =   {};
 
                                 v_tempItem.F12506           =   String( index );
+                                v_tempItem.fmt_F12506       =   util.formatDate( v_tempItem.F12506 );
+                                v_tempItem.F12506_B         =   item.before_date;
                                 v_tempItem.F12506_S         =   item.start_date;
                                 v_tempItem.F12506_E         =   item.end_date;
 
@@ -1955,102 +1957,150 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                                     for( var i=0; i < Object.keys( item.jongmok ).length; i++ ) {
                                         var v_F16013        =   Object.keys( item.jongmok )[i];
-                                        var v_subItem       =   item.jongmok[ v_F16013 ];
+                                        var v_jongmokItem   =   item.jongmok[ v_F16013 ];
+                                        var v_subItem       =   Object.assign( {}, v_tempItem );
 
-                                        v_tempItem.F16013   =   v_F16013;
-                                        if( typeof v_subItem != "undefined" && Object.keys( v_subItem ).length > 0 ) {
+                                        v_subItem.F16013    =   v_F16013;
+                                        if( typeof v_subItem != "undefined" && Object.keys( v_jongmokItem ).length > 0 ) {
 
-                                            v_tempItem.START_WEIGHT         =   v_subItem.START_WEIGH;
-                                            v_tempItem.END_WEIGHT           =   v_subItem.END_WEIGH;
-                                            v_tempItem.CONTRIBUTE_RATE      =   v_subItem.CONTRIBUTE_RATE;
+                                            v_subItem.START_WEIGHT          =   v_jongmokItem.START_WEIGHT;
+                                            v_subItem.END_WEIGHT            =   v_jongmokItem.END_WEIGHT;
+                                            v_subItem.CONTRIBUTE_RATE       =   v_jongmokItem.CONTRIBUTE_RATE;
 
-                                            arr_result_contribute.push( v_tempItem );
+                                            if( !(
+                                                        v_subItem.F12506_B  ==  v_tempItem.F12506_S
+                                                    &&  v_subItem.F12506_B  ==  v_tempItem.F12506_E 
+                                                    &&  v_subItem.F12506_S  ==  v_tempItem.F12506_E
+                                                )
+                                            ) {
+                                                arr_result_contribute.push( v_subItem );
+                                            }
                                         }
                                     }
                                 }
                             });
                         }
 
+
                         if( arr_result_contribute && arr_result_contribute.length > 0 ) {
 
-                            callback(null);
+                            resultMsg.arr_result_contribute =   [];
 
-                            // var divideList  =   [];
-                            // async.forEachOfLimit( arr_result_contribute, 1, function(subList, i, innerCallback) {
+                            var v_prev_F12506           =   "";
+                            var v_arr_F12506_contribute =   [];
+                            var v_tempObj               =   {};
+                            for( var i=0; i < arr_result_contribute.length; i++ ) {
+                                var v_row   =   arr_result_contribute[i];
 
-                            //     async.waterfall([
+                                if( i == 0 ) {
+                                    v_prev_F12506       =   v_row.F12506;
+                                    v_tempObj.F12506    =   v_row.F12506;
+                                }
+                                
+                                if( v_prev_F12506 == v_row.F12506 ) {
+                                    v_arr_F12506_contribute.push( v_row );
+                                }
 
-                            //         function(innerCallback) {
+                                if( v_prev_F12506 != v_row.F12506 ) {
+                                    v_tempObj.dataLists     =   v_arr_F12506_contribute;
+                                    resultMsg.arr_result_contribute.push( v_tempObj );
 
-                            //             divideList.push( subList );
+                                    v_arr_F12506_contribute =   [];
+                                    v_tempObj               =   {};
+
+                                    v_tempObj.F12506        =   v_row.F12506;
+                                    v_arr_F12506_contribute.push( v_row );
+                                }
+
+                                if( i == arr_result_contribute.length -1 ) {
+                                    v_tempObj.dataLists     =   v_arr_F12506_contribute;
+                                    resultMsg.arr_result_contribute.push( v_tempObj );
+
+                                    v_arr_F12506_contribute =   [];
+                                    v_tempObj               =   {};
+                                }
+
+                                v_prev_F12506   =   v_row.F12506;
+                            }
+
+                            console.log( "resultMsg.arr_result_contribute", resultMsg.arr_result_contribute );
+
+                            var divideList  =   [];
+                            async.forEachOfLimit( arr_result_contribute, 1, function(subList, i, innerCallback) {
+
+                                async.waterfall([
+
+                                    function(innerCallback) {
+
+                                        divideList.push( subList );
                                         
-                            //             innerCallback(null, paramData);
-                            //         },
+                                        innerCallback(null, paramData);
+                                    },
 
-                            //         function(sub_msg, innerCallback) {
+                                    function(sub_msg, innerCallback) {
 
-                            //             var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
-                            //             if( divideList && ( divideList.length == divide_size || i == arr_result_contribute.length-1 ) ) {
-                            //                 try {
-                            //                     paramData.dataLists =   divideList;
-                            //                     stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultContribute', paramData, format);
+                                        var divide_size = ( limit && limit.result_dive_size ? limit.result_dive_size : 1 );
+                                        if( divideList && ( divideList.length == divide_size || i == arr_result_contribute.length-1 ) ) {
+                                            try {
+                                                paramData.dataLists =   divideList;
+                                                stmt = mapper.getStatement('simulationBacktest', 'saveTmSimulResultContribute', paramData, format);
 
-                            //                     conn.query(stmt, function(err, rows) {
-                            //                         if (err) {
-                            //                             resultMsg.result = false;
-                            //                             resultMsg.msg = config.MSG.error01;
-                            //                             resultMsg.err = err;
+                                                conn.query(stmt, function(err, rows) {
+                                                    if (err) {
+                                                        resultMsg.result = false;
+                                                        resultMsg.msg = config.MSG.error01;
+                                                        resultMsg.err = err;
 
-                            //                             return innerCallback(resultMsg);
-                            //                         }
+                                                        return innerCallback(resultMsg);
+                                                    }
 
-                            //                         innerCallback(null);
-                            //                     });
+                                                    innerCallback(null);
+                                                });
 
-                            //                     divideList  =   [];
+                                                divideList  =   [];
 
-                            //                 } catch (err) {
+                                            } catch (err) {
 
-                            //                     resultMsg.result = false;
-                            //                     resultMsg.msg = config.MSG.error01;
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
 
-                            //                     if( !resultMsg.err ) {
-                            //                         resultMsg.err = err;
-                            //                     }
+                                                if( !resultMsg.err ) {
+                                                    resultMsg.err = err;
+                                                }
 
-                            //                     return innerCallback(resultMsg);
-                            //                 }
+                                                return innerCallback(resultMsg);
+                                            }
 
-                            //             }else{
-                            //                 innerCallback(null);
-                            //             }
-                            //         }
+                                        }else{
+                                            innerCallback(null);
+                                        }
+                                    }
 
-                            //     ], function(err) {
+                                ], function(err) {
 
-                            //         if( err ) {
-                            //             resultMsg.result = false;
-                            //             resultMsg.msg = config.MSG.error01;
-                            //             if( !resultMsg.err ) {
-                            //                 resultMsg.err = err;
-                            //             }
+                                    if( err ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        if( !resultMsg.err ) {
+                                            resultMsg.err = err;
+                                        }
 
-                            //             return innerCallback(resultMsg);
-                            //         }
+                                        return innerCallback(resultMsg);
+                                    }
 
-                            //         innerCallback(null);
-                            //     });                                            
+                                    innerCallback(null);
+                                });                                            
 
-                            // }, function(err) {
-                            //     if (err) {
-                            //         return callback(resultMsg);
-                            //     }
+                            }, function(err) {
+                                if (err) {
+                                    return callback(resultMsg);
+                                }
 
-                            //     log.debug("simulationBacktest.saveTmSimulResultContribute");
-                            //     arr_result_rebalance    =   [];
+                                log.debug("simulationBacktest.saveTmSimulResultContribute");
+                                arr_result_rebalance    =   [];
 
-                            //     callback(null);
-                            // });
+                                callback(null);
+                            });
 
                         }else{
                             callback(null);
@@ -2165,7 +2215,8 @@ var getBacktestResult = function(req, res) {
         resultMsg.jsonFileName          =   "";
         resultMsg.inputData             =   [];
         resultMsg.arr_analyze           =   [];
-        resultMsg.arr_analyze_main      =   [];        
+        resultMsg.arr_analyze_main      =   []
+        resultMsg.arr_result_contribute =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -2352,6 +2403,62 @@ var getBacktestResult = function(req, res) {
                         }
                     },
 
+                    /* 5. (백테스트) tm_simul_result_contribute 테이블을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+                            stmt = mapper.getStatement('simulationBacktest', 'getSimulResultContribute', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length > 0 ) {
+
+                                    var v_prev_F12506           =   "";
+                                    var v_arr_F12506_contribute =   [];
+                                    for( var i=0; i < rows.length; i++ ) {
+                                        var v_row   =   rows[i];
+
+                                        if( i == 0 ) {
+                                            v_prev_F12506   =   v_row.F12506;
+                                        }
+                                        
+                                        if( v_prev_F12506 == v_row.F12506 ) {
+                                            v_arr_F12506_contribute.push( v_row );
+                                        }
+                                        
+                                        if( i == rows.length -1 || v_prev_F12506 != v_row.F12506 ) {
+                                            resultMsg.arr_result_contribute.push( ...v_arr_F12506_contribute );
+                                            v_arr_F12506_contribute =   [];
+                                        }
+
+                                        v_prev_F12506   =   v_row.F12506;
+                                    }
+
+                                    console.log( "resultMsg.arr_result_contribute", resultMsg.arr_result_contribute );
+                                }
+
+                                callback(null, paramData);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
                     // /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
                     // function(msg, callback) {
 
@@ -2511,6 +2618,7 @@ var getBacktestResult = function(req, res) {
 
         resultMsg.arr_analyze           =   [];
         resultMsg.arr_analyze_main      =   [];
+        resultMsg.arr_result_contribute =   [];
 
         res.json(resultMsg);
         res.end();
