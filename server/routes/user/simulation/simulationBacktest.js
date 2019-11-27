@@ -2023,7 +2023,6 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 v_prev_F12506   =   v_row.F12506;
                             }
 
-                            console.log( "resultMsg.arr_result_contribute", resultMsg.arr_result_contribute );
 
                             var divideList  =   [];
                             async.forEachOfLimit( arr_result_contribute, 1, function(subList, i, innerCallback) {
