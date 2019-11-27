@@ -133,6 +133,7 @@ export default {
 
             if( tab_id == 0 ) {
                 vm.paramData    =   {};
+                vm.showSimulationId     =   0;
             }else{
 
                 if( vm.paramData ) {
@@ -145,17 +146,22 @@ export default {
 
                         if( vm.paramData.simul_mast.scen_cd ) {
                             vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
-                        }                
+                        }
+
+                        vm.showSimulationId     =   0;
                     }
 
                     if( typeof vm.paramData.time_series_upload_yn != "undefined" && vm.paramData.time_series_upload_yn == "1" ) {
-                        tab_id  =   0;
+                        tab_id  =   1;
+                        vm.showSimulationId     =   4;
                     }
+
+                }else{
+                    vm.showSimulationId     =   0;
                 }
             }
 
             vm.activeTab            =   tab_id;
-            vm.showSimulationId     =   0;
         },
 
         /*

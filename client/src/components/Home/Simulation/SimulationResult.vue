@@ -1852,7 +1852,7 @@ export default {
             }
 
             if( typeof p_param.time_series_upload_yn != "undefined" && p_param.time_series_upload_yn == "1" ) {
-                p_param.showSimulationId    =   0;
+                p_param.showSimulationId    =   4;
             }
 
             vm.$emit( "fn_showSimulation", p_param );
