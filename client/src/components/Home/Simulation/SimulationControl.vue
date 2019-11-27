@@ -134,16 +134,24 @@ export default {
             if( tab_id == 0 ) {
                 vm.paramData    =   {};
             }else{
-                if( vm.paramData.simul_mast ) {
 
-                    if( vm.paramData.simul_mast.grp_cd ) {
-                        vm.paramData.grp_cd     =   vm.paramData.simul_mast.grp_cd;
+                if( vm.paramData ) {
+
+                    if( vm.paramData.simul_mast ) {
+
+                        if( vm.paramData.simul_mast.grp_cd ) {
+                            vm.paramData.grp_cd     =   vm.paramData.simul_mast.grp_cd;
+                        }
+
+                        if( vm.paramData.simul_mast.scen_cd ) {
+                            vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
+                        }                
                     }
 
-                    if( vm.paramData.simul_mast.scen_cd ) {
-                        vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
-                    }                
-                }                    
+                    if( typeof vm.paramData.time_series_upload_yn != "undefined" && vm.paramData.time_series_upload_yn == "1" ) {
+                        tab_id  =   0;
+                    }
+                }
             }
 
             vm.activeTab            =   tab_id;
@@ -186,16 +194,17 @@ export default {
          */
         async fn_showSimulation(
              v_param={ 
-                    showSimulationId    :   1
+                    showSimulationId        :   1
 
-                ,   grp_cd              :   ""
-                ,   scen_cd             :   ""
+                ,   grp_cd                  :   ""
+                ,   scen_cd                 :   ""
+                ,   time_series_upload_yn   :   ""
 
-                ,   simul_mast          :   {}
-                ,   arr_daily           :   []
-                ,   arr_rebalance       :   []
-                ,   arr_scen_in_grp     :   []
-                ,   method_gubun        :   ""
+                ,   simul_mast              :   {}
+                ,   arr_daily               :   []
+                ,   arr_rebalance           :   []
+                ,   arr_scen_in_grp         :   []
+                ,   method_gubun            :   ""
             } 
         ) {
             var vm = this;

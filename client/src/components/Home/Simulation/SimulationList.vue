@@ -230,16 +230,17 @@
                                         <input
                                             type="hidden"
                                             name="strParam"
-                                            :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index, 'owner_yn' : item.owner_yn } )"
+                                            :value="JSON.stringify( { 'grp_cd' : item.grp_cd, 'scen_cd' : item.scen_cd, 'scen_name' : item.scen_name, 'grp_yn' : item.grp_yn, 'simul_change_yn' : item.simul_change_yn, 'result_daily_yn' : item.result_daily_yn, 'index' : index, 'owner_yn' : item.owner_yn, 'time_series_upload_yn' : item.time_series_upload_yn } )"
                                         />
                                     </td>
 
-                                    <!-- 버튼 영역 start -->
+
+                                <!-- 버튼 영역 start -->
                                     <td>
                                         <div class="tooltip">
                                             <button
                                                 name="btn1"
-                                                :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' ) ?  '' : 'disable' )"
+                                                :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' && !( typeof item.time_series_upload_yn != 'undefined' && item.time_series_upload_yn == '1' ) ) ?  '' : 'disable' )"
                                                 @click.stop="fn_show_simul_modify( item, index )"
                                             ></button>
                                             <span class="tooltiptext" style="width:70px;">설정하기</span>
@@ -380,7 +381,8 @@
                                             <span class="tooltiptext" style="width:50px;">more</span>
                                         </div>
                                     </td>
-                                    <!-- 버튼 영역 end -->
+                                <!-- 버튼 영역 end -->
+
                                 </tr>
                             </tbody>
                         </table>
@@ -1491,7 +1493,7 @@ export default {
                     return  false;
                 }
 
-                if( !( p_item.grp_yn == '0' && p_item.owner_yn == '1' ) ) {
+                if( !( p_item.grp_yn == '0' && p_item.owner_yn == '1' && !( typeof p_item.time_series_upload_yn != 'undefined' && p_item.time_series_upload_yn == '1' ) ) ) {
                     return false;
                 }                       
 

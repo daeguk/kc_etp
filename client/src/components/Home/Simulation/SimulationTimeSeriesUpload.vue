@@ -83,7 +83,7 @@
                             />
                         </v-flex>
                         <v-flex xs2>
-                            <label class="upload-hidden" @click="/* fn_fileClick() */">업로드</label>
+                            <label class="upload-hidden" @click="fn_fileClick()">업로드</label>
                             <input
                                 type="file"
                                 name="timeSeriesUpload"
@@ -636,7 +636,15 @@ export default {
 
 
                                     if( check ) {
-                                        check   =   true;
+
+                                        vm.$emit( "fn_showSimulation", 
+                                            { 
+                                                    showSimulationId        :   2
+                                                ,   grp_cd                  :   response.data.grp_cd
+                                                ,   scen_cd                 :   response.data.scen_cd
+                                                ,   time_series_upload_yn   :   '1'
+                                            }
+                                        );
                                     }
 
                                 }else{

@@ -396,6 +396,7 @@
                             ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
                             ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
                             ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+                            ,   tm_simul_mast.time_series_upload_yn                     AS  time_series_upload_yn       /* 시계열 업로드 여부 */
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
                             ,   '0'                                                     AS  result_daily_yn             /* result_daily 존재여부 */
@@ -435,6 +436,7 @@
                             ,   tm_simul_mast.init_invest_money                         AS  init_invest_money           /* 초기투자금액 */
                             ,   tm_simul_mast.bench_mark_cd                             AS  bench_mark_cd               /* 벤치마크 (COM008) */
                             ,   tm_simul_mast.importance_method_cd                      AS  importance_method_cd        /* 비중설정방식 (COM009) */
+                            ,   tm_simul_mast.time_series_upload_yn                     AS  time_series_upload_yn       /* 시계열 업로드 여부 */
 
                             ,   DATE_FORMAT( tm_simul_mast.upd_time, '%Y.%m.%d' )       AS  fmt_upd_time                /* 수정일 */
                             ,   IFNULL(
@@ -496,16 +498,6 @@
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_yn          =   '0'
 
-                       AND  EXISTS
-                            (
-                                SELECT  1
-                                  FROM  tm_simul_portfolio
-                                 WHERE  1 = 1
-                                   AND  tm_simul_portfolio.grp_cd       =   tm_simul_mast.grp_cd
-                                   AND  tm_simul_portfolio.scen_cd      =   tm_simul_mast.scen_cd
-                                 LIMIT  1
-                            )                       
-
                 )   base
 
          ORDER  BY      /* 상위그룹 '선택안함' 을 제일 먼저 노출되게 하고, 그룹코드는 역순으로 노출 */
@@ -548,6 +540,7 @@
 
                 ,   tm_simul_mast.serial_no                                 AS  serial_no                   /* 변경 순번 */
                 ,   tm_simul_mast.stock_gubun                               AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                ,   tm_simul_mast.time_series_upload_yn                     AS  time_series_upload_yn       /* 시계열 업로드 여부 */
 
                 ,   (
 
@@ -735,6 +728,7 @@
 
             ,   serial_no                           /* 변경 순번 */
             ,   stock_gubun                         /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+            ,   time_series_upload_yn               /* 시계열 업로드 여부 */
 
             ,   reg_id                              /* 등록자 ID */
             ,   reg_time                            /* 등록시간 */
@@ -759,6 +753,7 @@
 
             ,   #{serial_no}                        /* 변경 순번 */
             ,   #{stock_gubun}                      /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+            ,   #{time_series_upload_yn}            /* 시계열 업로드 여부 */
 
             ,   #{user_id}                          /* 등록자 ID */
             ,   now()                               /* 등록시간 */
@@ -1248,6 +1243,28 @@
            AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
     ]]>
     </update>
+
+    <!--
+    * 그룹변경인 경우 [tm_simul_result_contribute] 수정한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <update     id="modifyTmSimulResultContributeByChangeGroup">
+    <![CDATA[
+        UPDATE      /* simulation.modifyTmSimulResultContributeByChangeGroup     그룹변경인 경우 [tm_simul_result_contribute] 수정한다. */
+                    tm_simul_result_contribute
+
+           SET      grp_cd                  =   #{grp_cd}                       /* 그룹코드(상위코드) */
+                ,   scen_cd                 =   #{scen_cd}                      /* 시나리오 코드 */
+
+                ,   upd_id                  =   #{user_id}                      /* 수정자 ID */
+                ,   upd_time                =   now()                           /* 수정시간 */                
+
+         WHERE  1 = 1
+           AND  grp_cd                      =   #{prev_grp_cd}                  /* 그룹코드(상위코드) - 변경전 */
+           AND  scen_cd                     =   #{prev_scen_cd}                 /* 시나리오 코드 - 변경전 */
+    ]]>
+    </update>
+
     
 
     <!--
@@ -1334,6 +1351,23 @@
            AND  tm_simul_result_mast.scen_cd                =   #{scen_cd}          /* 시나리오코드 */
     ]]>
     </delete>
+
+    <!--
+    * [tm_simul_result_contribute] 테이블을 삭제한다.
+    * 2019-07-26  bkLove(촤병국)
+    -->
+    <delete     id="deleteSimulResultContribute">
+    <![CDATA[
+        DELETE  /* simulation.deleteSimulResultContribute        [tm_simul_result_contribute] 테이블을 삭제한다. */
+
+          FROM  tm_simul_result_contribute
+
+         WHERE  1 = 1
+
+           AND  tm_simul_result_contribute.grp_cd           =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_contribute.scen_cd          =   #{scen_cd}          /* 시나리오코드 */
+    ]]>
+    </delete>    
 
     <!--
     * [tm_simul_mast] 테이블을 삭제한다.

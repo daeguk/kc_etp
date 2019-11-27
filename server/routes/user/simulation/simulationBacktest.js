@@ -1278,66 +1278,72 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 // paramData.moduleId      =   "saveBacktestResult2";
 
 
-                                /* 백테스트를 수행한다. */
-                                runBacktest.call( this, req, res, paramData ).then( function(e) {
+                                if( paramData.time_series_upload_yn != "undefined" && paramData.time_series_upload_yn == "1" ) {
 
-                                    if( e && e.resultMsg && e.resultMsg.result ) {
+                                    callback( null, msg );
 
-                                        resultMsg               =   e.resultMsg;
+                                }else{
+                                    /* 백테스트를 수행한다. */
+                                    runBacktest.call( this, req, res, paramData ).then( function(e) {
 
-                                        // resultMsg.result        =   e.resultMsg.result;
-                                        // resultMsg.msg           =   e.resultMsg.msg;
-                                        // resultMsg.simul_mast    =   e.resultMsg.simul_mast;
+                                        if( e && e.resultMsg && e.resultMsg.result ) {
 
-                                        v_resultSimulData.arr_daily             =   [];
-                                        if( e.resultMsg.arr_daily && e.resultMsg.arr_daily.length > 0 ) {
-                                            v_resultSimulData.arr_daily         =   [ ...e.resultMsg.arr_daily ];
+                                            resultMsg               =   e.resultMsg;
+
+                                            // resultMsg.result        =   e.resultMsg.result;
+                                            // resultMsg.msg           =   e.resultMsg.msg;
+                                            // resultMsg.simul_mast    =   e.resultMsg.simul_mast;
+
+                                            v_resultSimulData.arr_daily             =   [];
+                                            if( e.resultMsg.arr_daily && e.resultMsg.arr_daily.length > 0 ) {
+                                                v_resultSimulData.arr_daily         =   [ ...e.resultMsg.arr_daily ];
+                                            }
+
+                                            v_resultSimulData.arr_rebalance         =   {};
+                                            if( e.resultMsg.arr_rebalance && Object.keys( e.resultMsg.arr_rebalance ).length > 0 ) {
+                                                v_resultSimulData.arr_rebalance     =   e.resultMsg.arr_rebalance;
+                                            }
+
+                                            v_resultSimulData.dailyJongmokObj       =   {};
+                                            if( e.resultMsg.dailyJongmokObj && Object.keys( e.resultMsg.dailyJongmokObj ).length > 0 ) {
+                                                v_resultSimulData.dailyJongmokObj   =   e.resultMsg.dailyJongmokObj;
+                                            }
+
+                                            v_resultSimulData.dailyObj              =   {};
+                                            if( e.resultMsg.dailyObj && Object.keys( e.resultMsg.dailyObj ).length > 0 ) {
+                                                v_resultSimulData.dailyObj          =   e.resultMsg.dailyObj;
+                                            }
+
+                                            v_resultSimulData.arr_contribute        =   {};
+                                            if( e.resultMsg.arr_contribute && Object.keys( e.resultMsg.arr_contribute ).length > 0 ) {
+                                                v_resultSimulData.arr_contribute    =   e.resultMsg.arr_contribute;
+                                            }
+
+                                            if( resultMsg.simul_mast && resultMsg.simul_mast.serial_no != null ) {
+                                                paramData.serial_no     =   resultMsg.simul_mast.serial_no;
+                                            }
+
+                                            callback( null, msg );
+
+                                        }else{
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = config.MSG.error01;
+
+                                            callback( resultMsg );
                                         }
 
-                                        v_resultSimulData.arr_rebalance         =   {};
-                                        if( e.resultMsg.arr_rebalance && Object.keys( e.resultMsg.arr_rebalance ).length > 0 ) {
-                                            v_resultSimulData.arr_rebalance     =   e.resultMsg.arr_rebalance;
-                                        }
+                                    }).catch( function(expetion){
 
-                                        v_resultSimulData.dailyJongmokObj       =   {};
-                                        if( e.resultMsg.dailyJongmokObj && Object.keys( e.resultMsg.dailyJongmokObj ).length > 0 ) {
-                                            v_resultSimulData.dailyJongmokObj   =   e.resultMsg.dailyJongmokObj;
-                                        }
+                                        log.debug( expetion, paramData );
 
-                                        v_resultSimulData.dailyObj              =   {};
-                                        if( e.resultMsg.dailyObj && Object.keys( e.resultMsg.dailyObj ).length > 0 ) {
-                                            v_resultSimulData.dailyObj          =   e.resultMsg.dailyObj;
-                                        }
-
-                                        v_resultSimulData.arr_contribute        =   {};
-                                        if( e.resultMsg.arr_contribute && Object.keys( e.resultMsg.arr_contribute ).length > 0 ) {
-                                            v_resultSimulData.arr_contribute    =   e.resultMsg.arr_contribute;
-                                        }
-
-                                        if( resultMsg.simul_mast && resultMsg.simul_mast.serial_no != null ) {
-                                            paramData.serial_no     =   resultMsg.simul_mast.serial_no;
-                                        }
-
-                                        callback( null, msg );
-
-                                    }else{
                                         resultMsg.result = false;
                                         resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = config.MSG.error01;
+                                        resultMsg.err = expetion;
 
                                         callback( resultMsg );
-                                    }
-
-                                }).catch( function(expetion){
-
-                                    log.debug( expetion, paramData );
-
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = expetion;
-
-                                    callback( resultMsg );
-                                });
+                                    });
+                                }
 
                             }
                         } catch (err) {
@@ -2182,7 +2188,17 @@ var getBacktestResult = function(req, res) {
                                 callback(resultMsg);
                             }
                             else{
-                                stmt = mapper.getStatement('simulationBacktest', 'getSimulListByBacktest', paramData, format);
+
+                                var v_namespace =   "simulationBacktest";
+                                var v_queryId   =   "getSimulListByBacktest";
+
+                                if( typeof paramData.time_series_upload_yn != "undefined" && paramData.time_series_upload_yn == "1" ) {
+                                    v_namespace =   "simulation";
+                                    v_queryId   =   "getSimulMast";
+                                }
+
+                                paramData.changeGrpCdYn     =   "0";
+                                stmt = mapper.getStatement( v_namespace, v_queryId, paramData, format);
                                 log.debug(stmt, paramData);
 
                                 conn.query(stmt, function(err, rows) {
@@ -2334,65 +2350,65 @@ var getBacktestResult = function(req, res) {
                         }
                     },
 
-                    /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
-                    function(msg, callback) {
+                    // /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
+                    // function(msg, callback) {
 
-                        try{
-                            stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultAnal', paramData, format);
-                            log.debug(stmt, paramData);
+                    //     try{
+                    //         stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultAnal', paramData, format);
+                    //         log.debug(stmt, paramData);
 
-                            conn.query(stmt, function(err, rows) {
+                    //         conn.query(stmt, function(err, rows) {
 
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
+                    //             if (err) {
+                    //                 resultMsg.result = false;
+                    //                 resultMsg.msg = config.MSG.error01;
+                    //                 resultMsg.err = err;
 
-                                    return callback(resultMsg);
-                                }
+                    //                 return callback(resultMsg);
+                    //             }
 
-                                if ( rows && rows.length > 0 ) {
+                    //             if ( rows && rows.length > 0 ) {
 
-                                    var v_arr_analyze_main  =   [];
-                                    for( var i=0; i < rows.length; i++ ) {
-                                        var rowData     =   rows[i];
+                    //                 var v_arr_analyze_main  =   [];
+                    //                 for( var i=0; i < rows.length; i++ ) {
+                    //                     var rowData     =   rows[i];
 
-                                        var analJson    =   {};
+                    //                     var analJson    =   {};
 
-                                        analJson.anal_title     =   rowData.anal_title;
+                    //                     analJson.anal_title     =   rowData.anal_title;
 
-                                        analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
-                                        if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
-                                            analJson.backtest   +=   " (" + rowData.backtest_year + ")";
-                                        }
+                    //                     analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
+                    //                     if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
+                    //                         analJson.backtest   +=   " (" + rowData.backtest_year + ")";
+                    //                     }
 
-                                        analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
-                                        if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
-                                            analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
-                                        }
+                    //                     analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
+                    //                     if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
+                    //                         analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
+                    //                     }
 
-                                        resultMsg.arr_analyze.push(analJson);
+                    //                     resultMsg.arr_analyze.push(analJson);
 
-                                        if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
-                                            v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
-                                        }
-                                    }
+                    //                     if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
+                    //                         v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
+                    //                     }
+                    //                 }
 
-                                    resultMsg.arr_analyze_main  =   _.orderBy( v_arr_analyze_main, [ "order_no"], ["asc"] );
-                                }
+                    //                 resultMsg.arr_analyze_main  =   _.orderBy( v_arr_analyze_main, [ "order_no"], ["asc"] );
+                    //             }
 
-                                callback(null, paramData);
-                            });
+                    //             callback(null, paramData);
+                    //         });
 
-                        } catch (err) {
+                    //     } catch (err) {
 
-                            resultMsg.result = false;
-                            resultMsg.msg = config.MSG.error01;
-                            resultMsg.err = err;
+                    //         resultMsg.result = false;
+                    //         resultMsg.msg = config.MSG.error01;
+                    //         resultMsg.err = err;
 
-                            callback(resultMsg);
-                        }
-                    },                    
+                    //         callback(resultMsg);
+                    //     }
+                    // },                    
                     
 
                     /* 5. 파이선을 통해 분석정보를 가져온다.*/
@@ -2559,60 +2575,68 @@ var getSimulJongmoForExcel = function(req, res) {
 
                             msg.arr_daily_jongmok           =   [];
 
-                            paramData.moduleId              =   "getSimulJongmoForExcel";
-                            paramData.transaction           =   {};
-                            paramData.transaction.mapper    =   mapper;
-                            paramData.transaction.pool      =   pool;
-                            paramData.transaction.conn      =   conn;
+
+                            if( paramData.time_series_upload_yn != "undefined" && paramData.time_series_upload_yn == "1" ) {
+
+                                callback( null, msg );
+
+                            }else{
+                                
+                                paramData.moduleId              =   "getSimulJongmoForExcel";
+                                paramData.transaction           =   {};
+                                paramData.transaction.mapper    =   mapper;
+                                paramData.transaction.pool      =   pool;
+                                paramData.transaction.conn      =   conn;
 
 
-                            /* 백테스트를 수행한다. */
-                            runBacktest.call( this, req, res, paramData ).then( function(e) {
+                                /* 백테스트를 수행한다. */
+                                runBacktest.call( this, req, res, paramData ).then( function(e) {
 
-                                if( e && e.resultMsg && e.resultMsg.result ) {
+                                    if( e && e.resultMsg && e.resultMsg.result ) {
 
-                                    resultMsg.result        =   e.resultMsg.result;
-                                    resultMsg.msg           =   e.resultMsg.msg;
-                                    resultMsg.simul_mast    =   e.resultMsg.simul_mast;
+                                        resultMsg.result        =   e.resultMsg.result;
+                                        resultMsg.msg           =   e.resultMsg.msg;
+                                        resultMsg.simul_mast    =   e.resultMsg.simul_mast;
 
 
-                                    if( e.resultMsg.dailyJongmokObj && Object.keys( e.resultMsg.dailyJongmokObj ).length > 0 ) {
+                                        if( e.resultMsg.dailyJongmokObj && Object.keys( e.resultMsg.dailyJongmokObj ).length > 0 ) {
 
-                                        for( var i=0; i < Object.keys( e.resultMsg.dailyJongmokObj ).length; i++ ) {
-                                            var v_F12506        =   Object.keys( e.resultMsg.dailyJongmokObj )[i];
-                                            var v_subItem       =   e.resultMsg.dailyJongmokObj[ v_F12506 ];
-                                            var v_mastItem      =   e.resultMsg.dailyJongmokObj[ v_F12506 ];
+                                            for( var i=0; i < Object.keys( e.resultMsg.dailyJongmokObj ).length; i++ ) {
+                                                var v_F12506        =   Object.keys( e.resultMsg.dailyJongmokObj )[i];
+                                                var v_subItem       =   e.resultMsg.dailyJongmokObj[ v_F12506 ];
+                                                var v_mastItem      =   e.resultMsg.dailyJongmokObj[ v_F12506 ];
 
-                                            for( var j=0; j < Object.keys( e.resultMsg.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
-                                                var v_dataKey       =   Object.keys( e.resultMsg.dailyJongmokObj[ v_F12506 ] )[j];
-                                                var v_dataItem      =   e.resultMsg.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
+                                                for( var j=0; j < Object.keys( e.resultMsg.dailyJongmokObj[ v_F12506 ] ).length; j++ ) {
+                                                    var v_dataKey       =   Object.keys( e.resultMsg.dailyJongmokObj[ v_F12506 ] )[j];
+                                                    var v_dataItem      =   e.resultMsg.dailyJongmokObj[ v_F12506 ][ v_dataKey ];
 
-                                                Object.assign( v_dataItem, v_mastItem );
-                                                msg.arr_daily_jongmok.push( v_dataItem  );
+                                                    Object.assign( v_dataItem, v_mastItem );
+                                                    msg.arr_daily_jongmok.push( v_dataItem  );
+                                                }
                                             }
                                         }
+
+                                        callback( null, msg );
+
+                                    }else{
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = config.MSG.error01;
+
+                                        callback( resultMsg );
                                     }
 
-                                    callback( null, msg );
+                                }).catch( function(expetion){
 
-                                }else{
+                                    log.debug( expetion, paramData );
+
                                     resultMsg.result = false;
                                     resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = config.MSG.error01;
+                                    resultMsg.err = expetion;
 
                                     callback( resultMsg );
-                                }
-
-                            }).catch( function(expetion){
-
-                                log.debug( expetion, paramData );
-
-                                resultMsg.result = false;
-                                resultMsg.msg = config.MSG.error01;
-                                resultMsg.err = expetion;
-
-                                callback( resultMsg );
-                            });
+                                });
+                            }
 
                         }
                     } catch (err) {
