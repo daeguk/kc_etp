@@ -4149,8 +4149,8 @@ var	fn_get_simulation_data  =   function(
 
                                 var jongmokKey  =   Object.keys(contributeItem.jongmok)[jongmokIndex];
 
-                                contributeItem.jongmok[jongmokKey].START_WEIGH = v_dailyJongmokObj[contributeItem.start_date][jongmokKey].AFTER_IMPORTANCE;
-                                contributeItem.jongmok[jongmokKey].END_WEIGH = v_dailyJongmokObj[contributeItem.end_date][jongmokKey].AFTER_IMPORTANCE;
+                                contributeItem.jongmok[jongmokKey].START_WEIGHT = v_dailyJongmokObj[contributeItem.start_date][jongmokKey].TODAY_IMPORTANCE;
+                                contributeItem.jongmok[jongmokKey].END_WEIGHT = v_dailyJongmokObj[contributeItem.end_date][jongmokKey].TODAY_IMPORTANCE;
 
 
                                 contributeItem.jongmok[jongmokKey].CONTRIBUTE_RATE = ((endIndex *  contributeItem.jongmok[jongmokKey].END_WEIGH) - (startIndex * contributeItem.jongmok[jongmokKey].START_WEIGH)) / startIndex * 100;
