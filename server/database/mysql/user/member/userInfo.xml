@@ -17,8 +17,8 @@
         WHERE email = #{email}
     </update>
     <insert id="insertUserLog">
-      INSERT INTO tm_user_log (email, login_date)
-      VALUES (#{email}, now())
+      INSERT INTO tm_user_log (email, login_date, ip)
+      VALUES (#{email}, now(), #{ip})
     </insert>
     <!--
     * 사용자 회원가입 처리

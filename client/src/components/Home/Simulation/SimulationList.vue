@@ -60,7 +60,7 @@
                         outline
                         color="primary"
 
-                        @click.stop="fn_show_simulation_time_series_upload()"
+                        @click.stop="fn_show_simulation_time_series_upload( {}, -1 )"
                         
                     >시계열 등록</v-btn>
                 </span>
@@ -240,7 +240,7 @@
                                         <div class="tooltip">
                                             <button
                                                 name="btn1"
-                                                :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' && !( typeof item.time_series_upload_yn != 'undefined' && item.time_series_upload_yn == '1' ) ) ?  '' : 'disable' )"
+                                                :class="'simul_icon1 ' + ( ( item.grp_yn == '0' && item.owner_yn == '1' ) ?  '' : 'disable' )"
                                                 @click.stop="fn_show_simul_modify( item, index )"
                                             ></button>
                                             <span class="tooltiptext" style="width:70px;">설정하기</span>
@@ -1493,13 +1493,20 @@ export default {
                     return  false;
                 }
 
-                if( !( p_item.grp_yn == '0' && p_item.owner_yn == '1' && !( typeof p_item.time_series_upload_yn != 'undefined' && p_item.time_series_upload_yn == '1' ) ) ) {
+                if( !( p_item.grp_yn == '0' && p_item.owner_yn == '1' ) ) {
                     return false;
-                }                       
+                }
 
-                /* 수정정보를 보여준다. */
-                p_item.showSimulationId         =   1;
-                vm.fn_showSimulation( p_item );
+
+                if( typeof p_item.time_series_upload_yn != 'undefined' && p_item.time_series_upload_yn == '1' ) {
+
+                    vm.fn_show_simulation_time_series_upload( p_item, p_index );
+                }else{
+
+                    /* 수정정보를 보여준다. */
+                    p_item.showSimulationId         =   1;
+                    vm.fn_showSimulation( p_item );
+                }
 
             }catch( e ) {
                 console.log( e );
@@ -1735,10 +1742,13 @@ export default {
          * 시나리오 버튼 클릭시
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_show_simulation_time_series_upload : function() {
+        fn_show_simulation_time_series_upload : function( p_item, p_index ) {
             var vm = this;
 
-            vm.$emit("fn_showSimulation", { showSimulationId : 4 } );
+            /* 수정정보를 보여준다. */
+            p_item.showSimulationId         =   4;
+
+            vm.$emit("fn_showSimulation", p_item );
         },        
     }  
 };
