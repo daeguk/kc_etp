@@ -9,6 +9,7 @@ var config = require('../../../config/config');
 var dbconfig = require('../../../database/mysql_config');
 var util = require('../../../util/util');
 var Promise = require("bluebird");
+var requestIp = require('request-ip');
 
 /* logging 추가함.  2019-06-10 */
 var log = config.logger;
@@ -25,9 +26,12 @@ var userLoginCheck = function(req, res) {
   // options.criteria.hashed_password = crypto.createHash('sha256', config.pwd_salt).update(password).digest('base64');;
 
   // IP / 접속 시간 
-  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
+  let tmpip = requestIp.getClientIp(req);
+  tmpip = tmpip.split(':').slice(-1);
+  options.ip = tmpip[0];
+  // var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
   var dt = new Date();
-  log.debug("client DATE : " + dt + " IP : " + ip);
+  log.debug("client DATE : " + dt + " IP : " + options.ip);
 
   try {
     var pool = req.app.get("pool");
@@ -76,18 +80,18 @@ var userLoginCheck = function(req, res) {
   } catch(exception) {
     log.debug("err=>", exception);
   }
-  setLoginHistory(req);
+  setLoginHistory(req, options);
 };
 
-var setLoginHistory = function(req) {
+var setLoginHistory = function(req, options) {
   try {
-    var options = req.body;
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     /*
     *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
     *   written by bkLove(최병국)   2019-06-25
     */
+    // log.debug("options1==> ", JSON.stringify(options));
     util.fn_replaceSpecialChar( options );
     var stmt = mapper.getStatement('member', 'setLoginHistory', options, dbconfig.format);
     // log.debug(stmt);
