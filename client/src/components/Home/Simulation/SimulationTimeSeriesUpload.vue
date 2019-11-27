@@ -141,6 +141,7 @@ import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import _ from "lodash";
+import excel from "xlsx";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
@@ -982,7 +983,7 @@ export default {
             };
 
             var excelInfo = {
-                    excelFileNm     :   vm.scen_name.replace( /(\\)|(")|(\/)|(:)|(\*)|(\?)|(<)|(>)|(\|)/g, "" )
+                    excelFileNm     :   vm.org_scen_name.replace( /(\\)|(")|(\/)|(:)|(\*)|(\?)|(<)|(>)|(\|)/g, "" )
                 ,   sheetNm         :   ""
                 ,   dataInfo        :   []
 
@@ -1011,6 +1012,7 @@ export default {
                     vm.fn_showProgress( false );
                 });
                 
+
                 /* 시계열 등록 */
                 async function    step1() {
 
@@ -1028,11 +1030,10 @@ export default {
 
                                 util.axiosCall(
                                         {
-                                                "url"       :   Config.base_url + "/user/simulation/getSimulJongmoForExcel"
+                                                "url"       :   Config.base_url + "/user/simulation/getSimulTimeSeriesExcel"
                                             ,   "data"      :   {
-                                                        "grp_cd"                    :   vm.simul_result_mast.grp_cd
-                                                    ,   "scen_cd"                   :   vm.simul_result_mast.scen_cd
-                                                    ,   "time_series_upload_yn"     :   vm.simul_result_mast.time_series_upload_yn
+                                                        "grp_cd"                    :   vm.prev_grp_cd
+                                                    ,   "scen_cd"                   :   vm.prev_scen_cd
                                                 }
                                             ,   "method"    :   "post"
                                         }
@@ -1049,19 +1050,19 @@ export default {
                                                     }else{
 
                                                         excelInfo.arrHeaderNm       =   [       
-                                                            "분석지표", "백테스트", vm.simul_result_mast.bench_index_nm
+                                                            "DATE", "지수"
                                                         ];
 
                                                         excelInfo.arrHeaderKey      =   [       
-                                                            "anal_title", "backtest", "benchmark"
+                                                            "fmt_F12506", "INDEX_RATE"
                                                         ];
 
 
                                                         excelInfo.arrColsInfo       =   [       
-                                                            {width : 45}, {width : 20}, {width : 20}
+                                                            {width : 20}, {width : 45}
                                                         ];
 
-                                                        excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.arr_analyze, excelInfo.arrHeaderKey );
+                                                        excelInfo.dataInfo  =   vm.fn_setExcelInfo( response.data.arr_result_daily, excelInfo.arrHeaderKey );
                                                         dataWS              =   excel.utils.aoa_to_sheet( [ excelInfo.arrHeaderNm ] );
                                                         options             =   Object.assign( options, excelInfo.options );
                                                         vm.fn_setSheetInfo( dataWS, options, excelInfo );
@@ -1084,7 +1085,7 @@ export default {
                                     ,   function(ex) {
                                             console.log( "error", ex );
 
-                                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                            if ( ex && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                                             resolve( { result : false } );
                                         }
                                 );

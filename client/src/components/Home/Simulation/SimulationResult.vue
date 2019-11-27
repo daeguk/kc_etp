@@ -1656,7 +1656,7 @@ export default {
                                     ,   function(ex) {
                                             console.log( "error", ex );
 
-                                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                            if ( ex && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                                             resolve( { result : false } );
                                         }
                                 );
