@@ -263,6 +263,10 @@
                     tm_simul_result_daily.grp_cd                                AS  grp_cd                  /* 그룹코드(상위코드) */
                 ,   tm_simul_result_daily.scen_cd                               AS  scen_cd                 /* 시나리오코드 */
                 ,   tm_simul_result_daily.F12506                                AS  F12506                  /* 입회일자 */
+                ,   DATE_FORMAT( 
+                            tm_simul_result_daily.F12506
+                        ,   '%Y.%m.%d' 
+                    )                                                           AS  fmt_F12506              /* 입회일자 */
 
                 ,   tm_simul_result_daily.rebalancing                           AS  rebalancing             /* 리밸런싱 여부(Y,N)-COM010 */
                 ,   tm_simul_result_daily.F15028_S                              AS  F15028_S                /* 기준시총 */

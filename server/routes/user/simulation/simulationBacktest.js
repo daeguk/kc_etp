@@ -1365,7 +1365,9 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 msg = {};
                             }
 
-                            paramData.changeGrpCdYn  =   "0";
+                            if( typeof paramData.changeGrpCdYn == "undefined" || paramData.changeGrpCdYn == null ) {
+                                paramData.changeGrpCdYn  =   "0";
+                            }
 
 
                             /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
@@ -2895,6 +2897,112 @@ var getSimulResultSaveYn = function(req, res) {
         resultMsg.err = expetion;
 
         resultMsg.result_save_yn            =   "N";
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 시계열 엑셀 다운로드를 위한 데이터를 조회한다.
+ * 2019-10-24  bkLove(촤병국)
+ */
+var getSimulTimeSeriesExcel = function(req, res) {
+    try {
+        log.debug('simulationBacktest.getSimulTimeSeriesExcel 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        var resultMsg = {};
+        
+        /* 1. body.data 값이 있는지 체크 */
+        if (!req.body.data) {
+            log.error("[error] simulationBacktest.getSimulTimeSeriesExcel  req.body.data no data.", req.body.data);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+
+            throw resultMsg;
+        }
+
+        var paramData = JSON.parse(JSON.stringify(req.body.data));
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        var format = { language: 'sql', indent: '' };
+        var stmt = "";
+
+        resultMsg.arr_result_daily              =   [];
+
+
+        Promise.using(pool.connect(), conn => {
+
+            try{
+
+                /* 그룹에 속한 시뮬레이션을 조회한다. */
+                stmt = mapper.getStatement('simulationBacktest', 'getSimulResultDaily', paramData, format);
+                log.debug(stmt);
+
+                conn.query(stmt, function(err, rows) {
+
+                    if (err) {
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        res.json(resultMsg);
+                        res.end();
+
+                        return  false;
+                    }
+
+
+                    if( rows && rows.length > 0  ) {
+
+                        rows.forEach( function( item, index, array ) {
+                           resultMsg.arr_result_daily.push({
+                                "fmt_F12506"     :   item.fmt_F12506
+                            ,   "INDEX_RATE"     :   item.INDEX_RATE
+                           }) 
+                        });
+
+                        resultMsg.result            =   true;
+                        resultMsg.msg               =   "";
+
+                        res.json(resultMsg);
+                        res.end();
+                    }                    
+                });
+
+            } catch (err) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+
+                if( !resultMsg.err ) {
+                    resultMsg.err = err;
+                }
+
+                res.json(resultMsg);
+                res.end();
+            }
+
+        });
+
+    } catch (expetion) {
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        resultMsg.arr_result_daily      =   [];
 
         res.json(resultMsg);
         res.end();
@@ -4445,3 +4553,4 @@ module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
 module.exports.getSimulResultSaveYn = getSimulResultSaveYn;
 module.exports.getAnalyze_timeseries = getAnalyze_timeseries;
 module.exports.fnSaveTmSimulResultAnal = fnSaveTmSimulResultAnal;
+module.exports.getSimulTimeSeriesExcel = getSimulTimeSeriesExcel;

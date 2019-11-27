@@ -193,10 +193,12 @@ module.exports = {
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getSimulJongmoForExcel'           , method: 'getSimulJongmoForExcel'              , session: 'check', type: 'post' },     // 엑셀 다운로드용 시뮬레이션 종목정보 조회
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getSimulResultSaveYn'             , method: 'getSimulResultSaveYn'                , session: 'check', type: 'post' },     // 시뮬레이션 결과 테이블에 저장되어 있는지 체크
         { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getAnalyze_timeseries'            , method: 'getAnalyze_timeseries'               , session: 'check', type: 'post' },     // daily 조회하여 파이선 호출후 분석테이블 저장
+        { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getSimulTimeSeriesExcel'          , method: 'getSimulTimeSeriesExcel'             , session: 'check', type: 'post' },     // 시계열 엑셀 다운로드를 위한 데이터를 조회
 
 
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadPortfolio'                  , method: 'uploadPortfolio'                     , session: 'check', type: 'post' },     // 포트폴리오 업로드
         { file: './user/simulation/simulationUpload'    , path: '/user/simulation/uploadTimeSeries'                 , method: 'uploadTimeSeries'                    , session: 'check', type: 'post' },     // 시계열 업로드
+
 
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getScenInGrpCd'                   , method: 'getScenInGrpCd'                      , session: 'check', type: 'post' },     // 그룹코드에 속한 시나리오 조회
         { file: './user/simulation/simulationGroup'     , path: '/user/simulation/getInfoCheckedScenCd'             , method: 'getInfoCheckedScenCd'                , session: 'check', type: 'post' },     // 선택된 시나리오 코드들에 대한 정보 조회

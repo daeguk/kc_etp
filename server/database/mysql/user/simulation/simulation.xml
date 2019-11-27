@@ -1323,16 +1323,23 @@
     * 2019-07-26  bkLove(촤병국)
     -->
     <delete     id="deleteSimulResultDaily">
-    <![CDATA[
+
         DELETE  /* simulation.deleteSimulResultDaily      [tm_simul_result_daily] 테이블을 삭제한다. */
 
           FROM  tm_simul_result_daily
 
          WHERE  1 = 1
 
-           AND  tm_simul_result_daily.grp_cd                =   #{grp_cd}           /* 그룹코드(상위코드) */
-           AND  tm_simul_result_daily.scen_cd               =   #{scen_cd}          /* 시나리오코드 */
-    ]]>
+        <if   test= ' changeGrpCdYn == "1" ' >
+           AND  tm_simul_result_daily.grp_cd        =   #{prev_grp_cd}      /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd       =   #{prev_scen_cd}     /* 시나리오코드 */
+        </if>
+
+        <if   test= ' changeGrpCdYn == "0" ' >
+           AND  tm_simul_result_daily.grp_cd        =   #{grp_cd}           /* 그룹코드(상위코드) */
+           AND  tm_simul_result_daily.scen_cd       =   #{scen_cd}          /* 시나리오코드 */
+        </if>
+
     </delete>
 
     <!--
