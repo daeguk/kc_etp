@@ -1723,7 +1723,8 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             var msg         =   {};
                             var exist_yn    =   "Y";
 
-                            paramData.changeGrpCdYn  =   "0";
+                            paramData.changeGrpCdYn     =   "0";
+                            paramData.prevChangeGrpCdYn =   "0";
 
                             /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
                             if( typeof paramData.prev_scen_cd == "undefined" || paramData.prev_scen_cd == "" ) {
@@ -1788,7 +1789,8 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                             if(     paramData.status        ==  "modify"
                                 &&  paramData.prev_grp_cd   !=  paramData.grp_cd ) {
 
-                                paramData.changeGrpCdYn  =   "1";
+                                paramData.changeGrpCdYn     =   "1";
+                                paramData.prevChangeGrpCdYn =   "1";
                                 stmt = mapper.getStatement('simulation', 'getExistSubCnt', paramData, format);
                                 log.debug(stmt, paramData);
 
@@ -2472,7 +2474,9 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                                         if( rows && rows.length > 0  ) {
                                             msg.v_simul_prev_share      =   rows;
-                                        }                                    
+                                        }
+
+                                        paramData.changeGrpCdYn     =   paramData.prevChangeGrpCdYn;
 
                                         callback(null, msg);
                                     });
@@ -2529,7 +2533,9 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
 
                                         if( rows && rows.length > 0  ) {
                                             msg.v_simul_share_upper     =   rows;
-                                        }                                    
+                                        }
+
+                                        paramData.changeGrpCdYn     =   paramData.prevChangeGrpCdYn;
 
                                         callback(null, msg);
                                     });

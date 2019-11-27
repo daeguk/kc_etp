@@ -1519,13 +1519,22 @@ var uploadTimeSeries = function(req, res) {
                                     var msg         =   {};
                                     var exist_yn    =   "Y";
 
-                                    paramData.changeGrpCdYn  =   "0";
+                                    paramData.changeGrpCdYn     =   "0";
+                                    paramData.prevChangeGrpCdYn =   "0";
 
                                     /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */
                                     if( typeof paramData.prev_scen_cd == "undefined" || paramData.prev_scen_cd == "" ) {
                                         paramData.status    =   "insert";
                                     }else{
                                         paramData.status    =   "modify";
+                                    }
+
+                                    /* 수정 건 이고 상위 그룹이 변경된 경우 */
+                                    if(     paramData.status        ==  "modify"
+                                        &&  paramData.prev_grp_cd   !=  paramData.grp_cd ) {
+
+                                        paramData.changeGrpCdYn     =   "1";
+                                        paramData.prevChangeGrpCdYn =   "1";
                                     }
 
                                     stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
@@ -1941,7 +1950,6 @@ var uploadTimeSeries = function(req, res) {
 									paramData.rebalance_date_cd     =   null;                   /* 리밸런싱 일자 코드 */
 
 									paramData.scen_depth     		=   "2";                    /* 시나리오 DEPTH */
-									paramData.init_invest_money		=   1000000;                /* 초기투자금액 */
 									paramData.importance_method_cd	=   "1";                    /* 비중설정방식 (COM009) */
                                     paramData.serial_no             =   msg.now_serial_no + 1;  /* 변경 순번 */
 									paramData.stock_gubun			=   "1"; 	                /* 주식수 구분 (COM013) */
@@ -2052,7 +2060,9 @@ var uploadTimeSeries = function(req, res) {
 
                                                 if( rows && rows.length > 0  ) {
                                                     msg.v_simul_prev_share      =   rows;
-                                                }                                    
+                                                }
+
+                                                paramData.changeGrpCdYn     =   paramData.prevChangeGrpCdYn;
 
                                                 callback(null, msg);
                                             });
@@ -2109,7 +2119,9 @@ var uploadTimeSeries = function(req, res) {
 
                                                 if( rows && rows.length > 0  ) {
                                                     msg.v_simul_share_upper     =   rows;
-                                                }                                    
+                                                }
+
+                                                paramData.changeGrpCdYn     =   paramData.prevChangeGrpCdYn;
 
                                                 callback(null, msg);
                                             });

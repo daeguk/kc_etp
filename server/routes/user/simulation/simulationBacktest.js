@@ -1365,7 +1365,9 @@ var saveBacktestResult = async function(req, res, paramData) {
                                 msg = {};
                             }
 
-                            paramData.changeGrpCdYn  =   "0";
+                            if( typeof paramData.changeGrpCdYn == "undefined" || paramData.changeGrpCdYn == null ) {
+                                paramData.changeGrpCdYn  =   "0";
+                            }
 
 
                             /* 기존에 등록된 prev_scen_cd 가 없는 경우 ( 신규 건 ) */

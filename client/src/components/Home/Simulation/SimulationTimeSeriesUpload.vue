@@ -57,6 +57,21 @@
 
                     <v-layout row xs12>
                         <v-flex xs2>
+                            <v-subheader class="subheader_r">초기투자금액(KRW)</v-subheader>
+                        </v-flex>
+                        <v-flex xs2>
+                            <v-text-field
+                                type="text"
+                                v-model="init_invest_money"
+                                outline
+                                @blur="fn_resetErrorMessage();"
+                                maxlength="15"
+                            ></v-text-field>
+                        </v-flex>
+                    </v-layout>
+
+                    <v-layout row xs12>
+                        <v-flex xs2>
                             <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
                         </v-flex>
                         <v-flex xs2>
@@ -152,6 +167,7 @@ export default {
             ,   grp_cd                      :   "*"         /* 상위 그룹코드 */
             ,   scen_name                   :   ""          /* 시나리오명 */
             ,   org_scen_name               :   ""          /* 시나리오명 원본 */
+            ,   init_invest_money           :   1000000     /* 초기투자금액 */
             ,   bench_mark_cd               :   "1"         /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
             ,   bench_index_cd01            :   ""          /* 벤치마크 인덱스 코드 ( F16013 ) */
             ,   bench_index_cd02            :   ""          /* 벤치마크 인덱스 코드 ( large_type ) */
@@ -274,6 +290,7 @@ export default {
 				if( "Y" == vm.$refs.confirm2.val ) {
 
                     vm.grp_cd                       =   "*";
+                    vm.init_invest_money            =   1000000;
 					vm.bench_mark_cd               	=   "1";        /* COM008 - 벤치마크( 0-설정안함, 1. KOSPI200, 2.KOSDAQ150, 3.KOSDAQ ) */
 					vm.bench_index_cd01            	=   "";         /* 벤치마크 인덱스 코드 ( F16013 ) */
 					vm.bench_index_cd02            	=   "";         /* 벤치마크 인덱스 코드 ( large_type ) */
@@ -567,6 +584,7 @@ export default {
                                         vm.scen_name                =   mastInfo.scen_name;             /* 시나리오명 */
                                         vm.org_scen_name            =   mastInfo.scen_name;             /* 시나리오명 */
                                         
+                                        vm.init_invest_money        =   Number( mastInfo.init_invest_money );     /* 초기투자금액 */
                                         vm.bench_mark_cd            =   ( vm.bench_mark_cd == 0 ? "1" : vm.bench_mark_cd );
                                     }
                                 }
@@ -617,6 +635,18 @@ export default {
                 vm.arr_show_error_message.push( "[조건설정] 시계열을 업로드 해주세요." );
             }
 
+
+            try{
+                if( vm.init_invest_money == "" ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액을 입력해 주세요." );
+                }else if( isNaN( vm.init_invest_money ) ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
+                }else if( Number( vm.init_invest_money ) <= 0 ) {
+                    vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 0 보다 큰수를 입력해 주세요." );
+                }
+            }catch( e ) {
+                vm.arr_show_error_message.push( "[조건설정] 초기투자금액은 숫자만 입력해 주세요." );
+            }
         },        
 
         /*
@@ -681,6 +711,7 @@ export default {
                 p_param.grp_cd              =   vm.grp_cd;
                 p_param.scen_name           =   vm.scen_name;
                 p_param.bench_mark_cd       =   vm.bench_mark_cd;
+                p_param.init_invest_money   =   vm.init_invest_money;
                 
 
                 var formData    =   new FormData();
