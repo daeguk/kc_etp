@@ -963,9 +963,24 @@ export default {
         * 엑셀을 다운로드 한다.
         * 2019-10-17  bkLove(촤병국)
         */
-        fn_excelDown() {
+        async fn_excelDown() {
 
             var vm = this;
+
+
+            if( !vm.paramData.grp_cd || !vm.paramData.scen_cd ) {
+
+                if( await vm.$refs.confirm2.open(
+                            '[엑셀파일 유형확인]'
+                        ,   "신규등록은 다운로드 하실수 없습니다."
+                        ,   {}
+                        ,   1
+                    )
+                ) {
+                }
+
+                return  false;
+            }
 
             var options     =   {
                     skipHeader          :   true
