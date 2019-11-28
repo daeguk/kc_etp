@@ -949,6 +949,13 @@
                 ,   tm_simul_result_contribute.scen_cd                                  AS  scen_cd                 /* 시나리오코드 */
                 ,   tm_simul_result_contribute.F12506                                   AS  F12506                  /* 리밸런싱 입회일자 */
                 ,   tm_simul_result_contribute.F16013                                   AS  F16013                  /* 단축 코드 */
+                ,   (
+                        SELECT  td_kspjong_basic.F16002
+                          FROM  td_kspjong_basic
+                         WHERE  1 = 1
+                           AND  td_kspjong_basic.F16013     =   tm_simul_result_contribute.F16013
+                         LIMIT  1
+                    )                                                                   AS  F16002                  /* 한글종목명 */
             
                 ,   tm_simul_result_contribute.F12506_B                                 AS  F12506_B                /* 시작 직전일 */
                 ,   tm_simul_result_contribute.F12506_S                                 AS  F12506_S                /* 시작 입회일자 */
