@@ -1941,6 +1941,7 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                         var arr_result_contribute    =   [];
 
+                        resultMsg.arr_contribute        =   [];
                         if( v_resultSimulData.arr_contribute && v_resultSimulData.arr_contribute.length > 0 ) {
 
                             v_resultSimulData.arr_contribute.forEach( function( item, index, array ) {
@@ -1979,45 +1980,90 @@ var saveBacktestResult = async function(req, res, paramData) {
                                     }
                                 }
                             });
+
+                            delete  v_resultSimulData.arr_contribute;
                         }
 
 
                         if( arr_result_contribute && arr_result_contribute.length > 0 ) {
 
-                            resultMsg.arr_result_contribute =   [];
-
                             var v_prev_F12506           =   "";
                             var v_arr_F12506_contribute =   [];
                             var v_tempObj               =   {};
+
                             for( var i=0; i < arr_result_contribute.length; i++ ) {
+
                                 var v_row   =   arr_result_contribute[i];
 
                                 if( i == 0 ) {
-                                    v_prev_F12506       =   v_row.F12506;
-                                    v_tempObj.F12506    =   v_row.F12506;
+                                    v_prev_F12506           =   v_row.F12506;
+
+                                    v_tempObj.F12506        =   v_row.F12506;
+                                    v_tempObj.fmt_F12506    =   v_row.fmt_F12506;
                                 }
                                 
+
                                 if( v_prev_F12506 == v_row.F12506 ) {
                                     v_arr_F12506_contribute.push( v_row );
                                 }
 
-                                if( v_prev_F12506 != v_row.F12506 ) {
-                                    v_tempObj.dataLists     =   v_arr_F12506_contribute;
-                                    resultMsg.arr_result_contribute.push( v_tempObj );
+
+                                if(     i == arr_result_contribute.length -1
+                                    ||  v_prev_F12506 != v_row.F12506 
+                                ) {
+
+                                    /* F12506_B ( 시작 직전일 ) */
+									var v_obj   =   _.minBy( v_arr_F12506_contribute, function(o){
+										return  o.F12506_B;
+									});
+									if( v_obj && Object.keys( v_obj ).length > 0 ) {
+										v_tempObj.min_F12506_B	=   v_obj.F12506_B;
+
+										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.min_F12506_B } );
+										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
+											v_tempObj.min_F12506_B_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
+										}
+									}
+
+                                    /* F12506_S ( 시작 입회일자 ) */
+									v_obj   =   _.minBy( v_arr_F12506_contribute, function(o){
+										return  o.F12506_S;
+									});
+									if( v_obj && Object.keys( v_obj ).length > 0 ) {
+										v_tempObj.min_F12506_S	=   v_obj.F12506_S;
+
+										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.min_F12506_S } );
+										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
+											v_tempObj.min_F12506_S_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
+										}
+									}
+
+                                    /* F12506_E ( 종료 입회일자 ) */
+									v_obj   =   _.maxBy( v_arr_F12506_contribute, function(o){
+										return  o.F12506_E;
+									});
+									if( v_obj && Object.keys( v_obj ).length > 0 ) {
+										v_tempObj.max_F12506_E	=   v_obj.F12506_E;
+
+										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.max_F12506_E } );
+										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
+											v_tempObj.max_F12506_E_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
+										}
+									}
+
+                                    v_tempObj.dataLists     =   v_arr_F12506_contribute; 
+                                    resultMsg.arr_contribute.push( v_tempObj );
 
                                     v_arr_F12506_contribute =   [];
                                     v_tempObj               =   {};
 
-                                    v_tempObj.F12506        =   v_row.F12506;
-                                    v_arr_F12506_contribute.push( v_row );
-                                }
+                                    if( i != arr_result_contribute.length -1 ) {
 
-                                if( i == arr_result_contribute.length -1 ) {
-                                    v_tempObj.dataLists     =   v_arr_F12506_contribute;
-                                    resultMsg.arr_result_contribute.push( v_tempObj );
+                                        v_tempObj.F12506        =   v_row.F12506;
+                                        v_tempObj.fmt_F12506    =   v_row.fmt_F12506;
 
-                                    v_arr_F12506_contribute =   [];
-                                    v_tempObj               =   {};
+                                        v_arr_F12506_contribute.push( v_row );
+                                    }
                                 }
 
                                 v_prev_F12506   =   v_row.F12506;

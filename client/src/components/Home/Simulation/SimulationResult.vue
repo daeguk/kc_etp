@@ -503,6 +503,7 @@ export default {
             ,   simul_result_mast           :   {}
             ,   arr_result_daily            :   []      /* array 일자별 지수 */
             ,   arr_result_rebalance        :   []      /* array 리밸런스 */
+            ,   arr_result_contribute       :   []      /* array 기여도 */
 
             ,   arr_analyze                 :   []      /* 분석정보#1 */
             ,   arr_analyze_main            :   []      /* 초기화면 */
@@ -672,6 +673,7 @@ export default {
                             ( vm.paramData.simul_mast && Object.keys( vm.paramData.simul_mast ).length > 0 )
                         ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
+                        ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
                     ){                        
 
 
@@ -755,6 +757,12 @@ export default {
 
                             vm.arr_result_daily.push( item );
                         });
+
+
+                    /*************************************************************************************************************
+                    *   array 기여도 지수 정보
+                    **************************************************************************************************************/
+                        vm.arr_result_contribute    =   vm.paramData.arr_contribute;
 
                         vm.chartFlag   =   true;
 

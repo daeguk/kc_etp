@@ -1973,6 +1973,7 @@ export default {
                                     var arr_daily       =   response.data.arr_daily;
                                     var arr_rebalance   =   response.data.arr_rebalance;
                                     var simul_mast    	=   response.data.simul_mast;
+                                    var arr_contribute  =   response.data.arr_contribute;
                                     // var analyzeList     =   response.data.analyzeList;
                                     // var jsonFileName    =   response.data.jsonFileName;
                                     // var inputData       =   response.data.inputData;
@@ -1990,6 +1991,7 @@ export default {
                                             ,   arr_daily           :   arr_daily
                                             ,   arr_rebalance       :   arr_rebalance
                                             ,   simul_mast          :   simul_mast
+                                            ,   arr_contribute      :   arr_contribute
                                             // ,   analyzeList         :   analyzeList
                                             // ,   jsonFileName        :   jsonFileName
                                             // ,   inputData           :   inputData
