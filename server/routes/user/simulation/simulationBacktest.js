@@ -9,6 +9,7 @@
 
 var config = require('../../../config/config');
 var util = require('../../../util/util');
+var util1 = require('util');
 var Promise = require("bluebird");
 
 
@@ -874,38 +875,30 @@ var getAnalyze_timeseries = function(req, res) {
                                 msg = {};
                             }
 
-
-                            /* 상세조회가 아닌 경우에만 분석정보 저장 */
-                            if( ![ "detail" ].includes( paramData.status ) ) {
-
-                                paramData.transaction           =   {};
-                                paramData.transaction.mapper    =   mapper;
-                                paramData.transaction.pool      =   pool;
-                                paramData.transaction.conn      =   conn;
+                            paramData.transaction           =   {};
+                            paramData.transaction.mapper    =   mapper;
+                            paramData.transaction.pool      =   pool;
+                            paramData.transaction.conn      =   conn;
 
 
-                                paramData.arr_analyze_db        =   msg.arr_analyze_db;
+                            paramData.arr_analyze_db        =   msg.arr_analyze_db;
 
-                                /* 분석정보를 저장한다. */
-                                fnSaveTmSimulResultAnal.call( this, req, res, paramData ).then( function(e) {
+                            /* 분석정보를 저장한다. */
+                            fnSaveTmSimulResultAnal.call( this, req, res, paramData ).then( function(e) {
 
-                                    if( e && e.resultMsg && e.resultMsg.result ) {
+                                if( e && e.resultMsg && e.resultMsg.result ) {
 
-                                        callback( null );
+                                    callback( null );
 
-                                    }else{
-                                        resultMsg.result = false;
-                                        resultMsg.msg = config.MSG.error01;
-                                        resultMsg.err = config.MSG.error01;
+                                }else{
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = config.MSG.error01;
 
-                                        callback( resultMsg );
-                                    }
+                                    callback( resultMsg );
+                                }
 
-                                });
-
-                            }else{
-                                callback( null );
-                            }              
+                            });           
 
                         } catch (err) {
 
@@ -1939,9 +1932,9 @@ var saveBacktestResult = async function(req, res, paramData) {
                             msg = {};
                         }
 
-                        var arr_result_contribute    =   [];
+                        resultMsg.arr_contribute    =   [];
 
-                        resultMsg.arr_contribute        =   [];
+                        var arr_result_contribute   =   [];
                         if( v_resultSimulData.arr_contribute && v_resultSimulData.arr_contribute.length > 0 ) {
 
                             v_resultSimulData.arr_contribute.forEach( function( item, index, array ) {
@@ -1963,7 +1956,7 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                                         v_subItem.F16013    =   v_F16013;
                                         if( typeof v_subItem != "undefined" && Object.keys( v_jongmokItem ).length > 0 ) {
-
+                                            v_subItem.F16002                =   v_jongmokItem.F16002;
                                             v_subItem.START_WEIGHT          =   v_jongmokItem.START_WEIGHT;
                                             v_subItem.END_WEIGHT            =   v_jongmokItem.END_WEIGHT;
                                             v_subItem.CONTRIBUTE_RATE       =   v_jongmokItem.CONTRIBUTE_RATE;
@@ -1987,88 +1980,11 @@ var saveBacktestResult = async function(req, res, paramData) {
 
                         if( arr_result_contribute && arr_result_contribute.length > 0 ) {
 
-                            var v_prev_F12506           =   "";
-                            var v_arr_F12506_contribute =   [];
-                            var v_tempObj               =   {};
-
-                            for( var i=0; i < arr_result_contribute.length; i++ ) {
-
-                                var v_row   =   arr_result_contribute[i];
-
-                                if( i == 0 ) {
-                                    v_prev_F12506           =   v_row.F12506;
-
-                                    v_tempObj.F12506        =   v_row.F12506;
-                                    v_tempObj.fmt_F12506    =   v_row.fmt_F12506;
-                                }
-                                
-
-                                if( v_prev_F12506 == v_row.F12506 ) {
-                                    v_arr_F12506_contribute.push( v_row );
-                                }
-
-
-                                if(     i == arr_result_contribute.length -1
-                                    ||  v_prev_F12506 != v_row.F12506 
-                                ) {
-
-                                    /* F12506_B ( 시작 직전일 ) */
-									var v_obj   =   _.minBy( v_arr_F12506_contribute, function(o){
-										return  o.F12506_B;
-									});
-									if( v_obj && Object.keys( v_obj ).length > 0 ) {
-										v_tempObj.min_F12506_B	=   v_obj.F12506_B;
-
-										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.min_F12506_B } );
-										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
-											v_tempObj.min_F12506_B_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
-										}
-									}
-
-                                    /* F12506_S ( 시작 입회일자 ) */
-									v_obj   =   _.minBy( v_arr_F12506_contribute, function(o){
-										return  o.F12506_S;
-									});
-									if( v_obj && Object.keys( v_obj ).length > 0 ) {
-										v_tempObj.min_F12506_S	=   v_obj.F12506_S;
-
-										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.min_F12506_S } );
-										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
-											v_tempObj.min_F12506_S_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
-										}
-									}
-
-                                    /* F12506_E ( 종료 입회일자 ) */
-									v_obj   =   _.maxBy( v_arr_F12506_contribute, function(o){
-										return  o.F12506_E;
-									});
-									if( v_obj && Object.keys( v_obj ).length > 0 ) {
-										v_tempObj.max_F12506_E	=   v_obj.F12506_E;
-
-										var	v_temp_obj	=	_.find( v_resultSimulData.arr_daily, { "F12506" : v_tempObj.max_F12506_E } );
-										if( v_temp_obj && Object.keys( v_temp_obj ).length > 0 ) {
-											v_tempObj.max_F12506_E_INDEX_RATE	=	v_temp_obj.INDEX_RATE;
-										}
-									}
-
-                                    v_tempObj.dataLists     =   v_arr_F12506_contribute; 
-                                    resultMsg.arr_contribute.push( v_tempObj );
-
-                                    v_arr_F12506_contribute =   [];
-                                    v_tempObj               =   {};
-
-                                    if( i != arr_result_contribute.length -1 ) {
-
-                                        v_tempObj.F12506        =   v_row.F12506;
-                                        v_tempObj.fmt_F12506    =   v_row.fmt_F12506;
-
-                                        v_arr_F12506_contribute.push( v_row );
-                                    }
-                                }
-
-                                v_prev_F12506   =   v_row.F12506;
+                            /* 기여도 정보를 일자별로 변환한다. */
+                            var v_return_obj    =   fn_convert_contribute_indexRate( arr_result_contribute, v_resultSimulData.arr_daily );
+                            if( v_return_obj && v_return_obj.result ) {
+                                resultMsg.arr_contribute    =   v_return_obj.return_data;
                             }
-
 
                             var divideList  =   [];
                             async.forEachOfLimit( arr_result_contribute, 1, function(subList, i, innerCallback) {
@@ -2258,10 +2174,10 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_bench_mark        =   [];
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
-        resultMsg.inputData             =   [];
+        resultMsg.inputData             =   "";
         resultMsg.arr_analyze           =   [];
         resultMsg.arr_analyze_main      =   []
-        resultMsg.arr_result_contribute =   [];
+        resultMsg.arr_contribute        =   [];
 
         Promise.using(pool.connect(), conn => {
 
@@ -2467,28 +2383,11 @@ var getBacktestResult = function(req, res) {
 
                                 if ( rows && rows.length > 0 ) {
 
-                                    var v_prev_F12506           =   "";
-                                    var v_arr_F12506_contribute =   [];
-                                    for( var i=0; i < rows.length; i++ ) {
-                                        var v_row   =   rows[i];
-
-                                        if( i == 0 ) {
-                                            v_prev_F12506   =   v_row.F12506;
-                                        }
-                                        
-                                        if( v_prev_F12506 == v_row.F12506 ) {
-                                            v_arr_F12506_contribute.push( v_row );
-                                        }
-                                        
-                                        if( i == rows.length -1 || v_prev_F12506 != v_row.F12506 ) {
-                                            resultMsg.arr_result_contribute.push( ...v_arr_F12506_contribute );
-                                            v_arr_F12506_contribute =   [];
-                                        }
-
-                                        v_prev_F12506   =   v_row.F12506;
+                                    /* 기여도 정보를 일자별로 변환한다. */
+                                    var v_return_obj    =   fn_convert_contribute_indexRate( rows, resultMsg.arr_result_daily );
+                                    if( v_return_obj && v_return_obj.result ) {
+                                        resultMsg.arr_contribute    =   v_return_obj.return_data;
                                     }
-
-                                    console.log( "resultMsg.arr_result_contribute", resultMsg.arr_result_contribute );
                                 }
 
                                 callback(null, paramData);
@@ -2504,125 +2403,97 @@ var getBacktestResult = function(req, res) {
                         }
                     },
 
-                    // /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
-                    // function(msg, callback) {
-
-                    //     try{
-                    //         stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultAnal', paramData, format);
-                    //         log.debug(stmt, paramData);
-
-                    //         conn.query(stmt, function(err, rows) {
-
-                    //             if (err) {
-                    //                 resultMsg.result = false;
-                    //                 resultMsg.msg = config.MSG.error01;
-                    //                 resultMsg.err = err;
-
-                    //                 return callback(resultMsg);
-                    //             }
-
-                    //             if ( rows && rows.length > 0 ) {
-
-                    //                 var v_arr_analyze_main  =   [];
-                    //                 for( var i=0; i < rows.length; i++ ) {
-                    //                     var rowData     =   rows[i];
-
-                    //                     var analJson    =   {};
-
-                    //                     analJson.anal_title     =   rowData.anal_title;
-
-                    //                     analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
-                    //                     if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
-                    //                         analJson.backtest   +=   " (" + rowData.backtest_year + ")";
-                    //                     }
-
-                    //                     analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
-                    //                     if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
-                    //                         analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
-                    //                     }
-
-                    //                     resultMsg.arr_analyze.push(analJson);
-
-                    //                     if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
-                    //                         v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
-                    //                     }
-                    //                 }
-
-                    //                 resultMsg.arr_analyze_main  =   _.orderBy( v_arr_analyze_main, [ "order_no"], ["asc"] );
-                    //             }
-
-                    //             callback(null, paramData);
-                    //         });
-
-                    //     } catch (err) {
-
-                    //         resultMsg.result = false;
-                    //         resultMsg.msg = config.MSG.error01;
-                    //         resultMsg.err = err;
-
-                    //         callback(resultMsg);
-                    //     }
-                    // },                    
-                    
-
-                    /* 5. 파이선을 통해 분석정보를 가져온다.*/
+                    /* 5. (백테스트) tm_simul_result_anal 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
 
-                            if( !msg || Object.keys( msg ).length == 0 ) {
-                                msg = {};
+                            var analyzeList = [];
+
+                            resultMsg.jsonFileName  =   "";
+                            resultMsg.inputData     =   "";
+
+                            if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
+
+                                resultMsg.arr_result_daily.forEach(function(item) {
+
+                                    let analyzeObj = {};
+
+                                    if (typeof item.F12506 != 'undefined') {
+
+                                        analyzeObj.date = util1.format('%s-%s-%s', item.F12506.substr(0, 4), item.F12506.substr(4, 2), item.F12506.substr(6, 2));
+
+                                        analyzeObj.backtest = item.INDEX_RATE;
+                                        analyzeObj.riskfree   = item.F15175;
+                                        if ( paramData.bench_mark_cd != '0') {
+                                            analyzeObj.benchmark = item.bm_data01;
+                                        }
+                                        analyzeObj.kospi = item.KOSPI_F15001;
+                                        analyzeObj.F15028_S = item.tot_F15028_S;
+                                        analyzeObj.F15028_C = item.tot_F15028_C;
+                                        analyzeList.push(analyzeObj);
+                                    }
+                                });
+
+                                resultMsg.jsonFileName      =  "timeserise_" + ( new Date().getTime() ) + ".json";
+                                resultMsg.inputData         =  JSON.stringify(analyzeList);
                             }
 
+                            stmt = mapper.getStatement('simulationBacktest', 'getTmSimulResultAnal', paramData, format);
+                            log.debug(stmt, paramData);
 
-                            callback(null);
- 
+                            conn.query(stmt, function(err, rows) {
 
-                            // /* tm_simul_result_anal 테이블에 존재하지 않는 경우 파이선 호출 */
-                            // if( !resultMsg.arr_analyze || resultMsg.arr_analyze.length == 0 ) {
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
 
-                            //     /* 파이선을 통해 분석정보를 가져온다. */
-                            //     if( resultMsg.arr_result_daily && resultMsg.arr_result_daily.length > 0 ) {
+                                    return callback(resultMsg);
+                                }
 
-                            //         log.debug( "분석정보 #1 조회 from 파이선 START");
-                            //         simulAnalyze.getAnalyze_timeseries(resultMsg.arr_result_daily, paramData.bench_mark_cd).then( function(e) {
-                            //             if( e && e.result ) {
-                            //                 if( e.results && e.results.length > 0 ) {
-                            //                     resultMsg.analyzeList   =   e.results;
-                            //                     resultMsg.jsonFileName  =   e.jsonFileName;
-                            //                     resultMsg.inputData  =   e.inputData;
-                            //                 }
-                            //                 callback(null);
-                            //             }else{
+                                if ( rows && rows.length > 0 ) {
 
-                            //                 stmt    =   "";
-                            //                 resultMsg.result = false;
-                            //                 resultMsg.msg = config.MSG.error01;
-                            //                 resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
+                                    var v_arr_analyze_main  =   [];
+                                    for( var i=0; i < rows.length; i++ ) {
+                                        var rowData     =   rows[i];
 
-                            //                 return callback(null);
+                                        var analJson    =   {};
 
-                            //             }
-                            //         });
-                            //         log.debug( "분석정보 #1 조회 from 파이선 END");
-                            //     }else{
-                            //         callback(null);
-                            //     }
+                                        analJson.anal_title     =   rowData.anal_title;
 
-                            // }else{
-                            //     callback(null);
-                            // }
+                                        analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
+                                        if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
+                                            analJson.backtest   +=   " (" + rowData.backtest_year + ")";
+                                        }
+
+                                        analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
+                                        if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
+                                            analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
+                                        }
+
+                                        resultMsg.arr_analyze.push(analJson);
+
+                                        if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
+                                            v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
+                                        }
+                                    }
+
+                                    resultMsg.arr_analyze_main  =   _.orderBy( v_arr_analyze_main, [ "order_no"], ["asc"] );
+                                }
+
+                                callback(null);
+                            });
 
                         } catch (err) {
 
-                            //resultMsg.result = false;
-                            //resultMsg.msg = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
-                            //resultMsg.err = err;
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
 
-                            callback(null);
+                            callback(resultMsg);
                         }
                     },
-
 
                 ], function(err) {
 
@@ -2659,11 +2530,11 @@ var getBacktestResult = function(req, res) {
         resultMsg.simul_result_mast     =   {};
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
-        resultMsg.inputData             =   [];
+        resultMsg.inputData             =   "";
 
         resultMsg.arr_analyze           =   [];
         resultMsg.arr_analyze_main      =   [];
-        resultMsg.arr_result_contribute =   [];
+        resultMsg.arr_contribute        =   [];
 
         res.json(resultMsg);
         res.end();
@@ -3162,6 +3033,122 @@ var getSimulTimeSeriesExcel = function(req, res) {
     }
 }
 
+/*
+ * 기여도 정보를 일자별로 변환한다.
+ * 2019-10-24  bkLove(촤병국)
+ */
+function    fn_convert_contribute_indexRate( p_arr_result_contribute, p_arr_daily ) {
+
+    try{
+        var v_prev_F12506           =   "";
+        var v_arr_F12506_contribute =   [];
+        var v_tempObj               =   {};
+
+        var v_return_arr_contribute =   [];
+        var v_return_obj            =   {};
+
+        if(     !p_arr_result_contribute || p_arr_result_contribute.length == 0
+            ||  !p_arr_daily || p_arr_daily.length == 0
+        ) {
+            v_return_obj.result         =   false;
+            v_return_obj.msg            =   "기여도 정보가 존재하지 않습니다.";
+            v_return_obj.return_data    =   [];
+
+            return  v_return_obj;
+        }
+
+        for( var i=0; i < p_arr_result_contribute.length; i++ ) {
+            var v_row   =   p_arr_result_contribute[i];
+
+            if( i == 0 ) {
+                v_prev_F12506       =   v_row.F12506;
+
+                v_tempObj.F12506    =   v_row.F12506;
+
+                /* 시작 직전일 */
+                v_tempObj.F12506_B  =   v_row.F12506_B;
+                var	v_daily_obj	    =	_.find( p_arr_daily, { "F12506" : v_row.F12506_B } );
+                if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                    v_tempObj.F12506_B_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                }
+
+                /* 시작 입회일자 */
+                v_tempObj.F12506_S  =   v_row.F12506_S;
+                v_daily_obj	        =	_.find( p_arr_daily, { "F12506" : v_row.F12506_S } );
+                if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                    v_tempObj.F12506_S_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                }
+
+                /* 종료 입회일자 */
+                v_tempObj.F12506_E	=   v_row.F12506_E;
+                v_daily_obj	        =	_.find( p_arr_daily, { "F12506" : v_row.F12506_E } );
+                if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                    v_tempObj.F12506_E_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                }
+            }
+            
+            if( v_prev_F12506 == v_row.F12506 ) {
+                v_arr_F12506_contribute.push( v_row );
+            }
+
+
+            if(     i == p_arr_result_contribute.length -1
+                ||  v_prev_F12506 != v_row.F12506 ) {
+
+                v_tempObj.dataLists     =   v_arr_F12506_contribute; 
+                v_return_arr_contribute.push( v_tempObj );
+
+                v_arr_F12506_contribute =   [];
+                v_tempObj               =   {};
+                v_tempObj.dataLists     =   [];
+
+                if( i != p_arr_result_contribute.length -1 ) {
+                    v_tempObj.F12506        =   v_row.F12506;
+
+                    /* 시작 직전일 */
+                    v_tempObj.F12506_B  =   v_row.F12506_B;
+                    var	v_daily_obj	    =	_.find( p_arr_daily, { "F12506" : v_row.F12506_B } );
+                    if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                        v_tempObj.F12506_B_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                    }
+
+                    /* 시작 입회일자 */
+                    v_tempObj.F12506_S  =   v_row.F12506_S;
+                    v_daily_obj	        =	_.find( p_arr_daily, { "F12506" : v_row.F12506_S } );
+                    if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                        v_tempObj.F12506_S_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                    }
+
+                    /* 종료 입회일자 */
+                    v_tempObj.F12506_E	=   v_row.F12506_E;
+                    v_daily_obj	        =	_.find( p_arr_daily, { "F12506" : v_row.F12506_E } );
+                    if( v_daily_obj && Object.keys( v_daily_obj ).length > 0 ) {
+                        v_tempObj.F12506_E_INDEX_RATE	    =	v_daily_obj.INDEX_RATE;
+                    }
+
+                    v_arr_F12506_contribute.push( v_row );
+                }
+            }
+
+            v_prev_F12506   =   v_row.F12506;
+        }
+
+        v_return_obj.result         =   true;
+        v_return_obj.msg            =   "";
+        v_return_obj.return_data    =   v_return_arr_contribute;
+
+        return  v_return_obj;        
+
+    }catch(e) {
+        log.error(e);
+
+        v_return_obj.result         =   false;
+        v_return_obj.msg            =   config.MSG.error01;
+        v_return_obj.return_data    =   [];
+
+        return  v_return_obj;        
+    }
+}
 
 
 /*

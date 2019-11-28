@@ -150,6 +150,10 @@ export default {
 
                         vm.showSimulationId     =   0;
                     }
+                    else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
+
+                        vm.showSimulationId     =   0;
+                    }
 
                     if( typeof vm.paramData.time_series_upload_yn != "undefined" && vm.paramData.time_series_upload_yn == "1" ) {
                         tab_id  =   1;
