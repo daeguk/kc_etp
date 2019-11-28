@@ -812,15 +812,53 @@ export default {
                                 ) + " %";
 
 
-                                if( item.dataLists && item.dataLists.length > 0 ) {
-                                    
-                                    item.dataLists.forEach( function( item_sub, index_sub, array_sub ) {
+                                item.fmt_F12506    	=   util.formatDate( new String( item.F12506 ) );         /* 입회일자 */
+                                item.fmt_F12506_B	=   util.formatDate( new String( item.F12506_B ) );       /* 시작 직전일 */
+                                item.fmt_F12506_S   =   util.formatDate( new String( item.F12506_S ) );       /* 시작 입회일자 */
+                                item.fmt_F12506_E   =   util.formatDate( new String( item.F12506_E ) );       /* 종료 입회일자 */
 
-                                        /* 구분에 맞게 레코드를 설정한다. */
-                                        vm.fn_set_record_data( "contribute", item_sub );
+                                var	v_total_obj	=	{
+                                        fmt_F12506_S		:	item.fmt_F12506_S       /* 시작 입회일자 */
+                                    ,	fmt_F12506_E		:	item.fmt_F12506_E       /* 종료 입회일자 */
 
-                                    });
-                                }
+                                    ,	F16013				:	"-"                     /* 단축 코드 */
+                                    ,	F16002				:	"TOTAL"                 /* 종목명 */
+
+                                    ,	START_WEIGHT		:	0                       /* 시작일비중 */
+                                    ,	END_WEIGHT			:	0                       /* 종료일비중 */
+                                    ,	CONTRIBUTE_RATE		:	0                       /* 기여율 */
+
+                                    ,	fmt_START_WEIGHT	:	""                      /* 시작일비중 */
+                                    ,	fmt_END_WEIGHT		:	""                      /* 종료일비중 */
+                                    ,	fmt_CONTRIBUTE_RATE	:	""                      /* 기여율 */
+                                };
+
+
+								if( item.dataLists && item.dataLists.length > 0 ) {
+									
+									item.dataLists.forEach( function( item_sub, index_sub, array_sub ) {
+
+										/* 구분에 맞게 레코드를 설정한다. */
+										vm.fn_set_record_data( "contribute", item_sub );
+
+										v_total_obj.START_WEIGHT	+=	Number(
+											( Number( item_sub.START_WEIGHT ) * 100 ).toFixed(2)
+										);
+										v_total_obj.END_WEIGHT		+=	Number(
+											( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
+										);
+										v_total_obj.CONTRIBUTE_RATE	+=Number(
+											( Number( item_sub.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
+										);
+									});
+
+									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT ) 		+ "%";
+									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT ) 		+ "%";
+									v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ "%";
+								}
+								item.dataLists.push( v_total_obj );
+
+
                                 
                                 vm.arr_result_contribute.push( item );
                             });
@@ -1053,6 +1091,27 @@ export default {
                                                         ).toFixed(2)
                                                     ) + " %";
 
+													item.fmt_F12506    	=   util.formatDate( new String( item.F12506 ) );         /* 입회일자 */
+													item.fmt_F12506_B	=   util.formatDate( new String( item.F12506_B ) );       /* 시작 직전일 */
+													item.fmt_F12506_S   =   util.formatDate( new String( item.F12506_S ) );       /* 시작 입회일자 */
+													item.fmt_F12506_E   =   util.formatDate( new String( item.F12506_E ) );       /* 종료 입회일자 */
+
+													var	v_total_obj	=	{
+															fmt_F12506_S		:	item.fmt_F12506_S       /* 시작 입회일자 */
+														,	fmt_F12506_E		:	item.fmt_F12506_E       /* 종료 입회일자 */
+
+														,	F16013				:	"-"                     /* 단축 코드 */
+														,	F16002				:	"TOTAL"                 /* 종목명 */
+
+														,	START_WEIGHT		:	0                       /* 시작일비중 */
+														,	END_WEIGHT			:	0                       /* 종료일비중 */
+														,	CONTRIBUTE_RATE		:	0                       /* 기여율 */
+
+														,	fmt_START_WEIGHT	:	""                      /* 시작일비중 */
+														,	fmt_END_WEIGHT		:	""                      /* 종료일비중 */
+														,	fmt_CONTRIBUTE_RATE	:	""                      /* 기여율 */
+													};
+
 
                                                     if( item.dataLists && item.dataLists.length > 0 ) {
                                                         
@@ -1061,8 +1120,22 @@ export default {
                                                             /* 구분에 맞게 레코드를 설정한다. */
                                                             vm.fn_set_record_data( "contribute", item_sub );
 
+															v_total_obj.START_WEIGHT	+=	Number(
+																( Number( item_sub.START_WEIGHT ) * 100 ).toFixed(2)
+															);
+															v_total_obj.END_WEIGHT		+=	Number(
+																( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
+															);
+															v_total_obj.CONTRIBUTE_RATE	+=Number(
+																( Number( item_sub.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
+															);
                                                         });
+
+														v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT ) 		+ "%";
+														v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT ) 		+ "%";
+														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ "%";
                                                     }
+													item.dataLists.push( v_total_obj );
                                                     
                                                     vm.arr_result_contribute.push( item );
                                                 });
@@ -1387,22 +1460,25 @@ export default {
                             /* 기여도 설정 */
                     case    "contribute"  :
 
-                            p_item_obj.fmt_F12506               =   util.formatDate( new String( p_item_obj.F12506 ) );         /* 입회일자 */
-                            p_item_obj.fmt_F12506_B             =   util.formatDate( new String( p_item_obj.F12506_B ) );       /* 시작 직전일 */
-                            p_item_obj.fmt_F12506_S             =   util.formatDate( new String( p_item_obj.F12506_S ) );       /* 시작 입회일자 */
-                            p_item_obj.fmt_F12506_E             =   util.formatDate( new String( p_item_obj.F12506_E ) );       /* 종료 입회일자 */
+                            p_item_obj.fmt_F12506       =   util.formatDate( new String( p_item_obj.F12506 ) );         /* 입회일자 */
+                            p_item_obj.fmt_F12506_B   	=   util.formatDate( new String( p_item_obj.F12506_B ) );       /* 시작 직전일 */
+                            p_item_obj.fmt_F12506_S     =   util.formatDate( new String( p_item_obj.F12506_S ) );       /* 시작 입회일자 */
+                            p_item_obj.fmt_F12506_E     =   util.formatDate( new String( p_item_obj.F12506_E ) );       /* 종료 입회일자 */
 
+							/* 시작일비중 */
                             p_item_obj.fmt_START_WEIGHT         =   util.formatNumber(
                                 ( Number( p_item_obj.START_WEIGHT ) * 100 ).toFixed(2)
-                            ) + " %";                                                                                           /* 시작일비중 */
+                            ) + " %";
 
+							/* 종료일비중 */
                             p_item_obj.fmt_END_WEIGHT           =   util.formatNumber(
                                 ( Number( p_item_obj.END_WEIGHT ) * 100 ).toFixed(2)
-                            ) + " %";                                                                                           /* 종료일비중 */
+                            ) + " %";
 
+							/* 기여율 */
                             p_item_obj.fmt_CONTRIBUTE_RATE      =   util.formatNumber(
                                 ( Number( p_item_obj.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
-                            ) + " %";                                                                                           /* 기여율 */
+                            ) + " %";
 
                             break;
                 }
