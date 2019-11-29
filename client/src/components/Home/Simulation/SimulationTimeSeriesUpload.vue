@@ -781,6 +781,12 @@ export default {
                                             }
                                         }
 
+                                        if( typeof response.data.simul_mast == "undefined" || response.data.simul_mast == "" ) {
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                                            }                                            
+                                        }
+
                                         check   =   false;
                                     }
 
@@ -790,9 +796,8 @@ export default {
                                         vm.$emit( "fn_showSimulation", 
                                             { 
                                                     showSimulationId        :   2
-                                                ,   grp_cd                  :   response.data.grp_cd
-                                                ,   scen_cd                 :   response.data.scen_cd
-                                                ,   time_series_upload_yn   :   '1'
+                                                ,   simul_mast              :   response.data.simul_mast
+                                                ,   arr_daily               :   response.data.arr_daily
                                             }
                                         );
                                     }

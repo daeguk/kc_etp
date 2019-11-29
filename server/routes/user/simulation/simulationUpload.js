@@ -1345,9 +1345,9 @@ var uploadTimeSeries = function(req, res) {
         }
 
 
-        /* 리밸런싱일별 포트폴리오 */
         resultMsg.errorList             =   [];
-        resultMsg.arr_rebalance_date    =   [];
+        resultMsg.simul_mast            =   {};
+        resultMsg.arr_daily             =   [];
 
         try {
             reqParam.org_file_name = req.file.originalname;
@@ -1921,6 +1921,7 @@ var uploadTimeSeries = function(req, res) {
 										msg = {};
 									}
 
+
                                     if( typeof msg.now_serial_no == "undefined" || msg.now_serial_no == null ) {
                                         msg.now_serial_no   =   0;
                                     }
@@ -1956,6 +1957,8 @@ var uploadTimeSeries = function(req, res) {
 
 											return callback(resultMsg);
 										}
+
+                                        resultMsg.simul_mast    =   Object.assign( {}, paramData );
 
 										callback(null, msg);
 										
@@ -2483,6 +2486,7 @@ var uploadTimeSeries = function(req, res) {
                                                     }
                                                 }
 
+                                                resultMsg.arr_daily      =   dataLists;
                                             }
 
                                             callback(null, msg);
@@ -2644,9 +2648,6 @@ var uploadTimeSeries = function(req, res) {
 								resultMsg.result = true;
 								resultMsg.msg = "";
 								resultMsg.err = null;
-
-                                resultMsg.grp_cd    =   paramData.grp_cd;
-                                resultMsg.scen_cd   =   paramData.scen_cd;
 
 								conn.commit();
 							}
