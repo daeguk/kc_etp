@@ -2486,7 +2486,8 @@ var uploadTimeSeries = function(req, res) {
                                                     }
                                                 }
 
-                                                resultMsg.arr_daily      =   dataLists;
+                                                resultMsg.arr_daily     =   dataLists;
+                                                resultMsg.arr_daily     =   _.orderBy( resultMsg.arr_daily, [ "F12506"], ["asc"] ); 
                                             }
 
                                             callback(null, msg);
