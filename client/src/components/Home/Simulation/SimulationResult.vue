@@ -368,7 +368,13 @@
                             v-for="( item1, index1 ) in arr_result_contribute"
                             :key="'contribute_' + index1"
                         >
-                           <div class="simul_result_tatext mar15"> <b>지수변동</b> {{ item1.fmt_F12506_B_INDEX_RATE }} <v-icon>arrow_forward</v-icon> {{ item1.fmt_F12506_E_INDEX_RATE }} ( <span class="text_red">{{ item1.fmt_INDEX_CHNAGE_RATE }}</span> )</div>
+                            <div class="simul_result_tatext mar15">
+                                <b>지수변동</b>
+                                {{ item1.fmt_F12506_B_INDEX_RATE }}
+                                <v-icon>arrow_forward</v-icon>
+                                {{ item1.fmt_F12506_E_INDEX_RATE }} (
+                                <span :class="item1.INDEX_CHNAGE_RATE > 0 ? 'text_red' : 'text_blue'">{{ item1.fmt_INDEX_CHNAGE_RATE }}</span> )
+                            </div>
                             <div class="table-box-wrap">
                                 <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
@@ -804,7 +810,7 @@ export default {
                                 );
 
                                 /* 지수변동율 = ( ( 종료 입회일자 지수 - 시작 직전일 지수 ) / 시작 직전일 지수 ) * 100 */
-                                item.fmt_INDEX_CHNAGE_RATE    =   util.formatNumber(
+                                item.INDEX_CHNAGE_RATE              =   util.formatNumber(
                                     (
                                         (
                                             (
@@ -812,7 +818,8 @@ export default {
                                             ) / Number( util.NumtoStr( item.fmt_F12506_B_INDEX_RATE ) )
                                         ) * 100
                                     ).toFixed(2)
-                                ) + " %";
+                                );
+                                item.fmt_INDEX_CHNAGE_RATE          =   item.INDEX_CHNAGE_RATE + " %";
 
 
                                 item.fmt_F12506    	=   util.formatDate( new String( item.F12506 ) );         /* 입회일자 */
@@ -845,19 +852,19 @@ export default {
 										vm.fn_set_record_data( "contribute", item_sub );
 
 										v_total_obj.START_WEIGHT	+=	Number(
-											( Number( item_sub.START_WEIGHT ) * 100 ).toFixed(2)
+											item_sub.START_WEIGHT
 										);
 										v_total_obj.END_WEIGHT		+=	Number(
-											( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
+											item_sub.END_WEIGHT
 										);
 										v_total_obj.CONTRIBUTE_RATE	+=  Number(
-											( Number( item_sub.CONTRIBUTE_RATE ) ).toFixed(2)
+											item_sub.CONTRIBUTE_RATE
 										);
 									});
 
-									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT ) 		+ "%";
-									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT ) 		+ "%";
-									v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ "%";
+									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
+									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
+									v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
 								}
 								item.dataLists.push( v_total_obj );
 
@@ -1084,7 +1091,7 @@ export default {
                                                     );
 
                                                     /* 지수변동율 = ( ( 종료 입회일자 지수 - 시작 직전일 지수 ) / 시작 직전일 지수 ) * 100 */
-                                                    item.fmt_INDEX_CHNAGE_RATE    =   util.formatNumber(
+                                                    item.INDEX_CHNAGE_RATE              =   util.formatNumber(
                                                         (
                                                             (
                                                                 (
@@ -1092,7 +1099,9 @@ export default {
                                                                 ) / Number( util.NumtoStr( item.fmt_F12506_B_INDEX_RATE ) )
                                                             ) * 100
                                                         ).toFixed(2)
-                                                    ) + " %";
+                                                    );
+                                                    item.fmt_INDEX_CHNAGE_RATE          =   item.INDEX_CHNAGE_RATE + " %";
+
 
 													item.fmt_F12506    	=   util.formatDate( new String( item.F12506 ) );         /* 입회일자 */
 													item.fmt_F12506_B	=   util.formatDate( new String( item.F12506_B ) );       /* 시작 직전일 */
@@ -1124,19 +1133,19 @@ export default {
                                                             vm.fn_set_record_data( "contribute", item_sub );
 
 															v_total_obj.START_WEIGHT	+=	Number(
-																( Number( item_sub.START_WEIGHT ) * 100 ).toFixed(2)
+																item_sub.START_WEIGHT
 															);
 															v_total_obj.END_WEIGHT		+=	Number(
-																( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
+																item_sub.END_WEIGHT
 															);
 															v_total_obj.CONTRIBUTE_RATE	+=  Number(
-																( Number( item_sub.CONTRIBUTE_RATE ) ).toFixed(2)
+																item_sub.CONTRIBUTE_RATE
 															);
                                                         });
 
-														v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT ) 		+ "%";
-														v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT ) 		+ "%";
-														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ "%";
+														v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
+														v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
+														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
                                                     }
 													item.dataLists.push( v_total_obj );
                                                     
