@@ -368,8 +368,8 @@
                             v-for="( item1, index1 ) in arr_result_contribute"
                             :key="'contribute_' + index1"
                         >
-                            지수변동 {{ item1.fmt_F12506_B_INDEX_RATE }} -> {{ item1.fmt_F12506_E_INDEX_RATE }} ( {{ item1.fmt_INDEX_CHNAGE_RATE }} )
-                            <div class="table-box-wrap mar15">
+                           <div class="simul_result_tatext mar15"> <b>지수변동</b> {{ item1.fmt_F12506_B_INDEX_RATE }} <v-icon>arrow_forward</v-icon> {{ item1.fmt_F12506_E_INDEX_RATE }} ( <span class="text_red">{{ item1.fmt_INDEX_CHNAGE_RATE }}</span> )</div>
+                            <div class="table-box-wrap">
                                 <div class="table-box" style="max-height:710px;">
                                     <table class="tbl_type ver10">
                                         <colgroup>
