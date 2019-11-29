@@ -19,11 +19,26 @@ export default {
   },
   created() {
     // this.$router.push({ path: '/landing'});
+
   },
   mounted: function() {      
     this.setBefDates();
     this.getEtpMast();
     this.getIndexMast();
+
+    // PC / MOBILE 분기 처리
+    var filter = "win16|win32|win64|mac|macintel"; 
+    console.log("Created..........");
+    console.log(navigator.platform);
+    if ( navigator.platform ) { 
+      if ( filter.indexOf( navigator.platform.toLowerCase() ) < 0 ) { 
+        this.$router.push({ path: '/mobile'});
+      } else { 
+        // this.$router.push({ path: '/'});
+        this.$router.push({ path: '/mobile'});
+        //pc alert('pc 접속'); 
+      } 
+    }
   },
   methods: {
     setBefDates: function() {
@@ -51,7 +66,7 @@ export default {
       }).then(response => {
         // console.log(response);
         if (response.data.success == false) {
-          alert("ETP정보가 없습니다.");
+          // alert("ETP정보가 없습니다.");
         } else {
           vm.$store.commit(Constant.SET_ETP, response.data.results);
         }
@@ -67,7 +82,7 @@ export default {
       }).then(response => {
         // console.log(response);
         if (response.data.success == false) {
-          alert("지수정보가 없습니다.");
+          // alert("지수정보가 없습니다.");
         } else {
           vm.$store.commit(Constant.SET_INDEX, response.data.results);
         }

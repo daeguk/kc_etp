@@ -37,7 +37,9 @@ import  SimulationTimeSeriesUpload  from '@/components/Home/Simulation/Simulatio
 // OperSupport
 import  OperSupportControl   from '@/components/Home/OperSupport/OperSupportControl.vue'
 
-// 관리자
+// 사용자(MOBILE)
+import MobileHome        from './components/MobileHome/M_Home.vue'
+
 export const routes = [
   { path : '/',
     component: Home,
@@ -205,7 +207,11 @@ export const routes = [
           },
       },       
     ]
-  }
+  },
+  // MOBILE
+  { path : '/mobile',
+    component: MobileHome,
+  },
 ]
 
 
