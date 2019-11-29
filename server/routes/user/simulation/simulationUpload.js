@@ -1108,7 +1108,7 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                             p_param.p_column_check          =   false;
 
                             p_record_data.result    =   false;
-                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 8자리 또는 10자리만 입력가능합니다.";   
+                            p_record_data.msg       =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 ( YYYYMMDD 또는 YYYY.MM.DD ) 형태로 입력 해 주세요.";   
 
                         }else{
 
@@ -1145,7 +1145,7 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                                 p_param.p_column_check          =   false;
 
                                 p_record_data.result            =   false;
-                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼이 날짜유형인지 확인해 주세요.";
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] DATE 컬럼은 ( YYYYMMDD 또는 YYYY.MM.DD ) 형태로 입력 해 주세요.";
                             }
                         }
 
