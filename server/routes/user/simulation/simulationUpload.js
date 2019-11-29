@@ -2392,6 +2392,32 @@ var uploadTimeSeries = function(req, res) {
 										msg = {};
 									}
 
+
+                                    dataLists   =   _.orderBy( dataLists, [ "F12506"], ["asc"] ); 
+
+                                    /* 일자별 지수에 balance 정보를 설정한다. */
+                                    var v_prev_index   =    0;
+                                    for( var i=0; i < dataLists.length; i++ ) {
+
+                                        var v_daily         =   dataLists[i];
+                                        var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"     ? {} : dataLists[ v_prev_index ] );
+
+                                        /* 최초인 경우 */
+                                        if( i == 0 ) {
+                                            v_daily.balance  =   resultMsg.simul_mast.init_invest_money;
+                                        }else{
+                                            /* balance = 전일 balance * ( 당일 지수 / 전일 지수 ) */
+                                            v_daily.balance  =   (
+                                                Number( v_prev_daily.balance ) * ( Number( Number( v_daily.INDEX_RATE ).toFixed(2) ) / Number( Number( v_prev_daily.INDEX_RATE ).toFixed(2) ) )
+                                            ).toFixed(3);
+                                        }
+
+                                        if( i > 0 ) {
+                                            v_prev_index    =   i;
+                                        }            
+                                    }
+
+
                                     if( typeof msg.first_date == "undefined" || msg.first_date == "" ) {
 										resultMsg.result = false;
 										resultMsg.msg = "최초일이 존재하지 않습니다.";
@@ -2414,6 +2440,7 @@ var uploadTimeSeries = function(req, res) {
 
                                                 return callback(resultMsg);
                                             }
+
 
                                             if ( rows && rows.length > 0 ) {
 
@@ -2487,7 +2514,6 @@ var uploadTimeSeries = function(req, res) {
                                                 }
 
                                                 resultMsg.arr_daily     =   dataLists;
-                                                resultMsg.arr_daily     =   _.orderBy( resultMsg.arr_daily, [ "F12506"], ["asc"] ); 
                                             }
 
                                             callback(null, msg);
