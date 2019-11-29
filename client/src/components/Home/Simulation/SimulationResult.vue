@@ -688,7 +688,10 @@ export default {
                         ||  ( vm.paramData.arr_daily && vm.paramData.arr_daily.length > 0 )
                         ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
                         ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
-                    ){                        
+                    ){
+
+                        vm.v_item.grp_cd    =   vm.paramData.simul_mast.grp_cd;
+                        vm.v_item.scen_cd   =   vm.paramData.simul_mast.scen_cd;                        
 
 
                     /*************************************************************************************************************
