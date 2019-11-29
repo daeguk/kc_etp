@@ -79,10 +79,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                             ,   jsonFileName : jsonFileName
                             ,   inputData : JSON.stringify(analyzeList)
                         } );
-                    }else{
-                        //console.log('results: %j', results);
-                        //console.log("####### 4) 파이선 호출 END");
-                        //fs.unlinkSync(fileName);
+                    }else{                                     
                         resolve1( { 
                                 result : true
                             ,   jsonFileName : jsonFileName
@@ -91,6 +88,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                         });                        
                         log.debug("[PYTHON] 완료");
                     }
+                    fs.unlinkSync(fileName);
                 });
                 
             }else{
