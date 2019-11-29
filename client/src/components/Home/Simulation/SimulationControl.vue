@@ -148,16 +148,25 @@ export default {
                             vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
                         }
 
-                        vm.showSimulationId     =   0;
+                        if(     typeof vm.paramData.simul_mast.time_series_upload_yn != "undefined" 
+                            &&  vm.paramData.simul_mast.time_series_upload_yn == "1" 
+                        ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   4;
+                        }else{
+                            vm.showSimulationId     =   0;
+                        }
                     }
                     else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
 
-                        vm.showSimulationId     =   0;
-                    }
-
-                    if( typeof vm.paramData.time_series_upload_yn != "undefined" && vm.paramData.time_series_upload_yn == "1" ) {
-                        tab_id  =   1;
-                        vm.showSimulationId     =   4;
+                        if(     typeof vm.paramData.time_series_upload_yn != "undefined" 
+                            &&  vm.paramData.time_series_upload_yn == "1" 
+                        ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   4;
+                        }else{
+                            vm.showSimulationId     =   0;
+                        }
                     }
 
                 }else{
