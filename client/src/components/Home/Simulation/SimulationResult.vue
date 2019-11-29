@@ -850,8 +850,8 @@ export default {
 										v_total_obj.END_WEIGHT		+=	Number(
 											( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
 										);
-										v_total_obj.CONTRIBUTE_RATE	+=Number(
-											( Number( item_sub.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
+										v_total_obj.CONTRIBUTE_RATE	+=  Number(
+											( Number( item_sub.CONTRIBUTE_RATE ) ).toFixed(2)
 										);
 									});
 
@@ -1129,8 +1129,8 @@ export default {
 															v_total_obj.END_WEIGHT		+=	Number(
 																( Number( item_sub.END_WEIGHT ) * 100 ).toFixed(2)
 															);
-															v_total_obj.CONTRIBUTE_RATE	+=Number(
-																( Number( item_sub.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
+															v_total_obj.CONTRIBUTE_RATE	+=  Number(
+																( Number( item_sub.CONTRIBUTE_RATE ) ).toFixed(2)
 															);
                                                         });
 
@@ -1480,7 +1480,7 @@ export default {
 
 							/* 기여율 */
                             p_item_obj.fmt_CONTRIBUTE_RATE      =   util.formatNumber(
-                                ( Number( p_item_obj.CONTRIBUTE_RATE ) * 100 ).toFixed(2)
+                                ( Number( p_item_obj.CONTRIBUTE_RATE ) ).toFixed(2)
                             ) + " %";
 
                             break;
