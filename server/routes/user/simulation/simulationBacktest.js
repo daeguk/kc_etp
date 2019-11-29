@@ -4400,7 +4400,10 @@ var	fn_get_simulation_data  =   function(
                                 contributeItem.jongmok[jongmokKey].START_WEIGHT = v_dailyJongmokObj[contributeItem.start_date][jongmokKey].AFTER_IMPORTANCE;
                                 contributeItem.jongmok[jongmokKey].END_WEIGHT = v_dailyJongmokObj[contributeItem.end_date][jongmokKey].TODAY_IMPORTANCE;
 
-
+                                /*기여율 = (종료일지수값 * 종료일비중 - 시작일직전일지수값 * 시작일비중) / 시작일직전일지수값 * 100
+                                * 시작일직전일지수값 
+                                - 지수첫산출일은 직전일지수값이 없으므로 시작일지수값을사용
+                                - 다음 리밸런싱회차부터는 시작일 직전일의 지수값을 사용*/
                                 contributeItem.jongmok[jongmokKey].CONTRIBUTE_RATE = ((endIndex *  contributeItem.jongmok[jongmokKey].END_WEIGHT) - (startIndex * contributeItem.jongmok[jongmokKey].START_WEIGHT)) / startIndex * 100;
 
                             };
