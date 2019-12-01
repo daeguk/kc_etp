@@ -17,6 +17,7 @@ var async = require('async');
 var _ = require("lodash");
 
 var simulModule = require('./simulModule');
+var simulationBacktest = require('./simulationBacktest');
 
 var multer = require('multer');
 var xlsx = require('xlsx');
@@ -2393,30 +2394,10 @@ var uploadTimeSeries = function(req, res) {
 									}
 
 
-                                    dataLists   =   _.orderBy( dataLists, [ "F12506"], ["asc"] ); 
+                                    dataLists   =   _.orderBy( dataLists, [ "F12506"], ["asc"] );
 
                                     /* 일자별 지수에 balance 정보를 설정한다. */
-                                    var v_prev_index   =    0;
-                                    for( var i=0; i < dataLists.length; i++ ) {
-
-                                        var v_daily         =   dataLists[i];
-                                        var v_prev_daily    =   ( typeof dataLists[ v_prev_index ] == "undefined"     ? {} : dataLists[ v_prev_index ] );
-
-                                        /* 최초인 경우 */
-                                        if( i == 0 ) {
-                                            v_daily.balance  =   resultMsg.simul_mast.init_invest_money;
-                                        }else{
-                                            /* balance = 전일 balance * ( 당일 지수 / 전일 지수 ) */
-                                            v_daily.balance  =   (
-                                                Number( v_prev_daily.balance ) * ( Number( Number( v_daily.INDEX_RATE ).toFixed(2) ) / Number( Number( v_prev_daily.INDEX_RATE ).toFixed(2) ) )
-                                            ).toFixed(3);
-                                        }
-
-                                        if( i > 0 ) {
-                                            v_prev_index    =   i;
-                                        }            
-                                    }
-
+                                    simulationBacktest.fn_set_balance( dataLists, resultMsg.simul_mast );
 
                                     if( typeof msg.first_date == "undefined" || msg.first_date == "" ) {
 										resultMsg.result = false;

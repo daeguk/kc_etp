@@ -4696,4 +4696,5 @@ module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
 module.exports.getSimulResultSaveYn = getSimulResultSaveYn;
 module.exports.getAnalyze_timeseries = getAnalyze_timeseries;
 module.exports.fnSaveTmSimulResultAnal = fnSaveTmSimulResultAnal;
+module.exports.fn_set_balance = fn_set_balance;
 module.exports.getSimulTimeSeriesExcel = getSimulTimeSeriesExcel;
