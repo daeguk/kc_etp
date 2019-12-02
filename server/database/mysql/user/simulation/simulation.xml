@@ -101,6 +101,20 @@
 
 
     <!--
+    *   복사하기에서 사용할 로그인 사용자가 등록한 시나리오명을 조회한다.
+    *   2019-07-26  bkLove(촤병국)
+    -->
+    <select id="getScenNameForCopy">
+        SELECT  /* simulation.getScenNameForCopy  복사하기에서 사용할 로그인 사용자가 등록한 시나리오명을 조회한다. */
+                tm_simul_mast.scen_name             AS  scen_name
+
+          FROM  tm_simul_mast
+         WHERE  1 = 1
+           AND  tm_simul_mast.reg_id                =   #{user_id}          /* 등록자 ID */
+    </select>
+
+
+    <!--
     *   시뮬레이션 공통코드 초기 데이터를 조회한다.
     *   2019-07-26  bkLove(촤병국)
     -->
