@@ -143,8 +143,11 @@ var server = http.createServer(app).listen(app.get('port'), function(req, res) {
     console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
 });
 
+// 실시간 데이터 처리 테스트 완료
+/*
 const webSocket = require("./routes/websocket/web_socket");
 webSocket(server);
+*/
 
 server.timeout = 350000;
 
