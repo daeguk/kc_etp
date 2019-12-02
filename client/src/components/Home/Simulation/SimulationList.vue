@@ -164,7 +164,8 @@
                                             class="simu_namemodi_w"
                                         >
                                             <div>
-                                                <v-icon>description</v-icon>
+                                                <v-icon v-if="( typeof item.time_series_upload_yn != 'undefined' && item.time_series_upload_yn == '1')">insert_drive_file</v-icon>
+                                                <v-icon v-if="( typeof item.time_series_upload_yn == 'undefined' || item.time_series_upload_yn != '1')">description</v-icon>
                                             </div>
 
                                             <div

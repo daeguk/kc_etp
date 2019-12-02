@@ -3206,47 +3206,62 @@ function    fn_set_bench_mark( p_arr_daily, p_arr_bench ) {
                 var v_prev_daily    =   ( typeof p_arr_daily[ v_prev_index ] == "undefined"     ? {} : p_arr_daily[ v_prev_index ] );
 
                 var v_bm            =   ( typeof p_arr_bench[i] == "undefined"                  ? {} : p_arr_bench[i] );
-                var v_prev_bm       =   ( typeof p_arr_bench[ v_prev_index ] == "undefined"     ? {} : p_arr_bench[ v_prev_index ] );
 
 
-                v_daily.bm_data01       =   Number( v_bm.F15001 );
-                v_daily.F15175          =   Number( v_bm.F15175 );
-                v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
-
-
-                /* 최초인 경우 */
-                if( i == 0 ) {
-
-                    v_daily.bm_1000_data    =   1000;
-                    v_daily.bm_return_data  =   Number(
-                        (
-                            ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
-                        ).toFixed(17)
-                    );
-
-                }else{
-
-                    /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
-                    v_daily.bm_1000_data    =   Number(
-                        (
-                                Number( v_prev_daily.bm_1000_data ) *
-                                ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
-                        ).toFixed(17)
-                    );
-
-                    /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
-                    v_daily.bm_return_data  =   Number(
-                        (
-                                ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
-                        ).toFixed(17)
-                    );
-                }
+                fn_set_sub_bench_mark( i, v_daily, v_prev_daily, v_bm );
 
                 if( i > 0 ) {
                     v_prev_index    =   i;
-                }            
+                }
             }
         }
+    } catch(e) {
+        throw e;
+    }
+}
+
+
+/*
+*   (하위) 일자별 지수에 밴치마크 정보를 설정한다.
+*   2019-08-14  bkLove(촤병국)
+*/
+function    fn_set_sub_bench_mark( p_index, p_daily, p_prev_daily, p_bm ) {
+
+    try {
+
+        p_daily.bm_data01       =   Number( p_bm.F15001 );
+        p_daily.F15175          =   Number( p_bm.F15175 );
+        p_daily.KOSPI_F15001    =   Number( p_bm.KOSPI_F15001 );
+
+
+        /* 최초인 경우 */
+        if( p_index == 0 ) {
+
+            p_daily.bm_1000_data    =   1000;
+            p_daily.bm_return_data  =   Number(
+                (
+                    ( Number( p_daily.bm_1000_data ) - Number( p_daily.bm_1000_data ) ) / Number( p_daily.bm_1000_data )
+                ).toFixed(17)
+            );
+
+        }else{
+
+            /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
+            p_daily.bm_1000_data    =   Number(
+                (
+                        Number( p_prev_daily.bm_1000_data ) *
+                        ( Number( p_daily.bm_data01 ) / Number( p_prev_daily.bm_data01 ) )
+                ).toFixed(17)
+            );
+
+            /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
+            p_daily.bm_return_data  =   Number(
+                (
+                        ( Number( p_daily.bm_1000_data ) - Number( p_prev_daily.bm_1000_data ) ) / Number( p_prev_daily.bm_1000_data )
+                ).toFixed(17)
+            );
+        }
+
     } catch(e) {
         throw e;
     }
@@ -4696,4 +4711,6 @@ module.exports.getSimulJongmoForExcel = getSimulJongmoForExcel;
 module.exports.getSimulResultSaveYn = getSimulResultSaveYn;
 module.exports.getAnalyze_timeseries = getAnalyze_timeseries;
 module.exports.fnSaveTmSimulResultAnal = fnSaveTmSimulResultAnal;
+module.exports.fn_set_balance = fn_set_balance;
+module.exports.fn_set_sub_bench_mark = fn_set_sub_bench_mark;
 module.exports.getSimulTimeSeriesExcel = getSimulTimeSeriesExcel;
