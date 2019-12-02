@@ -734,6 +734,9 @@ export default {
 					vm.old_rebalance_date_cd       	=   "1";
 					vm.old_rebalance_date          	=   "";
 
+                    /* next 시나리오명을 조회한다. */
+                    vm.fn_getNextScenName();
+
 					/* 레코드를 초기화 한다. */
 					vm.fn_initRecords();
 
