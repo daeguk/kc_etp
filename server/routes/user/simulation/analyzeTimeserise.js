@@ -40,14 +40,13 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
     var dir = config.uploadFolder+"/analyze";
     !fs.existsSync(dir) && fs.mkdirSync(dir);
 
-    var fileName = dir+"/timeserise_"+curDate+".json";
-    var jsonFileName = "timeserise_"+curDate+".json";
+    var fileName = "timeserise_"+curDate+".json";
     
     return await new Promise(function(resolve, reject) {
 
         /* 파일에 write 한다. */
         
-        fs.writeFile(fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
+        fs.writeFile(dir+"/"+fileName, JSON.stringify(analyzeList), 'utf8', function(error) {
             if (error) {
                 log.debug( "파일 write 중 오류가 발생되었습니다.", error );
                 resolve( { result : false } );
@@ -67,7 +66,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                     pythonPath: config.python_path,
                     pythonOptions: ['-u'],
                     scriptPath: '',
-                    args: [fileName]
+                    args: [dir+"/"+fileName]
                 };
                     
                 log.debug("[PYTHON] 시작");
@@ -76,19 +75,19 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                     if (err) {
                         log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
                         resolve1( { result : false
-                            ,   jsonFileName : jsonFileName
+                            ,   jsonFileName : fileName
                             ,   inputData : JSON.stringify(analyzeList)
                         } );
                     }else{                                     
                         resolve1( { 
                                 result : true
-                            ,   jsonFileName : jsonFileName
+                            ,   jsonFileName : fileName
                             ,   inputData : JSON.stringify(analyzeList)
                             ,   results : results 
                         });                        
                         log.debug("[PYTHON] 완료");
                     }
-                    fs.unlinkSync(fileName);
+                    fs.unlinkSync(dir+"/"+fileName);
                 });
                 
             }else{
