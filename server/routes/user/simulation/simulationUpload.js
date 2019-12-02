@@ -2436,7 +2436,6 @@ var uploadTimeSeries = function(req, res) {
                                                     var v_bm            =   {};
 
 
-
                                                     v_daily.RETURN_VAL    =   Number(
                                                         simulModule.fn_calc_data(
                                                                 "RETURN_VAL"
@@ -2453,41 +2452,11 @@ var uploadTimeSeries = function(req, res) {
                                                         v_bm        =   ( typeof rows[v_index] == "undefined"       ? {} : rows[v_index] );
                                                     }
 
-                                                    if( typeof v_bm != "undefined" && Object.keys( v_bm ).length > 0 ) {
 
-                                                        v_daily.bm_data01       =   Number( v_bm.F15001 );
-                                                        v_daily.F15175          =   Number( v_bm.F15175 );
-                                                        v_daily.KOSPI_F15001    =   Number( v_bm.KOSPI_F15001 );
+                                                    v_bm    =   ( typeof v_bm == "undefined"  ? {} : v_bm );
 
-
-                                                        /* 최초인 경우 */
-                                                        if( i == 0 ) {
-
-                                                            v_daily.bm_1000_data    =   1000;
-                                                            v_daily.bm_return_data  =   Number(
-                                                                (
-                                                                    ( Number( v_daily.bm_1000_data ) - Number( v_daily.bm_1000_data ) ) / Number( v_daily.bm_1000_data )
-                                                                ).toFixed(17)
-                                                            );
-
-                                                        }else{
-
-                                                            /* 1000 단위환산 = 전일 단위환산 * ( 당일지수 / 전일 지수 ) */
-                                                            v_daily.bm_1000_data    =   Number(
-                                                                (
-                                                                        Number( v_prev_daily.bm_1000_data ) *
-                                                                        ( Number( v_daily.bm_data01 ) / Number( v_prev_daily.bm_data01 ) )
-                                                                ).toFixed(17)
-                                                            );
-
-                                                            /* return = ( 당일 단위환산 - 전일 단위환산 ) / 전일 단위환산 */
-                                                            v_daily.bm_return_data  =   Number(
-                                                                (
-                                                                        ( Number( v_daily.bm_1000_data ) - Number( v_prev_daily.bm_1000_data ) ) / Number( v_prev_daily.bm_1000_data )
-                                                                ).toFixed(17)
-                                                            );
-                                                        }
-                                                    }
+                                                    /* (하위) 일자별 지수에 밴치마크 정보를 설정한다. */
+                                                    simulationBacktest.fn_set_sub_bench_mark( i, v_daily, v_prev_daily, v_bm );
 
                                                     if( i > 0 ) {
                                                         v_prev_index    =   i;
