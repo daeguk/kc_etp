@@ -106,6 +106,10 @@ export default {
       this.showEtpInfoPdfDetail = false;
       this.showFaver = false;
     });
+
+  },
+  destroyed() {
+    this.$EventBus.$off('showList');
   },
   beforeUpdated: function() {
       

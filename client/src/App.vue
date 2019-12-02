@@ -15,6 +15,7 @@ export default {
     return {
       IndexMast: [],
       EtpMast: [],
+      ws: null,
     }
   },
   created() {
@@ -22,6 +23,8 @@ export default {
 
   },
   mounted: function() {      
+    // 실시간 데이터 테스트 완료 (2019.11.02)
+    // this.initWebSocket();
     this.setBefDates();
     this.getEtpMast();
     this.getIndexMast();
@@ -41,6 +44,26 @@ export default {
     }
   },
   methods: {
+    // 실시간 데이터 테스트 완료 (2019.11.02)
+    /*
+    initWebSocket: function() {
+      console.log("initWebSocket..........");
+      var vm = this;
+      this.socket = new WebSocket(Config.ws_url);
+      this.socket.onopen = function() {
+        console.log("Connected......");
+        vm.socket.send(JSON.stringify({msg: "CLIENT TEST"}));
+      }
+      this.socket.onmessage = function(recv) {
+        console.log("onmessage..........");
+        console.log(recv.data);
+        var rMsg = JSON.parse(recv.data);
+        vm.$EventBus.$emit(rMsg.event, rMsg);
+        // var tmp = JSON.parse(recv.data)
+        // console.log(tmp.msg);
+      }
+    },
+    */
     setBefDates: function() {
       var befDates = {};
 

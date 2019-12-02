@@ -17,7 +17,7 @@
               {{item.ctg_name}}
                 <span class="text_result" v-bind:id="table_name + '_count'+item.ctg_code">120 </span>
                 <span class="text_result_t">results</span>
-                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일111 :2018.10.20</span>
+                <span v-bind:id="table_name + '_date'+item.ctg_code">기준일 :2018.10.20</span>
             </h3>
           </v-card-title>
           <v-card flat>
@@ -106,8 +106,22 @@ export default {
     for(var i=0; i<this.rep_info.length; i++) {
       this.getIndexIntra(this.rep_info[i]);
     }
+    // 실시간 데이터 테스트 완료 (2019.11.02)
+    /*
+    this.$EventBus.$on('ETF_SISE', data => {
+      console.log("ETF_SISE ON........");
+      console.log(data);
+    });
+    */
+
   },
   created: function() {},
+  destroyed() {
+    // 실시간 데이터 테스트 완료 (2019.11.02)
+    /*
+    this.$EventBus.$off('ETF_SISE');
+    */
+  },
   beforeDestroy() {},
   methods: {
     getIndexBasic: function(rinfo) {

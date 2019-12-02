@@ -143,5 +143,8 @@ var server = http.createServer(app).listen(app.get('port'), function(req, res) {
     console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
 });
 
+const webSocket = require("./routes/websocket/web_socket");
+webSocket(server);
+
 server.timeout = 350000;
 
