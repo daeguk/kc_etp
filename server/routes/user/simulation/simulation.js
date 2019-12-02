@@ -3826,7 +3826,59 @@ var renameScenario = function(req, res) {
                         }
                     },
 
-                    /* 2. 시나리오 이름을 변경한다. */
+                    /* 2. 시나리오명이 존재하는지 체크한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            var exist_yn   =   "Y";
+
+                            paramData.status        =   "modify";
+                            paramData.prev_grp_cd   =   paramData.grp_cd;
+                            paramData.prev_scen_cd  =   paramData.scen_cd;
+
+                            stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length == 1) {
+                                    exist_yn   =   rows[0].exist_yn;
+                                }
+
+                                if( exist_yn == "Y" ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "시나리오 그룹명이 이미 존재합니다.";
+                                    resultMsg.err   = "시나리오 그룹명이 이미 존재합니다.";
+
+                                    return callback(resultMsg);                                    
+                                }
+
+                                callback(null, msg);
+                            });
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 시나리오 이름을 변경한다. */
                     function(msg, callback) {
 
                         try{
@@ -3941,6 +3993,8 @@ var copyScenario = function(req, res) {
                         try{
                             var msg         =   {};
 
+                            msg.v_simul_mast    =   {};
+
                             paramData.changeGrpCdYn     =   "1";
                             stmt = mapper.getStatement('simulation', 'getSimulMast', paramData, format);
                             log.debug(stmt);
@@ -3963,24 +4017,62 @@ var copyScenario = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                if( rows.length > 0 ) {
+                                if( rows.length == 1 ) {
+                                    msg.v_simul_mast     =   rows[0];
+                                }
 
-                                    var v_simul_mast  =   _.filter( rows, {
-                                            'grp_cd'    :   paramData.prev_grp_cd
-                                        ,   'scen_cd'   :   paramData.prev_scen_cd
-                                    });
+                                callback(null, msg);
+                            });
 
-                                    if( typeof v_simul_mast == "undefined" || !v_simul_mast || v_simul_mast.length == 0 ) {
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 2. 복사하기에서 사용할 로그인 사용자가 등록한 시나리오명을 조회한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if( typeof msg.v_simul_mast == "undefined" || Object.keys( msg.v_simul_mast ).length == 0 ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "기본정보가 존재하지 않습니다.";
+                                resultMsg.err = "기본정보가 존재하지 않습니다.";
+
+                                callback(resultMsg);
+                            }
+                            else if( msg.v_simul_mast.scen_name == "" ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "시나리오명이 존재하지 않습니다.";
+                                resultMsg.err = "시나리오명이 존재하지 않습니다.";
+
+                                callback(resultMsg);
+                            }
+                            else{
+                                stmt = mapper.getStatement('simulation', 'getScenNameForCopy', paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
                                         resultMsg.result = false;
-                                        resultMsg.msg = "시나리오 정보가 존재하지 않습니다.";
-                                        resultMsg.err = "시나리오 정보가 존재하지 않습니다.";
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
 
                                         return callback(resultMsg);
                                     }
 
-                                    msg.v_simul_mast    =   v_simul_mast[0];
 
-                                    log.debug( "### msg.v_simul_mast", msg.v_simul_mast );
+                                    log.debug( "### msg.v_simul_mast.scen_name", msg.v_simul_mast.scen_name );
 
                                     var v_postfix       =   "_copy";
                                     var v_scen_name     =   msg.v_simul_mast.scen_name;
@@ -4010,6 +4102,55 @@ var copyScenario = function(req, res) {
                                     }
 
                                     log.debug( "#### paramData.scen_name", paramData.scen_name );
+
+                                    callback(null, msg);
+                                });
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 3. 시나리오명이 존재하는지 체크한다. */
+                    function(msg, callback) {
+
+                        try{
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            var exist_yn   =   "Y";
+
+                            paramData.status    =   "insert";
+                            stmt = mapper.getStatement('simulation', 'getExistScenName', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length == 1) {
+                                    exist_yn   =   rows[0].exist_yn;
+                                }
+
+                                if( exist_yn == "Y" ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg   = "시나리오 그룹명이 이미 존재합니다.";
+                                    resultMsg.err   = "시나리오 그룹명이 이미 존재합니다.";
+
+                                    return callback(resultMsg);                                    
                                 }
 
                                 callback(null, msg);
@@ -4023,9 +4164,9 @@ var copyScenario = function(req, res) {
 
                             callback(resultMsg);
                         }
-                    },                    
+                    },
 
-                    /* 2. 시뮬레이션 시나리오 코드를 채번한다. */
+                    /* 4. 시뮬레이션 시나리오 코드를 채번한다. */
                     function(msg, callback) {
 
                         try{
@@ -4039,7 +4180,7 @@ var copyScenario = function(req, res) {
                                 resultMsg.msg = "시나리오 정보가 존재하지 않습니다.";
                                 resultMsg.err = "시나리오 정보가 존재하지 않습니다.";
 
-                                return callback(resultMsg);
+                                callback(resultMsg);
                             }
 
                             var queryId     =   "getScenCdByGroup";
@@ -4086,7 +4227,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 3. 시뮬레이션 시나리오 정렬순번을 조회한다. */
+                    /* 5. 시뮬레이션 시나리오 정렬순번을 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -4127,7 +4268,7 @@ var copyScenario = function(req, res) {
                         }
                     },                    
 
-                    /* 4. 시뮬레이션 기본 정보를 복사한다. */
+                    /* 6. 시뮬레이션 기본 정보를 복사한다. */
                     function( msg, callback) {
 
                         try{
@@ -4179,7 +4320,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 5. 시나리오인 경우 상위 그룹정보 조회한다. */
+                    /* 7. 시나리오인 경우 상위 그룹정보 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4238,7 +4379,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 6. 상위 그룹이 존재하는 경우 그룹 공유 정보를 조회한다. */
+                    /* 8. 상위 그룹이 존재하는 경우 그룹 공유 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -4294,7 +4435,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 6. 등록할 공유정보 설정한다. */
+                    /* 9. 등록할 공유정보 설정한다. */
                     function( msg, callback) {
 
                         try {
@@ -4376,7 +4517,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 7. 수정할 공유정보 설정한다. */
+                    /* 10. 수정할 공유정보 설정한다. */
                     function( msg, callback) {
 
                         try {
@@ -4424,7 +4565,7 @@ var copyScenario = function(req, res) {
                         }
                     },
 
-                    /* 7. [tm_simul_portfolio] 를 복사한다.  */
+                    /* 11. [tm_simul_portfolio] 를 복사한다.  */
                     function( msg, callback) {
 
                         try {
