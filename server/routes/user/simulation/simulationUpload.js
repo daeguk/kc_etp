@@ -2658,3 +2658,9 @@ var uploadTimeSeries = function(req, res) {
 
 module.exports.uploadPortfolio = uploadPortfolio;
 module.exports.uploadTimeSeries = uploadTimeSeries;
+
+module.exports.fn_excel_record_check = fn_excel_record_check;
+module.exports.fn_excel_column_check = fn_excel_column_check;
+module.exports.fn_sizeCheck = fn_sizeCheck;
+module.exports.deleteFile = deleteFile;
+module.exports.dirExists = dirExists;
