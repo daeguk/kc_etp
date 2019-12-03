@@ -945,7 +945,69 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                     p_record_data.INDEX_RATE    =   Number( p_record_data.col02 );
                 }
 
-            }else{
+            }
+            /* PDF 업로드 파일인 경우 */
+            else if( typeof p_param.p_pdf_yn != "undefined" && p_param.p_pdf_yn == "1" ) {
+
+                /* 구성종목코드 체크 */
+                p_param.p_column            =   "F16316";
+                p_param.p_column_name       =   "종목코드";
+                p_param.p_data              =   p_record_data.col01;
+                fn_excel_column_check( p_param, p_record_data );
+
+                if( !p_param.p_column_check ) {
+                    p_param.p_record_check      =   false;
+                }else{
+
+                    /* CODE 명 체크 */
+                    p_param.p_column            =   "CODE_NAME";
+                    p_param.p_column_name       =   "종목명";
+                    p_param.p_data              =   p_record_data.col02;
+                    fn_excel_column_check( p_param, p_record_data );
+
+
+                    if( !p_param.p_column_check ) {
+                        p_param.p_record_check      =   false;
+                    }else{
+
+                        /* CU shrs 값이 비이 있을시 0으로 디폴트값 설정 */
+                        if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
+                            p_record_data.col03 =   "0";
+                        }
+
+                        /* CU 체크 */
+                        p_param.p_column            =   "QTY";
+                        p_param.p_column_name       =   "CU shrs";
+                        p_param.p_data              =   p_record_data.col03;
+                        fn_excel_column_check( p_param, p_record_data );
+
+                        if( !p_param.p_column_check ) {
+                            p_param.p_record_check      =   false;
+                        }else{
+
+                            /* 액면금액 값이 비이 있을시 0으로 디폴트값 설정 */
+                            if( typeof p_record_data.col04 == "undefined" || p_record_data.col04 == "" ) {
+                                p_record_data.col04 =   "0";
+                            }
+
+                            /* 액면금액 체크 */
+                            p_param.p_column            =   "QTY";
+                            p_param.p_column_name       =   "액면금액";
+                            p_param.p_data              =   p_record_data.col04;
+                            fn_excel_column_check( p_param, p_record_data );
+                        }                    
+                    }
+                }
+
+                if( p_param.p_column_check ) {
+                    p_record_data.F16316        =   String( p_record_data.col01 );      /* 구성종목코드 */
+                    p_record_data.F16004        =   String( p_record_data.col02 );      /* 종목명 */
+                    p_record_data.F16499        =   Number( p_record_data.col03 );      /* CU shrs */
+                    p_record_data.F34840        =   Number( p_record_data.col04 );      /* 액면금액 */
+                }
+
+            }            
+            else{
 
                 /* 리밸런싱 파일이 아닌 경우 */
                 if( p_param.p_rebalance_file_yn == "0" ) {
@@ -1044,20 +1106,129 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
 
                 case    "CODE"  :
 
-                        if (typeof p_param.p_data == "undefined") {
+                        var v_column_name   =   "CODE";
+                        if( typeof p_param.p_column_name != "undefined" &&  p_param.p_column_name != "" ) {
+                            v_column_name   =   p_param.p_column_name;
+                        }
+
+                        if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼이 존재하지 않습니다.";
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
 
                         } else if ( !( String( p_param.p_data ).length == 6 || String( p_param.p_data ).length == 12 ) ) {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] CODE 컬럼은 6자리 또는 12자리만 가능합니다.";
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 6자리 또는 12자리만 가능합니다.";
                         }
 
                         break;
+
+                case    "F16316"  :
+
+                        var v_column_name   =   "CODE";
+                        if( typeof p_param.p_column_name != "undefined" &&  p_param.p_column_name != "" ) {
+                            v_column_name   =   p_param.p_column_name;
+                        }
+
+                        if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
+
+                        }else if ( !( /[0-9a-zA-Z+]$/.test( String( p_param.p_data ) ) ) ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 영문과 숫자만 입력하실수 있습니다.";
+
+                        }else if ( fn_getByte.call( this, String( p_param.p_data ) ) > 12 ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 12자리 까지 입력해 주세요.";
+                        }
+
+                        break;
+
+                case    "CODE_NAME"  :
+
+                        var v_column_name   =   "CODE 명";
+                        if( typeof p_param.p_column_name != "undefined" &&  p_param.p_column_name != "" ) {
+                            v_column_name   =   p_param.p_column_name;
+                        }
+
+                        if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
+
+                        }
+                        
+                        p_record_data.col02     =   String( p_record_data.col02 ).replace( /[\s]+$/g, "" );
+
+                        p_param.p_data          =   p_record_data.col02;
+
+                        if ( fn_getByte.call( this, p_param.p_data ) > 50 ) {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 50자리 까지 입력해 주세요.";
+                        }
+
+                        break;
+
+                case    "QTY"  :
+
+                        var v_column_name   =   "수량";
+                        if( typeof p_param.p_column_name != "undefined" &&  p_param.p_column_name != "" ) {
+                            v_column_name   =   p_param.p_column_name;
+                        }
+
+                        if (typeof p_param.p_data == "undefined") {
+                            p_param.p_column_check          =   false;
+
+                            p_record_data.result            =   false;
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
+
+                        }else{
+                        
+                            try{
+                                var temp = Number( p_param.p_data );
+
+                                if( isNaN( temp ) ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 숫자형만 입력해 주세요.";
+                                }
+                            }catch(e) {
+                                p_param.p_column_check          =   false;
+
+                                p_record_data.result            =   false;
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 숫자형만 입력해 주세요.";
+                            }
+
+                            if( p_param.p_column_check ) {
+                                if ( Number( p_param.p_data ) < 0 ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 0 보다 커야 합니다.";
+                                }else if ( String( p_param.p_data ).length > 15 ) {
+                                    p_param.p_column_check          =   false;
+
+                                    p_record_data.result            =   false;
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 15자리 까지 입력해 주세요.";
+                                }
+                            }
+                        }
+
+                        break;                        
 
                 case    "ALLOCATION"  :
 
@@ -2655,6 +2826,27 @@ var uploadTimeSeries = function(req, res) {
 };
 
 
+/*
+*   문자열 길이를 반환한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var fn_getByte  =   function( str ) {
+
+    var count = 0;
+    
+    for(var i = 0; i < str.length; i++) {
+        if(escape(str.charAt(i)).length >= 4)
+            count += 2;
+        else
+            if(escape(str.charAt(i)) != "%0D")
+                count++;
+    }
+    
+    return count;
+
+}
+
+
 
 module.exports.uploadPortfolio = uploadPortfolio;
 module.exports.uploadTimeSeries = uploadTimeSeries;
@@ -2664,3 +2856,5 @@ module.exports.fn_excel_column_check = fn_excel_column_check;
 module.exports.fn_sizeCheck = fn_sizeCheck;
 module.exports.deleteFile = deleteFile;
 module.exports.dirExists = dirExists;
+module.exports.fn_getByte = fn_getByte;
+
