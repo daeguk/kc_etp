@@ -2,7 +2,7 @@
     <v-container>
     <v-flex>
 
-<v-dialog v-model="loginDialog" persistent max-width="600px">
+<v-dialog v-model="loginDialog" persistent max-width="310px">
     <v-card>
         <v-container>
           <v-layout wrap>
@@ -22,18 +22,13 @@
             </v-layout>
         <v-card flat>
             <v-layout wrap>
-            <v-flex xs12 class="login_pop_pad">
-                <v-card-title>
-                <v-spacer></v-spacer>
+            <v-flex xs12 class="login_pop_pad text-xs-center">
               <v-btn depressed color="#85c406" dark @click.stop="loginCheck">LOG-IN to ETP PLATFORM</v-btn>
-                </v-card-title>
             </v-flex>
             <v-flex xs12  class="login_pop_pad2">
                 <v-layout>
                     <v-flex>
-                         New to ETP Platform? <a @click.stop="newAccount">Create an account.</a>
-                    </v-flex>
-                    <v-flex>
+                         New to ETP Platform?<br> <a @click.stop="newAccount">Create an account.</a>
                          <a @click.stop="forgotPassword">Forgot password.</a>
                     </v-flex>
                 </v-layout>
@@ -54,6 +49,9 @@
     </v-container>
 
 </template>
+<style scoped>
+.v-dialog__content{display: block !important;}
+</style>
 
 <script>
 import Config       from "@/js/config.js"
