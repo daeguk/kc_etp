@@ -860,15 +860,18 @@ export default {
 										v_total_obj.CONTRIBUTE_RATE	+=  Number(
 											item_sub.CONTRIBUTE_RATE
 										);
-									});
+                                    });
+                                    
+                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 
 									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
 									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
 									v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
-								}
-								item.dataLists.push( v_total_obj );
+                                }
+                                
+								item.dataLists.push(v_total_obj);
 
-
+                                 
                                 
                                 vm.arr_result_contribute.push( item );
                             });
@@ -1147,6 +1150,8 @@ export default {
 														v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
 														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
                                                     }
+                                                    
+                                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 													item.dataLists.push( v_total_obj );
                                                     
                                                     vm.arr_result_contribute.push( item );

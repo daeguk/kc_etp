@@ -1,9 +1,9 @@
 <template>
-  <v-app>
-    <v-card class="intro_bg">
-      <v-layout row wrap>
+<div class="m_intro_w">
+  <div class="m_intro_bg">
+       <v-layout row wrap>
         <v-flex xs12 text-xs-center>
-          <div class="intro_logo">EMP<span>ETP Management<br> Platform(mobile)</span>
+          <div class="m_intro_logo">EMP<span>ETP Management<br> Platform(mobile)</span>
               <p>Built to create, manage and analyze capital market <br> 
                   Live simple, it's all in EMP</p>
           </div>
@@ -19,14 +19,16 @@
       <UserLoginModal v-if="login_flag" ></UserLoginModal>
       <UserSignupModal v-if="signup_flag" ></UserSignupModal>
       <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
-    </v-card>
-  </v-app>
+</div>
+</div>
 </template> 
 
 <script>
+
 import UserLoginModal       from './M_UserLoginModal.vue';
 import UserSignupModal       from './M_UserSignupModal.vue';
 import UserFindPwdModal       from './M_UserFindPwdModal.vue';
+
 
 export default {
     data() {
