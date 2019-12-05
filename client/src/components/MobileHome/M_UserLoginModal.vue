@@ -80,7 +80,7 @@ export default {
       if (this.status == 0) {
         this.loginDialog = false;
         // MainLanding.vue
-        this.$EventBus.$emit("closeLoginModal");
+        this.$EventBus.$emit("MCloseLoginModal");
       }
     },
     loginCheck: function() {
@@ -122,7 +122,7 @@ export default {
 
           vm.loginDialog = false;
           // MainLanding.vue
-          vm.$EventBus.$emit("userLoginCheck", true);
+          vm.$EventBus.$emit("MUserLoginCheck", true);
         }
       });
     },

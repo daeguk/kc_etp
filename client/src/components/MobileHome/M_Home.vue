@@ -3,13 +3,11 @@
     <div v-if="!enterServiceFlag">
       <MainLanding></MainLanding>
     </div>
-    <div v-else>
-    <!--
+    <div v-else>    
       <ToolBar></ToolBar>
       <NoticeModal v-if="showModalFlag"></NoticeModal>
       <HomeContents></HomeContents>
-      <Footer></Footer>
-      -->
+      <Footer></Footer>      
     </div>        
   </v-app>
 </template> 
@@ -18,7 +16,7 @@
 
 import MainLanding          from './M_MainLanding.vue';
 import ToolBar          from './M_ToolBar.vue';
-import HomeContents     from './M_HomeContents.vue';
+import HomeContents     from '@/components/Home/MarketInfo/etp/EtpInfoMain.vue';
 import NoticeModal      from './M_NoticeModal.vue';
 import Footer           from './M_Footer.vue';
 import Config       from "@/js/config.js";
@@ -43,15 +41,15 @@ export default {
       // this.$forceupdate;
   },
   created: function() {
-    this.$EventBus.$on('popClose', this.popClose);
-    this.$EventBus.$on('menuClick', this.menuClick);
-    this.$EventBus.$on('enterService', this.enterService);
-    this.$EventBus.$on('outService', this.outService);
+    this.$EventBus.$on('MPopClose', this.popClose);
+    this.$EventBus.$on('MMenuClick', this.menuClick);
+    this.$EventBus.$on('MEnterService', this.enterService);
+    this.$EventBus.$on('MOutService', this.outService);
 
     let loginDt = localStorage.getItem('loginDt');
     let nDate = new Date();
     let nTerm = nDate.getTime() - Number(loginDt);
-    console.log("Home.vue.............");
+   /* console.log("Home.vue.............");
     console.log("loginDt : " + loginDt + " nDate : " + nDate + "nTerm : " + nTerm);
 
     if(loginDt !== null && nTerm < 600000) {
@@ -64,13 +62,13 @@ console.log(user);
       }        
     }else {
       localStorage.removeItem("finalPath");
-    }
+    }*/
   },
   beforeDestroy() {
-    this.$EventBus.$off('popClose');
-    this.$EventBus.$off('menuClick');
-    this.$EventBus.$off('enterService');
-    this.$EventBus.$off('outService');
+    this.$EventBus.$off('MPopClose');
+    this.$EventBus.$off('MMenuClick');
+    this.$EventBus.$off('MEnterService');
+    this.$EventBus.$off('MOutService');
   },    
   methods: {
     popClose: function() {
@@ -81,7 +79,7 @@ console.log(user);
       // console.log('Home menuClick');
       this.showFullFlag = isDrawer;
     },
-    enterService: function() {
+    enterService: function() {      
       // console.log('enterService............');
       this.enterServiceFlag = true;
     },

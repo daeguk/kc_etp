@@ -21,8 +21,7 @@ export default {
   },
   created: function() {
     let finalPath = localStorage.getItem('finalPath');
-    // console.log("finalPath.....");
-    // console.log(finalPath);
+    
     if(finalPath !== null && finalPath !== '/') {
       this.$router.push({path: finalPath});
     }else if (this.$store.state.user.type_cd == '0003') {
@@ -34,7 +33,7 @@ export default {
       || this.$store.state.user.type_cd == '9999') {
       this.$router.push({ path: Config.etp_url });
     } else {
-      this.$router.push({ path: Config.info_url });
+      this.$router.push({ path: Config.info_url });      
     }
   },
   beforeDestroy() {
