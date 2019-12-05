@@ -12,4 +12,5 @@ module.exports = {
   home_url: "/info/etpinfo/",
   etp_url: "/etp/manage",
   jisu_url: "/index/manage/",
+  mobile_home: "/mobile",
 }
