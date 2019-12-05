@@ -3,7 +3,7 @@
     <div v-if="!enterServiceFlag">
       <MainLanding></MainLanding>
     </div>
-    <div v-else>    
+    <div v-else style="min-width:1400px">    
       <ToolBar></ToolBar>
       <NoticeModal v-if="showModalFlag"></NoticeModal>
       <HomeContents></HomeContents>
