@@ -690,6 +690,58 @@ var getIndexRegStateCnt = function (req, res) {
     }
 };
 
+
+
+/*
+* <!--가장 최근 인덱스 4개-->
+*/
+var getRecentIndex = function (req, res) {
+    try {
+        log.debug('indexSummary=>getRecentIndex 호출됨.');
+
+        var pool = req.app.get("pool");
+        var mapper = req.app.get("mapper");
+        // var options = {id:'admin'};
+        
+        var options = {
+            large_type : req.session.large_type == null ? '' : req.session.large_type,
+            jisu_cd: req.query.jisu_cd,
+            market_id: req.query.market_id
+        };
+
+        var gubun = req.query.gubun;
+        log.debug("options", JSON.stringify(options));
+        var query_id = 'getRecentIndex';
+
+        
+        var stmt = mapper.getStatement('index', query_id, options, {language:'sql', indent: '  '});
+        // 대입 연산자 치환
+        stmt = stmt.replace(/\: =/g,':='); 
+        log.debug(stmt);
+        Promise.using(pool.connect(), conn => {
+            conn.queryAsync(stmt).then(rows => {
+                res.json({
+                    success: true,
+                    results: rows
+                });
+                res.end();
+            }).catch(err => {
+                log.error("Error while performing Query.", err);
+                res.json({
+                    success: false,
+                    message: err
+                });
+                res.end();
+            });
+
+        });
+    } catch(exception) {
+        log.error("err=>", exception);
+    }
+};
+
+
+
 module.exports.getIndexSummaryInfo = getIndexSummaryInfo;
 module.exports.getInfoOpenReqList = getInfoOpenReqList;
 module.exports.updateIndexOpenYn = updateIndexOpenYn;
@@ -704,3 +756,4 @@ module.exports.getIndexAnalysisInfo = getIndexAnalysisInfo;
 module.exports.getShareReqCnt = getShareReqCnt;
 module.exports.getIndexRegStateCnt = getIndexRegStateCnt;
 module.exports.getIndexAnalysisData = getIndexAnalysisData;
+module.exports.getRecentIndex = getRecentIndex;

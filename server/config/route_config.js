@@ -84,11 +84,13 @@ module.exports = {
         { file: './user/index/indexSummary', path: '/user/index/getIndexAnalysisData', method: 'getIndexAnalysisData', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getShareReqCnt', method: 'getShareReqCnt', session: 'check', type: 'get' },
         { file: './user/index/indexSummary', path: '/user/index/getIndexRegStateCnt', method: 'getIndexRegStateCnt', session: 'check', type: 'get' },
+        { file: './user/index/indexSummary', path: '/user/index/getRecentIndex', method: 'getRecentIndex', session: 'check', type: 'post' },
 
         { file: './user/index/indexDetail', path: '/user/index/getIndexJongmokList', method: 'getIndexJongmokList', session: 'check', type: 'post' },
         { file: './user/index/indexDetail', path: '/user/index/getIndexList', method: 'getIndexList', session: 'check', type: 'post' },
         { file: './user/index/indexDetail', path: '/user/index/getIndexDetailList', method: 'getIndexDetailList', session: 'check', type: 'post' },
         { file: './user/index/indexDetail', path: '/user/index/getIndexFixList', method: 'getIndexFixList', session: 'check', type: 'post' },
+        
 
 //        { file: './user/index/indexmanage', path: '/user/index/getIndexVueTableTestList', method: 'getIndexVueTableTestList', session: 'uncheck', type: 'get' },
 //        { file: './user/index/indexmanage', path: '/user/index/getIndexToastGridTestList', method: 'getIndexToastGridTestList', session: 'uncheck', type: 'get' },
