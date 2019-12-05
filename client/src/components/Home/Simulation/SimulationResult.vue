@@ -35,7 +35,7 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
 
-                    <span class="btn_r" v-if="owner_all_yn=='1'">
+                    <span class="btn_r">
                         <v-btn
                             small
                             flat
@@ -46,7 +46,7 @@
                         </v-btn>
                     </span>
 
-                    <span class="btn_r"  v-if="owner_all_yn=='1'">
+                    <span class="btn_r">
                         <v-btn small flat icon @click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
                         </v-btn>
@@ -496,7 +496,7 @@ export default {
             ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
             ,   share_modal_flag            :   false
             ,   share_row_index             :   -1
-            ,   owner_all_yn                :   "0"
+            ,   owner_all_yn                :   ""
         };
     },
 
@@ -2159,7 +2159,9 @@ export default {
 
             if( typeof p_param.time_series_upload_yn != "undefined" && p_param.time_series_upload_yn == "1" ) {
                 p_param.showSimulationId    =   4;
-            }
+            }else if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
+                p_param.showSimulationId    =   0;
+            }            
 
             vm.$emit( "fn_showSimulation", p_param );
         },
@@ -2236,7 +2238,7 @@ export default {
          * 공유하기 창을 오픈한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_open_share_modal: function( p_item, p_index, p_gubun="scen" ) {
+        async fn_open_share_modal( p_item, p_index, p_gubun="scen" ) {
 
             var vm = this;
 
@@ -2245,6 +2247,20 @@ export default {
 
             if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
                 vm.arr_show_error_message.push( "기본정보가 존재하지 않습니다." );
+                return  false;
+            }
+
+            if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
+
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '공유받은 시나리오는 공유가 불가합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                }
+
                 return  false;
             }
 
