@@ -1576,6 +1576,8 @@ export default {
 
                     }else{
 
+                        p_item.owner_all_yn     =   p_item.owner_yn;
+
                         /* 결과화면을 보여준다. */
                         p_item.showSimulationId        =   2;
                         vm.$emit( "fn_showSimulation", p_item );

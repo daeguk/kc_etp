@@ -556,6 +556,9 @@
                 ,   tm_simul_mast.stock_gubun                               AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
                 ,   tm_simul_mast.time_series_upload_yn                     AS  time_series_upload_yn       /* 시계열 업로드 여부 */
 
+                ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
+                ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
+
                 ,   (
 
                         SELECT  tm_code_dtl.com_val01

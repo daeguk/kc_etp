@@ -1,299 +1,372 @@
 <template>
     <v-container>
-    <v-flex>
-    <v-dialog v-model="showDialog" persistent max-width="900">
-        
-        <v-card class="mx-auto">
+        <v-flex>
+            <v-dialog v-model="showDialog" persistent max-width="900">
+                <v-card class="mx-auto">
+                    <v-window v-model="step">
+                        <v-window-item :value="1">
+                    <!---step1 START-->
+                            <v-card flat class="listset_pop">
+                                <h5>
+                                    <v-card-title ma-0>
+                                        {{ etpBasic.F16002 /* 한글종목명 */ }}
+                                        <span>{{ etpBasic.F16013 /* 단축코드 */ }}</span>
 
-            <v-window v-model="step">
+                                        <v-text-field v-show="false"></v-text-field>
 
+                                        <v-spacer></v-spacer>
+                                        <v-btn icon @click="fn_close()">
+                                            <v-icon>close</v-icon>
+                                        </v-btn>
+                                    </v-card-title>
+                                </h5>
 
-                <v-window-item :value="1">
-<!---step1 START-->
-                    <v-card flat class="listset_pop">
-                        <h5>
-                            <v-card-title ma-0>
-                                {{ etpBasic.F16002          /* 한글종목명 */ }}
-                                <span>{{ etpBasic.F16013    /* 단축코드 */ }}</span>
+                                <v-card flat class="pdf_mody_w">
+                                    <v-toolbar card prominent>
+                                        <v-toolbar-title class="pdf_t">
+                                            <v-icon class="text_red">feedback</v-icon>PDF 수정 모드입니다.
+                                        </v-toolbar-title>
 
-                                <v-text-field v-show="false"></v-text-field>
+                                        <v-btn
+                                            outline
+                                            small
+                                            color="primary"
+                                            dark
+                                            @click="fn_addRow()"
+                                        >
+                                            <v-icon small color="primary">add</v-icon>자산추가
+                                        </v-btn>
 
+                                        <!-- 개발 중복 자산추가 팝업 end -->
+                                    </v-toolbar>
+
+                                    <div
+                                        class="warning_box"
+                                        v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                                    >
+                                        <span
+                                            v-for="(item, index) in arr_show_error_message"
+                                            :key="index"
+                                        >
+                                            <v-icon color="#ff4366">error_outline</v-icon>
+                                            {{item}}
+                                            <br />
+                                        </span>
+                                    </div>
+                                </v-card>
+
+                                <v-card flat>
+                                    <table
+                                        :id="tblEmergeny01"
+                                        class="tbl_type ver7"
+                                        style="width:100%"
+                                    >
+                                        <colgroup>
+                                            <col width="10%" />
+                                            <col width="8%" />
+                                            <col width="12%" />
+                                            <col width="14%" />
+                                            <col width="12%" />
+                                            <col width="12%" />
+                                            <col width="12%" />
+                                            <col width="10%" />
+                                            <col width="9%" />
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th class="txt_center">Date</th>
+                                                <th class="txt_center">
+                                                    시장
+                                                    <br />구분
+                                                </th>
+                                                <th class="txt_left">구성종목코드</th>
+                                                <th class="txt_left">종목명</th>
+                                                <th class="txt_right">CU shrs</th>
+                                                <th class="txt_right">액면금액</th>
+                                                <th class="txt_right">평가금액</th>
+                                                <th class="txt_right">비중</th>
+                                                <th class="txt_right"></th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </v-card>
+                            </v-card>
+                            <v-divider></v-divider>
+
+                            <v-card-actions>
+                                <v-btn
+                                    depressed
+                                    outline
+                                    small
+                                    color="primary"
+                                    @click.stop="fn_fileClick();"
+                                >업로드</v-btn>
+                                <input
+                                    type="file"
+                                    name="pdfUpload"
+                                    ref="pdfUpload"
+                                    style="display:none;"
+                                />                                
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="fn_close()">
-                                    <v-icon>close</v-icon>
-                                </v-btn>                                
-                            </v-card-title>
-
-                        </h5>
-
-                        <v-card flat class="pdf_mody_w">
-                            <v-toolbar card prominent>
-                                <v-toolbar-title class="pdf_t">
-                                    <v-icon class="text_red">feedback</v-icon>PDF 수정 모드입니다.
-                                </v-toolbar-title>
-
-                                <v-btn outline small color="primary" dark   @click="fn_addRow()">
-                                    <v-icon small color="primary">add</v-icon>자산추가
-                                </v-btn>
-
-                                <!-- 개발 중복 자산추가 팝업 end -->
-                            </v-toolbar>
-
-                            <div class="warning_box"    v-if="arr_show_error_message != null && arr_show_error_message.length > 0">
-                                <span v-for="(item, index) in arr_show_error_message" :key="index">
-                                    <v-icon color="#ff4366">error_outline</v-icon> {{item}} <br>
-                                </span>
-                            </div>                            
-                        </v-card>
-                        
-                        <v-card flat>
-
-                            <table :id="tblEmergeny01" class="tbl_type ver7" style="width:100%" >
-
-                                <colgroup>
-                                    <col width="10%">
-                                    <col width="8%">
-                                    <col width="12%">
-                                    <col width="14%">
-                                    <col width="12%">
-                                    <col width="12%">
-                                    <col width="12%">
-                                    <col width="10%">
-                                    <col width="9%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th class="txt_center">Date</th>
-                                        <th class="txt_center">시장<br>구분</th>
-                                        <th class="txt_left">구성종목코드</th>
-                                        <th class="txt_left">종목명</th>
-                                        <th class="txt_right">CU shrs</th>
-                                        <th class="txt_right">액면금액</th>
-                                        <th class="txt_right">평가금액</th>
-                                        <th class="txt_right">비중</th>
-                                        <th class="txt_right"></th>
-                                    </tr>
-                                </thead> 
-
-                            </table>
-                        </v-card>
-                    </v-card>
-                    <v-divider></v-divider>
-
-                    <v-card-actions>         
-                        <v-spacer></v-spacer>
-                        <v-btn color="primary" :disabled='fn_nextButtonDisabledCheck()' depressed @click="fn_stepCheck(1)">Next</v-btn>
-                    </v-card-actions>
-<!-- step1 END-->
-                </v-window-item>
+                                <v-btn
+                                    color="primary"
+                                    :disabled="fn_nextButtonDisabledCheck()"
+                                    depressed
+                                    @click="fn_stepCheck(1)"
+                                >Next</v-btn>
+                            </v-card-actions>
+                    <!-- step1 END-->
+                        </v-window-item>
 
 
 
+                        <v-window-item :value="2">
+                    <!---step2 START-->
+                            <v-card flat class="listset_pop">
+                                <h5>
+                                    <v-card-title ma-0>
+                                        <v-btn icon :disabled="step === 1" flat @click="step--;">
+                                            <v-icon>arrow_back_ios</v-icon>
+                                        </v-btn>
+                                        PDF 변경신청 현황
+                                        <v-spacer></v-spacer>
+                                        <v-btn icon @click="fn_close">
+                                            <v-icon>close</v-icon>
+                                        </v-btn>
+                                    </v-card-title>
+                                </h5>
+                                <v-card flat>
+                                    <v-flex
+                                        xs12
+                                        v-for="subData in allDataList"
+                                        :key='"step2_" + subData.etf_F16012'
+                                    >
+                                        <h4>
+                                            {{ subData.etf_F16002 /* ETF 한글종목명 */ }}
+                                            <span>{{ subData.etf_F16013 /* ETF 단축코드 */ }}</span>
+                                        </h4>
 
+                                        <table
+                                            v-bind:id='"step2_" + subData.etf_F16012'
+                                            class="tbl_type ver7"
+                                            style="width:100%"
+                                        >
+                                            <colgroup>
+                                                <col width="10%" />
+                                                <!-- 구분 -->
+                                                <col width="15%" />
+                                                <!-- CODE -->
+                                                <col width="15%" />
+                                                <!-- 종목 -->
 
-                <v-window-item :value="2">
-<!---step2 START-->
-                    <v-card flat class="listset_pop">
-                        <h5>
-                            <v-card-title ma-0>
-                                <v-btn icon :disabled="step === 1" flat @click='step--;'>
-                                    <v-icon>arrow_back_ios</v-icon>
-                                </v-btn>PDF 변경신청 현황
+                                                <col width="15%" />
+                                                <!-- CU shrs -->
+                                                <col width="15%" />
 
+                                                <col width="15%" />
+                                                <!-- 액면금액 -->
+                                                <col width="15%" />
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th class="txt_center" rowspan="2">구분</th>
+                                                    <th class="txt_center" rowspan="2">CODE</th>
+                                                    <th class="txt_left" rowspan="2">종목</th>
+                                                    <th class="txt_center" colspan="2">CU shrs</th>
+                                                    <th class="txt_center" colspan="2">액면금액</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </v-flex>
+                                </v-card>
+                                <v-card flat class="pdf_context">
+                                    <div
+                                        class="pdf_coment text-xs-center"
+                                    >* 추가로 변경하실 ETF 종목이 있다면 [추가 변경]을 선택하세요.</div>
+                                    <p class="text-xs-center">다른 ETF의 PDF를 변경하시겠습니까?</p>
+                                    <div class="pop_btn_w">
+                                        <p class="pdfmody_btn">
+                                            <v-btn
+                                                fab
+                                                dark
+                                                depressed
+                                                color="primary"
+                                                :disabled="disabledAddEtfOperPdf"
+                                                @click="fn_showAddEtfOperPdf()"
+                                            >
+                                                <v-icon dark large>add</v-icon>
+                                            </v-btn>
+                                            네, 추가 변경 작업을 진행합니다.
+                                            <v-expansion-panel
+                                                v-model="showAddEtfOperPdfPanel"
+                                                expand
+                                            >
+                                                <v-expansion-panel-content flat>
+                                                    <v-card flat>
+                                                        <v-card-text>
+                                                            <div class="pdfmody_panel">
+                                                                <span>
+                                                                    <v-text-field
+                                                                        placeholder="ETP의 종목코드 12자리 또는 단축코드를 입력하세요"
+                                                                        value
+                                                                        outline
+                                                                        class="width_fix2"
+                                                                        v-model="txtAddEtpCode"
+                                                                        maxlength="15"
+                                                                    ></v-text-field>
+                                                                </span>
+                                                                <span>
+                                                                    <v-btn
+                                                                        outline
+                                                                        small
+                                                                        color="primary"
+                                                                        @click="fn_addEtfOperPdfModify"
+                                                                    >확인</v-btn>
+                                                                    <v-btn
+                                                                        outline
+                                                                        small
+                                                                        color="#9e9e9e"
+                                                                        @click="fn_addEtfOperPdfModifyCancel"
+                                                                    >취소</v-btn>
+                                                                </span>
+                                                                <span
+                                                                    style="color:red"
+                                                                >{{ result.msg }}</span>
+                                                            </div>
+                                                        </v-card-text>
+                                                    </v-card>
+                                                </v-expansion-panel-content>
+                                            </v-expansion-panel>
+                                        </p>
+                                        <p class="pdfmody_btn">
+                                            <v-btn
+                                                fab
+                                                dark
+                                                depressed
+                                                color="primary"
+                                                :disabled="disabledSubmit2"
+                                                @click="fn_stepCheck(2)"
+                                            >
+                                                <v-icon dark large>navigate_next</v-icon>
+                                            </v-btn>아니오, 지금까지 변경한 내용을 제출합니다.
+                                        </p>
+                                    </div>
+                                </v-card>
+                            </v-card>
+
+                            <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn icon @click="fn_close">
-                                    <v-icon>close</v-icon>
-                                </v-btn>
-                            </v-card-title>
-                        </h5>
-                        <v-card flat>
-                            <v-flex xs12    v-for="subData in allDataList" :key='"step2_" + subData.etf_F16012'>
-
-                                <h4>
-                                    {{ subData.etf_F16002           /* ETF 한글종목명 */    }}
-                                    <span>{{ subData.etf_F16013     /* ETF 단축코드 */      }}</span>
-                                </h4>
-
-                                <table v-bind:id='"step2_" + subData.etf_F16012' class="tbl_type ver7" style="width:100%">
-                                    <colgroup>
-                                        <col width="10%">       <!-- 구분 -->
-                                        <col width="15%">       <!-- CODE -->
-                                        <col width="15%">       <!-- 종목 -->
-
-                                        <col width="15%">       <!-- CU shrs -->
-                                        <col width="15%">
-
-                                        <col width="15%">       <!-- 액면금액 -->
-                                        <col width="15%">                                        
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th class="txt_center"  rowspan="2">구분</th>
-                                            <th class="txt_center"  rowspan="2">CODE</th>
-                                            <th class="txt_left"    rowspan="2">종목</th>
-                                            <th class="txt_center"  colspan="2">CU shrs</th>
-                                            <th class="txt_center"  colspan="2">액면금액</th>
-                                        </tr>
-                                        <tr>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>                                            
-                                        </tr>
-                                    </thead> 
-                                </table>
-
-                            </v-flex>
-
-                        </v-card>
-                        <v-card flat class="pdf_context">
-                            <div
-                                class="pdf_coment text-xs-center"
-                            >* 추가로 변경하실 ETF 종목이 있다면 [추가 변경]을 선택하세요.</div>
-                            <p class="text-xs-center">다른 ETF의 PDF를 변경하시겠습니까?</p>
-                            <div class="pop_btn_w">
-                                <p class="pdfmody_btn">
-
-                                    <v-btn fab dark depressed color="primary" :disabled="disabledAddEtfOperPdf" @click="fn_showAddEtfOperPdf()">
-                                        <v-icon dark large>add</v-icon>
-                                    </v-btn>네, 추가 변경 작업을 진행합니다.
-
-                                    <v-expansion-panel v-model="showAddEtfOperPdfPanel" expand>
-                                        <v-expansion-panel-content flat>
-                                            <v-card flat>
-                                                <v-card-text>
-                                                    <div class="pdfmody_panel">
-                                                        <span>
-                                                            <v-text-field
-                                                                placeholder="ETP의 종목코드 12자리 또는 단축코드를 입력하세요"
-                                                                value
-                                                                outline
-                                                                class="width_fix2"
-                                                                v-model="txtAddEtpCode"
-                                                                maxlength="15"
-                                                            ></v-text-field>
-                                                        </span>
-                                                        <span>
-                                                            <v-btn outline small color="primary" @click="fn_addEtfOperPdfModify">확인</v-btn>
-                                                            <v-btn outline small color="#9e9e9e" @click="fn_addEtfOperPdfModifyCancel">취소</v-btn>
-                                                        </span>
-                                                        <span style="color:red">
-                                                            {{ result.msg }}
-                                                        </span>
-                                                    </div>
-                                                </v-card-text>
-                                            </v-card>
-                                        </v-expansion-panel-content>
-                                    </v-expansion-panel>
-                                </p>
-                                <p class="pdfmody_btn">
-                                    <v-btn fab dark depressed color="primary" :disabled="disabledSubmit2" @click="fn_stepCheck(2)">
-                                        <v-icon dark large>navigate_next</v-icon>
-                                    </v-btn>아니오, 지금까지 변경한 내용을 제출합니다.
-                                </p>
-                            </div>
-                        </v-card>
-                    </v-card>
-
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                    </v-card-actions>
-<!--step2 END-->
-                </v-window-item>
-
-                <v-window-item :value="3">
-<!---step3 START-->
-                    <v-card flat class="listset_pop">
-                        <h5>
-                            <v-card-title ma-0>
-                                PDF 변경신청 완료
-                                <v-spacer></v-spacer>
-
-                                <v-btn icon @click="fn_close">
-                                    <v-icon>close</v-icon>
-                                </v-btn>
-                            </v-card-title>
-                        </h5>
-
-                        <v-card flat>
-                            <v-flex xs12    v-for="subData in allDataList" :key='"step3_"  + subData.etf_F16012'>
-
-                                <h4>
-                                    {{ subData.etf_F16002           /* ETF 한글종목명 */    }}
-                                    <span>{{ subData.etf_F16013     /* ETF 단축코드 */      }}</span>
-                                </h4>
-
-                                <table v-bind:id='"step3_" + subData.etf_F16012' class="tbl_type ver7" style="width:100%">
-                                    <colgroup>
-                                        <col width="10%">       <!-- 구분 -->
-                                        <col width="15%">       <!-- CODE -->
-                                        <col width="15%">       <!-- 종목 -->
-
-                                        <col width="15%">       <!-- CU shrs -->
-                                        <col width="15%">
-
-                                        <col width="15%">       <!-- 액면금액 -->
-                                        <col width="15%">                                        
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th class="txt_center"  rowspan="2">구분</th>
-                                            <th class="txt_center"  rowspan="2">CODE</th>
-                                            <th class="txt_left"    rowspan="2">종목</th>
-                                            <th class="txt_center"  colspan="2">CU shrs</th>
-                                            <th class="txt_center"  colspan="2">액면금액</th>
-                                        </tr>
-                                        <tr>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>
-                                            <th class="txt_right">변경전</th>
-                                            <th class="txt_right">변경후</th>                                            
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                            </v-flex>
-
-                        </v-card>
+                            </v-card-actions>
+                    <!--step2 END-->
+                        </v-window-item>
 
 
-                        <v-card flat class="pdf_context">
-                            <div class="pdf_coment text-xs-center text_blue">
-                                <b>
-                                    PDF 변경 신청이 완료되었습니다.
-                                    <br>신속한 작업을 위해 내역을 제출하신 후 코스콤 담당자와 통화해주세요
-                                </b>
-                            </div>
-                            <div class="pdf_coment2 text-xs-center">
-                                오춘교 과장 02-767-8735
-                                <br>이형준 과장 02-767-8750
-                            </div>
-                            <div class="pdf_coment3 text-xs-center">
-                                -주의사항-
-                                <br>본 변경내용은 장중투자지표(iNAV) 산출에만 반영됩니다.
-                                <br>기타업무(설정환매, 정보단말 PDF조회 등)에 반영을 위해
-                                <br>사무관리사에 PDF변경내역을 통지하시기 바랍니다.
-                            </div>
-                            <p class="text-xs-center">
-                                <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
-                            </p>
-                        </v-card>
-                    </v-card>
-                    <v-card-actions></v-card-actions>
-<!--step3 END-->
-                </v-window-item>
-            </v-window>
 
-        </v-card>
+                        <v-window-item :value="3">
+                    <!---step3 START-->
+                            <v-card flat class="listset_pop">
+                                <h5>
+                                    <v-card-title ma-0>
+                                        PDF 변경신청 완료
+                                        <v-spacer></v-spacer>
 
-    </v-dialog>
-    </v-flex>
-    <v-flex>
-        <ProgressBar ref="progress"></ProgressBar>
-        <ConfirmDialog ref="confirm2"></ConfirmDialog>
-    </v-flex>    
-    </v-container>    
+                                        <v-btn icon @click="fn_close">
+                                            <v-icon>close</v-icon>
+                                        </v-btn>
+                                    </v-card-title>
+                                </h5>
 
+                                <v-card flat>
+                                    <v-flex
+                                        xs12
+                                        v-for="subData in allDataList"
+                                        :key='"step3_"  + subData.etf_F16012'
+                                    >
+                                        <h4>
+                                            {{ subData.etf_F16002 /* ETF 한글종목명 */ }}
+                                            <span>{{ subData.etf_F16013 /* ETF 단축코드 */ }}</span>
+                                        </h4>
+
+                                        <table
+                                            v-bind:id='"step3_" + subData.etf_F16012'
+                                            class="tbl_type ver7"
+                                            style="width:100%"
+                                        >
+                                            <colgroup>
+                                                <col width="10%" />
+                                                <!-- 구분 -->
+                                                <col width="15%" />
+                                                <!-- CODE -->
+                                                <col width="15%" />
+                                                <!-- 종목 -->
+
+                                                <col width="15%" />
+                                                <!-- CU shrs -->
+                                                <col width="15%" />
+
+                                                <col width="15%" />
+                                                <!-- 액면금액 -->
+                                                <col width="15%" />
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th class="txt_center" rowspan="2">구분</th>
+                                                    <th class="txt_center" rowspan="2">CODE</th>
+                                                    <th class="txt_left" rowspan="2">종목</th>
+                                                    <th class="txt_center" colspan="2">CU shrs</th>
+                                                    <th class="txt_center" colspan="2">액면금액</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>
+                                                    <th class="txt_right">변경전</th>
+                                                    <th class="txt_right">변경후</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </v-flex>
+                                </v-card>
+
+                                <v-card flat class="pdf_context">
+                                    <div class="pdf_coment text-xs-center text_blue">
+                                        <b>
+                                            PDF 변경 신청이 완료되었습니다.
+                                            <br />신속한 작업을 위해 내역을 제출하신 후 코스콤 담당자와 통화해주세요
+                                        </b>
+                                    </div>
+                                    <div class="pdf_coment2 text-xs-center">
+                                        오춘교 과장 02-767-8735
+                                        <br />이형준 과장 02-767-8750
+                                    </div>
+                                    <div class="pdf_coment3 text-xs-center">
+                                        -주의사항-
+                                        <br />본 변경내용은 장중투자지표(iNAV) 산출에만 반영됩니다.
+                                        <br />기타업무(설정환매, 정보단말 PDF조회 등)에 반영을 위해
+                                        <br />사무관리사에 PDF변경내역을 통지하시기 바랍니다.
+                                    </div>
+                                    <p class="text-xs-center">
+                                        <v-btn dark depressed color="primary" @click="fn_close">닫기</v-btn>
+                                    </p>
+                                </v-card>
+                            </v-card>
+                            <v-card-actions></v-card-actions>
+                    <!--step3 END-->
+                        </v-window-item>
+                    </v-window>
+                </v-card>
+            </v-dialog>
+        </v-flex>
+        <v-flex>
+            <ProgressBar ref="progress"></ProgressBar>
+            <ConfirmDialog ref="confirm2"></ConfirmDialog>
+        </v-flex>
+    </v-container>
 </template>
 
 
@@ -320,26 +393,30 @@ export default {
     },
     data() {
         return {
-            step: 1,
-            tblEmergeny01 : "tblEmergeny01",
-            etpBasic : {},
-            dataList : [],
-            allDataList : [],
-            disabledAddEtfOperPdf : false,
-            showAddEtfOperPdfPanel : [false],
-            disabledSubmit2 : false,
-            txtAddEtpCode : "",
-            result : {
-                    flag : true
-                ,   msg: ""
-            },
-            search_date : "",
-            fmt_search_date : "",
+                step: 1
+            ,   tblEmergeny01 : "tblEmergeny01"
+            ,   etpBasic : {}
+            ,   dataList : []
+            ,   allDataList : []
+            ,   disabledAddEtfOperPdf : false
+            ,   showAddEtfOperPdfPanel : [false]
+            ,   disabledSubmit2 : false
+            ,   txtAddEtpCode : ""
+            ,   result : {
+                        flag : true
+                    ,   msg: ""
+                }
+            ,   search_date : ""
+            ,   fmt_search_date : ""
 
-            jongmok_state : "", /* ksp_jongbasic DB 조회 상태 */
+            ,   jongmok_state : ""      /* ksp_jongbasic DB 조회 상태 */
 
-            status: 0,
-            arr_show_error_message : []
+            ,   status: 0
+            ,   arr_show_error_message : []
+
+            ,   limit : {
+                    max_size : 1        /* 파일 사이즈 (Mb) */
+                }            
         };
     },
     created: function() {
@@ -463,6 +540,8 @@ export default {
         /* [자산추가] 후 [종목코드] 변경시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('keyup', "input[name='jongmok']", function (e) {
 
+            vm.arr_show_error_message   =  [];
+
             $(this).val( $(this).val().replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '' ) );
             $(this).val( $(this).val().replace(/[^0-9a-zA-Z]/g, '' ) );
 
@@ -493,6 +572,8 @@ export default {
 
         /* [자산추가] 후 확인 버튼 클릭시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('click', "button[name='confirm']", function () {
+
+            vm.arr_show_error_message   =  [];
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -605,6 +686,8 @@ export default {
         /* F16004=[종목명] 수정시 */
         $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16004']", function () {
 
+            vm.arr_show_error_message   =  [];
+
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
             var rowIndex = table.row($(this).parents("tr")).index();
@@ -617,7 +700,7 @@ export default {
         });        
 
         /* F16499=[CU shrs], F34840=[액면금액] 수정시 */
-        $("#" + vm.tblEmergeny01 + " tbody").on('change', "input[name='F16499'],input[name='F34840']", function () {
+        $("#" + vm.tblEmergeny01 + " tbody").on('blur', "input[name='F16499'],input[name='F34840']", function () {
 
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var data = table.row($(this).parents("tr")).data();
@@ -672,6 +755,61 @@ export default {
 
             vm.fn_deleteTableData( data, tr, rowIndex );
         });
+
+
+        /* PDF 업로드 파일 영역 */
+        this.$refs.pdfUpload.addEventListener(
+            "change",
+            async function(evt) {
+                var vm          =   this;
+                let file        =   this.$refs.pdfUpload.files[0];
+
+                var flag    =   true;
+
+                vm.arr_show_error_message   =  [];
+
+                /* 엑셀 유형인지 파일을 체크한다. */
+                await vm.fn_checkFile( file ).then( async function(e) {
+
+                    if( e && e.result ) {
+
+                        /* 파일 사이즈를 체크한다. */
+                        return  await vm.fn_sizeCheck( file, "file" );
+                    }else{
+                        flag = false;
+                    }
+
+                }).then( async function(e) {
+
+                    if( e && e.result ) {
+
+                        /* PDF 엑셀을 업로드 한다. */
+                        return  await vm.fn_uploadPdf( file );
+                    }else{
+                        flag = false;
+                    }
+
+                }).then( function(e) {
+
+                    vm.$refs.pdfUpload.value  =   null;
+
+                    if( vm.$refs.pdfUpload.files ) {
+                        vm.$refs.pdfUpload.files  =   null;
+                    }
+
+                }).catch( function(e) {
+
+                    if( e && e.result ) {
+
+                    }else{
+                        flag = false;
+                    }
+                });
+
+            }.bind(this)
+        );
+
+
 
         var searchParam                 =   {}
         searchParam.F16012              =   vm.paramData.F16012;                   /* 국제표준코드 */
@@ -1555,6 +1693,8 @@ export default {
 
                 if( vm.allDataList.length > 0 ) {
 
+                    vm.arr_show_error_message   =  [];
+
                     var items = [];
 
                     for ( let subData of vm.allDataList ) {
@@ -2094,40 +2234,47 @@ export default {
                 /* 1CU단위증권수 */
                 if( nowData.name == "F16499" ) {
 
-                    if( tableData.status == "insert" ) {
-                        /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
-                        //F33861 -> 시장구분
-                        //F33904 -> 계약승수                        
-                        /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
-                        if (tableData.F33861 == '4') {                        
-                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 ) * Number(tableData.F33904);
-                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
-                        } else {
-                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
-                        }
-                    }else{
-                        
-                        /* 
-                        *   상태값 normal 로 변경
-                        *
-                        *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                        *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                        */
-                        if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
-                            &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
-                            table.cell( tr, 9 ).data( { "status" : "normal" } );
-                            vm.dataList[ rowIndex ].status  =   "normal";
-                        }else{
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
-                            vm.dataList[ rowIndex ].status  =   "modify";
-                        }
 
-                        /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
-                        if( Number( tableData.F16499_prev ) == 0  ) {
-                            v_F16588    =   0;
+                    if( Number( tableData.F34840 ) > 0 ) {
+                        v_F16588    =   0;
+
+                    }else{
+                        if( tableData.status == "insert" ) {
+
+                            /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
+                            //F33861 -> 시장구분
+                            //F33904 -> 계약승수                        
+                            /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
+                            if (tableData.F33861 == '4') {                        
+                                v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 ) * Number(tableData.F33904);
+                            /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                            } else {
+                                v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
+                            }
                         }else{
-                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
-                            v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F16499 ) / Number( tableData.F16499_prev );
+                            
+                            /* 
+                            *   상태값 normal 로 변경
+                            *
+                            *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                            *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                            */
+                            if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
+                                &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
+                                table.cell(rowIndex, 9).data( "normal" ).draw();
+                                vm.dataList[ rowIndex ].status  =   "normal";
+                            }else{
+                                table.cell(rowIndex, 9 ).data( "modify" ).draw();
+                                vm.dataList[ rowIndex ].status  =   "modify";
+                            }
+
+                            /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
+                            if( Number( tableData.F16499_prev ) == 0  ) {
+                                v_F16588    =   0;
+                            }else{
+                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
+                                v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F16499 ) / Number( tableData.F16499_prev );
+                            }
                         }
                     }
 
@@ -2137,8 +2284,24 @@ export default {
                 else if( nowData.name == "F34840" ) {
 
                     if( tableData.status == "insert" ) {
-                        /* v_F16588 (계산된 평가금액)  */
-                        v_F16588    =   0;
+
+                        if( nowData.F34840 == 0 ) {
+                            /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
+                            //F33861 -> 시장구분
+                            //F33904 -> 계약승수                        
+                            /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
+                            if (tableData.F33861 == '4') {                        
+                                v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 ) * Number(tableData.F33904);
+                            /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                            } else {
+                                v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 );
+                            }
+                        }else{
+                            /* v_F16588 (계산된 평가금액)  */
+                            v_F16588    =   0;
+                        }
+
+
                     }else {
                                             
                         /* 
@@ -2149,28 +2312,41 @@ export default {
                         */
                         if(     Number( tableData.F34840_prev ) == Number( nowData.F34840 )
                             &&  Number( tableData.F16499_prev ) == Number( tableData.F16499 ) ) {
-                            table.cell( tr, 9 ).data( { "status" : "normal" } );
+                            table.cell(rowIndex, 9).data( "normal" ).draw();
                             vm.dataList[ rowIndex ].status  =   "normal";
                         }
                         else{
-                            table.cell( tr, 9 ).data( { "status" : "modify" } );
+                            table.cell(rowIndex, 9 ).data( "modify" ).draw();
                             vm.dataList[ rowIndex ].status  =   "modify";
                         }
 
-                        /* 변경전 액면금액 이 0 인 경우 ( 분모가 0 ) */
-                        if( Number( tableData.F34840_prev ) == 0  ) {
-                            v_F16588    =   0;
+                        if( Number( nowData.F34840 ) == 0 ) {
+
+                            /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
+                            if( Number( tableData.F16499_prev ) == 0  ) {
+                                v_F16588    =   0;
+                            }else{
+                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
+                                v_F16588    =   Number( tableData.F16588_prev ) * Number( tableData.F16499 ) / Number( tableData.F16499_prev );
+                            }
                         }else{
-                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F34840 ( 변경후 액면금액 ) / tableData.F34840_prev ( 변경전 액면금액 )  */
-                            v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F34840 ) / Number( tableData.F34840_prev );
-                        }                        
+                            /* 변경전 액면금액 이 0 인 경우 ( 분모가 0 ) */
+                            if( Number( tableData.F34840_prev ) == 0  ) {
+                                v_F16588    =   0;
+                            }else{
+                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F34840 ( 변경후 액면금액 ) / tableData.F34840_prev ( 변경전 액면금액 )  */
+                                v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F34840 ) / Number( tableData.F34840_prev );
+                            }
+                        }
                     }
 
                     vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
                 }
 
                 v_F16588 = Math.round(v_F16588);
-                table.cell( tr, 6 ).data( v_F16588 );                   /* 화면 table 의 평가금액 컬럼 데이터 변경 */
+                table.cell( rowIndex, 6 ).data( v_F16588 ).draw();  /* 화면 table 의 평가금액 컬럼 데이터 변경 */
+
+                table.row( rowIndex ).invalidate().draw();
                 vm.dataList[ rowIndex ].F16588    =   v_F16588;         /* DB 에 저장하기 위해 계산된 평가금액 보관 */
         },
 
@@ -2378,6 +2554,265 @@ export default {
             if( vm.status == 0 ) {
                 vm.$emit( "fn_closePop", "close" );
             }
+        },
+
+        /*
+         * PDF 엑셀을 업로드 한다.
+         * 2019-07-26  bkLove(촤병국)
+         */    
+        fn_uploadPdf( file ) {
+            var vm = this;
+
+            var p_param     =   {};
+
+            vm.arr_show_error_message   =   [];
+
+
+            if(     vm.etpBasic.F16012 == "undefined"
+                ||  vm.etpBasic.F16012 == ""
+            ) {
+                vm.arr_show_error_message.push( "ETF 코드가 존재하지 않습니다." );
+                return  false;
+            }
+
+            if(     vm.etpBasic.F16013 == "undefined"
+                ||  vm.etpBasic.F16013 == ""
+            ) {
+                vm.arr_show_error_message.push( "ETF 코드가 존재하지 않습니다." );
+                return  false;
+            }
+
+            if(     vm.etpBasic.F16583 == "undefined"
+                ||  vm.etpBasic.F16583 == ""
+            ) {
+                vm.arr_show_error_message.push( "ETF 코드가 존재하지 않습니다." );
+                return  false;
+            }
+
+            p_param.F12506              =   vm.search_date;
+            p_param.F16012              =   vm.etpBasic.F16012;
+            p_param.F16013              =   vm.etpBasic.F16013;
+            p_param.F16583              =   vm.etpBasic.F16583;
+
+            return  new Promise(function(resolve, reject) {
+
+                let formData    =   new FormData();
+                var check       =   true;
+
+                formData.append( "files", file );
+                formData.append( "data", JSON.stringify( p_param ) );   
+
+                util.processing(vm.$refs.progress, true);
+
+                util.axiosCall(
+                        {
+                                "url"           :   Config.base_url + "/user/etp/uploadPdf"
+                            ,   "data"          :   formData
+                            ,   "method"        :   "post"
+                            ,   "paramKey"      :   ""
+                            ,   "headers"       :   {   "Content-Type": "multipart/form-data"   }
+                        }
+                    ,   async function(response) {
+
+                            util.processing(vm.$refs.progress, false);
+
+                            try{
+
+                                if( response.data ) {
+
+                                    if( !response.data.result ) {
+                                        var errorList = [];
+
+                                        if(     ( typeof response.data.count_check  != "undefined"  && !response.data.count_check )
+                                            ||  ( typeof response.data.record_check != "undefined"  && !response.data.record_check ) 
+                                        ) {
+
+                                            if( typeof response.data.errorList != "undefined" && response.data.errorList.length > 0 ) {
+                                                errorList    =   response.data.errorList;
+
+                                                for( var i=0; i < errorList.length; i++ ) {
+                                                    if( !errorList[i].result && errorList[i].msg ) {
+                                                        vm.arr_show_error_message.push( errorList[i].msg );
+                                                    }
+                                                }
+                                            }else{
+                                                var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                                if( msg ) {
+                                                    vm.arr_show_error_message.push( msg );
+                                                }
+                                            }
+                                        }else{
+                                            var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                            if( msg ) {
+                                                vm.arr_show_error_message.push( msg );
+                                            }
+                                        }
+
+                                        check   =   false;
+                                    }
+
+
+                                    if( check ) {
+                                        vm.dataList         =   [];
+                                        tblEmergeny01.clear().draw();                                        
+
+                                        vm.$nextTick( function(o) {
+                                            vm.dataList =   response.data.pdf_list;
+                                            tblEmergeny01.rows.add( vm.dataList ).draw();
+                                        });
+                                    }
+
+                                }else{
+                                    check = false;
+                                }
+
+
+                                if( check ) {
+                                    resolve( { result : true } );
+                                }else{
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+                            resolve( { result : false } );
+
+                            util.processing(vm.$refs.progress, false);
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });
+
+        },
+
+        /*
+         * 엑셀 유형인지 파일을 체크한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+         fn_checkFile( file ) {
+            var vm = this;
+
+            var fileLen = file.name.length;
+            var lastDot = file.name.lastIndexOf(".");
+
+            var check = true;
+
+            return  new Promise( async function(resolve, reject) {
+
+                /* 1. 확장자가 존재하지 않는지 확인 */
+                if (lastDot == -1) {
+                    if( await vm.$refs.confirm2.open(
+                                '[엑셀파일 유형확인]'
+                            ,   "엑셀유형의 파일인지 확인 해 주세요."
+                            ,   {}
+                            ,   1
+                        )
+                    ) {
+                        check   =   false;
+                    }
+                }
+
+                var fileExt     =   file.name.substring(lastDot + 1, fileLen).toLowerCase();
+                var allowExt    =   ["xls", "xlsx", "csv"];
+
+                /* 2. 허용되는 확장자에 포함되는지 확인 */
+                if (!allowExt.includes(fileExt)) {
+
+                    if( vm.$refs.confirm2.open(
+                                '[엑셀파일 유형확인]',
+                                "엑셀유형의 파일인지 확인 해 주세요.",
+                                {}
+                            ,   1
+                        )
+                    ) {        
+                        check   =   false;
+                    }
+                }
+                
+                if( check ) {
+                    resolve( { result : true } );
+                }else{
+                    resolve( { result : false } );
+                }
+
+            }).catch( function(e) {
+                console.log( e );
+                resolve( { result : false } );
+            });
+        },        
+
+        /*
+         * 파일 사이즈를 체크한다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_sizeCheck( file, gubun ) {
+            var vm = this;
+
+            var check = true;
+
+            return  new Promise( async function(resolve, reject) {
+
+                if( file ) {
+                    var title = "포트폴리오";
+                    var maxSize = vm.limit.max_size;
+
+                    if( maxSize > 0 ) {
+                        if( file.size == 0 ) {
+                            if( await vm.$refs.confirm2.open(
+                                        '확인',
+                                        title + ' 파일용량이 0 byte 입니다.',
+                                        {}
+                                    ,   1
+                                )
+                            ) {
+                                check = false;
+                            }
+                        }
+
+                        if( ( maxSize * 1024 * 1024 ) < file.size ) {
+                            if( await vm.$refs.confirm2.open(
+                                        '확인',
+                                        title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
+                                        {}
+                                    ,   1
+                                )
+                            ) {                       
+                                check = false;
+                            }
+                        }
+                    }
+                }else{
+                    check = false;
+                }
+
+                if( check ) {
+                    resolve( { result : true } );
+                }else{
+                    resolve( { result : false } );
+                }
+
+            }).catch( function(e) {
+                console.log( e );
+
+                resolve( { result : false } );
+            });                
+        },
+
+        /*
+         * 파일 선택시
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_fileClick: function() {
+            this.$refs.pdfUpload.click();
         },
     },
 };

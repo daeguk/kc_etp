@@ -153,7 +153,10 @@ export default {
                         ) {
                             tab_id  =   1;
                             vm.showSimulationId     =   4;
-                        }else{
+                        }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   3;
+                        }else if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "1" ) {
                             vm.showSimulationId     =   0;
                         }
                     }
@@ -164,7 +167,10 @@ export default {
                         ) {
                             tab_id  =   1;
                             vm.showSimulationId     =   4;
-                        }else{
+                        }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   3;
+                        }else if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "1" ) {
                             vm.showSimulationId     =   0;
                         }
                     }
@@ -218,6 +224,7 @@ export default {
                 ,   grp_cd                  :   ""
                 ,   scen_cd                 :   ""
                 ,   time_series_upload_yn   :   ""
+                ,   owner_all_yn            :   "0"
 
                 ,   simul_mast              :   {}
                 ,   arr_daily               :   []
@@ -253,7 +260,7 @@ export default {
 
                         /* 시뮬레이션 그룹 결과 */
                 case    3:
-                        vm.activeTab            =   3;
+                        vm.activeTab            =   1;
                         vm.showSimulationId     =   3;
                         break;
 
