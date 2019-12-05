@@ -49,9 +49,7 @@
     </v-container>
 
 </template>
-<style scoped>
-.v-dialog__content{display: block !important;}
-</style>
+
 
 <script>
 import Config       from "@/js/config.js"

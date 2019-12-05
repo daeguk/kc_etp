@@ -22,9 +22,9 @@
 
 
    
-
-html{ min-width: 1400px;}
 body{background: #f5f5f5; }
+.v-content__wrap .v-tabs{min-width: 1400px !important;}
+.v-content__wrap .content_margin .v-tabs{min-width: 100% !important;}
 .v-content__wrap .v-tabs__wrapper{width:1400px; margin:0 auto;}
 .v-content__wrap .conWidth_left .v-tabs__wrapper{width:100% !important; }
 .v-content__wrap .conWidth_right .v-tabs__wrapper{width:300px !important; }
@@ -1235,9 +1235,9 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 
   /*intro_Mobile*/
 .m_intro_w{overflow: hidden;}
-.m_intro_bg{ height:100vh;width:100vw; background-size:cover; background-position: center; background-image:linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/m_main_720.png); }
+.m_intro_bg{ width:100%; height: 100%; background-size:cover; position: fixed; background-image:linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/m_main_720.png); }
 .m_intro_logo{color:#85c406; font-size: 54px; margin:0 auto; width:250px; font-weight:bold; margin-top:80px; line-height: 48px;}
-.m_intro_logo span{font-size:20px;padding-left:5px; font-weight:400;line-height: 20px;display:inline-block; text-align: left; color:#76a712; padding-bottom:25px;}
+.m_intro_logo span{font-size:20px;padding-left:5px; font-weight:400;line-height: 20px;display:inline-block; text-align: center; color:#76a712; padding-bottom:25px;}
 .m_intro_logo p{font-size: 22px; font-weight: 400; color:#ffffff; line-height:28px;}
 
 .m_intro_pop.v-dialog__content{display:block !important; height:auto !important ;}
