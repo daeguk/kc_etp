@@ -570,7 +570,7 @@ var getAnalyze_timeseries = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        resultMsg.onwer_all_yn  =   "0";
+        resultMsg.owner_all_yn  =   "0";
 
 
         Promise.using(pool.connect(), conn => {
@@ -670,7 +670,7 @@ var getAnalyze_timeseries = function(req, res) {
                                 callback( resultMsg );
                             }else{
 
-                                resultMsg.onwer_all_yn  =   msg.v_simul_mast.owner_yn;
+                                resultMsg.owner_all_yn  =   msg.v_simul_mast.owner_yn;
 
                                 stmt = mapper.getStatement('simulationBacktest', 'getSimulResultDaily', paramData, format);
                                 log.debug(stmt);
@@ -947,7 +947,7 @@ var getAnalyze_timeseries = function(req, res) {
         resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
-        resultMsg.onwer_all_yn      =   "0";
+        resultMsg.owner_all_yn      =   "0";
 
         res.json(resultMsg);
         res.end();
@@ -2185,7 +2185,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_analyze_main      =   []
         resultMsg.arr_contribute        =   [];
 
-        resultMsg.onwer_all_yn          =   "0";
+        resultMsg.owner_all_yn          =   "0";
 
         Promise.using(pool.connect(), conn => {
 
@@ -2269,7 +2269,7 @@ var getBacktestResult = function(req, res) {
 
                             }else {
 
-                                resultMsg.onwer_all_yn  =   msg.v_simul_mast.owner_yn;
+                                resultMsg.owner_all_yn  =   msg.v_simul_mast.owner_yn;
 
                                 if( typeof paramData.time_series_upload_yn != "undefined" && paramData.time_series_upload_yn == "1" ) {
 
@@ -2621,7 +2621,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_analyze_main      =   [];
         resultMsg.arr_contribute        =   [];
 
-        resultMsg.onwer_all_yn          =   "0";
+        resultMsg.owner_all_yn          =   "0";
 
         res.json(resultMsg);
         res.end();

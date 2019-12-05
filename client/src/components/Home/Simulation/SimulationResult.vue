@@ -35,7 +35,7 @@
                         <button type="button" class="exceldown_btn" @click="fn_excelDown()"></button>
                     </span>
 
-                    <span class="btn_r">
+                    <span class="btn_r" v-if="owner_all_yn=='1'">
                         <v-btn
                             small
                             flat
@@ -46,7 +46,7 @@
                         </v-btn>
                     </span>
 
-                    <span class="btn_r">
+                    <span class="btn_r"  v-if="owner_all_yn=='1'">
                         <v-btn small flat icon @click="fn_goSimulMod()">
                             <v-icon>reply</v-icon>
                         </v-btn>
@@ -496,6 +496,7 @@ export default {
             ,   share_row_data              :   {}          /* 공유할 레코드 데이터  */
             ,   share_modal_flag            :   false
             ,   share_row_index             :   -1
+            ,   owner_all_yn                :   "0"
         };
     },
 
@@ -988,6 +989,10 @@ export default {
 
                                             resolve( { result : false } );
                                         }else{
+                                            
+                                            if( typeof response.data.owner_all_yn != "undefined" && response.data.owner_all_yn != null ) {
+                                                vm.owner_all_yn     =   response.data.owner_all_yn;
+                                            }
 
 
                                         /*************************************************************************************************************
@@ -1545,7 +1550,7 @@ export default {
                                         if( response.data.jsonFileName ) {
                                             vm.jsonFileName         =   response.data.jsonFileName;
                                         }
-                                                                                
+                                  
 
                                         if (!response.data.result) {
                                             if( msg ) {
@@ -1561,6 +1566,10 @@ export default {
 
                                             if( response.data.arr_analyze_main && response.data.arr_analyze_main.length > 0 ) {
                                                 vm.arr_analyze_main     =   response.data.arr_analyze_main;
+                                            }
+
+                                            if( typeof response.data.owner_all_yn != "undefined" && response.data.owner_all_yn != null ) {
+                                                vm.owner_all_yn     =   response.data.owner_all_yn;
                                             }
 
                                             resolve( { result : true } );
