@@ -376,10 +376,9 @@ var uploadPdf = function(req, res) {
 
                                             /* 업로드된 종목코드와 동일한 정보가 존재하는 경우 */
                                                 var filterData      =   _.filter( dataLists, function(o) {
+
                                                     /* 구성종목코드 */
-                                                    if( o.F16316.length == 12 ) {
-                                                        return  o.F16316 == item.F16316;
-                                                    }
+                                                    return  o.F16316 == item.F16316;
                                                 });
                                                 if( filterData && filterData.length == 1 ) {
 
@@ -540,9 +539,7 @@ var uploadPdf = function(req, res) {
                                                     var filterData  =   _.filter( rows, function(o) {
 
                                                         /* 구성종목코드 */
-                                                        if( item.F16316.length == 12 ) {
-                                                            return  o.F16012 == item.F16316;
-                                                        }
+                                                        return  o.F16012 == item.F16316;
                                                     });
 
 
@@ -706,9 +703,7 @@ var uploadPdf = function(req, res) {
                                                     var filterData  =   _.filter( rows, function(o) {
 
                                                         /* 구성종목코드 */
-                                                        if( item.F16316.length == 12 ) {
-                                                            return  o.F16012 == item.F16316;
-                                                        }
+                                                        return  o.F16012 == item.F16316;
                                                     });
 
 
