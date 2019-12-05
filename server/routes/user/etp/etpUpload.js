@@ -382,57 +382,73 @@ var uploadPdf = function(req, res) {
                                                 });
                                                 if( filterData && filterData.length == 1 ) {
 
-                                                    // data.F16316         =   filterData[0].F16012;           /* 구성종목코드 */
-                                                    // data.F33837         =   filterData[0].F33837;           /* 구성종목수 */
-                                                    data.F16499         =   filterData[0].F16499;           /* 1CU단위증권수 */
+                                                    // data.F16316         =   filterData[0].F16012;            /* 구성종목코드 */
+                                                    // data.F33837         =   filterData[0].F33837;            /* 구성종목수 */
+                                                    data.F16499         =   filterData[0].F16499;               /* 1CU단위증권수 */
                                                     data.fmt_F16499     =   Math.floor( 
                                                         Number( data.F16499 ) * 100 
-                                                    ) / 100;                                                /* 1CU단위증권수 */
-                                                    // data.F33861         =   filterData[0].F33861;           /* ETF시장구분 */
-                                                    data.F34840         =   filterData[0].F34840;           /* 액면금액설정현금액 */
+                                                    ) / 100;                                                    /* 1CU단위증권수 */
+                                                    // data.F33861         =   filterData[0].F33861;            /* ETF시장구분 */
+                                                    data.F34840         =   filterData[0].F34840;               /* 액면금액설정현금액 */
                                                     data.fmt_F34840     =   Math.floor( 
                                                         Number( data.F34840 ) * 100 
-                                                    ) / 100;                                                /* 액면금액설정현금액 */
+                                                    ) / 100;                                                    /* 액면금액설정현금액 */
 
 
-                                                    if( 
-                                                        !(      Number( data.F16499_prev ) == Number( filterData[0].F16499 )
-                                                            &&  Number( data.F34840_prev ) == Number( item.F34840 )
-                                                        ) 
-                                                    ) {
-                                                        data.status         =   "modify";
+                                                    /* 액면금액이 0 보다 큰 경우 평가금액 0 으로 설정 */
+                                                    if( Number( item.F34840 ) > 0 ) {
+                                                        data.F16588         =   0;                              /* 평가금액 */
+                                                    }else{
+                                                        if( 
+                                                            !(      Number( data.F16499_prev ) == Number( filterData[0].F16499 )
+                                                                &&  Number( data.F34840_prev ) == Number( item.F34840 )
+                                                            ) 
+                                                        ) {
+                                                            data.status         =   "modify";
 
-                                                        if( data.status == "modify" ) {
+                                                            if( data.status == "modify" ) {
 
-                                                            if( Number( data.F16499_prev ) == 0 ) {
-                                                                data.F16588         =   0;                          /* 평가금액 */
-                                                            }else{
-                                                                data.F16588         =   (
-                                                                    Number( data.F16588_prev ) * Number( filterData[0].F16499 ) / Number( data.F16499_prev )
-                                                                );                                                  /* 평가금액 */
-                                                            }
-                                                        }                                                        
+                                                                if( Number( data.F16499_prev ) == 0 ) {
+                                                                    data.F16588         =   0;                  /* 평가금액 */
+                                                                }else{
+                                                                    data.F16588         =   (
+                                                                        Number( data.F16588_prev ) * Number( filterData[0].F16499 ) / Number( data.F16499_prev )
+                                                                    );                                          /* 평가금액 */
+                                                                }
+                                                            }                                                        
+                                                        }
+
+
+                                                        if( 
+                                                            !(      Number( data.F34840_prev ) == Number( filterData[0].F34840 )
+                                                                &&  Number( data.F16499_prev ) == Number( item.F16499 )
+                                                            ) 
+                                                        ) {
+                                                            data.status         =   "modify";
+
+                                                            if( data.status == "modify" ) {
+
+                                                                if( Number( data.F34840 ) == 0 ) {
+
+                                                                    if( Number( data.F16499_prev ) == 0  ) {
+                                                                        v_F16588    =   0;
+                                                                    }else{
+                                                                        v_F16588    =   Number( data.F16588_prev ) * Number( data.F16499 ) / Number( data.F16499_prev );
+                                                                    }
+
+                                                                }else{
+
+                                                                    if( Number( data.F34840_prev ) == 0 ) {
+                                                                        data.F16588         =   0;              /* 평가금액 */
+                                                                    }else{
+                                                                        data.F16588         =   (
+                                                                            Number( data.F16588_prev ) * Number( filterData[0].F34840 ) / Number( data.F34840_prev )
+                                                                        );                                      /* 평가금액 */
+                                                                    }
+                                                                }
+                                                            }                                                        
+                                                        }
                                                     }
-
-
-                                                    if( 
-                                                        !(      Number( data.F34840_prev ) == Number( filterData[0].F34840 )
-                                                            &&  Number( data.F16499_prev ) == Number( item.F16499 )
-                                                        ) 
-                                                    ) {
-                                                        data.status         =   "modify";
-
-                                                        if( data.status == "modify" ) {
-
-                                                            if( Number( data.F34840_prev ) == 0 ) {
-                                                                data.F16588         =   0;                          /* 평가금액 */
-                                                            }else{
-                                                                data.F16588         =   (
-                                                                    Number( data.F16588_prev ) * Number( filterData[0].F34840 ) / Number( data.F34840_prev )
-                                                                );                                                  /* 평가금액 */
-                                                            }
-                                                        }                                                        
-                                                    }                                                    
                                                     
                                                     // data.F33904         =   filterData[0].F33904;           /* 선물 옵션 계약승수*/ 
                                                     // data.F34743         =   filterData[0].F34743;           /* ETF_PDF비중 */
@@ -490,10 +506,6 @@ var uploadPdf = function(req, res) {
 
                                     callback(resultMsg);
                                 }else{
-
-                                    // msg.arr_insert_list   =   _.filter( dataLists, function(o) {
-                                    //     return o.status == "insert";
-                                    // });
 
                                     msg.arr_insert_list   =   _.filter( dataLists, function(o) {
                                         return ( typeof o.status == "undefined" || o.status == "" );
@@ -579,14 +591,27 @@ var uploadPdf = function(req, res) {
 															typeof filterData[0].F15007 == "undefined" || filterData[0].F15007 == null ? 0 : filterData[0].F15007
 														);  													/* kspjong_basic 기준가 (신규추가시 사용) */
 														data.F16588			=	0;
-                                                        if (data.F33861 == '4') {                        
-                                                            data.F16588     =   (
-                                                                Number( data.F15007 ) * Number( data.F16499 ) * Number( data.F33904 )
-                                                            );
-                                                        } 
-                                                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
-                                                        else {
-                                                            data.F16588     =   Number( data.F15007 ) * Number( data.F16499 );
+
+                                                        /* 액면금액이 0 보다 큰 경우 평가금액 0 으로 설정 */
+                                                        if( Number( item.F34840 ) > 0 ) {
+                                                            data.F16588         =   0;                          /* 평가금액 */
+                                                        }else{
+
+                                                            if( Number( item.F34840 ) == 0 ) {
+
+                                                                if (data.F33861 == '4') {                        
+                                                                    data.F16588     =   (
+                                                                        Number( data.F15007 ) * Number( data.F16499 ) * Number( data.F33904 )
+                                                                    );
+                                                                } 
+                                                                /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                                                                else {
+                                                                    data.F16588     =   Number( data.F15007 ) * Number( data.F16499 );
+                                                                }
+                                                            }else{
+                                                                data.F16588 =   0;
+                                                            }
+
                                                         }
 
                                                         data.F16499_prev    =   data.F16499;                    /* CU shrs (변경전) */
@@ -743,14 +768,26 @@ var uploadPdf = function(req, res) {
 															typeof filterData[0].F15007 == "undefined" || filterData[0].F15007 == null ? 0 : filterData[0].F15007
 														);  													/* kspjong_basic 기준가 (신규추가시 사용) */
 														data.F16588			=	0;
-                                                        if (data.F33861 == '4') {                        
-                                                            data.F16588     =   (
-                                                                Number( data.F15007 ) * Number( data.F16499 ) * Number( data.F33904 )
-                                                            );
-                                                        } 
-                                                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
-                                                        else {
-                                                            data.F16588     =   Number( data.F15007 ) * Number( data.F16499 );
+
+                                                        /* 액면금액이 0 보다 큰 경우 평가금액 0 으로 설정 */
+                                                        if( Number( item.F34840 ) > 0 ) {
+                                                            data.F16588         =   0;                          /* 평가금액 */
+                                                        }else{
+
+                                                            if( Number( item.F34840 ) == 0 ) {
+
+                                                                if (data.F33861 == '4') {                        
+                                                                    data.F16588     =   (
+                                                                        Number( data.F15007 ) * Number( data.F16499 ) * Number( data.F33904 )
+                                                                    );
+                                                                } 
+                                                                /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                                                                else {
+                                                                    data.F16588     =   Number( data.F15007 ) * Number( data.F16499 );
+                                                                }
+                                                            }else{
+                                                                data.F16588 =   0;
+                                                            }
                                                         }
 
                                                         data.F16499_prev    =   data.F16499;                    /* CU shrs (변경전) */
@@ -814,25 +851,6 @@ var uploadPdf = function(req, res) {
                                 if( !msg || Object.keys( msg ).length == 0 ) {
                                     msg = {};
                                 }
-
-
-                            // /*  
-                            // *   ###################################################################################
-                            // *   modify 상태 [CU SHrs] 또는 [액면금액] 이 동일한 경우 normal 로 변경 
-                            // *   ###################################################################################
-                            // */
-                            //     /* status가 modify 인 데이터 중 [CU SHrs] 또는 [액면금액]  동일한 정보 추출 */
-                            //     var v_arr_nochange_list =   _.filter( dataLists, function(o) {
-                            //         return  o.status == "modify" && o.F16499 == o.F16499_prev && o.F16588 == o.F16588_prev;
-                            //     });
-
-                            //     /* 변경되지 않은 경우 status 상태값 normal 로 변경 */
-                            //     if( v_arr_nochange_list && v_arr_nochange_list.length > 0 ) {
-                            //         v_arr_nochange_list.forEach( function(item) {
-                            //             item.status     =   "normal";
-                            //         })
-                            //     }
-
 
                                 /* status 가 normal 이 아닌 정보 추출 */
                                 var v_arr_change_list   =   _.filter( dataLists, function(o) {
