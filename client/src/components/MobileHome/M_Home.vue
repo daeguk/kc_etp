@@ -3,13 +3,11 @@
     <div v-if="!enterServiceFlag">
       <MainLanding></MainLanding>
     </div>
-    <div v-else>
-    <!--
+    <div v-else style="min-width:1400px">    
       <ToolBar></ToolBar>
       <NoticeModal v-if="showModalFlag"></NoticeModal>
       <HomeContents></HomeContents>
-      <Footer></Footer>
-      -->
+      <Footer></Footer>      
     </div>        
   </v-app>
 </template> 
@@ -43,10 +41,10 @@ export default {
       // this.$forceupdate;
   },
   created: function() {
-    this.$EventBus.$on('popClose', this.popClose);
-    this.$EventBus.$on('menuClick', this.menuClick);
-    this.$EventBus.$on('enterService', this.enterService);
-    this.$EventBus.$on('outService', this.outService);
+    this.$EventBus.$on('MPopClose', this.popClose);
+    this.$EventBus.$on('MMenuClick', this.menuClick);
+    this.$EventBus.$on('MEnterService', this.enterService);
+    this.$EventBus.$on('MOutService', this.outService);
 
     let loginDt = localStorage.getItem('loginDt');
     let nDate = new Date();
@@ -67,10 +65,10 @@ console.log(user);
     }
   },
   beforeDestroy() {
-    this.$EventBus.$off('popClose');
-    this.$EventBus.$off('menuClick');
-    this.$EventBus.$off('enterService');
-    this.$EventBus.$off('outService');
+    this.$EventBus.$off('MPopClose');
+    this.$EventBus.$off('MMenuClick');
+    this.$EventBus.$off('MEnterService');
+    this.$EventBus.$off('MOutService');
   },    
   methods: {
     popClose: function() {
@@ -81,7 +79,7 @@ console.log(user);
       // console.log('Home menuClick');
       this.showFullFlag = isDrawer;
     },
-    enterService: function() {
+    enterService: function() {      
       // console.log('enterService............');
       this.enterServiceFlag = true;
     },
@@ -91,7 +89,7 @@ console.log(user);
       localStorage.clear();
       this.$store.commit(Constant.DELETE_USER);
 
-      this.$router.push({path: Config.home_url});
+      this.$router.push({path: Config.mobile_home});
     },
   }
 }

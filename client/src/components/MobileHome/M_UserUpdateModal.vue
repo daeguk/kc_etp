@@ -78,7 +78,7 @@ export default {
     closeModal: function() {
       this.updateDialog = false;
       // MainLanding.vue
-      this.$EventBus.$emit("closeUserUpdateModal");
+      this.$EventBus.$emit("MCloseUserUpdateModal");
 
     },
     getUserInfo: function() {

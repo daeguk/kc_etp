@@ -74,7 +74,7 @@ export default {
     outService: function() {
       // console.log("UserInfo.vue....... outService...");
       // Home.vue
-      this.$EventBus.$emit("outService");
+      this.$EventBus.$emit("MOutService");
 
     }
   }

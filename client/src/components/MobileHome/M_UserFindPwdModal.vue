@@ -107,7 +107,7 @@ export default {
         if (this.status == 0) {
             this.findpwdDialog = false;
             // MainLanding.vue
-            this.$EventBus.$emit("closeFindPwdModal");
+            this.$EventBus.$emit("MCloseFindPwdModal");
         }
 
     },

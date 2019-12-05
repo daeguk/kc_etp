@@ -127,7 +127,7 @@ export default {
         if (this.status == 0) {
             this.signupDialog = false;
             // MainLanding.vue
-            this.$EventBus.$emit("closeNewAccountModal");
+            this.$EventBus.$emit("MCloseNewAccountModal");
         }
     },
     getMemberTypeList: function() {

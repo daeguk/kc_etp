@@ -49,9 +49,7 @@
     </v-container>
 
 </template>
-<style scoped>
-.v-dialog__content{display: block !important;}
-</style>
+
 
 <script>
 import Config       from "@/js/config.js"
@@ -80,7 +78,7 @@ export default {
       if (this.status == 0) {
         this.loginDialog = false;
         // MainLanding.vue
-        this.$EventBus.$emit("closeLoginModal");
+        this.$EventBus.$emit("MCloseLoginModal");
       }
     },
     loginCheck: function() {
@@ -122,7 +120,7 @@ export default {
 
           vm.loginDialog = false;
           // MainLanding.vue
-          vm.$EventBus.$emit("userLoginCheck", true);
+          vm.$EventBus.$emit("MUserLoginCheck", true);
         }
       });
     },
