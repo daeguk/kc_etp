@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       allMenuList: [
-        {path: '/info/etpinfo', imagePath:'/assets/img/marketetp_icon.png', title: 'MARKET ETP INFO', stitle: 'MARKET ETP 정보 조회'},
+        {path: '/mobile/info/etpinfo', imagePath:'/assets/img/marketetp_icon.png', title: 'MARKET ETP INFO', stitle: 'MARKET ETP 정보 조회'},
       ],
       menuList: [],
     };

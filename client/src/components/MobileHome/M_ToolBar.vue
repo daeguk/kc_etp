@@ -9,8 +9,8 @@
       <a class="routerlink logo" @click="moveHome">EMP<span>ETP Management<br> Platform(mobile)</span></a>
     </div>
   </v-toolbar-title>
-  <!--ContextMenu v-show="isContext" @menuClick="menuClick"></ContextMenu-->
-  <span class="top_cont_title" style="padding-left:30px">{{menuTitle}}</span>
+  <ContextMenu v-show="isContext" @menuClick="menuClick"></ContextMenu>
+  <span class="top_cont_title">{{menuTitle}}</span>
   <v-spacer></v-spacer>
   <!--고객지원-->
   <v-btn flat class="support_btn" @click="csDialog=true"><v-icon>send</v-icon> 고객지원</v-btn>

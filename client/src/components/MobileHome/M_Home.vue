@@ -49,7 +49,7 @@ export default {
     let loginDt = localStorage.getItem('loginDt');
     let nDate = new Date();
     let nTerm = nDate.getTime() - Number(loginDt);
-   /* console.log("Home.vue.............");
+    console.log("Home.vue.............");
     console.log("loginDt : " + loginDt + " nDate : " + nDate + "nTerm : " + nTerm);
 
     if(loginDt !== null && nTerm < 600000) {
@@ -62,7 +62,7 @@ console.log(user);
       }        
     }else {
       localStorage.removeItem("finalPath");
-    }*/
+    }
   },
   beforeDestroy() {
     this.$EventBus.$off('MPopClose');

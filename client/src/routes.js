@@ -210,7 +210,17 @@ export const routes = [
   },
   // MOBILE
   { path : '/mobile',
-    component: MobileHome,
+    component: MobileHome,    
+    children: [        
+      // MARKET INFO
+      {   path : 'info/etpinfo',
+          component: EtpInfoMain,
+          meta: {
+              requiresAuth: false
+          },
+          
+      },
+    ]
   },
 ]
 
