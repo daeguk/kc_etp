@@ -28,23 +28,21 @@
       
     </v-layout> 
 </template>
-
 <script>
 
 export default {
     data() {
         return {
             activeTab: 0,
-            tabs: [
-                { id: 1, name: "Summary", route: '/index/manage/indexSummary' },
-                { id: 2, name: "관리지수목록", route: '/index/manage/indexList' },
-                { id: 3, name: "지수종목상세", route: '/index/manage/indexDetailList' }
+            tabs: [                
+                { id: 1, name: "관리지수목록", route: '/index/manage/indexList' },
+                { id: 2, name: "지수종목상세", route: '/index/manage/indexDetailList' }
             ],
     	};
     },    
     
     mounted: function() {
-        if (this.$route.query.activeTab == 2) {
+        if (this.$route.query.activeTab == 1) {
             this.activeTab = 1;
             this.pageMove(this.tabs[1].route);
         } else {

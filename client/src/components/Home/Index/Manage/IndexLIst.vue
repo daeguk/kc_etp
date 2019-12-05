@@ -1,6 +1,15 @@
 <template>
     <v-container>
        <v-layout row wrap class="content_margin">
+           <v-flex xs12>
+                <v-layout row wrap>
+                <v-flex xs3 v-for="(rinfo, index) in rep_info" :key="rinfo.seq">
+                    <AreaIndexChart v-if=chartLoadFlag 
+                    :chartItem="rinfo"
+                    :dataSet="getDataSet(index)"></AreaIndexChart>
+                </v-flex>                    
+                </v-layout>
+            </v-flex>
             <v-flex grow>
                 <v-card flat>
                     <v-card-title primary-title>
@@ -49,6 +58,7 @@ import Config from '@/js/config.js';
 import util       from "@/js/util.js";
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import AreaIndexChart   from  '@/components/common/chart/AreaIndexChart.vue';
 var table = null;
 
 export default {
@@ -75,12 +85,16 @@ export default {
             ],
 
             results: [],
-            list_cnt: 0
+            intra_data: [],
+            list_cnt: 0,
+            chartLoadFlag : false,
+            rep_info:[],
         };
     },
     components: {
         ConfirmDialog: ConfirmDialog,
-        ProgressBar: ProgressBar
+        ProgressBar: ProgressBar,
+        AreaIndexChart: AreaIndexChart
     },
     computed: {},
     created: function() {},
@@ -121,6 +135,7 @@ export default {
             ]
          }); 
 
+        vm.getRecentIndex();
 
         vm.getInfoIndexList();
 
@@ -144,6 +159,60 @@ export default {
        
     },
     methods: {
+        getRecentIndex: function() {
+            console.log("getRecentIndex");
+
+            var vm = this;
+            
+            util.processing(this.$refs.progress, true);
+
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/index/getRecentIndex"
+                        ,   "data"      :   {
+                            }
+                        ,   "method"    :   "post"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   function(response) {
+                        // console.log(response);
+                        if (response.data.success == false) {
+                            vm.$refs.confirm.open('', '지수 목록이 없습니다', {}, 1);
+                        } else {                             
+                            var items = response.data.results;  
+
+                            items.forEach(function(item, index) {
+                                item.sColor = "#def5ae";
+                                item.eColor = "#ffffff";
+                                item.width = 340;
+                                item.height = 150;
+                                item.marginW = 1; 
+                                item.marginH = 40;                             
+                            });                                                 
+                            vm.rep_info = items;
+
+                            vm.rep_info.forEach(function(rinfo, index) {
+                                vm.getIndexIntra(rinfo);
+                            });
+                        }
+                                      
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
+                    }
+                ,   function(error) {
+
+                        if( vm.$refs && vm.$refs.progress ) {
+                            util.processing(vm.$refs.progress, false);
+                        }
+
+                        if( error ) {
+                            vm.$refs.confirm.open('', error, {}, 1);
+                        }
+                    }
+            );
+
+        }, 
         getInfoIndexList: function() {
             console.log("getInfoIndexList");
 
@@ -200,7 +269,35 @@ export default {
         },
         movePage: function(jisu_cd, market_id, large_type) {
             this.$router.push({path: '/index/manage/IndexDetailInfo', query :{'jisu_cd':jisu_cd, 'market_id':market_id, 'large_type':large_type}});
-        }
+        },
+
+        getIndexIntra: function(rinfo) {
+            // console.log("getIndexIntra : " + rinfo.seq);
+            var vm = this;
+
+            axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
+                params: rinfo
+            }).then(function(response) {
+                // console.log(response);
+                if (response.data.success == false) {
+                    alert("해당 지수의 데이터가 없습니다");
+                } else {                
+                    vm.intra_data.push(response.data.results);
+                
+                    if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
+                }
+            });
+            },
+        getDataSet: function(idx) {
+            var vm = this;
+            var intra_info = vm.intra_data[idx];
+            var items = [];
+            for (let item of intra_info) {
+                // console.log("close_idx : " + item.close_idx);
+                items.push([item.F20044, item.F20004, item.F20008]);
+            }
+            return items;
+        },
 
         
     }

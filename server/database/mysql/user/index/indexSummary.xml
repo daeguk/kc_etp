@@ -838,4 +838,25 @@
          WHERE STATUS = #{state};
     ]]>    
     </select>
+
+    <!--가장 최근 지수 4종목-->
+    <select id="getRecentIndex">
+    <![CDATA[
+        SELECT @ROWNUM:=@ROWNUM+1 AS seq
+              , td_index_basic.F16013
+              , td_index_basic.market_id
+              , td_index_basic.F16002 AS name
+              , td_index_basic.F15004
+              , td_index_basic.F15472
+              , td_index_basic.F15001
+
+          FROM (SELECT * 
+                  FROM td_index_basic                
+                  WHERE LARGE_TYPE = #{large_type}
+                 ORDER BY F16013 DESC
+                 LIMIT 0, 4
+                ) td_index_basic
+                ,(SELECT @ROWNUM:=0) R     
+    ]]>
+    </select>
 </mapper>
