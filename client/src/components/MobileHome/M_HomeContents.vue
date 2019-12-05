@@ -2,7 +2,7 @@
   <v-content>
     <v-container fluid>
       <div id="_content">
-        <router-view></router-view>
+        <EtpInfoMain></EtpInfoMain>
       </div>
     </v-container>
   </v-content>
@@ -10,8 +10,10 @@
 
 <script>
 import Config       from "@/js/config.js";
+import EtpInfoMain     from '@/components/Home/MarketInfo/etp/EtpInfoMain.vue';
 export default {
   components: {
+    EtpInfoMain
   },
   data() {
     return {
@@ -20,8 +22,8 @@ export default {
   beforeCreate() {
   },
   created: function() {
-    let finalPath = localStorage.getItem('finalPath');
-    
+    /*let finalPath = localStorage.getItem('finalPath');
+
     if(finalPath !== null && finalPath !== '/') {
       this.$router.push({path: finalPath});
     }else if (this.$store.state.user.type_cd == '0003') {
@@ -34,7 +36,7 @@ export default {
       this.$router.push({ path: Config.etp_url });
     } else {
       this.$router.push({ path: Config.info_url });      
-    }
+    }*/
   },
   beforeDestroy() {
   },
