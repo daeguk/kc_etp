@@ -45,6 +45,8 @@ var getStatusList = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
+
         /* 2. 지수 등록 상태정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getCodeDtl', paramData, format);
@@ -123,6 +125,8 @@ var getIndexSelectList = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
+        
         /* 1. 기관정보를 조회한다. */
         var format = { language: 'sql', indent: '' };
         var stmt = mapper.getStatement('indexSelectList', 'getJisuList', paramData, format);
