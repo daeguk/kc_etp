@@ -2157,11 +2157,11 @@ export default {
                 return  false;
             }
 
-            if( typeof p_param.time_series_upload_yn != "undefined" && p_param.time_series_upload_yn == "1" ) {
-                p_param.showSimulationId    =   4;
-            }else if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
+            if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
                 p_param.showSimulationId    =   0;
-            }            
+            }else if( typeof p_param.time_series_upload_yn != "undefined" && p_param.time_series_upload_yn == "1" ) {
+                p_param.showSimulationId    =   4;
+            }
 
             vm.$emit( "fn_showSimulation", p_param );
         },
