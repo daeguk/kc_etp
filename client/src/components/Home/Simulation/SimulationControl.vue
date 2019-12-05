@@ -153,6 +153,9 @@ export default {
                         ) {
                             tab_id  =   1;
                             vm.showSimulationId     =   4;
+                        }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   3;
                         }else{
                             vm.showSimulationId     =   0;
                         }
@@ -164,6 +167,9 @@ export default {
                         ) {
                             tab_id  =   1;
                             vm.showSimulationId     =   4;
+                        }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
+                            tab_id  =   1;
+                            vm.showSimulationId     =   3;
                         }else{
                             vm.showSimulationId     =   0;
                         }
@@ -253,7 +259,7 @@ export default {
 
                         /* 시뮬레이션 그룹 결과 */
                 case    3:
-                        vm.activeTab            =   3;
+                        vm.activeTab            =   1;
                         vm.showSimulationId     =   3;
                         break;
 
