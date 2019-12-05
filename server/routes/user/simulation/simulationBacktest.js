@@ -2234,6 +2234,11 @@ var getBacktestResult = function(req, res) {
 
                                     }else if( rows.length == 1 ) {
                                         msg.v_simul_mast    =   rows[0];
+
+                                        paramData.bench_mark_cd = rows[0].bench_mark_cd;
+                                        paramData.bench_index_cd01 = rows[0].bench_index_cd01;
+                                        paramData.bench_index_cd02 = rows[0].bench_index_cd02;
+                                        paramData.bench_index_cd03 = rows[0].bench_index_cd03;                                        
                                     }
 
                                     callback(null, msg);
@@ -2300,11 +2305,6 @@ var getBacktestResult = function(req, res) {
                                         }
                                         
                                         resultMsg.simul_result_mast =   rows[0];
-                                        
-                                        paramData.bench_mark_cd = rows[0].bench_mark_cd;
-                                        paramData.bench_index_cd01 = rows[0].bench_index_cd01;
-                                        paramData.bench_index_cd02 = rows[0].bench_index_cd02;
-                                        paramData.bench_index_cd03 = rows[0].bench_index_cd03;
                                         
                                         callback(null, msg);
                                     });

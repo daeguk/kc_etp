@@ -1,9 +1,9 @@
 <template>
-<div class="m_intro_w">
-  <div class="m_intro_bg">
-       <v-layout row wrap>
+  <v-app>
+    <v-card class="m_intro_bg">
+      <v-layout row wrap>
         <v-flex xs12 text-xs-center>
-          <div class="m_intro_logo">EMP<span>ETP Management<br> Platform(mobile)</span>
+          <div class="m_intro_logo">EMP<span>ETP Management<br> Platform</span>
               <p>Built to create, manage and analyze capital market <br> 
                   Live simple, it's all in EMP</p>
           </div>
@@ -19,9 +19,11 @@
       <UserLoginModal v-if="login_flag" ></UserLoginModal>
       <UserSignupModal v-if="signup_flag" ></UserSignupModal>
       <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
-</div>
-</div>
+    </v-card>
+  </v-app>
 </template> 
+
+
 
 <script>
 

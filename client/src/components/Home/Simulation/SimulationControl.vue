@@ -148,29 +148,36 @@ export default {
                             vm.paramData.scen_cd    =   vm.paramData.simul_mast.scen_cd;
                         }
 
-                        if(     typeof vm.paramData.simul_mast.time_series_upload_yn != "undefined" 
+
+                        if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "0" ) {
+                            tab_id                  =   0;
+                            vm.showSimulationId     =   0;
+                        }else if(     typeof vm.paramData.simul_mast.time_series_upload_yn != "undefined" 
                             &&  vm.paramData.simul_mast.time_series_upload_yn == "1" 
                         ) {
-                            tab_id  =   1;
+                            tab_id                  =   1;
                             vm.showSimulationId     =   4;
                         }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
-                            tab_id  =   1;
+                            tab_id                  =   1;
                             vm.showSimulationId     =   3;
-                        }else if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "1" ) {
+                        }else{
                             vm.showSimulationId     =   0;
                         }
                     }
                     else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
 
-                        if(     typeof vm.paramData.time_series_upload_yn != "undefined" 
+                        if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "0" ) {
+                            tab_id                  =   0;
+                            vm.showSimulationId     =   0;
+                        }else if(     typeof vm.paramData.time_series_upload_yn != "undefined" 
                             &&  vm.paramData.time_series_upload_yn == "1" 
                         ) {
-                            tab_id  =   1;
+                            tab_id                  =   1;
                             vm.showSimulationId     =   4;
                         }else if( [ "getInfoCheckedScenCd", "getScenInGrpCd"].includes( vm.paramData.method_gubun ) ) {
-                            tab_id  =   1;
+                            tab_id                  =   1;
                             vm.showSimulationId     =   3;
-                        }else if( typeof vm.paramData.owner_all_yn != "undefined" && vm.paramData.owner_all_yn == "1" ) {
+                        }else{
                             vm.showSimulationId     =   0;
                         }
                     }
