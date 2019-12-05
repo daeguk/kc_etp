@@ -6358,6 +6358,12 @@ var applyShareUserRevokeInArr = function(req, res) {
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
+        if( typeof paramData.only_shared_user != "undefined" && paramData.only_shared_user == "Y" ) {
+            paramData.arr_checked_shared.push({
+                "email"     :   paramData.user_id
+            })
+        }
+
         resultMsg.share_count    =  0;
 
         var format = { language: 'sql', indent: '' };
