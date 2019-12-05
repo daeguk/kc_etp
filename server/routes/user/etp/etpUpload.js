@@ -151,7 +151,7 @@ var uploadPdf = function(req, res) {
                         v_param.p_index         =   i;
                         simulationUpload.fn_excel_record_check( v_param, data );
 
-                        if( data.F16012 != paramData.F16012 ) {
+                        if( data.col01 != paramData.F16012 ) {
                             v_param.p_record_check  =   false;
 
                             data.result             =   false;
@@ -191,7 +191,7 @@ var uploadPdf = function(req, res) {
                             data        =   dataLists[i+1];
                             data.row_no =   i + v_param.p_startIndex + 2;
 
-                            if( data.F16012 != paramData.F16012 ) {
+                            if( data.col01 != paramData.F16012 ) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
