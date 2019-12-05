@@ -249,6 +249,7 @@ export default {
 
             ,   simul_result_mast           :   {}
             ,   arr_scen_in_grp             :   []      /* 그룹 내 시나리오 정보 */
+            ,   owner_all_yn                :   ""
             ,   method_gubun                :   ""      /* 호출된 메소드 ( 선택비교 또는 그룹비교 체크 용) */
 
                 /* 결과 정보 */
@@ -769,8 +770,9 @@ export default {
                 try{
                     vm.simul_result_mast                =   Object.assign( {}, vm.paramData.simul_mast );
                     vm.arr_scen_in_grp                  =   [ ...vm.paramData.arr_scen_in_grp ];
-
+                    vm.owner_all_yn                     =   vm.paramData.owner_all_yn;
                     vm.method_gubun                     =   vm.paramData.method_gubun;
+
                     vm.v_item.grp_cd    				=   vm.paramData.simul_mast.grp_cd;
                     vm.v_item.scen_cd   				=   vm.paramData.simul_mast.scen_cd;
 
@@ -1477,7 +1479,7 @@ export default {
          * 공유하기 창을 오픈한다.
          * 2019-07-26  bkLove(촤병국)
          */
-        fn_open_share_modal: function( p_item, p_index ) {
+        async fn_open_share_modal( p_item, p_index ) {
 
             var vm = this;
 
@@ -1491,11 +1493,26 @@ export default {
 
             /* 그룹비교인 경우 */
             if( vm.method_gubun == "getScenInGrpCd" ) {
+
                 if( !p_item || !p_item.grp_cd || !p_item.scen_cd || typeof p_index == "undefined" || p_index < 0  ) {
                     vm.arr_show_error_message.push( "[그룹비교] 기본정보가 존재하지 않습니다." );
                     return  false;
                 }
             }
+
+            if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
+
+                if (await vm.$refs.confirm2.open(
+                        '확인',
+                        '공유받은 시나리오가 한개 이상 포함되어 있어 공유가 불가합니다.',
+                        {}
+                        ,1
+                    )
+                ) {
+                }
+
+                return  false;
+            }            
 
             var v_param             =   {};
 

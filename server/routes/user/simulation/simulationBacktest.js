@@ -570,7 +570,7 @@ var getAnalyze_timeseries = function(req, res) {
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
-        resultMsg.owner_all_yn  =   "0";
+        resultMsg.owner_all_yn  =   "";
 
 
         Promise.using(pool.connect(), conn => {
@@ -947,7 +947,7 @@ var getAnalyze_timeseries = function(req, res) {
         resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
-        resultMsg.owner_all_yn      =   "0";
+        resultMsg.owner_all_yn      =   "";
 
         res.json(resultMsg);
         res.end();
@@ -2185,7 +2185,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_analyze_main      =   []
         resultMsg.arr_contribute        =   [];
 
-        resultMsg.owner_all_yn          =   "0";
+        resultMsg.owner_all_yn          =   "";
 
         Promise.using(pool.connect(), conn => {
 
@@ -2621,7 +2621,7 @@ var getBacktestResult = function(req, res) {
         resultMsg.arr_analyze_main      =   [];
         resultMsg.arr_contribute        =   [];
 
-        resultMsg.owner_all_yn          =   "0";
+        resultMsg.owner_all_yn          =   "";
 
         res.json(resultMsg);
         res.end();

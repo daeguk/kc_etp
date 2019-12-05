@@ -231,7 +231,7 @@ export default {
                 ,   grp_cd                  :   ""
                 ,   scen_cd                 :   ""
                 ,   time_series_upload_yn   :   ""
-                ,   owner_all_yn            :   "0"
+                ,   owner_all_yn            :   ""
 
                 ,   simul_mast              :   {}
                 ,   arr_daily               :   []

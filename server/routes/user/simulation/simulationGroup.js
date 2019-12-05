@@ -72,6 +72,7 @@ var getScenInGrpCd = function(req, res) {
 
         resultMsg.dataList      =   [];
         resultMsg.simul_mast    =   {};
+        resultMsg.owner_all_yn  =   "";
 
 
         Promise.using(pool.connect(), conn => {
@@ -283,6 +284,8 @@ var getScenInGrpCd = function(req, res) {
 
                                     if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
                                         continue;
+                                    }else if( v_temp.length == 1 ) {
+                                        item.owner_yn   =   v_temp[0].owner_yn;
                                     }
 
                                     v_share_check   =   true;
@@ -331,11 +334,19 @@ var getScenInGrpCd = function(req, res) {
                                     resultMsg.msg       +=  v_result_msg;
                                 }
 
+                                var all_owner_flag  =   true;
                                 for( var i=0; i < v_arr_result.length; i++ ) {
-                                    resultMsg.dataList.push( v_arr_result[i] );
+                                    var v_temp      =   v_arr_result[i];
+
+                                    if( typeof v_temp.owner_yn != "undefined" && v_temp.owner_yn != null && v_temp.owner_yn == "0" ) {
+                                        all_owner_flag    =   false;
+                                    }
+
+                                    resultMsg.dataList.push( v_temp );
                                 }
 
                                 resultMsg.simul_mast    =   msg.simul_mast;
+                                resultMsg.owner_all_yn  =   ( all_owner_flag ? "1" : "0" );
                             }
 
                             callback(null);
@@ -380,6 +391,7 @@ var getScenInGrpCd = function(req, res) {
 
         resultMsg.dataList      =   [];
         resultMsg.simul_mast    =   {};
+        resultMsg.owner_all_yn  =   "";
 
         res.json(resultMsg);
         res.end();
@@ -422,119 +434,342 @@ var getInfoCheckedScenCd = function(req, res) {
 
         resultMsg.dataList      =   [];
         resultMsg.simul_mast    =   {};
+        resultMsg.owner_all_yn  =   "";
 
 
         Promise.using(pool.connect(), conn => {
 
-            try{
-                var msg = {};
+            async.waterfall([
 
-                /* 선택된 시나리오 코드들에 대한 정보를 조회한다. */
-                stmt = mapper.getStatement('simulationGroup', 'getInfoCheckedScenCd', paramData, format);
-                log.debug(stmt);
+                /* 1. 선택된 시나리오 코드들에 대한 정보를 조회한다. */
+                function(callback) {      
 
-                conn.query(stmt, function(err, rows) {
+                    try{
+                        var msg = {};
 
-                    if (err) {
+                        msg.v_arr_scen_cd       =   [];
+                        msg.v_arr_grp_scen_cd   =   [];
+
+                        stmt = mapper.getStatement('simulationGroup', 'getInfoCheckedScenCd', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if ( !rows || rows.length == 0) {
+
+                                resultMsg.result = false;
+                                resultMsg.msg = "시나리오가 한건 이상 존재해야 합니다.";
+                                resultMsg.err = "시나리오가 한건 이상 존재해야 합니다.";
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows.length > 0 ) {
+
+                                msg.v_arr_scen_cd       =   rows;
+                                msg.v_arr_grp_scen_cd   =   [ ...msg.v_arr_scen_cd ];
+
+                                callback(null, msg);
+                            }
+                        });
+
+                    } catch (err) {
+
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
-                        resultMsg.err = err;
 
-                        res.json(resultMsg);
-                        res.end();
-                    }
-
-                    if ( !rows || rows.length == 0) {
-                        resultMsg.result = false;
-                        resultMsg.msg   = "시나리오가 한건 이상 존재해야 합니다.";
-                        resultMsg.err   = "시나리오가 한건 이상 존재해야 합니다.";
-
-                        res.json(resultMsg);
-                        res.end();
-                    }
-
-                    var v_arr_result    =   [];
-                    var v_limit_yn      =   false;
-                    var v_change_yn     =   false;
-                    var v_result_msg    =   "";
-
-                    var v_checkFlag     =   true;
-                    var v_checkCode     =   "";
-
-                    for( var i=0; i < rows.length; i++ ) {
-                        var item    =   rows[i];
-
-                        if( !item.scen_name || item.scen_name == null ) {
-                            v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
-                            v_checkFlag     =   false;
-                            break;
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
                         }
 
-                        if( v_arr_result.length == 10 ) {
-                            v_limit_yn          =   true;
-                            v_result_msg        =   "10건까지만 비교됩니다.";
-                            break;
-                        }                                
+                        return callback(resultMsg);
+                    }
+                },
 
-                        if( item.change_serial_yn  ==  "N" ) {
-                            v_arr_result.push( item );
+                /* 2. 선택된 시나리오들의 상위 그룹을 조회한다. */
+                function(msg, callback) {        
+
+                    try{
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        msg.v_arr_grp_cd            =   [];
+
+                        if( typeof msg.v_arr_scen_cd    == "undefined" || msg.v_arr_scen_cd.length == 0 ) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = "시나리오가 한건 이상 존재해야 합니다.";
+                            resultMsg.err = "시나리오가 한건 이상 존재해야 합니다.";
+
+                            callback(resultMsg);
                         }else{
-                            v_change_yn =   true;
-                        }
-                    };
 
-                    if( !v_checkFlag ) {
-                        resultMsg.result    =   false;
-                        resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
-                        resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+                            paramData.arr_scen_in_grp   =   paramData.dataList;
+                            stmt = mapper.getStatement('simulation', 'getSimulMastUpperInArr', paramData, format);
+                            log.debug(stmt);
 
-                        res.json(resultMsg);
-                        res.end();
-                    }else if( !v_arr_result || v_arr_result.length == 0 ) {
-                        resultMsg.result    =   false;
-                        resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
-                        resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+                            conn.query(stmt, function(err, rows) {
 
-                        res.json(resultMsg);
-                        res.end();
-                    }else{
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
 
-                        resultMsg.msg       =   "";
-                        resultMsg.result    =   true;
-                        if( v_arr_result && v_arr_result.length > 0  ) {
+                                    return callback(resultMsg);
+                                }
 
-                            if( v_change_yn ) {
-                                resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동된 정보가 한건 이상 존재합니다.";
-                            }
+                                if( rows.length > 0 ) {
 
-                            if( v_limit_yn ) {
-                                resultMsg.msg       +=  v_result_msg;
-                            }
+                                    msg.v_arr_grp_cd        =   rows;
 
-                            for( var i=0; i < v_arr_result.length; i++ ) {
-                                resultMsg.dataList.push( v_arr_result[i] );
-                            }
+                                    msg.v_arr_grp_cd.forEach( function( item, index, array ) {
+                                        msg.v_arr_grp_scen_cd.push( item );
+                                    });
 
-                            resultMsg.simul_mast    =   {};
+                                    callback(null, msg);
+                                }
+                            });
                         }
 
-                        res.json(resultMsg);
-                        res.end();
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
                     }
-                });
+                },
 
-            } catch (err) {
+                /* 3. 시나리오 또는 그룹 공유자 정보를 조회한다. */
+                function(msg, callback) {      
 
-                resultMsg.result = false;
-                resultMsg.msg = config.MSG.error01;
+                    try{
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
 
-                if( !resultMsg.err ) {
-                    resultMsg.err = err;
+                        paramData.arr_data_list     =   [];
+                        paramData.arr_data_list     =   msg.v_arr_grp_scen_cd;
+                        stmt = mapper.getStatement('simulation', 'getSimulShareInArr', paramData, format);
+                        log.debug(stmt);
+
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 ) {
+
+                                var v_arr_result    =   [];
+                                var v_limit_yn      =   false;
+                                var v_change_yn     =   false;
+                                var v_result_msg    =   "";
+
+                                var v_share_check   =   false;
+
+                                var v_checkFlag     =   true;
+                                var v_checkCode     =   "";
+
+
+                            /* [상위 그룹] 공유자  및 소유자 유무 체크 */
+                                for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
+                                    var item    =   msg.v_arr_grp_cd[i];
+
+                                    var v_temp  =   _.filter( rows, function(o) {
+                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
+                                    });
+
+                                    if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                        continue;
+                                    }else if( v_temp.length == 1 ) {
+                                        item.owner_yn   =   v_temp[0].owner_yn;
+                                    }
+
+                                    v_share_check   =   true;
+
+
+                                    if( !item.scen_name || item.scen_name == null ) {
+                                        v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
+                                        v_checkFlag     =   false;
+                                        break;
+                                    }                                    
+                                }
+
+                                if( !v_share_check ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+                                }                                
+
+                                if( !v_checkFlag ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
+                                    resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+
+                                var all_owner_flag  =   true;
+                                for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
+                                    var v_temp      =   msg.v_arr_grp_cd[i];
+
+                                    if(     ( typeof v_temp.owner_yn == "undefined" || v_temp.owner_yn == null )
+                                        ||  ( typeof v_temp.owner_yn != "undefined" && v_temp.owner_yn != null && v_temp.owner_yn == "0" ) ) {
+                                        all_owner_flag    =   false;
+                                    }
+                                }
+
+                                resultMsg.owner_all_yn  =   ( all_owner_flag ? "1" : "0" );
+
+
+
+                            /* [시나리오] 공유자  및 소유자 유무 체크 */
+                                for( var i=0; i < msg.v_arr_scen_cd.length; i++ ) {
+                                    var item    =   msg.v_arr_scen_cd[i];
+
+                                    var v_temp  =   _.filter( rows, function(o) {
+                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
+                                    });
+
+                                    if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                        continue;
+                                    }else if( v_temp.length == 1 ) {
+                                        item.owner_yn   =   v_temp[0].owner_yn;
+                                    }
+
+                                    v_share_check   =   true;
+
+
+                                    if( !item.scen_name || item.scen_name == null ) {
+                                        v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
+                                        v_checkFlag     =   false;
+                                        break;
+                                    }
+
+                                    if( v_arr_result.length == 10 ) {
+                                        v_limit_yn          =   true;
+                                        v_result_msg        =   "10건까지만 비교됩니다.";
+                                        break;
+                                    }                                
+
+                                    if( item.change_serial_yn  ==  "N" ) {
+                                        v_arr_result.push( item );
+                                    }else{
+                                        v_change_yn =   true;
+                                    }
+                                };
+
+
+                                if( !v_share_check ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+                                }                                
+
+                                if( !v_checkFlag ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
+                                    resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+
+                                    return callback(resultMsg);
+
+                                }
+                                
+                                if( !v_arr_result || v_arr_result.length == 0 ) {
+                                    resultMsg.result    =   false;
+                                    resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+                                    resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+
+                                    return callback(resultMsg);
+
+                                }
+
+
+                                resultMsg.msg       =   "";
+                                resultMsg.result    =   true;
+                                if( v_arr_result && v_arr_result.length > 0  ) {
+
+                                    if( v_change_yn ) {
+                                        resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동된 정보가 한건 이상 존재합니다.";
+                                    }
+
+                                    if( v_limit_yn ) {
+                                        resultMsg.msg       +=  v_result_msg;
+                                    }
+
+                                    var all_owner_flag  =   true;
+                                    for( var i=0; i < v_arr_result.length; i++ ) {
+                                        var v_temp      =   v_arr_result[i];
+
+                                        if( typeof v_temp.owner_yn != "undefined" && v_temp.owner_yn != null && v_temp.owner_yn == "0" ) {
+                                            all_owner_flag    =   false;
+                                        }
+
+                                        resultMsg.dataList.push( v_temp );
+                                    }
+
+                                    resultMsg.simul_mast    =   {};
+
+                                    if( typeof resultMsg.owner_all_yn == "undefined" || resultMsg.owner_all_yn == null || resultMsg.owner_all_yn == "" ) {
+                                        resultMsg.owner_all_yn  =   ( all_owner_flag ? "1" : "0" );
+                                    }
+                                }
+
+                            }
+
+                            callback(null );
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+
+                        if( !resultMsg.err ) {
+                            resultMsg.err = err;
+                        }
+
+                        return callback(resultMsg);
+                    }
+                },
+
+            ], function(err) {
+
+                if (err) {
+                    log.debug(err, stmt, paramData);
+
+                } else {
+                    resultMsg.result = true;
+                    resultMsg.err = null;
                 }
 
                 res.json(resultMsg);
                 res.end();
-            }
+
+            });
         });
 
     } catch (expetion) {
@@ -547,6 +782,7 @@ var getInfoCheckedScenCd = function(req, res) {
 
         resultMsg.dataList      =   [];
         resultMsg.simul_mast    =   {};
+        resultMsg.owner_all_yn  =   "";
 
         res.json(resultMsg);
         res.end();

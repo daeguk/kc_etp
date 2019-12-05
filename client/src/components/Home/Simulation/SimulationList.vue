@@ -294,6 +294,14 @@
                                                     </li>
 
 
+                                                    <li v-if="item.owner_yn == '0'"
+                                                        @click="fn_apply_share_user_revoke_in_arr( item, index, 'grp' )">
+                                                        <v-icon
+                                                            class="simul_more_btn"
+                                                        >share</v-icon>공유해제
+                                                    </li>                                                    
+
+
                                                     <li v-if="item.owner_yn == '1'"
                                                         @click="fn_open_share_modal( item, index, 'grp' )">
                                                         <v-icon
@@ -369,6 +377,12 @@
                                                     </li>
 
 
+                                                    <li v-if="item.owner_yn == '0'"
+                                                        @click="fn_apply_share_user_revoke_in_arr( item, index, 'scen' )">
+                                                        <v-icon
+                                                            class="simul_more_btn"
+                                                        >share</v-icon>공유해제
+                                                    </li>
 
                                                     <li v-if="item.owner_yn == '1'"
                                                         @click="fn_open_share_modal( item, index, 'scen' )">
@@ -952,6 +966,7 @@ export default {
                                                 "showSimulationId"  :   3
                                             ,   "simul_mast"        :   response.data.simul_mast
                                             ,   "arr_scen_in_grp"   :   response.data.dataList
+                                            ,   "owner_all_yn"      :   response.data.owner_all_yn
                                             ,   "method_gubun"      :   "getScenInGrpCd"
                                         });
 
@@ -964,6 +979,7 @@ export default {
                                         "showSimulationId"  :   3
                                     ,   "simul_mast"        :   response.data.simul_mast
                                     ,   "arr_scen_in_grp"   :   response.data.dataList
+                                    ,   "owner_all_yn"      :   response.data.owner_all_yn
                                     ,   "method_gubun"      :   "getScenInGrpCd"
                                 });                                
                             }
@@ -1090,6 +1106,7 @@ export default {
                                 }
 
                                 if( msg ) {
+                                    
                                     if ( await vm.$refs.confirm2.open(
                                             '확인',
                                             msg,
@@ -1102,6 +1119,7 @@ export default {
                                                 "showSimulationId"  :   3
                                             ,   "simul_mast"        :   response.data.simul_mast
                                             ,   "arr_scen_in_grp"   :   response.data.dataList
+                                            ,   "owner_all_yn"      :   response.data.owner_all_yn
                                             ,   "method_gubun"      :   "getInfoCheckedScenCd"
                                         });
 
@@ -1114,6 +1132,7 @@ export default {
                                         "showSimulationId"  :   3
                                     ,   "simul_mast"        :   response.data.simul_mast
                                     ,   "arr_scen_in_grp"   :   response.data.dataList
+                                    ,   "owner_all_yn"      :   response.data.owner_all_yn
                                     ,   "method_gubun"      :   "getInfoCheckedScenCd"
                                 });                                
                             }
@@ -1752,6 +1771,113 @@ export default {
             p_item.showSimulationId         =   4;
 
             vm.$emit("fn_showSimulation", p_item );
+        },
+
+        /*
+         * 선택된 사용자를 공유해제 한다.
+         * 2019-11-13  bkLove(촤병국)
+         */
+        async fn_apply_share_user_revoke_in_arr( p_item, p_index, p_gubun="scen" ) {
+
+            var vm = this;
+
+            vm.arr_checked_shared       =   [];
+
+
+            if( !p_item || !p_item.grp_cd || !p_item.scen_cd  ) {
+
+                if ( vm.$refs.confirm2.open(
+                        '확인',
+                        "기본정보가 존재하지 않습니다.",
+                        {}
+                        ,1
+                    )
+                ) {
+                }
+
+                return  false;
+            }
+
+            return  await new Promise( async function(resolve, reject) {
+
+                var p_param                     =   {};
+
+                p_param.grp_cd                  =   p_item.grp_cd;
+                p_param.scen_cd                 =   p_item.scen_cd;
+                p_param.only_shared_user        =   "Y";
+                p_param.arr_checked_shared      =   [];
+
+
+                vm.fn_showProgress( true );
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/simulation/applyShareUserRevokeInArr"
+                            ,   "data"      :   p_param
+                            ,   "method"    :   "post"
+                        }
+                    ,   async function(response) {
+
+                            try{
+
+                                if (response && response.data) {
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+
+                                        vm.fn_showProgress( false );
+
+                                        if( msg ) {
+
+                                            if ( vm.$refs.confirm2.open(
+                                                    '확인',
+                                                    msg,
+                                                    {}
+                                                    ,1
+                                                )
+                                            ) {
+                                            }                                                
+                                        }
+
+                                        resolve( { result : false } );
+                                    }else{
+                                        vm.fn_showProgress( false );
+
+                                        resolve( { result : true } );
+                                    }
+
+                                }else{
+                                    vm.fn_showProgress( false );
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+                                vm.fn_showProgress( false );
+
+                                console.log( "error", ex );
+                                resolve( { result : false } );
+                            }
+                        }
+                    ,   function(error) {
+                            vm.fn_showProgress( false );
+
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            resolve( { result : false } );
+                        }
+                );
+
+            }).then( function(e) {
+
+                if( e && e.result ) {
+
+                    /* 시뮬레이션 목록정보를 조회한다. */
+                    return  vm.fn_getSimulList();                    
+                }
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });     
         },        
     }  
 };
