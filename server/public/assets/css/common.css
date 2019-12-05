@@ -22,9 +22,9 @@
 
 
    
-
-html{ min-width: 1400px;}
 body{background: #f5f5f5; }
+.v-content__wrap .v-tabs{min-width: 1400px !important;}
+.v-content__wrap .content_margin .v-tabs{min-width: 100% !important;}
 .v-content__wrap .v-tabs__wrapper{width:1400px; margin:0 auto;}
 .v-content__wrap .conWidth_left .v-tabs__wrapper{width:100% !important; }
 .v-content__wrap .conWidth_right .v-tabs__wrapper{width:300px !important; }
@@ -477,10 +477,12 @@ display: table-row;
 .img_align{vertical-align: middle;}
 
 /*intro*/
-.intro_bg{ width:100%; height:100%;background-size: cover; position: fixed; background-image:linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/main.jpg); }
+.intro_bg{ width:100%; height:100%; background-size: cover; position: fixed; background-image:linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/main.jpg); }
 .intro_logo{color:#85c406; font-size: 54px; margin:0 auto; width:800px; font-weight:bold; margin-top:250px;}
 .intro_logo span{font-size:20px;padding-left:5px; font-weight:400;line-height: 20px;display:inline-block; text-align: left; color:#76a712;}
 .intro_logo p{font-size: 26px; font-weight: 400; color:#ffffff; line-height:34px;}
+
+
 
 
 
@@ -1103,7 +1105,9 @@ input[type='file']{
 .simul_graph{ margin:5px 24px 24px; height:300px; border:1px solid #e2e2e2;}
 .warning_box{width:100%; border:1px solid #ff4366 ; padding:15px; margin-top:10px; color:#ff4366; font-weight: 600; border-radius: 2px;}
 .folder_1dep{padding-left:0px;}
+.folder_1dep .v-icon{ padding-right:3px;}
 .folder_2dep{padding-left:22px;}
+.folder_2dep .v-icon{ padding-right:3px;}
 .wid200{width:200px}
 .creat_f span{display:inline-block; margin-top:13px; margin-left:5px; margin-bottom:10px;}
 .creat_f span.btn_r{float:right; margin-right: 10px;}
@@ -1195,7 +1199,8 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_g_w ul li span.rcolor011{ color:#23233f;}
 
 
-.simu_namemodi_w div{display:inline-block; float: left; vertical-align: middle; line-height: 25px;}
+.simu_namemodi_w div{display:inline-block; float:left; vertical-align: middle; line-height: 25px;}
+.simu_namemodi_w div .v-icon{padding-right:3px;}
 .simu_namemodi_w div ul li{display:inline-block !important; vertical-align: middle; }
 .simu_namemodi_w div ul li input{width:280px; line-height: 20px;}
 .simu_namemodi_w div ul li .v-btn{margin:0 4px !important;}
@@ -1215,3 +1220,25 @@ h4 span.excel_btn{float:right; margin-right:25px;}
   .incode_w01{width: 210px;}
   .incode_w02{width: 68%;}
   .select01{width:200px; }
+
+
+
+
+
+
+
+
+
+
+
+  /********************모바일********************/
+
+  /*intro_Mobile*/
+.m_intro_w{overflow: hidden;}
+.m_intro_bg{ width:100%; height: 100%; background-size:cover; position: fixed; background-image:linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/m_main_720.png); }
+.m_intro_logo{color:#85c406; font-size: 54px; margin:0 auto; width:250px; font-weight:bold; margin-top:80px; line-height: 48px;}
+.m_intro_logo span{font-size:20px;padding-left:5px; font-weight:400;line-height: 20px;display:inline-block; text-align: center; color:#76a712; padding-bottom:25px;}
+.m_intro_logo p{font-size: 22px; font-weight: 400; color:#ffffff; line-height:28px;}
+
+.m_intro_pop.v-dialog__content{display:block !important; height:auto !important ;}
+
