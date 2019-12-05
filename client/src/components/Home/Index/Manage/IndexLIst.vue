@@ -182,13 +182,20 @@ export default {
                             var items = response.data.results;  
 
                             items.forEach(function(item, index) {
+                                
                                 item.sColor = "#def5ae";
-                                item.eColor = "#ffffff";
-                                item.width = 340;
+                                item.eColor = "#ffffff";                                
+                                
                                 item.height = 150;
+                                if (index == items.length -1) {
+                                    item.width = 350;
+                                } else {
+                                    item.width = 340;
+                                }
                                 item.marginW = 1; 
                                 item.marginH = 40;                             
-                            });                                                 
+                            });            
+                                                                 
                             vm.rep_info = items;
 
                             vm.rep_info.forEach(function(rinfo, index) {

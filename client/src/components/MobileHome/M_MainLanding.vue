@@ -48,28 +48,29 @@ export default {
     beforeCreate() {
     },
     created: function() {
-      this.$EventBus.$on('closeLoginModal', this.closeLoginModal);
-      this.$EventBus.$on('closeNewAccountModal', this.closeNewAccountModal);
-      this.$EventBus.$on('closeFindPwdModal', this.closeFindPwdModal);
-      this.$EventBus.$on('userLoginCheck', this.userLoginCheck);
-      this.$EventBus.$on('userNewAccount', this.userNewAccount);
-      this.$EventBus.$on('forgotPassword', this.forgotPassword);
+      this.$EventBus.$on('MCloseLoginModal', this.closeLoginModal);
+      this.$EventBus.$on('MCloseNewAccountModal', this.closeNewAccountModal);
+      this.$EventBus.$on('MCloseFindPwdModal', this.closeFindPwdModal);
+      this.$EventBus.$on('MUserLoginCheck', this.userLoginCheck);
+      this.$EventBus.$on('MUserNewAccount', this.userNewAccount);
+      this.$EventBus.$on('MForgotPassword', this.forgotPassword);
     },
     beforeDestroy() {
-      this.$EventBus.$off('closeLoginModal');
-      this.$EventBus.$off('closeNewAccountModal');
-      this.$EventBus.$off('closeFindPwdModal');
-      this.$EventBus.$off('userLoginCheck');
-      this.$EventBus.$off('userNewAccount');
-      this.$EventBus.$off('forgotPassword');
+      this.$EventBus.$off('MCloseLoginModal');
+      this.$EventBus.$off('MCloseNewAccountModal');
+      this.$EventBus.$off('MCloseFindPwdModal');
+      this.$EventBus.$off('MUserLoginCheck');
+      this.$EventBus.$off('MUserNewAccount');
+      this.$EventBus.$off('MForgotPassword');
     },
 
     methods: {
       doView: function() {
-        this.$EventBus.$emit("enterService");
+        this.$EventBus.$emit("MEnterService");
       },
       doLogin: function() {
-        this.login_flag = true;
+        if (this.login_flag) this.login_flag = false;
+        else this.login_flag = true
       },
       closeLoginModal: function() {
         this.login_flag = false;
@@ -85,7 +86,7 @@ export default {
         // console.log("email : " + this.$store.state.user.email);
         this.login_flag = false;
         if(success == true) {
-          this.$EventBus.$emit("enterService");
+          this.$EventBus.$emit("MEnterService");
         }
       },
       userNewAccount: function() {

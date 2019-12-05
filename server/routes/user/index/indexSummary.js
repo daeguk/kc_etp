@@ -27,6 +27,7 @@ var getIndexSummaryInfo = function (req, res) {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
         };
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') params.large_type = "FNGUIDE";
 
         var stmt1 = mapper.getStatement('index', 'indexSummaryLately', params, {language:'sql', indent: '  '});
         var stmt2 = mapper.getStatement('index', 'indexSummaryResult', params, {language:'sql', indent: '  '});
@@ -94,6 +95,8 @@ var getInfoOpenReqList = function (req, res) {
             jisu_cd : jisu_cd,
         };
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') params.large_type = "FNGUIDE";
+
         var stmt = mapper.getStatement('index', 'indexReqList', params, {language:'sql', indent: '  '});
 
         log.debug(stmt);
@@ -136,6 +139,8 @@ var getindexSubscribeList = function (req, res) {
             large_type : req.session.large_type == null ? '' : req.session.large_type,
             jisu_cd : jisu_cd,
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') params.large_type = "FNGUIDE";
 
         var stmt = mapper.getStatement('index', 'getindexSubscribeList', params, {language:'sql', indent: '  '});
 
@@ -240,6 +245,8 @@ var getInfoIndexList = function (req, res) {
         user_id : req.session.user_id == null? '' : req.session.user_id
     };
 
+    if (req.session.type_cd == '9998' || req.session.type_cd == '9999') params.large_type = "FNGUIDE";
+
     var stmt = mapper.getStatement('index', 'getInfoIndexList', params, {language:'sql', indent: '  '});
 
     log.debug(stmt);
@@ -282,6 +289,7 @@ var getIndexSummaryHist = function (req, res) {
             MARKET_ID: req.query.market_id
         };
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
         var stmt = mapper.getStatement('index', 'selectIndexSummaryHist', options, {language:'sql', indent: '  '});
         log.debug(stmt);
  
@@ -325,6 +333,8 @@ var getIndexBaseInfo = function (req, res) {
             market_id: req.query.market_id,            
             inst_cd: req.session.inst_cd == null ? '' : req.session.inst_cd
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
 
         log.debug("options", JSON.stringify(options));
 
@@ -372,6 +382,8 @@ var getIndexEtpHistoryData = function (req, res) {
             market_id: req.query.market_id,
             term: req.query.term
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
 
         log.debug("options", JSON.stringify(options));
 
@@ -421,6 +433,8 @@ var getIndexInEtpInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
+
         log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexInEtpInfo', options, {language:'sql', indent: '  '});
@@ -467,6 +481,8 @@ var getIndexImportanceList = function (req, res) {
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
 
         log.debug("options", JSON.stringify(options));
 
@@ -518,6 +534,8 @@ var getIndexAnalysisInfo = function (req, res) {
             market_id: req.query.market_id
         };
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
+
         log.debug("options", JSON.stringify(options));
 
         var stmt = mapper.getStatement('index', 'getIndexAnalysisInfo', options, {language:'sql', indent: '  '});
@@ -566,6 +584,8 @@ var getIndexAnalysisData = function (req, res) {
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
 
         var gubun = req.query.gubun;
         log.debug("options", JSON.stringify(options));
@@ -708,6 +728,8 @@ var getRecentIndex = function (req, res) {
             jisu_cd: req.query.jisu_cd,
             market_id: req.query.market_id
         };
+
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') options.large_type = "FNGUIDE";
 
         var gubun = req.query.gubun;
         log.debug("options", JSON.stringify(options));

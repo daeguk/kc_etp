@@ -10,6 +10,8 @@ module.exports = {
   // ws_url: "ws://emptest.koscom.co.kr",
   ws_url: "wss://emp.koscom.co.kr",
   home_url: "/info/etpinfo/",
+  info_url: "/info/etpinfo/",
   etp_url: "/etp/manage",
   jisu_url: "/index/manage/",
+  mobile_home: "/mobile",
 }

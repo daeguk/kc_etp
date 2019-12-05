@@ -48,6 +48,8 @@ var getIndexJongmokList = function(req, res) {
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -138,7 +140,8 @@ var getIndexDetailList = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
-
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
+        
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -263,6 +266,7 @@ var getIndexFixList = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -413,7 +417,8 @@ var getIndexList = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );        
 
-
+        if (req.session.type_cd == '9998' || req.session.type_cd == '9999') paramData.large_type = "FNGUIDE";
+        
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
