@@ -16,7 +16,7 @@
 
 import MainLanding          from './M_MainLanding.vue';
 import ToolBar          from './M_ToolBar.vue';
-import HomeContents     from '@/components/Home/MarketInfo/etp/EtpInfoMain.vue';
+import HomeContents     from './M_HomeContents.vue';
 import NoticeModal      from './M_NoticeModal.vue';
 import Footer           from './M_Footer.vue';
 import Config       from "@/js/config.js";
@@ -89,7 +89,7 @@ console.log(user);
       localStorage.clear();
       this.$store.commit(Constant.DELETE_USER);
 
-      this.$router.push({path: Config.home_url});
+      this.$router.push({path: Config.mobile_home});
     },
   }
 }
