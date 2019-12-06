@@ -1067,7 +1067,7 @@ export default {
 
 
             if( !vm.arr_comp || vm.arr_comp.length == 0 ) {
-                vm.arr_show_error_message.push( "1건 이상 선택되어 있어야 합니다." );
+                vm.arr_show_error_message.push( "비교대상 시나리오를 선택해 주세요." );
                 return  false;
             }
 
