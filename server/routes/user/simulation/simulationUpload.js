@@ -244,14 +244,14 @@ var uploadPortfolio = function(req, res) {
                             }
                         }
 
-                        data.row_no = i + v_param.p_startIndex;
+                        data.row_no = i + v_param.p_startIndex + 1;
 
                         /* 마지막 전 인덱스인 경우 */
                         if( i == dataLists.length-2 ) {
 
                             /* 마지막 레코드에 row_no 추가 */
                             data        =   dataLists[i+1];
-                            data.row_no =   i + v_param.p_startIndex + 1;
+                            data.row_no =   i + v_param.p_startIndex + 2;
 
 
                             /* 리밸런싱 날자가 존재하는 엑셀 파일인 경우 */
@@ -275,7 +275,7 @@ var uploadPortfolio = function(req, res) {
                             if( !jongmokCheck || jongmokCheck.length == 0 ) {
                                 arrExcelJongmok.push( { 
                                         code    :   data.code
-                                    ,   row_no  :   i + v_param.p_startIndex + 1 
+                                    ,   row_no  :   i + v_param.p_startIndex + 2
                                 });
                             }
                         }
@@ -949,9 +949,9 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
             /* PDF 업로드 파일인 경우 */
             else if( typeof p_param.p_pdf_yn != "undefined" && p_param.p_pdf_yn == "1" ) {
 
-                /* ETF 코드 체크 */
+                /* ETF 종목코드 체크 */
                 p_param.p_column            =   "F16012";
-                p_param.p_column_name       =   "ETF 코드";
+                p_param.p_column_name       =   "ETF 종목코드";
                 p_param.p_data              =   p_record_data.col01;
                 fn_excel_column_check( p_param, p_record_data );
 
@@ -961,7 +961,7 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
 
                     /* 구성종목코드 체크 */
                     p_param.p_column            =   "F16316";
-                    p_param.p_column_name       =   "종목코드";
+                    p_param.p_column_name       =   "구성종목코드";
                     p_param.p_data              =   p_record_data.col02;
                     fn_excel_column_check( p_param, p_record_data );
 
@@ -969,25 +969,29 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                         p_param.p_record_check      =   false;
                     }else{
 
-                        /* CODE 명 체크 */
-                        p_param.p_column            =   "CODE_NAME";
-                        p_param.p_column_name       =   "종목명";
+                        /* CU shrs 값이 비이 있을시 0으로 디폴트값 설정 */
+                        if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
+                            p_record_data.col03 =   "0";
+                        }
+
+                        /* CU 체크 */
+                        p_param.p_column            =   "QTY";
+                        p_param.p_column_name       =   "CU당 수량";
                         p_param.p_data              =   p_record_data.col03;
                         fn_excel_column_check( p_param, p_record_data );
-
 
                         if( !p_param.p_column_check ) {
                             p_param.p_record_check      =   false;
                         }else{
 
-                            /* CU shrs 값이 비이 있을시 0으로 디폴트값 설정 */
+                            /* 액면금액 값이 비이 있을시 0으로 디폴트값 설정 */
                             if( typeof p_record_data.col04 == "undefined" || p_record_data.col04 == "" ) {
                                 p_record_data.col04 =   "0";
                             }
 
-                            /* CU 체크 */
+                            /* 액면금액 체크 */
                             p_param.p_column            =   "QTY";
-                            p_param.p_column_name       =   "CU shrs";
+                            p_param.p_column_name       =   "액면금액";
                             p_param.p_data              =   p_record_data.col04;
                             fn_excel_column_check( p_param, p_record_data );
 
@@ -995,27 +999,26 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                                 p_param.p_record_check      =   false;
                             }else{
 
-                                /* 액면금액 값이 비이 있을시 0으로 디폴트값 설정 */
-                                if( typeof p_record_data.col05 == "undefined" || p_record_data.col05 == "" ) {
-                                    p_record_data.col05 =   "0";
-                                }
-
-                                /* 액면금액 체크 */
-                                p_param.p_column            =   "QTY";
-                                p_param.p_column_name       =   "액면금액";
+                                /* CODE 명 체크 */
+                                p_param.p_column            =   "CODE_NAME";
+                                p_param.p_column_name       =   "종목명";
                                 p_param.p_data              =   p_record_data.col05;
                                 fn_excel_column_check( p_param, p_record_data );
-                            }                    
+
+                                if( !p_param.p_column_check ) {
+                                    p_param.p_record_check      =   false;
+                                }
+                            }
                         }
                     }
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETF 코드 */
+                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETP 코드 */
                     p_record_data.F16316        =   String( p_record_data.col02 );      /* 구성종목코드 */
-                    p_record_data.F16004        =   String( p_record_data.col03 );      /* 종목명 */
-                    p_record_data.F16499        =   Number( p_record_data.col04 );      /* CU shrs */
-                    p_record_data.F34840        =   Number( p_record_data.col05 );      /* 액면금액 */
+                    p_record_data.F16499        =   String( p_record_data.col03 );      /* CU당 수량 */
+                    p_record_data.F34840        =   String( p_record_data.col04 );      /* 액면금액 */
+                    p_record_data.F16004        =   String( p_record_data.col05 );      /* 종목명 */
                 }
 
             }            
@@ -1208,16 +1211,12 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                         }
 
                         if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
-                            p_param.p_column_check          =   false;
-
-                            p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
-
+                            p_record_data.col05 =   "";
                         }
                         
-                        p_record_data.col03     =   String( p_record_data.col03 ).replace( /[\s]+$/g, "" );
+                        p_record_data.col05     =   String( p_record_data.col05 ).replace( /[\s]+$/g, "" );
 
-                        p_param.p_data          =   p_record_data.col03;
+                        p_param.p_data          =   p_record_data.col05;
 
                         if ( fn_getByte.call( this, p_param.p_data ) > 50 ) {
                             p_param.p_column_check          =   false;
@@ -1655,7 +1654,7 @@ var uploadTimeSeries = function(req, res) {
                             }
                         }
 
-                        data.row_no         =   i + v_param.p_startIndex;
+                        data.row_no         =   i + v_param.p_startIndex + 1;
                         data.rebalancing    =   "0";                /* 리밸런싱 여부(Y,N)-COM010 */
                         data.F15028_S       =   0;                  /* 기준시총 */
                         data.F15028_C       =   0;                  /* 비교시총 */
@@ -1665,7 +1664,7 @@ var uploadTimeSeries = function(req, res) {
 
                             /* 마지막 레코드에 row_no 추가 */
                             data                =   dataLists[i+1];
-                            data.row_no         =   i + v_param.p_startIndex + 1;
+                            data.row_no         =   i + v_param.p_startIndex + 2;
                             data.rebalancing    =   "0";            /* 리밸런싱 여부(Y,N)-COM010 */
                             data.F15028_S       =   0;              /* 기준시총 */
                             data.F15028_C       =   0;              /* 비교시총 */

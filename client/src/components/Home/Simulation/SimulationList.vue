@@ -1067,9 +1067,14 @@ export default {
 
 
             if( !vm.arr_comp || vm.arr_comp.length == 0 ) {
-                vm.arr_show_error_message.push( "1건 이상 선택되어 있어야 합니다." );
+                vm.arr_show_error_message.push( "비교대상 시나리오를 선택해 주세요." );
                 return  false;
             }
+
+            if( vm.arr_comp.length == 1 ) {
+                vm.arr_show_error_message.push( "비교대상 시나리오를 2개 이상 선택해 주세요." );
+                return  false;
+            }            
 
             var param_comp  =   _.map( vm.arr_comp, function(o) {
                 o = JSON.parse(o);
@@ -1354,6 +1359,7 @@ export default {
                     }
 
                     param.now_grp_cd    =   p_item.grp_cd;
+                    param.show_owner_yn =   "1";
                 
 
                     return  await new Promise(function(resolve, reject) {

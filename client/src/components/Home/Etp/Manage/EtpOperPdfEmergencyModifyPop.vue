@@ -37,6 +37,22 @@
                                             <v-icon small color="primary">add</v-icon>자산추가
                                         </v-btn>
 
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn
+                                            depressed
+                                            outline
+                                            small
+                                            color="primary"
+                                            @click.stop="fn_fileClick();"
+                                        >업로드</v-btn>
+                                        <input
+                                            type="file"
+                                            name="pdfUpload"
+                                            ref="pdfUpload"
+                                            style="display:none;"
+                                        />                                
+
                                         <!-- 개발 중복 자산추가 팝업 end -->
                                     </v-toolbar>
 
@@ -94,19 +110,6 @@
                             <v-divider></v-divider>
 
                             <v-card-actions>
-                                <v-btn
-                                    depressed
-                                    outline
-                                    small
-                                    color="primary"
-                                    @click.stop="fn_fileClick();"
-                                >업로드</v-btn>
-                                <input
-                                    type="file"
-                                    name="pdfUpload"
-                                    ref="pdfUpload"
-                                    style="display:none;"
-                                />                                
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     color="primary"
@@ -651,6 +654,27 @@ export default {
                                 return  false;
                             }
                         }
+
+                        if( ![ "KR1", "KR3", "KR6" ].includes( dataJson.codeVal.substr(0,3) ) ) {
+
+                            if (await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '종목코드를 확인해 주세요.',
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                dataJson.initYn     =   "Y";
+                                vm.fn_setInitData( vm, dataJson );
+
+                                vm.status = 0;                                
+                                vm.jongmok_state    =   "";
+
+                                return  false;
+                            }
+
+                            return  false;
+                        }                        
 
 
                         if (await vm.$refs.confirm2.open(
@@ -1268,6 +1292,22 @@ export default {
                         return  false;
                     }
                 }
+
+                if(  dataJson.codeVal.length < 6 ) {
+                    vm.status = 1;
+                    if (await vm.$refs.confirm2.open(
+                            '확인',
+                            '구성종목코드를 6자리 이상 입력해 주세요.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        vm.status = 0;
+                        vm.jongmok_state    =   "";
+
+                        return  false;
+                    }
+                }                
             }
 
             return  await new Promise(function(resolve, reject) {

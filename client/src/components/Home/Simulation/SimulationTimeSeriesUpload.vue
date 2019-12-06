@@ -391,10 +391,13 @@ export default {
 
                 vm.fn_showProgress( true );
 
+                var param = {};
+                param.show_owner_yn     =   "";
+
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/simulation/getInitGrpCd"
-                            ,   "data"      :   {}
+                            ,   "data"      :   param
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
