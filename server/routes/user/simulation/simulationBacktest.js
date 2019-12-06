@@ -394,63 +394,6 @@ var runBacktest = async function(req, res, paramData) {
                         }
                     },
 
-                    /* 5. arr_daily (일자별 지수) 를 파일 생성한다.*/
-                    // function(msg, callback) {
-
-                    //     try{
-
-                    //         if( !msg || Object.keys( msg ).length == 0 ) {
-                    //             msg = {};
-                    //         }
-
-
-                    //         if( paramData.moduleId && paramData.moduleId == "runBacktestWithSaveBasicInfo" ) {
-
-                    //             /* arr_daily (일자별 지수) 를 파일 생성한다. */
-                    //             if( v_resultSimulData.arr_daily && v_resultSimulData.arr_daily.length > 0 ) {
-
-                    //                 log.debug( "분석정보 파일생성 #1  START");
-                    //                 simulAnalyze.writeFileArrDaily(v_resultSimulData.arr_daily, paramData.bench_mark_cd).then( function(e) {
-                    //                     if( e && e.result ) {
-                    //                         if( e.results && e.results.length > 0 ) {
-                    //                             resultMsg.jsonFileName  =   e.jsonFileName;
-                    //                             resultMsg.inputData  =   e.inputData;                                            
-                    //                         }
-
-                    //                         log.debug( "분석정보 파일생성 success #1 END");
-
-                    //                         callback(null);
-                    //                     }else{
-
-                    //                         resultMsg.result = false;
-                    //                         resultMsg.jsonFileName  =   e.jsonFileName;
-                    //                         resultMsg.msg = config.MSG.error01;
-                    //                         resultMsg.err = "[error] simulAnalyze.writeFileArrDaily 파일 생성 중 오류가 발생하였습니다.";
-
-                    //                         log.debug( "분석정보 파일생성 error #1 END");
-                    //                         return callback(resultMsg);
-
-                    //                     }
-                    //                 });
-
-                    //             }else{
-                    //                 callback(null);
-                    //             }
-
-                    //         }else{
-                    //             callback(null);
-                    //         }
-
-                    //     } catch (err) {
-
-                    //         resultMsg.result = false;
-                    //         resultMsg.msg = config.MSG.error01;
-                    //         resultMsg.err = err;
-
-                    //         callback(null);
-                    //     }
-                    // },
-
                 ], function(err) {
 
                     if (err) {
@@ -836,7 +779,11 @@ var getAnalyze_timeseries = function(req, res) {
                                                 resultMsg.msg = config.MSG.error01;
                                                 resultMsg.err = "파싱 중 오류가 발생되었습니다.";
 
-                                                return callback( resultMsg );
+                                                resultMsg.arr_analyze           =   [];
+                                                resultMsg.arr_analyze_main      =   [];
+                                                msg.arr_analyze_db              =   [];
+
+                                                callback( null, msg );
                                             }                                            
                                         }
 
@@ -851,8 +798,11 @@ var getAnalyze_timeseries = function(req, res) {
                                         resultMsg.msg = config.MSG.error01;
                                         resultMsg.err = "[error] simulAnalyze.getAnalyze_timeseries 파이선 호출중 오류가 발생되었습니다.";
 
+                                        resultMsg.arr_analyze           =   [];
+                                        resultMsg.arr_analyze_main      =   [];
+                                        msg.arr_analyze_db              =   [];
 
-                                        return callback(null, msg);
+                                        callback( null, msg );
 
                                     }
                                 });
