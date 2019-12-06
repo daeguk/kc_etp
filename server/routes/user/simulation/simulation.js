@@ -7097,17 +7097,17 @@ var getUserListSharedInGroup = function(req, res) {
 
             async.waterfall([
 
-                /* 1. 상위 그룹 정보를 조회한다. */
+                /* 1. 공유할 대상자를 조회한다. */
                 function(callback) {
 
                     try{
+
                         var msg         =   {};
 
-                        msg.v_simul_upper_grp   =   {};
+                        msg.arr_all_user_list_for_share     =   [];
 
-                        paramData.upper_scen_cd =   paramData.scen_cd;
-                        stmt = mapper.getStatement('simulation', 'getScenarioUpperGrp', paramData, format);
-                        log.debug(stmt, paramData);
+                        stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                        log.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -7121,25 +7121,19 @@ var getUserListSharedInGroup = function(req, res) {
 
                             if ( !rows || rows.length == 0 ) {
                                 resultMsg.result = false;
-                                resultMsg.msg = "그룹정보가 존재하지 않습니다.";
-                                resultMsg.err = "그룹정보가 존재하지 않습니다.";
+                                resultMsg.msg = "대상자가 존재하지 않습니다.";
+                                resultMsg.err = "대상자가 존재하지 않습니다.";
 
                                 return callback(resultMsg);
                             }
 
-                            if ( rows && rows.length > 1 ) {
-                                resultMsg.result = false;
-                                resultMsg.msg = "그룹정보가 2건 이상 존재합니다.";
-                                resultMsg.err = "그룹정보가 2건 이상 존재합니다.";
 
-                                return callback(resultMsg);
-                            }                            
-
-                            if( rows && rows.length == 1 ) {
-                                msg.v_simul_upper_grp        =   rows[0];
+                            if( rows && rows.length > 0 ) {
+                                msg.arr_all_user_list_for_share     =   rows;
                             }
-
+                                
                             callback(null, msg);
+
                         });
 
                     } catch (err) {
@@ -7152,7 +7146,7 @@ var getUserListSharedInGroup = function(req, res) {
                     }
                 },
 
-                /* 2. 그룹에 공유된 대상자를 조회한다. */
+                /* 2. 상위 그룹 정보를 조회한다. */
                 function(msg, callback) {
 
                     try{
@@ -7161,7 +7155,75 @@ var getUserListSharedInGroup = function(req, res) {
                             msg = {};
                         }
 
-                        msg.arr_simul_share_upper   =   [];
+                        if( typeof msg.arr_all_user_list_for_share == "undefined" || msg.arr_all_user_list_for_share.length == 0 ) {
+                            resultMsg.result = false;
+                            resultMsg.msg = "대상자가 존재하지 않습니다.";
+                            resultMsg.err = "대상자가 존재하지 않습니다.";
+
+                            callback(resultMsg);
+
+                        }else{
+
+                            msg.v_simul_upper_grp   =   {};
+
+                            paramData.upper_scen_cd =   paramData.scen_cd;
+                            stmt = mapper.getStatement('simulation', 'getScenarioUpperGrp', paramData, format);
+                            log.debug(stmt, paramData);
+
+                            conn.query(stmt, function(err, rows) {
+
+                                if (err) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( !rows || rows.length == 0 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "그룹정보가 존재하지 않습니다.";
+                                    resultMsg.err = "그룹정보가 존재하지 않습니다.";
+
+                                    return callback(resultMsg);
+                                }
+
+                                if ( rows && rows.length > 1 ) {
+                                    resultMsg.result = false;
+                                    resultMsg.msg = "그룹정보가 2건 이상 존재합니다.";
+                                    resultMsg.err = "그룹정보가 2건 이상 존재합니다.";
+
+                                    return callback(resultMsg);
+                                }                            
+
+                                if( rows && rows.length == 1 ) {
+                                    msg.v_simul_upper_grp        =   rows[0];
+                                }
+
+                                callback(null, msg);
+                            });
+                        }
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+
+                /* 3. 그룹에 공유된 대상자를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        msg.v_arr_shared_grp        =   [];
 
 
                         /* 상위 그룹 체크 */
@@ -7194,14 +7256,35 @@ var getUserListSharedInGroup = function(req, res) {
 
                                 if ( !rows || rows.length == 0 ) {
                                     resultMsg.result = false;
-                                    resultMsg.msg = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
-                                    resultMsg.err = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+                                    resultMsg.msg = "그룹에 공유된 정보는 1건 이상 존재해야 합니다.";
+                                    resultMsg.err = "그룹에 공유된 정보는 1건 이상 존재해야 합니다.";
 
                                     return callback(resultMsg);
                                 }
 
                                 if( rows && rows.length > 0 ) {
-                                    msg.arr_simul_share_upper   =   rows;
+
+                                    rows.forEach( function( item, index, array ) {
+
+                                        if( item.owner_yn   ==   '0' ) {
+                                            var v_check_data    =   _.filter(  msg.arr_all_user_list_for_share, {
+                                                    'email'     :   item.email
+                                            });
+
+                                            /* 그룹에 공유된 공유자만 보관 */
+                                            if( typeof v_check_data != "undefined" && v_check_data.length == 1 ) {
+                                                msg.v_arr_shared_grp.push({
+                                                        "grp_cd"    :   paramData.grp_cd
+                                                    ,   "scen_cd"   :   paramData.scen_cd
+                                                    ,   "email"     :   item.email
+                                                    ,   "name"      :   v_check_data[0].name
+                                                    ,   "owner_yn"  :   "0"                                                    
+                                                });
+                                            }
+                                        }
+
+                                    });
+                                    
                                 }
                                     
                                 callback(null, msg);
@@ -7219,7 +7302,7 @@ var getUserListSharedInGroup = function(req, res) {
                     }
                 },
 
-                /* 3. 공유할 대상자를 조회한다. */
+                /* 4. 그룹에 속한 시나리오들을 조회한다. */
                 function(msg, callback) {
 
                     try{
@@ -7228,19 +7311,62 @@ var getUserListSharedInGroup = function(req, res) {
                             msg = {};
                         }
 
+                        msg.v_arr_simul_in_grp    =   [];
 
-                        /* 상위 그룹 공유 데이터 체크 */
-                        if( typeof msg.arr_simul_share_upper == "undefined" || msg.arr_simul_share_upper.length == 0 ) {
+                        stmt = mapper.getStatement('simulation', 'getScenarioInGrp', paramData, format);
+                        log.debug(stmt);
 
+                        conn.query(stmt, function(err, rows) {
+
+                            if (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                return callback(resultMsg);
+                            }
+
+                            if( rows && rows.length > 0 )  {
+                                msg.v_arr_simul_in_grp    =   rows;
+                            }
+                                
+                            callback(null, msg);
+
+                        });
+
+                    } catch (err) {
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        callback(resultMsg);
+                    }
+                },
+                
+                /* 5. 그룹에 속한 시나리오들의 공유 정보를 조회한다. */
+                function(msg, callback) {
+
+                    try{
+
+                        if( !msg || Object.keys( msg ).length == 0 ) {
+                            msg = {};
+                        }
+
+                        paramData.arr_data_list         =   [];
+
+                        /* 그룹에 속한 시나리오가 없는 경우 */
+                        if( typeof msg.v_arr_simul_in_grp == "undefined" || msg.v_arr_simul_in_grp.length == 0 ) {
                             resultMsg.result = false;
-                            resultMsg.msg = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
-                            resultMsg.err = "그룹 공유 데이터는 1건 이상 존재해야 합니다.";
+                            resultMsg.msg = "그룹 내 시나리오는 1건 이상 존재해야 합니다.";
+                            resultMsg.err = "그룹 내 시나리오는 1건 이상 존재해야 합니다.";
 
                             callback(resultMsg);
                         }
                         else{
 
-                            stmt = mapper.getStatement('simulation', 'getAllUserListForShare', paramData, format);
+                            paramData.arr_data_list     =   msg.v_arr_simul_in_grp;
+                            stmt = mapper.getStatement('simulation', 'getSimulShareInArr', paramData, format);
                             log.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
@@ -7253,42 +7379,30 @@ var getUserListSharedInGroup = function(req, res) {
                                     return callback(resultMsg);
                                 }
 
-                                if ( !rows || rows.length == 0 ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = "대상자가 존재하지 않습니다.";
-                                    resultMsg.err = "대상자가 존재하지 않습니다.";
+                                if( rows && rows.length > 0 )  {
 
-                                    return callback(resultMsg);
-                                }
+                                    if( typeof msg.v_arr_shared_grp != "undefined" && msg.v_arr_shared_grp.length > 0 ) {
 
-
-                                if( rows && rows.length > 0 ) {
-
-                                    msg.arr_simul_share_upper.forEach( function( item, index, array ) {
-
-                                        if( item.owner_yn   ==   '0' ) {
-
+                                        /* [그룹 공유자] 와 [그룹 내 공유자] 가 동일한 경우에만 선택된 공유자에 설정 */
+                                        msg.v_arr_shared_grp.forEach( function( item, index, array ) {
                                             var v_check_data    =   _.filter( rows, {
                                                     'email'     :   item.email
+                                                ,   'owner_yn'  :   '0'
                                             });
-
-                                            if( typeof v_check_data != "undefined" && v_check_data.length == 1 ) {
-                                                resultMsg.arr_user_list_shared.push({
-                                                        "grp_cd"    :   paramData.grp_cd
-                                                    ,   "scen_cd"   :   paramData.scen_cd
-                                                    ,   "email"     :   item.email
-                                                    ,   "name"      :   v_check_data[0].name
-                                                    ,   "owner_yn"  :   "0"                                                    
-                                                });
+                                            if( typeof v_check_data != "undefined" && v_check_data.length > 0 ) {
+                                                if( msg.v_arr_simul_in_grp.length == v_check_data.length ) {
+                                                    resultMsg.arr_user_list_shared.push( item );
+                                                }
                                             }
-                                        }
-
-                                    });
+                                        });
+                                    }
 
                                     if( resultMsg.arr_user_list_shared.length > 0 ) {
                                         resultMsg.arr_user_list_shared  =   _.orderBy( resultMsg.arr_user_list_shared, [ "name" ], [ "asc" ] );
                                     }
                                 }
+
+                                paramData.arr_data_list     =   [];
                                     
                                 callback(null);
 
