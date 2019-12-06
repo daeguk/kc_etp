@@ -1211,11 +1211,7 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                         }
 
                         if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
-                            p_param.p_column_check          =   false;
-
-                            p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼이 존재하지 않습니다.";
-
+                            p_record_data.col03 =   "";
                         }
                         
                         p_record_data.col03     =   String( p_record_data.col03 ).replace( /[\s]+$/g, "" );
