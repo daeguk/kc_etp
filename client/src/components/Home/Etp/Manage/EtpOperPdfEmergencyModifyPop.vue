@@ -54,6 +54,7 @@
                                         <!-- 개발 중복 자산추가 팝업 end -->
                                         
                                     </v-toolbar>
+
                                     <!--에러 코멘트
                                     <div class="upload_error text_orange">
                                         <ul>
@@ -63,20 +64,19 @@
                                         </ul>
                                     </div>--->
                                     <div
-                                        class="warning_box"
+                                        class="upload_error text_orange"
                                         v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
                                     >
-                                        <span
-                                            v-for="(item, index) in arr_show_error_message"
-                                            :key="index"
-                                        >
-                                            <v-icon color="#ff4366">error_outline</v-icon>
-                                            {{item}}
-                                            <br />
-                                        </span>
+                                        <ul>
+                                            <li
+                                                v-for="(item, index) in arr_show_error_message"
+                                                :key="index"
+                                            >
+                                                {{item}}
+                                            </li>
+                                        </ul>
                                          
                                     </div>
-                                   
                                 </v-card>
 
                                 <v-card flat>
