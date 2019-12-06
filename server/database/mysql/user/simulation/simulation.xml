@@ -1460,6 +1460,7 @@
                                 
             ,   serial_no                                                           /* 변경 순번 */
             ,   stock_gubun                                                         /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+            ,   time_series_upload_yn                                               /* 시계열 업로드 여부 */
                                 
             ,   reg_id                                                              /* 등록자 ID */
             ,   reg_time                                                            /* 등록시간 */
@@ -1482,6 +1483,7 @@
 
                 ,   #{serial_no}                    AS  serial_no                   /* 변경 순번 */
                 ,   stock_gubun                     AS  stock_gubun                 /* 주식수 구분 ( 1-유동주식수, 2-상장주식수 ) */
+                ,   time_series_upload_yn           AS  time_series_upload_yn       /* 시계열 업로드 여부 */
 
                 ,   #{user_id}                      AS  reg_id                      /* 등록자 ID */
                 ,   now()                           AS  reg_time                    /* 등록시간 */
