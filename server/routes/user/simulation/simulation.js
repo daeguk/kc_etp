@@ -4675,8 +4675,6 @@ var fnChangeGroup = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
 
         Promise.using(pool.connect(), conn => {
 
@@ -4685,6 +4683,127 @@ var fnChangeGroup = function(req, res) {
                 if (txerr) {
                     return log.error(txerr);
                 }
+
+                try{
+
+                    paramData.moduleId              =   "changeGroupModle";
+                    paramData.transaction           =   {};
+                    paramData.transaction.mapper    =   mapper;
+                    paramData.transaction.pool      =   pool;
+                    paramData.transaction.conn      =   conn;                    
+
+                    /* 그룹변경 모듈을 수행한다. */
+                    changeGroupModle.call( this, req, res, paramData ).then( function(e) {
+
+                        log.debug('simulation.fnChangeGroup 완료.');
+
+                        if( e && e.resultMsg && e.resultMsg.result ) {
+
+                            resultMsg   =   e.resultMsg;
+
+                            conn.commit();
+
+                            res.json(resultMsg);
+                            res.end();
+
+                        }else{
+
+                            log.debug(err, paramData);
+                            conn.rollback();
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = config.MSG.error01;
+
+                            res.json(resultMsg);
+                            res.end();
+                        }
+
+                    }).catch( function(expetion){
+
+                        log.debug('simulation.fnChangeGroup 완료.');
+
+                        log.debug(err, paramData);
+                        conn.rollback();
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = expetion;
+
+                        res.json(resultMsg);
+                        res.end();
+                    });
+
+                } catch (err) {
+
+                    log.debug('simulation.fnChangeGroup 완료.');
+
+                    log.debug(err, paramData);
+                    conn.rollback();                            
+
+                    resultMsg.result = false;
+                    resultMsg.msg = config.MSG.error01;
+                    resultMsg.err = err;
+
+                    res.json(resultMsg);
+                    res.end();
+                }
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug('simulation.fnChangeGroup 완료.');
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+/*
+ * 그룹변경 모듈을 수행한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var changeGroupModle = async function(req, res, paramData) {
+
+    return await new Promise(function(resolve, reject) {
+
+        try {
+            log.debug('simulation.changeGroupModle 호출됨.');
+
+
+            if(     !paramData || Object.keys( paramData ).length == 0 
+                ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
+                ||  !paramData.transaction.mapper
+                ||  !paramData.transaction.pool
+                ||  !paramData.transaction.conn
+            ) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+                resultMsg.err = config.MSG.error01;
+
+                resolve( { 
+                        result : false
+                    ,   resultMsg : resultMsg 
+                });                
+
+            }else{
+
+                var mapper  = paramData.transaction.mapper;
+                var pool    = paramData.transaction.pool;
+                var conn    = paramData.transaction.conn;
+                var resultMsg = {};
+
+
+                var format = { language: 'sql', indent: '' };
+
 
                 async.waterfall([
 
@@ -5483,9 +5602,15 @@ var fnChangeGroup = function(req, res) {
 
                 ], function(err) {
 
+                    log.debug('simulation.changeGroupModle 완료.');
+
                     if (err) {
                         log.debug(err, stmt, paramData);
-                        conn.rollback();
+
+                        resolve( { 
+                                result : false
+                            ,   resultMsg : resultMsg 
+                        });                        
 
                     } else {
 
@@ -5493,17 +5618,35 @@ var fnChangeGroup = function(req, res) {
                         resultMsg.msg           =   "성공적으로 그룹변경 하였습니다.";
                         resultMsg.err           =   null;
 
-                        conn.commit();
+                        resolve( { 
+                                result : true
+                            ,   resultMsg : resultMsg 
+                        });
+
                     }
 
-                    res.json(resultMsg);
-                    res.end();
-
                 });
-            });
-        });
+            }
 
-    } catch (expetion) {
+        } catch (expetion) {
+
+            log.debug('simulation.changeGroupModle 완료.');
+
+            log.debug(expetion, paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+            resultMsg.err = expetion;
+
+            resolve( { 
+                    result : false
+                ,   resultMsg : resultMsg 
+            });
+        }
+
+    }).catch( function(expetion){
+
+        log.debug('simulation.changeGroupModle 완료.');
 
         log.debug(expetion, paramData);
 
@@ -5511,10 +5654,14 @@ var fnChangeGroup = function(req, res) {
         resultMsg.msg = config.MSG.error01;
         resultMsg.err = expetion;
 
-        res.json(resultMsg);
-        res.end();
-    }
+        resolve( { 
+                result : false
+            ,   resultMsg : resultMsg 
+        });
+    });
 }
+
+
 
 /*
  * 공유할 공유자를 조회한다.
