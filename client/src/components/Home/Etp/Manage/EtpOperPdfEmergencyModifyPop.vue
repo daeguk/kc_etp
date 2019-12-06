@@ -37,8 +37,6 @@
                                             <v-icon small color="primary">add</v-icon>자산추가
                                         </v-btn>
 
-                                        <v-spacer></v-spacer>
-
                                         <v-btn
                                             depressed
                                             outline
@@ -52,10 +50,18 @@
                                             ref="pdfUpload"
                                             style="display:none;"
                                         />                                
-
+                                        <EtpOperPdfEmergencyExcelInfoPop></EtpOperPdfEmergencyExcelInfoPop>
                                         <!-- 개발 중복 자산추가 팝업 end -->
+                                        
                                     </v-toolbar>
-
+                                    <!--에러 코멘트
+                                    <div class="upload_error text_orange">
+                                        <ul>
+                                            <li>※ 업로드한 파일을 확인하세요</li>
+                                            <li>※ 업로드한 파일을 확인하세요</li>
+                                            <li>※ 업로드한 파일을 확인하세요</li>
+                                        </ul>
+                                    </div>--->
                                     <div
                                         class="warning_box"
                                         v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
@@ -68,7 +74,9 @@
                                             {{item}}
                                             <br />
                                         </span>
+                                         
                                     </div>
+                                   
                                 </v-card>
 
                                 <v-card flat>
@@ -385,6 +393,7 @@ import tool       from "@/js/common/tool/tool.js";
 import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import EtpOperPdfEmergencyExcelInfoPop  from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyExcelInfoPop.vue";
 
 var tblEmergeny01 = null;
 
@@ -392,7 +401,8 @@ export default {
     props : [ "showDialog", "paramData" ],
     components : {
         ProgressBar: ProgressBar,
-        ConfirmDialog: ConfirmDialog
+        ConfirmDialog: ConfirmDialog,
+        EtpOperPdfEmergencyExcelInfoPop : EtpOperPdfEmergencyExcelInfoPop,
     },
     data() {
         return {
