@@ -35,15 +35,14 @@ route_loader.sessionCheckRegister = function(app) {
 					next();
 				}else {
 					log.debug("session FAIL.......");
-					var error = new Error('session error');
-					error.status = 404;
+					// var error = new Error('session error');
+					// error.status = 404;
 					
 					res.json({
 						success: -1,
 						message: '일정시간동안 사용하지 않아 자동으로 로그아웃되었습니다. 로그인 후 사용 가능한 정보입니다.',
 					});
-                	res.end();
-					//next(error);
+            res.end();
 				}
 			});
 		}
