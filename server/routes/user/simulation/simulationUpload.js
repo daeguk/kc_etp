@@ -1211,12 +1211,12 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                         }
 
                         if (typeof p_param.p_data == "undefined" || String( p_param.p_data ) == "" ) {
-                            p_record_data.col03 =   "";
+                            p_record_data.col05 =   "";
                         }
                         
-                        p_record_data.col03     =   String( p_record_data.col03 ).replace( /[\s]+$/g, "" );
+                        p_record_data.col05     =   String( p_record_data.col05 ).replace( /[\s]+$/g, "" );
 
-                        p_param.p_data          =   p_record_data.col03;
+                        p_param.p_data          =   p_record_data.col05;
 
                         if ( fn_getByte.call( this, p_param.p_data ) > 50 ) {
                             p_param.p_column_check          =   false;
