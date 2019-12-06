@@ -620,6 +620,27 @@ export default {
 
                         vm.status = 1;
 
+                        if( ![ "KR1", "KR3", "KR6" ].includes( dataJson.codeVal.substr(0,3) ) ) {
+
+                            if (await vm.$refs.confirm2.open(
+                                    '확인',
+                                    '종목코드를 확인해 주세요.',
+                                    {}
+                                    ,1
+                                )
+                            ) {
+                                dataJson.initYn     =   "Y";
+                                vm.fn_setInitData( vm, dataJson );
+
+                                vm.status = 0;                                
+                                vm.jongmok_state    =   "";
+
+                                return  false;
+                            }
+
+                            return  false;
+                        }
+
                         /* (신규 등록된건만) 구성종목코드 중복체크 ( input box 로 추가된 경우 ) */
                         var jongmokData = $("#tblEmergeny01 tbody").find("input[name='jongmok']" );     /* 종목코드 */
                         var insertDuplCheck  =  _.filter( tblEmergeny01.rows( jongmokData.parents("tr") ).data(), function( o, i ) {
@@ -1271,6 +1292,22 @@ export default {
                         return  false;
                     }
                 }
+
+                if(  dataJson.codeVal.length < 6 ) {
+                    vm.status = 1;
+                    if (await vm.$refs.confirm2.open(
+                            '확인',
+                            '구성종목코드를 6자리 이상 입력해 주세요.',
+                            {}
+                            ,1
+                        )
+                    ) {
+                        vm.status = 0;
+                        vm.jongmok_state    =   "";
+
+                        return  false;
+                    }
+                }                
             }
 
             return  await new Promise(function(resolve, reject) {
