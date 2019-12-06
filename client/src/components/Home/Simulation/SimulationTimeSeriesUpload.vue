@@ -21,7 +21,7 @@
                         </span>
 
                         <span class="btn_r">
-                            <button type="button" class="exceldown_btn" v-if="paramData.grp_cd && paramData.scen_cd" @click="fn_excelDown()"></button>
+                            <button type="button" class="exceldown_btn" v-if="paramData.grp_cd && paramData.scen_cd && paramData.result_daily_yn == '1'" @click="fn_excelDown()"></button>
                         </span>                        
                     </h3>
                 </v-card-title>

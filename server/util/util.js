@@ -71,7 +71,21 @@ module.exports = {
   },
   formatDate: function(inDate) {
     return inDate.substring(0, 4) + "." + inDate.substring(4,6) + "." + inDate.substring(6,8);
-  },  
+  },
+    /* 천단위 콤마 처리 */
+    formatNumber: function(num) {
+        if (num != null && typeof num !== 'undefined') {
+            if (isNaN(num)) {
+                return "0.00"              
+            } else {
+                num = Number(num).toFixed(2);
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            
+        } else {
+            return "0.00" 
+        }
+    },  
 
   /*
   *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )

@@ -3081,13 +3081,13 @@ var getSimulTimeSeriesExcel = function(req, res) {
                             ,   "INDEX_RATE"     :   item.INDEX_RATE
                            }) 
                         });
+                    }      
 
-                        resultMsg.result            =   true;
-                        resultMsg.msg               =   "";
+                    resultMsg.result            =   true;
+                    resultMsg.msg               =   "";
 
-                        res.json(resultMsg);
-                        res.end();
-                    }                    
+                    res.json(resultMsg);
+                    res.end();                                  
                 });
 
             } catch (err) {
