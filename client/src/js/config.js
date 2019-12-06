@@ -3,9 +3,9 @@
  */
 
 module.exports = {
-  // base_url: "http://127.0.0.1:8034",
+   base_url: "http://127.0.0.1:8034",
   // base_url: "http://emptest.koscom.co.kr",
-  base_url: "https://emp.koscom.co.kr",
+  //base_url: "https://emp.koscom.co.kr",
   // ws_url: "ws://127.0.0.1:8034",
   // ws_url: "ws://emptest.koscom.co.kr",
   ws_url: "wss://emp.koscom.co.kr",
