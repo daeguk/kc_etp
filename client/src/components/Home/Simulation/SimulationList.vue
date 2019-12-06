@@ -1071,6 +1071,11 @@ export default {
                 return  false;
             }
 
+            if( vm.arr_comp.length == 1 ) {
+                vm.arr_show_error_message.push( "비교대상 시나리오를 2개 이상 선택해 주세요." );
+                return  false;
+            }            
+
             var param_comp  =   _.map( vm.arr_comp, function(o) {
                 o = JSON.parse(o);
                 return  o;

@@ -476,9 +476,9 @@ var getInfoCheckedScenCd = function(req, res) {
 
                                 msg.v_arr_scen_cd       =   rows;
                                 msg.v_arr_grp_scen_cd   =   [ ...msg.v_arr_scen_cd ];
-
-                                callback(null, msg);
                             }
+
+                            callback(null, msg);
                         });
 
                     } catch (err) {
@@ -534,9 +534,9 @@ var getInfoCheckedScenCd = function(req, res) {
                                     msg.v_arr_grp_cd.forEach( function( item, index, array ) {
                                         msg.v_arr_grp_scen_cd.push( item );
                                     });
-
-                                    callback(null, msg);
                                 }
+
+                                callback(null, msg);
                             });
                         }
 
@@ -589,122 +589,128 @@ var getInfoCheckedScenCd = function(req, res) {
                                 var v_checkCode     =   "";
 
 
-                            /* [상위 그룹] 공유자  및 소유자 유무 체크 */
-                                for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
-                                    var item    =   msg.v_arr_grp_cd[i];
+                                if( typeof msg.v_arr_grp_cd != "undefined" && msg.v_arr_grp_cd.length > 0 ) {
 
-                                    var v_temp  =   _.filter( rows, function(o) {
-                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
-                                    });
+                                /* [상위 그룹] 공유자  및 소유자 유무 체크 */
+                                    for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
+                                        var item    =   msg.v_arr_grp_cd[i];
 
-                                    if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
-                                        continue;
-                                    }else if( v_temp.length == 1 ) {
-                                        item.owner_yn   =   v_temp[0].owner_yn;
+                                        var v_temp  =   _.filter( rows, function(o) {
+                                            return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
+                                        });
+
+                                        if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                            continue;
+                                        }else if( v_temp.length == 1 ) {
+                                            item.owner_yn   =   v_temp[0].owner_yn;
+                                        }
+
+                                        v_share_check   =   true;
+
+
+                                        if( !item.scen_name || item.scen_name == null ) {
+                                            v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
+                                            v_checkFlag     =   false;
+                                            break;
+                                        }                                    
                                     }
 
-                                    v_share_check   =   true;
+                                    if( !v_share_check ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                        resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
 
-
-                                    if( !item.scen_name || item.scen_name == null ) {
-                                        v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
-                                        v_checkFlag     =   false;
-                                        break;
-                                    }                                    
-                                }
-
-                                if( !v_share_check ) {
-                                    resultMsg.result    =   false;
-                                    resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
-                                    resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
-
-                                    return callback(resultMsg);
-                                }                                
-
-                                if( !v_checkFlag ) {
-                                    resultMsg.result    =   false;
-                                    resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
-                                    resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
-
-                                    return callback(resultMsg);
-                                }
-
-
-                                var all_owner_flag  =   true;
-                                for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
-                                    var v_temp      =   msg.v_arr_grp_cd[i];
-
-                                    if(     ( typeof v_temp.owner_yn == "undefined" || v_temp.owner_yn == null )
-                                        ||  ( typeof v_temp.owner_yn != "undefined" && v_temp.owner_yn != null && v_temp.owner_yn == "0" ) ) {
-                                        all_owner_flag    =   false;
-                                    }
-                                }
-
-                                resultMsg.owner_all_yn  =   ( all_owner_flag ? "1" : "0" );
-
-
-
-                            /* [시나리오] 공유자  및 소유자 유무 체크 */
-                                for( var i=0; i < msg.v_arr_scen_cd.length; i++ ) {
-                                    var item    =   msg.v_arr_scen_cd[i];
-
-                                    var v_temp  =   _.filter( rows, function(o) {
-                                        return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
-                                    });
-
-                                    if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
-                                        continue;
-                                    }else if( v_temp.length == 1 ) {
-                                        item.owner_yn   =   v_temp[0].owner_yn;
-                                    }
-
-                                    v_share_check   =   true;
-
-
-                                    if( !item.scen_name || item.scen_name == null ) {
-                                        v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
-                                        v_checkFlag     =   false;
-                                        break;
-                                    }
-
-                                    if( v_arr_result.length == 10 ) {
-                                        v_limit_yn          =   true;
-                                        v_result_msg        =   "10건까지만 비교됩니다.";
-                                        break;
+                                        return callback(resultMsg);
                                     }                                
 
-                                    if( item.change_serial_yn  ==  "N" ) {
-                                        v_arr_result.push( item );
-                                    }else{
-                                        v_change_yn =   true;
+                                    if( !v_checkFlag ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
+                                        resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+
+                                        return callback(resultMsg);
                                     }
-                                };
 
 
-                                if( !v_share_check ) {
-                                    resultMsg.result    =   false;
-                                    resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
-                                    resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                    var all_owner_flag  =   true;
+                                    for( var i=0; i < msg.v_arr_grp_cd.length; i++ ) {
+                                        var v_temp      =   msg.v_arr_grp_cd[i];
 
-                                    return callback(resultMsg);
-                                }                                
+                                        if(     ( typeof v_temp.owner_yn == "undefined" || v_temp.owner_yn == null )
+                                            ||  ( typeof v_temp.owner_yn != "undefined" && v_temp.owner_yn != null && v_temp.owner_yn == "0" ) ) {
+                                            all_owner_flag    =   false;
+                                        }
+                                    }
 
-                                if( !v_checkFlag ) {
-                                    resultMsg.result    =   false;
-                                    resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
-                                    resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
-
-                                    return callback(resultMsg);
-
+                                    resultMsg.owner_all_yn  =   ( all_owner_flag ? "1" : "0" );
                                 }
-                                
-                                if( !v_arr_result || v_arr_result.length == 0 ) {
-                                    resultMsg.result    =   false;
-                                    resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
-                                    resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
 
-                                    return callback(resultMsg);
 
+
+                                if( typeof msg.v_arr_scen_cd  != "undefined" && msg.v_arr_scen_cd.length > 0 ) {
+
+                                /* [시나리오] 공유자  및 소유자 유무 체크 */
+                                    for( var i=0; i < msg.v_arr_scen_cd.length; i++ ) {
+                                        var item    =   msg.v_arr_scen_cd[i];
+
+                                        var v_temp  =   _.filter( rows, function(o) {
+                                            return  item.grp_cd == o.grp_cd && item.scen_cd == o.scen_cd && o.email == paramData.user_id;
+                                        });
+
+                                        if( typeof v_temp == "undefined" || v_temp.length == 0 ) {
+                                            continue;
+                                        }else if( v_temp.length == 1 ) {
+                                            item.owner_yn   =   v_temp[0].owner_yn;
+                                        }
+
+                                        v_share_check   =   true;
+
+
+                                        if( !item.scen_name || item.scen_name == null ) {
+                                            v_checkCode     =   "grp_cd=[" + item.grp_cd + "], scen_cd=[" + item.scen_cd + "]";
+                                            v_checkFlag     =   false;
+                                            break;
+                                        }
+
+                                        if( v_arr_result.length == 10 ) {
+                                            v_limit_yn          =   true;
+                                            v_result_msg        =   "10건까지만 비교됩니다.";
+                                            break;
+                                        }                                
+
+                                        if( item.change_serial_yn  ==  "N" ) {
+                                            v_arr_result.push( item );
+                                        }else{
+                                            v_change_yn =   true;
+                                        }
+                                    };
+
+
+                                    if( !v_share_check ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+                                        resultMsg.err       =   "공유된 시나리오가 한건 이상 존재해야 합니다.";
+
+                                        return callback(resultMsg);
+                                    }                                
+
+                                    if( !v_checkFlag ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "존재하지 않는 시나리오 코드가 존재합니다.";
+                                        resultMsg.err       =   "존재하지 않는 시나리오 코드(" + v_checkCode + ")가 존재합니다.";
+
+                                        return callback(resultMsg);
+
+                                    }
+                                    
+                                    if( !v_arr_result || v_arr_result.length == 0 ) {
+                                        resultMsg.result    =   false;
+                                        resultMsg.msg       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+                                        resultMsg.err       =   "시뮬레이션 결과와 시나리오 정보가 변동되지 않는 정보가 한건 이상 존재해야 합니다.";
+
+                                        return callback(resultMsg);
+
+                                    }
                                 }
 
 
