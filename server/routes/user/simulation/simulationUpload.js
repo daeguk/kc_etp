@@ -949,9 +949,9 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
             /* PDF 업로드 파일인 경우 */
             else if( typeof p_param.p_pdf_yn != "undefined" && p_param.p_pdf_yn == "1" ) {
 
-                /* ETF 코드 체크 */
+                /* ETP 코드 체크 */
                 p_param.p_column            =   "F16012";
-                p_param.p_column_name       =   "ETF 코드";
+                p_param.p_column_name       =   "ETP 코드";
                 p_param.p_data              =   p_record_data.col01;
                 fn_excel_column_check( p_param, p_record_data );
 
@@ -1011,7 +1011,7 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETF 코드 */
+                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETP 코드 */
                     p_record_data.F16316        =   String( p_record_data.col02 );      /* 구성종목코드 */
                     p_record_data.F16004        =   String( p_record_data.col03 );      /* 종목명 */
                     p_record_data.F16499        =   Number( p_record_data.col04 );      /* CU shrs */
