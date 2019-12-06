@@ -29,34 +29,36 @@ route_loader.sessionCheckRegister = function(app) {
 		if(curItem.session == 'check') {
 			log.debug("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
-        /*
-            세션 정보 처리[개발시 사용];
-            ============================
-        */
-        req.session.user_id = "test1111@hanwha.com";
-        req.session.inst_cd = "03068";
-        req.session.type_cd = "0001";
-        req.session.large_type = "FNGUIDE";
-        req.session.krx_cd = '410220'; //거래소 ETP 발행사 코드
-//               req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
-//               req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
-        req.session.save();
         log.debug("loginkey : " + req.session.user_id);
-        /*===================================*/
+        if (cof.runenv == "dev") {
+          // 세션 정보 처리[개발시 사용];
+          req.session.user_id = "test1111@hanwha.com";
+          req.session.inst_cd = "03068";
+          req.session.type_cd = "0001";
+          req.session.large_type = "FNGUIDE";
+          req.session.krx_cd = '410220'; //거래소 ETP 발행사 코드
+          // req.session.krx_cd = '56'; // ETN 상품이 존재하는 운용사 ( 하나금융투자증권 )
+          // req.session.krx_cd = '2'; // ETN 상품이 존재하는 운용사 ( 신한금융투자증권 ) 
+          req.session.save();
+        }
 
-				if(req.session.user_id) {
-					log.debug("session SUCCESS");
-					next();
-				}else {
-					log.debug("session FAIL.......");
-					var error = new Error('session error');
-					error.status = 404;
-					next(error);
-				}
+        if(req.session.user_id) {
+          log.debug("session SUCCESS");
+          next();
+        }else {
+          log.debug("session FAIL.......");
+          var error = new Error('session error');
+          error.status = 404;
+          
+          res.json({
+            success: -1,
+            message: '일정시간동안 사용하지 않아 자동으로 로그아웃되었습니다. 로그인 후 사용 가능한 정보입니다.',
+          });
+          res.end();
+        }
 			});
 		}
 	}
-
 };
 
 route_loader.routerInit = function(app, router) {

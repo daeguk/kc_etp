@@ -37,7 +37,7 @@ export default {
       if ( filter.indexOf( navigator.platform.toLowerCase() ) < 0 ) { 
         this.$router.push({ path: '/mobile'});
       } else { 
-        this.$router.push({ path: '/'});
+        // this.$router.push({ path: '/'});
         // this.$router.push({ path: '/mobile'});
         //pc alert('pc 접속'); 
       } 

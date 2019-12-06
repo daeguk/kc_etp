@@ -82,7 +82,6 @@ app.use(expressSession({
 app.use(static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-
 //라우팅에 대한 사전 세션체크 (개발시 체크 하지 않음)
 if (config.runenv == "dev") {
     route_loader.sessionCheckRegister(app);
