@@ -29,10 +29,7 @@ route_loader.sessionCheckRegister = function(app) {
 		if(curItem.session == 'check') {
 			log.debug("seesionCheck path : [" + curItem.path + "]");
 			app.all(curItem.path, function(req, res, next) {
-                
-                log.debug("loginkey : " + req.session.user_id);
-                /*===================================*/
-
+        log.debug("loginkey : " + req.session.user_id);
 				if(req.session.user_id) {
 					log.debug("session SUCCESS");
 					next();
@@ -51,7 +48,6 @@ route_loader.sessionCheckRegister = function(app) {
 			});
 		}
 	}
-
 };
 
 route_loader.routerInit = function(app, router) {
