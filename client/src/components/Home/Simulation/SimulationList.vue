@@ -1354,6 +1354,7 @@ export default {
                     }
 
                     param.now_grp_cd    =   p_item.grp_cd;
+                    param.show_owner_yn =   "1";
                 
 
                     return  await new Promise(function(resolve, reject) {

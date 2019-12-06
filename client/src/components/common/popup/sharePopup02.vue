@@ -367,10 +367,12 @@ export default {
 
                 }else{
 
-                    var p_param         =   {};
+                    var p_param                     =   {};
 
-                    p_param.grp_cd      =   vm.share_row_data.grp_cd;
-                    p_param.scen_cd     =   vm.share_row_data.scen_cd;                
+                    p_param.grp_cd                  =   vm.share_row_data.grp_cd;
+                    p_param.scen_cd                 =   vm.share_row_data.scen_cd;
+                    p_param.method_gubun            =   vm.share_row_data.method_gubun;
+                    p_param.arr_scen_in_grp         =   vm.share_row_data.arr_scen_in_grp;
 
                     util.axiosCall(
                             {
