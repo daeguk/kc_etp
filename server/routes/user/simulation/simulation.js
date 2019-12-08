@@ -7004,9 +7004,8 @@ var getUserListForShareInResultGroup = function(req, res) {
                                 return callback(resultMsg);
                             }
 
-
                             if( rows && rows.length > 0 ) {
-                                resultMsg.arr_user_list_for_share   =   rows;
+								resultMsg.arr_user_list_for_share	=	_.differenceWith( rows, paramData.arr_user_shared, function( a, b ) { return a.email == b.email } );
                             }
 
                             callback(null);
