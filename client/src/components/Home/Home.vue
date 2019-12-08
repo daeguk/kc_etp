@@ -55,13 +55,13 @@ export default {
     let loginDt = localStorage.getItem('loginDt');
     let nDate = new Date();
     let nTerm = nDate.getTime() - Number(loginDt);
-    console.log("Home.vue.............");
-    console.log("loginDt : " + loginDt + " nDate : " + nDate + "nTerm : " + nTerm);
+    // console.log("Home.vue.............");
+    // console.log("loginDt : " + loginDt + " nDate : " + nDate + "nTerm : " + nTerm);
 
     if(loginDt !== null && nTerm < 600000) {
       let user = JSON.parse(localStorage.getItem('user'));
-console.log("user.........");
-console.log(user);
+// console.log("user.........");
+// console.log(user);
       if(user !== null) {
         this.enterServiceFlag = true;
         this.$store.commit(Constant.ADD_USER, user);
@@ -92,9 +92,15 @@ console.log(user);
     outService: function() {
       // console.log('outService............');
       this.enterServiceFlag = false;
+      axios.post(Config.base_url+'/user/member/userlogout', {
+      }).then(async function(response) {
+        if(response.data.success == true){
+          console.log("LogOut... Session clear...");
+        }
+      });
+
       localStorage.clear();
       this.$store.commit(Constant.DELETE_USER);
-
       this.$router.push({path: Config.home_url});
     },
   }
