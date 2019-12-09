@@ -9,103 +9,81 @@ var fs = require('fs');
 var config = require('../../../config/config');
 var util = require('../../../util/util');
 var sms = require('../../../util/sms');
+var logg = require('../../../util/logg');
 var Promise = require("bluebird");
 
 // var multer = require('multer');
 // var xlsx = require('xlsx');
 var async = require('async');
-var iconv = require('iconv-lite');
-
-var log = config.logger;
 
 /*
  * ETP 운용관리 - ETP 운영정보를 조회한다.
  * 2019-05-03  bkLove(촤병국)
  */
 var getEtpOperInfo = function(req, res) {
-    try {
-        log.debug('etpOper.getEtpOperInfo 호출됨.');
+  try {
+    logg.debug('etpOper.getEtpOperInfo 호출됨.');
 
-        var pool = req.app.get("pool");
-        var mapper = req.app.get("mapper");
-        var resultMsg = {};
+    var pool = req.app.get("pool");
+    var mapper = req.app.get("mapper");
+    var resultMsg = {};
 
-        /* 1. body.data 값이 있는지 체크 */
-        if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperInfo  req.body.data no data.", req.body.data);
+    /* 1. body.data 값이 있는지 체크 */
+    if (!req.body.data) {
+      logg.error("[error] etpOper.getEtpOperInfo  req.body.data no data.", req.body.data);
+      resultMsg.result = false;
+      resultMsg.msg = config.MSG.error01;
+      throw resultMsg;
+    }
 
+    var paramData = JSON.parse(JSON.stringify(req.body.data));
+    paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+    paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+    paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+    paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+    paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+    var format = { language: 'sql', indent: '' };
+    var stmt = "";
+    Promise.using(pool.connect(), conn => {
+      try {
+        /* 1. EtpBasic 의 기본정보를 조회한다. */
+        stmt = mapper.getStatement('etpOper', 'getEtpOperInfo', paramData, format);
+        logg.debug(stmt, paramData);
+        conn.query(stmt, function(err, rows) {
+          if (err) {
+            logg.error(err, stmt, paramData);
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
-
-            throw resultMsg;
-        }
-
-        var paramData = JSON.parse(JSON.stringify(req.body.data));
-
-        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
-        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
-        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
-        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
-        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
-
-
-        var format = { language: 'sql', indent: '' };
-        var stmt = "";
-
-        Promise.using(pool.connect(), conn => {
-
-            try {
-
-                /* 1. EtpBasic 의 기본정보를 조회한다. */
-                stmt = mapper.getStatement('etpOper', 'getEtpOperInfo', paramData, format);
-                log.debug(stmt, paramData);
-
-                conn.query(stmt, function(err, rows) {
-
-                    if (err) {
-                        log.error(err, stmt, paramData);
-
-                        resultMsg.result = false;
-                        resultMsg.msg = config.MSG.error01;
-                        resultMsg.err = err;
-                    }
-
-                    if (rows && rows.length > 0) {
-                        resultMsg.result = true;
-                        resultMsg.msg = "";
-
-                        resultMsg.dataList = rows;
-                    }
-
-                    res.json(resultMsg);
-                    res.end();
-                });
-
-            } catch (err) {
-                log.error(err, stmt, paramData);
-
-                resultMsg.result = false;
-                resultMsg.msg = config.MSG.error01;
-                resultMsg.err = err;
-
-                res.json(resultMsg);
-                res.end();
-            }
+            resultMsg.err = err;
+          }else if(rows && rows.length > 0) {
+            resultMsg.result = true;
+            resultMsg.msg = "";
+            resultMsg.dataList = rows;
+          }
+          res.json(resultMsg);
+          res.end();
         });
-
-    } catch (expetion) {
-
-        log.error(expetion, paramData);
-
+      } catch (err) {
+        logg.error(err, stmt, paramData);
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
-        resultMsg.err = expetion;
-
-        resultMsg.dataList = [];
+        resultMsg.err = err;
 
         res.json(resultMsg);
         res.end();
-    }
+      }
+    });
+  } catch (expetion) {
+    logg.error(expetion, paramData);
+    resultMsg.result = false;
+    resultMsg.msg = config.MSG.error01;
+    resultMsg.err = expetion;
+    resultMsg.dataList = [];
+
+    res.json(resultMsg);
+    res.end();
+  }
 }
 
 /*
@@ -114,7 +92,7 @@ var getEtpOperInfo = function(req, res) {
  */
 var getEtpOperIndex = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperIndex 호출됨.');
+        logg.debug('etpOper.getEtpOperIndex 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -122,7 +100,7 @@ var getEtpOperIndex = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndex  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getEtpOperIndex  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -155,7 +133,7 @@ var getEtpOperIndex = function(req, res) {
                     try{
                         paramData.group_concat_max_len = 1000000;
                         stmt = mapper.getStatement('etpOper', 'setGroupConcatMaxLen', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -170,7 +148,7 @@ var getEtpOperIndex = function(req, res) {
                             callback(null, paramData);
                         });
                     } catch (err) {
-
+                        logg.error(err);
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
@@ -184,11 +162,12 @@ var getEtpOperIndex = function(req, res) {
 
                     try{
                         stmt = mapper.getStatement('etpOper', 'getEtpOperIndex', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
                             if (err) {
+                                logg.error(err);
                                 resultMsg.result = false;
                                 resultMsg.msg = config.MSG.error01;
                                 resultMsg.err = err;
@@ -205,6 +184,7 @@ var getEtpOperIndex = function(req, res) {
 
                     } catch (err) {
 
+                        logg.error(err);
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
                         resultMsg.err = err;
@@ -216,7 +196,7 @@ var getEtpOperIndex = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err, stmt, paramData);
                 } else {
 
                     resultMsg.result = true;
@@ -231,7 +211,7 @@ var getEtpOperIndex = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -251,7 +231,7 @@ var getEtpOperIndex = function(req, res) {
  */
 var getEtpOperIndexOversea = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperIndexOversea 호출됨.');
+        logg.debug('etpOper.getEtpOperIndexOversea 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -259,7 +239,7 @@ var getEtpOperIndexOversea = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndexOversea  req.body.data no data.", req.body.data);
+            logg.error("etpOper.getEtpOperIndexOversea  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -283,12 +263,12 @@ var getEtpOperIndexOversea = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getEtpOperIndexOversea', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -307,7 +287,7 @@ var getEtpOperIndexOversea = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -320,7 +300,7 @@ var getEtpOperIndexOversea = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -339,7 +319,7 @@ var getEtpOperIndexOversea = function(req, res) {
  */
 var getEtpOperIndexError = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperIndexError 호출됨.');
+        logg.debug('etpOper.getEtpOperIndexError 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -347,7 +327,7 @@ var getEtpOperIndexError = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperIndexError  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getEtpOperIndexError  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -377,7 +357,7 @@ var getEtpOperIndexError = function(req, res) {
 
                     try{
                         stmt = mapper.getStatement('etpOper', 'getEtpOperIndexError', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -417,7 +397,7 @@ var getEtpOperIndexError = function(req, res) {
                             // 대입 문자 치환
                             stmt = stmt.replace(/\: =/g, ':=');
 
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -453,7 +433,7 @@ var getEtpOperIndexError = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -468,7 +448,7 @@ var getEtpOperIndexError = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -489,7 +469,7 @@ var getEtpOperIndexError = function(req, res) {
  */
 var getEtpOperPdf = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperPdf 호출됨.');
+        logg.debug('etpOper.getEtpOperPdf 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -497,7 +477,7 @@ var getEtpOperPdf = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdf  req.body.data no data.", paramData);
+            logg.error("[error] etpOper.getEtpOperPdf  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -533,7 +513,7 @@ var getEtpOperPdf = function(req, res) {
                         if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfHist', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -573,7 +553,7 @@ var getEtpOperPdf = function(req, res) {
 
                     try {
                         stmt = mapper.getStatement('etpOper', 'getStatusByEtpOperPdfEtfHist', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -618,7 +598,7 @@ var getEtpOperPdf = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -633,7 +613,7 @@ var getEtpOperPdf = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -652,7 +632,7 @@ var getEtpOperPdf = function(req, res) {
  */
 var getEtpOperPdfEmergencyHistNow = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperPdfEmergencyHistNow 호출됨.');
+        logg.debug('etpOper.getEtpOperPdfEmergencyHistNow 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -660,7 +640,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getEtpOperPdfEmergencyHistNow  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -694,7 +674,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                         if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastByNow', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -733,7 +713,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
                         if (paramData.F16493 == "1" || paramData.F16493 == "2") {
 
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistDtlByNow', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -785,7 +765,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -800,7 +780,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -819,7 +799,7 @@ var getEtpOperPdfEmergencyHistNow = function(req, res) {
  */
 var getEtpOperPdfByRateTitle = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperPdfByRateTitle 호출됨.');
+        logg.debug('etpOper.getEtpOperPdfByRateTitle 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -827,7 +807,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getEtpOperPdfByRateTitle  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -854,12 +834,12 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
                 /* 1. ETP 운용관리 - 비중변경현황 - 최근 5개 날짜 정보를 조회한다. ( ETF 인 경우 ) */
                 stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -889,7 +869,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -902,7 +882,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -922,7 +902,7 @@ var getEtpOperPdfByRateTitle = function(req, res) {
  */
 var getEtpOperPdfByRate = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperPdfByRate 호출됨.');
+        logg.debug('etpOper.getEtpOperPdfByRate 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -930,8 +910,8 @@ var getEtpOperPdfByRate = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfByRate  req.body.data no data.");
-            log.error(req.body.data);
+            logg.error("[error] etpOper.getEtpOperPdfByRate  req.body.data no data.");
+            logg.error(req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -963,7 +943,7 @@ var getEtpOperPdfByRate = function(req, res) {
 
                     try{
                         stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRateTitle", paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -1012,7 +992,7 @@ var getEtpOperPdfByRate = function(req, res) {
                             paramData.rateTitleList = resultMsg.rateTitleList;
 
                             stmt = mapper.getStatement('etpOper', "getEtpOperPdfEtfHistByRate", paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1056,7 +1036,7 @@ var getEtpOperPdfByRate = function(req, res) {
                     try {
                         if (resultMsg.rateTitleList && resultMsg.rateTitleList.length > 0) {
                             stmt = mapper.getStatement('etpOper', 'getStatusByEtpOperPdfEtfHist', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1106,7 +1086,7 @@ var getEtpOperPdfByRate = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1121,7 +1101,7 @@ var getEtpOperPdfByRate = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -1141,7 +1121,7 @@ var getEtpOperPdfByRate = function(req, res) {
  */
 var getEtpOperPdfModify = function(req, res) {
     try {
-        log.debug('etpOper.getEtpOperPdfModify 호출됨.');
+        logg.debug('etpOper.getEtpOperPdfModify 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -1149,7 +1129,7 @@ var getEtpOperPdfModify = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getEtpOperPdfModify  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getEtpOperPdfModify  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -1181,7 +1161,7 @@ var getEtpOperPdfModify = function(req, res) {
 
                     try{
                         stmt = mapper.getStatement('etpOper', 'getEtpBasic', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -1228,7 +1208,7 @@ var getEtpOperPdfModify = function(req, res) {
                         ) {
 
                             stmt = mapper.getStatement('etpOper', 'getEtpOperPdfEtfEmergency', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1275,7 +1255,7 @@ var getEtpOperPdfModify = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -1290,7 +1270,7 @@ var getEtpOperPdfModify = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -1310,7 +1290,7 @@ var getEtpOperPdfModify = function(req, res) {
  */
 var getJongmokData = function(req, res) {
     try {
-        log.debug('etpOper.getJongmokData 호출됨.');
+        logg.debug('etpOper.getJongmokData 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -1318,7 +1298,7 @@ var getJongmokData = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getJongmokData  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getJongmokData  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -1342,12 +1322,12 @@ var getJongmokData = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getKspjongBasic', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -1368,7 +1348,7 @@ var getJongmokData = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -1381,7 +1361,7 @@ var getJongmokData = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -1400,7 +1380,7 @@ var getJongmokData = function(req, res) {
  */
 var getFutureBasic1 = function (req, res) {
     try {
-        log.debug('etpOper=>getFutureBasic1 호출됨.');
+        logg.debug('etpOper=>getFutureBasic1 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -1408,7 +1388,7 @@ var getFutureBasic1 = function (req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getFutureBasic1  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getFutureBasic1  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -1432,12 +1412,12 @@ var getFutureBasic1 = function (req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getFutureBasic', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -1458,7 +1438,7 @@ var getFutureBasic1 = function (req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -1471,7 +1451,7 @@ var getFutureBasic1 = function (req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -1491,7 +1471,7 @@ var getFutureBasic1 = function (req, res) {
  */
 var saveEtpOperPdfModify = function(req, res) {
     try {
-        console.log('etpOper.saveEtpOperPdfModify 호출됨.');
+        logg.info('etpOper.saveEtpOperPdfModify 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -1503,7 +1483,7 @@ var saveEtpOperPdfModify = function(req, res) {
         
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.saveEtpOperPdfModify  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -1511,7 +1491,7 @@ var saveEtpOperPdfModify = function(req, res) {
             throw resultMsg;
         }else {
           ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
-          log.debug("IP : " + ip);
+          logg.debug("IP : " + ip);
         }
 
         var paramData = JSON.parse(JSON.stringify(req.body.data));
@@ -1523,12 +1503,11 @@ var saveEtpOperPdfModify = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
         paramData.reg_ip = ip;
-        console.log("paramData.............");
-        console.log(paramData.allDataList[0].data);
+        logg.debug("paramData.............");
+        logg.debug(paramData.allDataList[0].data);
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
-
 
         resultMsg.dataList = [];
         Promise.using(pool.connect(), conn => {
@@ -1536,10 +1515,10 @@ var saveEtpOperPdfModify = function(req, res) {
             conn.beginTransaction(txerr => {
 
                 if (txerr) {
-                    return log.error(txerr);
+                    return logg.error(txerr);
                 }
-                log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>");
-                log.debug(paramData.allDataList);
+                logg.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>");
+                logg.debug(paramData.allDataList);
 
                 async.waterfall([
 
@@ -1548,7 +1527,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                         try{
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastGroupNo', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -1579,7 +1558,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                     function(msg, callback) {
 
-                        log.debug("####group_no=[" + paramData.group_no + "]");
+                        logg.debug("####group_no=[" + paramData.group_no + "]");
 
                         if (!paramData.group_no) {
 
@@ -1598,7 +1577,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                 paramData.F16013 = subList.etf_F16013; /* ETF단축코드 */
                                 paramData.dataLists = subList.data;
 
-                                log.debug( "$$$$$$$ 인자값 $$$$$$$ START", paramData, subList, "$$$$$$$ 인자값 $$$$$$$ END");
+                                logg.debug( "$$$$$$$ 인자값 $$$$$$$ START", paramData, subList, "$$$$$$$ 인자값 $$$$$$$ END");
 
                                 async.waterfall([
 
@@ -1617,7 +1596,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             arrModifyDtl = [];
 
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfBasicExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1659,7 +1638,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1695,7 +1674,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfBasic', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1739,7 +1718,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             paramData.dataLists = subList.data;
                                             var stmt = mapper.getStatement('etpOper', 'getTdEtfpdfHistExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1781,7 +1760,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrInsertDtl && arrInsertDtl.length > 0) {
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1817,7 +1796,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTdEtfpdfHist', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1862,7 +1841,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                             paramData.dataLists = subList.data;
                                             var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyDtlExistsCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -1907,7 +1886,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                                 paramData.dataLists = arrInsertDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1943,7 +1922,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             if (arrModifyDtl && arrModifyDtl.length > 0) {
                                                 paramData.dataLists = arrModifyDtl;
                                                 var stmt = mapper.getStatement('etpOper', 'modifyTmPdfModifyDtl', paramData, { language: 'sql', indent: '  ' });
-                                                log.debug(stmt, paramData);
+                                                logg.debug(stmt);
 
                                                 conn.query(stmt, function(err, rows) {
 
@@ -1976,7 +1955,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                         try {
                                             var stmt = mapper.getStatement('etpOper', 'getTmPdfModifyMastCheck', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2017,7 +1996,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                             }
 
                                             var stmt = mapper.getStatement('etpOper', queryId, paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2046,7 +2025,7 @@ var saveEtpOperPdfModify = function(req, res) {
 
                                         try{
                                             var stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistMast', paramData, { language: 'sql', indent: '  ' });
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2081,7 +2060,7 @@ var saveEtpOperPdfModify = function(req, res) {
                                         try{
                                             paramData.dataLists = arrAllDtl;
                                             stmt = mapper.getStatement('etpOper', 'saveTmPdfModifyHistDtl', paramData, format);
-                                            log.debug(stmt, paramData);
+                                            logg.debug(stmt);
 
                                             conn.query(stmt, function(err, rows) {
 
@@ -2132,7 +2111,7 @@ var saveEtpOperPdfModify = function(req, res) {
                 ], function(err) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
                         conn.rollback();
 
                     } else {
@@ -2151,13 +2130,13 @@ var saveEtpOperPdfModify = function(req, res) {
             });
         });
 
-    } catch (expetion) {
+    } catch (err) {
 
-        log.error(expetion, paramData);
+        logg.error(err);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
-        resultMsg.err = expetion;
+        resultMsg.err = err;
 
         res.json(resultMsg);
         res.end();
@@ -2188,97 +2167,82 @@ var makePdfModify = function(fsData) {
     filler2: os.EOL,       // 1자리 개행문자
   }
   /*
-  { F12506: '20190626',
-  fmt_F12506: '2019.06.26',
+{ F12506: '20190627',
+  fmt_F12506: '2019.06.27',
   F16012: 'KR7152100004',
   F16583: '903',
   F16013: '152100',
   F16316: 'KR7000070003',
   F33837: '201',
-  F16499: '1110.00',
-  fmt_F16499: '110.00',
+  F16499: '121211.00',
+  fmt_F16499: '11.00',
   F33861: '0',
   F34840: '0',
   fmt_F34840: '0.00',
-  F16588: null,
+  F16588: 8896887400,
   F34743: '3',
   fmt_F34743: '0.03',
   F16004: '삼양홀딩스                              ',
   status: 'modify',
-  F16499_prev: '110.00',
+  F16499_prev: '11.00',
   F34840_prev: '0',
-  code_check: true } */
-  log.debug("makePdfModify.......................");
-  var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
-  var msg = "ETP PDF 변경신청 접수되었습니다.";
-
-  for(var i=0; i<fsData.allDataList.length; i++) {
-    var tmp = fsData.allDataList[i];
-    for(var j=0; j<tmp.data.length; j++) {
-    wItem.fld003 = tmp.data[j].F12506;
-    wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
-    wItem.fld005 = tmp.data[j].F16012;
-    wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
-    wItem.fld007 = tmp.data[j].F16316;
-    wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
-
-console.log("tmp F16499 : " + tmp.data[j].F16499);
-console.log("wItem fld008 : " + wItem.fld008);
-
-    wItem.fld009 = tmp.data[j].F33861;
-    // wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
-    // 종목명 인코딩 문제로 스페이스 처리 (2019.08.06. 이형준 과장 요청)
-    wItem.fld010 = util.padSpace('', 40);
-    wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
-console.log("tmp F34840 : " + tmp.data[j].F34840);
-console.log("wItem fld011 : " + wItem.fld011);
-    wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
-console.log("tmp F16588 : " + tmp.data[j].F16588);
-console.log("wItem fld013 : " + wItem.fld013);
-        
-    if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
-    else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
-    else  wItem.fld014 = '0';
-
-    var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
-    wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
-    wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
-    wItem.fld014 + wItem.filler + wItem.filler2;
-
-    msg = msg + "[" + tmp.data[j].F16013 + "]";
-    console.log("strlen : " + ostr.length);
-    fs.appendFileSync(ifname, ostr, 'utf8');
-    // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
-    log.debug("wItem..................");
-    log.debug(wItem);
-    }
-  }
-
-  sms.smsSend(0, msg)
-}
-/*
-{ F12506: '20190627',
-    fmt_F12506: '2019.06.27',
-    F16012: 'KR7152100004',
-    F16583: '903',
-    F16013: '152100',
-    F16316: 'KR7000070003',
-    F33837: '201',
-    F16499: '121211.00',
-    fmt_F16499: '11.00',
-    F33861: '0',
-    F34840: '0',
-    fmt_F34840: '0.00',
-    F16588: 8896887400,
-    F34743: '3',
-    fmt_F34743: '0.03',
-    F16004: '삼양홀딩스                              ',
-    status: 'modify',
-    F16499_prev: '11.00',
-    F34840_prev: '0',
-    code_check: true },
+  code_check: true },
 strlen : 202 (window : 202, linux : 201)
 */
+  logg.debug("makePdfModify.......................");
+  var ifname = config.pdfmodify_nas_path + "pdfmodify." + util.getTodayDate();
+  // 삭제되지 않게 한번 더 저장
+  var ifname1 = config.pdfmodify_path + "pdfmodify." + util.getTodayDate();
+  var msg = "ETP PDF 변경신청 접수되었습니다.";
+
+  try {
+    for(var i=0; i<fsData.allDataList.length; i++) {
+      var tmp = fsData.allDataList[i];
+      for(var j=0; j<tmp.data.length; j++) {
+        wItem.fld003 = tmp.data[j].F12506;
+        wItem.fld004 = util.padZero(tmp.data[j].F16583, 3);       /* 사무수탁회사번호 3자리가 아닌 경우 0 추가 ( written by bkLove 2019-07-30 ) */
+        wItem.fld005 = tmp.data[j].F16012;
+        wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
+        wItem.fld007 = tmp.data[j].F16316;
+        wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
+
+    logg.debug1("tmp F16499 : " + tmp.data[j].F16499);
+    logg.debug1("wItem fld008 : " + wItem.fld008);
+
+        wItem.fld009 = tmp.data[j].F33861;
+        // wItem.fld010 = util.padSpace(tmp.data[j].F16004, 40);
+        // 종목명 인코딩 문제로 스페이스 처리 (2019.08.06. 이형준 과장 요청)
+        wItem.fld010 = util.padSpace('', 40);
+        wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
+    logg.debug1("tmp F34840 : " + tmp.data[j].F34840);
+    logg.debug1("wItem fld011 : " + wItem.fld011);
+        wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
+    logg.debug1("tmp F16588 : " + tmp.data[j].F16588);
+    logg.debug1("wItem fld013 : " + wItem.fld013);
+            
+        if(tmp.data[j].status == 'insert') wItem.fld014 = '1';
+        else if(tmp.data[j].status == 'delete') wItem.fld014 = '2';
+        else  wItem.fld014 = '0';
+
+        var ostr = wItem.fld000 + wItem.fld001 + wItem.fld002 + wItem.fld003 + 
+        wItem.fld004 + wItem.fld005 + wItem.fld006 + wItem.fld007 + wItem.fld008 + 
+        wItem.fld009 + wItem.fld010 + wItem.fld011 + wItem.fld012 + wItem.fld013 + 
+        wItem.fld014 + wItem.filler + wItem.filler2;
+
+        msg = msg + "[" + tmp.data[j].F16013 + "]";
+        logg.debug1("strlen : " + ostr.length);
+        fs.appendFileSync(ifname, ostr, 'utf8');
+        fs.appendFileSync(ifname1, ostr, 'utf8');
+        // fs.writeFileSync(ifname, ostr, {flag: 'a+', encoding:'latin1'});  // latin1 == ISO-8859-1
+        logg.debug1("wItem..................");
+        logg.debug1(wItem);
+      }
+    }
+    sms.smsSend(0, msg)
+  } catch (error) {
+    logg.error(err);
+  }
+}
 
 /*
  * 최근 group_no 에 속한 pdf 수정정보를 조회한다.
@@ -2287,7 +2251,7 @@ strlen : 202 (window : 202, linux : 201)
 var getPdfByGroupNo = function(req, res) {
 
     try {
-        log.debug('etpOper.getPdfByGroupNo 호출됨.');
+        logg.debug('etpOper.getPdfByGroupNo 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -2295,7 +2259,7 @@ var getPdfByGroupNo = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getPdfByGroupNo  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -2326,7 +2290,7 @@ var getPdfByGroupNo = function(req, res) {
 
                     try {
                         stmt = mapper.getStatement('etpOper', 'getMaxGroupNo', paramData, format);
-                        log.debug(stmt, paramData);
+                        logg.debug(stmt);
 
                         conn.query(stmt, function(err, rows) {
 
@@ -2368,7 +2332,7 @@ var getPdfByGroupNo = function(req, res) {
                     try {
                         if (paramData.group_no) {
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistMastByGroupNo', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -2406,7 +2370,7 @@ var getPdfByGroupNo = function(req, res) {
                     try {
                         if (paramData.group_no) {
                             stmt = mapper.getStatement('etpOper', 'getTmPdfModifyHistDtlByGroupNo', paramData, format);
-                            log.debug(stmt, paramData);
+                            logg.debug(stmt);
 
                             conn.query(stmt, function(err, rows) {
 
@@ -2463,7 +2427,7 @@ var getPdfByGroupNo = function(req, res) {
             ], function(err) {
 
                 if (err) {
-                    log.error(err, stmt, paramData);
+                    logg.error(err);
                 } else {
 
                     resultMsg.result = true;
@@ -2478,7 +2442,7 @@ var getPdfByGroupNo = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -2499,7 +2463,7 @@ var getPdfByGroupNo = function(req, res) {
 var getPdfExistYnByNow = function(req, res) {
 
     try {
-        log.debug('etpOper.getPdfExistYnByNow 호출됨.');
+        logg.debug('etpOper.getPdfExistYnByNow 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -2507,7 +2471,7 @@ var getPdfExistYnByNow = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.", req.body.data);
+            logg.error("[error] etpOper.getPdfExistYnByNow  req.body.data no data.", req.body.data);
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -2532,12 +2496,12 @@ var getPdfExistYnByNow = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getPdfExistYnByNow', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -2563,7 +2527,7 @@ var getPdfExistYnByNow = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -2576,7 +2540,7 @@ var getPdfExistYnByNow = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, stmt, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -2593,7 +2557,7 @@ var getPdfExistYnByNow = function(req, res) {
  */
 var getTmPdfBaiscMaxF12506 = function(req, res) {
     try {
-        log.debug('etpOper.getTmPdfBaiscMaxF12506 호출됨.');
+        logg.debug('etpOper.getTmPdfBaiscMaxF12506 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -2601,7 +2565,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getTmPdfBaiscMaxF12506  req.body.data no data.", paramData);
+            logg.error("[error] etpOper.getTmPdfBaiscMaxF12506  req.body.data no data.");
 
             resultMsg.resultconfig.MSG.error01;
 
@@ -2624,12 +2588,12 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getTmPdfBaiscMaxF12506', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -2648,7 +2612,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -2661,7 +2625,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -2680,7 +2644,7 @@ var getTmPdfBaiscMaxF12506 = function(req, res) {
  */
 var getNowDate = function(req, res) {
     try {
-        log.debug('etpOper.getNowDate 호출됨.');
+        logg.debug('etpOper.getNowDate 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -2688,7 +2652,7 @@ var getNowDate = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getNowDate  req.body.data no data.", paramData);
+            logg.error("[error] etpOper.getNowDate  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -2712,12 +2676,12 @@ var getNowDate = function(req, res) {
 
             try {
                 stmt = mapper.getStatement('etpOper', 'getNowDate', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -2736,7 +2700,7 @@ var getNowDate = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -2749,7 +2713,7 @@ var getNowDate = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -2768,7 +2732,7 @@ var getNowDate = function(req, res) {
  */
 var getExistsNowPdfBaisc = function(req, res) {
     try {
-        log.debug('etpOper.getExistsNowEtpBasic 호출됨.');
+        logg.debug('etpOper.getExistsNowEtpBasic 호출됨.');
 
         var pool = req.app.get("pool");
         var mapper = req.app.get("mapper");
@@ -2776,7 +2740,7 @@ var getExistsNowPdfBaisc = function(req, res) {
 
         /* 1. body.data 값이 있는지 체크 */
         if (!req.body.data) {
-            log.error("[error] etpOper.getExistsNowEtpBasic  req.body.data no data.", paramData);
+            logg.error("[error] etpOper.getExistsNowEtpBasic  req.body.data no data.");
 
             resultMsg.result = false;
             resultMsg.msg = config.MSG.error01;
@@ -2801,12 +2765,12 @@ var getExistsNowPdfBaisc = function(req, res) {
             try {
 
                 stmt = mapper.getStatement('etpOper', 'getExistsNowPdfBaisc', paramData, format);
-                log.debug(stmt, paramData);
+                logg.debug(stmt);
 
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
-                        log.error(err, stmt, paramData);
+                        logg.error(err);
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
@@ -2825,7 +2789,7 @@ var getExistsNowPdfBaisc = function(req, res) {
                 });
 
             } catch (err) {
-                log.error(err, stmt, paramData);
+                logg.error(err);
 
                 resultMsg.result = false;
                 resultMsg.msg = config.MSG.error01;
@@ -2838,7 +2802,7 @@ var getExistsNowPdfBaisc = function(req, res) {
 
     } catch (expetion) {
 
-        log.error(expetion, paramData);
+        logg.error(expetion);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
@@ -2850,7 +2814,6 @@ var getExistsNowPdfBaisc = function(req, res) {
         res.end();
     }
 }
-
 
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;

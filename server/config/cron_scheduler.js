@@ -12,7 +12,7 @@ var cron = require('node-cron');
 var logg = require('../util/logg');
 
 cron_scheduler.init = function(app) {
-	logg.info('cron_scheduler.init 호출됨.');
+	// logg.info('cron_scheduler.init 호출됨.');
 	// return cronRegister(app);
 };
 
@@ -20,7 +20,7 @@ cron_scheduler.init = function(app) {
 function cronRegister(app) {
 	// cron 작업 등록
 	cron.schedule('* 0 * * *', function(){
-		logg.info('dailyCronJob 작업 실행 : ');
+		// logg.info('dailyCronJob 작업 실행 : ');
 		dailyCronJob(app);
 	});
 }
