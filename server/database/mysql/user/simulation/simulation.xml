@@ -430,11 +430,11 @@
                         ON  (
                                         tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
                                 AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
-                                AND     tm_simul_share.email    =   #{user_id}
                             )
 
                      WHERE  1 = 1
                        AND  tm_simul_mast.grp_yn          =   '1'
+                       AND  tm_simul_share.email            =   #{user_id}
 
                     UNION   ALL
 
@@ -510,11 +510,11 @@
                         ON  (
                                         tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
                                 AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
-                                AND     tm_simul_share.email    =   #{user_id}
                             )
 
                      WHERE  1 = 1
-                       AND  tm_simul_mast.grp_yn          =   '0'
+                       AND  tm_simul_mast.grp_yn            =   '0'
+                       AND  tm_simul_share.email            =   #{user_id}
 
                 )   base
 
