@@ -6,8 +6,8 @@
 
 // Express 기본 모듈 불러오기
 const express = require('express'),
-    http = require('http'),
-    path = require('path');
+  http = require('http'),
+  path = require('path');
 
 var bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
@@ -15,6 +15,8 @@ var bodyParser = require('body-parser'),
     cors = require('cors'),
     fs = require('fs');
     // errorHandler = require('errorhandler');
+
+var logg = require('./util/logg');
 
 // 에러 핸들러 모듈 사용 
 // express-error-handler 못 가져옴 (이유를 모르겠슴)
@@ -56,10 +58,10 @@ app.set('port', config.server_port); //8021
 
 //Cross Origin Resource Sharing
 app.all("*", function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
-    return next();
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+  return next();
 });
 
 //app.use(cors(corsOptions));
@@ -76,17 +78,17 @@ app.use(cookieParser());
 
 // 세션 설정
 app.use(expressSession({
-    secret: '!@!!#!#!#!@$^#$$#%#$%#%$%#%#$#$',
-    resave: false,
-    saveUninitialized: true,
-    store : new mysqlStore({
-      host: mysql_config.host,
-      port: mysql_config.port,
-      user: mysql_config.user,
-      password: mysql_config.password,
-      database: mysql_config.database,
-    }),
-}));
+  secret: '!@!!#!#!#!@$^#$$#%#$%#%$%#%#$#$',
+  resave: false,
+  saveUninitialized: true,
+  store : new mysqlStore({
+    host: mysql_config.host,
+    port: mysql_config.port,
+    user: mysql_config.user,
+    password: mysql_config.password,
+    database: mysql_config.database,
+  }),
+})); 
 
 // public 폴더를 static으로 오픈
 app.use(static(path.join(__dirname, 'public')));
@@ -94,9 +96,9 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 //라우팅에 대한 사전 세션체크 (개발시 체크 하지 않음)
 if (config.runenv == "dev") {
-    route_loader.sessionCheckRegister(app);
+  route_loader.sessionCheckRegister(app);
 } else {
-    route_loader.sessionCheckRegister(app);
+  route_loader.sessionCheckRegister(app);
 }
 
 //라우팅 정보를 읽어들여 라우팅 설정
@@ -129,27 +131,27 @@ cron.init(app);
 
 //확인되지 않은 예외 처리 - 서버 프로세스 종료하지 않고 유지함
 process.on('uncaughtException', function(err) {
-    console.log('uncaughtException 발생함 : ' + err);
-    console.log('서버 프로세스 종료하지 않고 유지함.');
+  logg.error('uncaughtException 발생함 : ' + err);
+  logg.info('서버 프로세스 종료하지 않고 유지함.');
 
-    if( err && err.stack ) {
-        console.log(err.stack);
-    }
+  if( err && err.stack ) {
+    logg.error(err.stack);
+  }
 });
 
 // 프로세스 종료 시에 데이터베이스 연결 해제
 process.on('SIGTERM', function() {
-    console.log("프로세스가 종료됩니다.");
-    app.close();
+  logg.info("프로세스가 종료됩니다.");
+  app.close();
 });
 
 app.on('close', function() {
-    console.log("Express 서버 객체가 종료됩니다.");
+  logg.info("Express 서버 객체가 종료됩니다.");
 });
 
 // 시작된 서버 객체를 리턴받도록 합니다. 
 var server = http.createServer(app).listen(app.get('port'), function(req, res) {
-    console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
+  logg.info('서버가 시작되었습니다. 포트 : ' + app.get('port'));
 });
 
 // 실시간 데이터 처리 테스트 완료
