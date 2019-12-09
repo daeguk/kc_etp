@@ -23,7 +23,7 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs');
 
-var log = config.logger;
+var log = require('../../../util/logg');
 
 
 var limit = {

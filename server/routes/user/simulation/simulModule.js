@@ -9,7 +9,7 @@
 
 
 var config = require('../../../config/config');
-var log = config.logger;
+var log = require('../../../util/logg');
 
 
 

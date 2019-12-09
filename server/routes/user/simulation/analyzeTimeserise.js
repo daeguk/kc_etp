@@ -9,7 +9,7 @@
 
 var config = require('../../../config/config');
 var util = require('util');
-var log = config.logger;
+var log = require('../../../util/logg');
 var fs = require('fs');
 
 // PYTHON SAMPLE

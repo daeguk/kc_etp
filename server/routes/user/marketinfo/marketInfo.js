@@ -9,7 +9,7 @@ var Promise = require("bluebird");
 var async = require('async'); 
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 /*
 * INDEX MAST 조회

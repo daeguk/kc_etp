@@ -4,12 +4,11 @@
  * @date 2019-02-08
  * @author ThreeOn
  */
-var config = require('../../../config/config');
-var util = require("util");
+
 var Promise = require("bluebird");
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 /* 
  * etp 신청 현황  조회한다.

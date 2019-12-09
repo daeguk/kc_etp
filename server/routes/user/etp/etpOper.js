@@ -16,7 +16,7 @@ var Promise = require("bluebird");
 var async = require('async');
 var iconv = require('iconv-lite');
 
-var log = config.logger;
+var log = require('../../../util/logg');
 
 /*
  * ETP 운용관리 - ETP 운영정보를 조회한다.

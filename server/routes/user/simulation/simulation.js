@@ -16,9 +16,8 @@ var async = require('async');
 var _ = require("lodash");
 
 var simulationBacktest = require('./simulationBacktest');
+var log = require('../../../util/logg');
 
-
-var log = config.logger;
 
 var limit = {
         divide_size         :   100
