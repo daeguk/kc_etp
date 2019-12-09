@@ -2,7 +2,6 @@
  *  ETP 등록화면
  */
 var config = require('../../../config/config');
-var util = require("util");
 var Promise = require("bluebird");
 var async = require('async');
 const etpUser           = "0001";

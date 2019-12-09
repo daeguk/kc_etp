@@ -9,8 +9,6 @@
 
 
 var config = require('../../../config/config');
-var util = require('../../../util/util');
-
 var log = config.logger;
 
 
