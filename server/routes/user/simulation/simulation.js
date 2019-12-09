@@ -85,6 +85,12 @@ var getInitGrpCd = function(req, res) {
                 stmt = mapper.getStatement('simulation', 'getInitGrpCd', paramData, format);
                 log.debug(stmt, paramData);
 
+
+                if(     paramData.now_grp_cd 
+                    &&  paramData.now_grp_cd == initGrpInfo.INIT_GRP_CD ) {
+                    resultMsg.dataList  =   [];
+                }                
+
                 conn.query(stmt, function(err, rows) {
 
                     if (err) {
@@ -96,18 +102,7 @@ var getInitGrpCd = function(req, res) {
                     }
                     else if (rows && rows.length > 0) {
 
-                        if( typeof paramData.now_grp_cd != "undefined" ) {
-
-                            if(     paramData.now_grp_cd 
-                                &&  paramData.now_grp_cd == initGrpInfo.INIT_GRP_CD ) {
-                                resultMsg.dataList  =   rows;
-                            }else{
-                                resultMsg.dataList.push( ...rows );
-                            }
-                            
-                        }else{
-                            resultMsg.dataList.push( ...rows );
-                        }
+                        resultMsg.dataList.push( ...rows );
 
                         resultMsg.result = true;
                         resultMsg.msg = "";
