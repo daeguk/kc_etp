@@ -23,12 +23,15 @@ var expressErrorHandler = require('express-error-handler');
 
 // Session 미들웨어 불러오기
 var expressSession = require('express-session');
+var mysqlStore = require('express-mysql-session')(expressSession);
 
 // connect-flash 미들웨어 불러오기
 var flash = require('connect-flash');
 
 // 모듈로 분리한 설정 파일 불러오기
 var config = require('./config/config');
+var mysql_config = require('./database/mysql_config');
+
 // 모듈로 분리한 설정 파일 불러오기
 var cron = require('./config/cron_scheduler');
 
@@ -75,7 +78,14 @@ app.use(cookieParser());
 app.use(expressSession({
     secret: '!@!!#!#!#!@$^#$$#%#$%#%$%#%#$#$',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store : new mysqlStore({
+      host: mysql_config.host,
+      port: mysql_config.port,
+      user: mysql_config.user,
+      password: mysql_config.password,
+      database: mysql_config.database,
+    }),
 }));
 
 // public 폴더를 static으로 오픈

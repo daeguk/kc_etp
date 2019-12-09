@@ -230,13 +230,13 @@ export default {
 
             vm.$emit( "fn_showProgress", true );
 
-            /* 공유할 공유자를 조회한다. */
-            vm.fn_get_user_list_for_share().then( function(e){
+            /* 공유된 공유자를 조회한다. */
+            vm.fn_get_user_list_shared().then( function(e){
 
                 if( e && e.result  ) {
 
-                    /* 공유된 공유자를 조회한다. */
-                    return  vm.fn_get_user_list_shared();
+                    /* 공유할 공유자를 조회한다. */
+                    return  vm.fn_get_user_list_for_share();
                 }
 
             }).then( function(e) {
@@ -275,10 +275,11 @@ export default {
 
 				}else{
 
-					var p_param         =   {};
+					var p_param         	=   {};
 
-					p_param.grp_cd      =   vm.share_row_data.grp_cd;
-					p_param.scen_cd     =   vm.share_row_data.scen_cd;
+					p_param.grp_cd      	=   vm.share_row_data.grp_cd;
+					p_param.scen_cd     	=   vm.share_row_data.scen_cd;
+					p_param.arr_user_shared	=	vm.arr_user_list_shared;
 
 
 					util.axiosCall(

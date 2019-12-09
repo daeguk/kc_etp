@@ -86,7 +86,7 @@ export default {
       this.menuList.push(this.allMenuList[3]);
       this.menuList.push(this.allMenuList[4]);
       this.menuList.push(this.allMenuList[5]);
-      this.menuList.push(this.allMenuList[6]);
+    //   this.menuList.push(this.allMenuList[6]);
       this.menuList.push(this.allMenuList[7]);      //  운용 지원
     }else {
 

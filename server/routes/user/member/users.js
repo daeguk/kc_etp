@@ -118,6 +118,29 @@ var setLoginHistory = function(req, options) {
   }
 }
 
+
+// 로그아웃처리
+var userLogout = function(req, res) {
+  log.debug('users 모듈 안에 있는 userLogout 호출됨.');
+
+  try {
+    delete req.session;
+    log.debug("session delete");
+    res.json({
+      success: true,
+    });
+    res.end();
+
+  } catch(exception) {
+    log.debug("err=>", exception);
+    res.json({
+      success: false,
+    });
+    res.end();
+  }
+};
+
+
 // 사용사 그룹 가져오기
 var getMemberTypeList = function(req, res) {
   log.debug('users 모듈 안에 있는 getMemberTypeList 호출됨.');
@@ -306,6 +329,7 @@ var userUpdateInfo = function(req, res) {
 };
 
 module.exports.userLoginCheck = userLoginCheck;
+module.exports.userLogout = userLogout;
 module.exports.getMemberTypeList = getMemberTypeList;
 module.exports.getMemberDomainList = getMemberDomainList;
 module.exports.userNewAccount = userNewAccount;
