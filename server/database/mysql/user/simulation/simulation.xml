@@ -424,9 +424,9 @@
                             ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
                             ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
 
-                      FROM  tm_simul_share
+                      FROM  tm_simul_mast
 
-                      JOIN  tm_simul_mast
+                 LEFT JOIN  tm_simul_share
                         ON  (
                                         tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
                                 AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
@@ -504,9 +504,9 @@
                             ,   tm_simul_share.email                                    AS  email                       /* 이메일 */
                             ,   tm_simul_share.owner_yn                                 AS  owner_yn                    /* 소유자 유무( 1-소유자, 0-소유자 아닌 공유 ) */
 
-                      FROM  tm_simul_share
+                      FROM  tm_simul_mast
 
-                      JOIN  tm_simul_mast
+                 LEFT JOIN  tm_simul_share
                         ON  (
                                         tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
                                 AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
