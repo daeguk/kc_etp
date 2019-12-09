@@ -12,7 +12,7 @@ var async = require('async');
 var util = require("util");
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 
 /*

@@ -14,7 +14,7 @@ var fs = require('fs');
 var async = require('async');
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 var limit = {
         method_max_size : 5      /* 지수방법론 (Mb) */

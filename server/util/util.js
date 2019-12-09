@@ -1,10 +1,6 @@
 /*
  * 설정
  */
-var config = require('../config/config');
-
-var log = config.logger;
-
 module.exports = {
   getYearMonth: function() {
     var newDate = new Date();

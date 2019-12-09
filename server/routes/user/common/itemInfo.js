@@ -13,7 +13,7 @@ var util = require("util");
 
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 // 관심 종목 리스트 가져 오기
 var getFavorItemInfo = function (req, res) {

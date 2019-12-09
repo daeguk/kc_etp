@@ -2,7 +2,6 @@
  *  ETP 등록화면
  */
 var config = require('../../../config/config');
-var util = require("util");
 var Promise = require("bluebird");
 var async = require('async');
 const etpUser           = "0001";
@@ -11,7 +10,7 @@ const koscomUser        = "9998";
 const koscomSuperUser   = "9999";
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 var format = { language: 'sql', indent: '' };
 

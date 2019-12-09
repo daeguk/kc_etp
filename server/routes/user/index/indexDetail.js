@@ -14,7 +14,7 @@ var fs = require('fs');
 var async = require('async');
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 
 /* 

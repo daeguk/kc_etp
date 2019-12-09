@@ -12,7 +12,7 @@ var Promise = require("bluebird");
 var requestIp = require('request-ip');
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 // 사용사 로그인 처리
 var userLoginCheck = function(req, res) {

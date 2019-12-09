@@ -3,7 +3,7 @@ var util = require("util");
 var Promise = require("bluebird");
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../util/logg');
 
 
 var getBlueList = function(req, res) {
