@@ -30,6 +30,9 @@ module.exports = {
     sampleDownFolder : "/data/koscom/kc_newetp/upload/sampleDown",
     pdfmodify_nas_path: "/nas3/nfs_data2/checkapi/pdfmodify/",
     logger : logger,
+    log_level : 'DEBUG',
+    // log_level : 'INFO',
+    // log_level : 'ERROR',
     python_path: '/home/sinfo/anaconda3/bin/python',
     MSG : MSG
 }
