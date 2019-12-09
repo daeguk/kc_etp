@@ -109,6 +109,7 @@
                                 ref="timeSeriesUpload"
                                 style="display:none;"
                             />
+                            <SimulationTimeSeriesUploadPop></SimulationTimeSeriesUploadPop>
                         </v-flex>
                     </v-layout>
                 </v-card>
@@ -146,6 +147,7 @@ import excel from "xlsx";
 import MastPopup02 from "@/components/common/popup/MastPopup02";
 import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import SimulationExcelupModal  from "@/components/Home/simulation/SimulationExcelupModal.vue";
+import SimulationTimeSeriesUploadPop  from "@/components/Home/simulation/SimulationTimeSeriesUploadPop.vue";
 
 var table01 = null;
 
@@ -189,7 +191,8 @@ export default {
     components: {
         MastPopup02,
         ConfirmDialog,
-        SimulationExcelupModal : SimulationExcelupModal,      
+        SimulationExcelupModal : SimulationExcelupModal, 
+        SimulationTimeSeriesUploadPop : SimulationTimeSeriesUploadPop,    
     },    
 
     created() {
