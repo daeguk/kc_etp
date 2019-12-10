@@ -1011,7 +1011,7 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETP 코드 */
+                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETF 코드 */
                     p_record_data.F16316        =   String( p_record_data.col02 );      /* 구성종목코드 */
                     p_record_data.F16499        =   String( p_record_data.col03 );      /* CU당 수량 */
                     p_record_data.F34840        =   String( p_record_data.col04 );      /* 액면금액 */

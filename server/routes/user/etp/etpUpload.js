@@ -155,7 +155,7 @@ var uploadPdf = function(req, res) {
                             v_param.p_record_check  =   false;
 
                             data.result             =   false;
-                            data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETP 코드를 잘못 입력하셨습니다.";
+                            data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETF 코드를 잘못 입력하셨습니다.";
                         }
 
 
@@ -193,7 +193,7 @@ var uploadPdf = function(req, res) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
-                                data.msg                =   "[" + ( data.row_no ) + " 행] ETP 코드를 잘못 입력하셨습니다.";
+                                data.msg                =   "[" + ( data.row_no ) + " 행] ETF 코드를 잘못 입력하셨습니다.";
                             }                            
                         }
                     }
