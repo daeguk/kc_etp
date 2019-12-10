@@ -2,6 +2,7 @@ import sys
 import json
 import pandas as pd
 import numpy as np
+import simplejson
 from scipy.stats import norm
 from scipy import stats
 from scipy.stats.mstats import gmean
@@ -13,10 +14,7 @@ def set_data(mystr):
 
     # 데이터 값을 float로 변환
     df['backtest'] = df['backtest'].astype(float)
-    
-    if 'benchmark' in df.columns:
-        df['benchmark'] = df['benchmark'].astype(float)
-    
+    df['benchmark'] = df['benchmark'].astype(float)
     df['kospi'] = df['kospi'].astype(float)
     df['riskfree'] = df['riskfree'].astype(float) / 100
 
@@ -30,11 +28,9 @@ def set_data(mystr):
     # 날짜 count를 맞추기 위한 작업임
     df['prev'] = df['backtest'].shift(1)
     df['rtn'] = df['backtest'].pct_change()
+    df['bm_prev'] = df['benchmark'].shift(1)
+    df['bm_rtn'] = df['benchmark'].pct_change()
     df['kospi_rtn'] = df['kospi'].pct_change()
-
-    if 'benchmark' in df.columns:
-        df['bm_prev'] = df['benchmark'].shift(1)
-        df['bm_rtn'] = df['benchmark'].pct_change()
     
     df = df.iloc[1:]
     #df = df['2001-01':'2019-04']
@@ -165,10 +161,19 @@ def analyze_data(df):
     # 년단위 데이터로 resamplingn
     y_idx = df.resample(rule='Y').last()
     y_idx['rtn'] = y_idx['backtest'].pct_change()
-    min_val = y_idx['rtn'].min()
-    min_idx = y_idx['rtn'].idxmin()
-    max_val = y_idx['rtn'].max()
-    max_idx = y_idx['rtn'].idxmax()
+
+    # 1년이내의 데이터의 경우 y_idx['rtn'] 값이 null 이므로 아래와 같이 계산
+    if len(y_idx) == 1 :
+        min_val = df['backtest'].iloc[-1] / df['prev'].iloc[0] - 1
+        min_idx = df['backtest'].idxmin()
+        max_val = df['backtest'].iloc[-1] / df['prev'].iloc[0] - 1
+        max_idx = df['backtest'].idxmax()        
+    else:     
+        min_val = y_idx['rtn'].min()
+        min_idx = y_idx['rtn'].idxmin()
+        max_val = y_idx['rtn'].max()
+        max_idx = y_idx['rtn'].idxmax()
+        
     result['best_y']['year'] = max_idx.year
     result['best_y']['rtn'] = max_val
     result['worst_y']['year'] = min_idx.year
@@ -341,7 +346,6 @@ if __name__ == '__main__':
     
     #json을 읽어서, 스트링으로 변환한다. 나중에 해당 스트링을 argv로 받을 예정
     filename = sys.argv[1]
-    #filename = 'emp_sample.json'
     in_str = open(filename).read()
     
     #배포시 아래로 변경
@@ -357,5 +361,5 @@ if __name__ == '__main__':
         tm_data['prev'] = tm_data['bm_prev']
         rslt['benchmark'] = analyze_data(tm_data)
     #show_result(rslt)    
-    rslt_json = json.dumps(rslt)
+    rslt_json = simplejson.dumps(rslt, ignore_nan=True)
     print(rslt_json)

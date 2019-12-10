@@ -71,7 +71,7 @@ var getAnalyze_timeseries = async function(arr_daily, bench_mark_cd) {
                     
                 log.debug("[PYTHON] 시작");
 
-                PythonShell.run('./python/analyze_timeseries.py', options, function (err, results) {
+                PythonShell.run('./python/analyze_timeseries_daily.py', options, function (err, results) {
                     if (err) {
                         log.debug( "파이선 호출 중 오류가 발생되었습니다.", err );
                         resolve1( { result : false
