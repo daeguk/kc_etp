@@ -2,6 +2,7 @@ import sys
 import json
 import pandas as pd
 import numpy as np
+import simplejson
 from scipy.stats import norm
 from scipy import stats
 from scipy.stats.mstats import gmean
@@ -163,10 +164,19 @@ def analyze_data(df):
     # 년단위 데이터로 resamplingn
     y_idx = df.resample(rule='Y').last()
     y_idx['rtn'] = y_idx['backtest'].pct_change()
-    min_val = y_idx['rtn'].min()
-    min_idx = y_idx['rtn'].idxmin()
-    max_val = y_idx['rtn'].max()
-    max_idx = y_idx['rtn'].idxmax()
+    
+    # 1년이내의 데이터의 경우 y_idx['rtn'] 값이 null 이므로 아래와 같이 계산
+    if len(y_idx) == 1 :
+        min_val = df['backtest'].iloc[-1] / df['prev'].iloc[0] - 1
+        min_idx = df['backtest'].idxmin()
+        max_val = df['backtest'].iloc[-1] / df['prev'].iloc[0] - 1
+        max_idx = df['backtest'].idxmax()        
+    else:     
+        min_val = y_idx['rtn'].min()
+        min_idx = y_idx['rtn'].idxmin()
+        max_val = y_idx['rtn'].max()
+        max_idx = y_idx['rtn'].idxmax()
+        
     result['best_y']['year'] = max_idx.year
     result['best_y']['rtn'] = max_val
     result['worst_y']['year'] = min_idx.year
@@ -356,5 +366,5 @@ if __name__ == '__main__':
         rslt['benchmark'] = analyze_data(tm_data)
     # data 확인용
     #show_result(rslt)
-    rslt_json = json.dumps(rslt)
+    rslt_json = simplejson.dumps(rslt, ignore_nan=True)
     print(rslt_json)
