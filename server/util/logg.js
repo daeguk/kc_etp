@@ -8,9 +8,17 @@ module.exports = {
     console.log('[' + new Date().toString() + ']');
     console.log(msg);
   },
+  error1: function(msg) {
+    console.log(msg);
+  },
   info: function(msg) {
     if(config.log_level == 'DEBUG' || config.log_level == 'INFO') {
       console.log('[' + new Date().toString() + ']');
+      console.log(msg);
+    }
+  },
+  info1: function(msg) {
+    if(config.log_level == 'DEBUG' || config.log_level == 'INFO') {
       console.log(msg);
     }
   },
