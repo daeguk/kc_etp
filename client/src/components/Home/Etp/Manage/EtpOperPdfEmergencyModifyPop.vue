@@ -643,10 +643,17 @@ export default {
                             if ( o.status != "insert" && o.F16316 == dataJson.codeVal ) {
                                 return true; 
                             }
-                        });                          
+                        });
+
+                        /* (기존건 + 신규건) 구성종목코드 중복체크 ( 현재 입력하는 코드 포함하여 종목코드체크 ) */
+                        var duplCheck1 = _.filter( tblEmergeny01.rows().data() , function( o, i ) {
+                            if ( o.F16316 == dataJson.codeVal ) {
+                                return true; 
+                            }
+                        });                        
 
 
-                        if( insertDuplCheck.length  > 1 || duplCheck.length > 0 ) {
+                        if( insertDuplCheck.length  > 1 || duplCheck.length > 0 || duplCheck1.length > 1 ) {
                             vm.status = 1;
                             if (await vm.$refs.confirm2.open(
                                     '확인',
