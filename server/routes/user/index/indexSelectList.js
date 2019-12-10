@@ -5,15 +5,12 @@
  * @author ThreeOn
  */
 var config = require('../../../config/config');
-var util = require("util");
 var Promise = require("bluebird");
 
-var multer = require('multer');
-var xlsx = require('xlsx');
-var fs = require('fs');
+
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 /* 
  * 지수등록 상태정보를 조회한다.

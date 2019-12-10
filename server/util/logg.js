@@ -20,4 +20,10 @@ module.exports = {
       console.log(msg);
     }
   },
+  // LOG TIME NOT DISPLAY
+  debug1: function(msg) {
+    if(config.log_level == 'DEBUG') {
+      console.log(msg);
+    }
+  },
 }

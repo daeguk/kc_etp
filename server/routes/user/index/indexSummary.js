@@ -14,7 +14,7 @@ var util = require("util");
 //var fs = require('fs'); 
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 var getIndexSummaryInfo = function (req, res) {
     try {

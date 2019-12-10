@@ -7,7 +7,7 @@
 var config = require('../../../config/config');
 var Promise = require("bluebird");
 var async = require('async');
-var log = config.logger;
+var log = require('../../../util/logg');
 
 var getEtpList = function(req, res) {
   try {

@@ -3,6 +3,7 @@
  */
 var http = require('http');
 var config = require('../config/config');
+var logg = require('./logg');
 const recvNoList = [
   // PDF 담당 : 민선기, 김상용, 오인명, 이형준
   // ['01091703352', '01047191302', '01088939334', '01071397335'],
@@ -27,10 +28,10 @@ module.exports = {
       for(let i=0; i < recvNo.length; i++) {
         var msgstr = str + "&recvNo=" + recvNo[i];
         options.path = encodeURI(msgstr);
-        console.log("smsSEnd...........");
-        console.log(options.path);
+        logg.info("smsSEnd...........");
+        logg.info(options.path);
         http.request(options, function(res) {
-          console.log("response........" + i);
+          logg.info("response........" + i);
         }).end();
       }
     }
@@ -48,10 +49,10 @@ module.exports = {
       for(let i=0; i < recvNo.length; i++) {
         var msgstr = str + "&recvNo=" + recvNo[i];
         options.path = encodeURI(msgstr);
-        console.log("smsSEnd...........");
-        console.log(options.path);
+        logg.info("smsSEnd...........");
+        logg.info(options.path);
         http.request(options, function(res) {
-          console.log("response........" + i);
+          logg.info("response........" + i);
         }).end();
       }
     }

@@ -5,13 +5,11 @@
  * @author ThreeOn
  */
 var config = require('../../../config/config');
-var util = require("util");
 var Promise = require("bluebird");
 var async = require('async'); 
-var util = require("util");
 
 /* logging 추가함.  2019-06-10 */
-var log = config.logger;
+var log = require('../../../util/logg');
 
 /*
 * INDEX MAST 조회

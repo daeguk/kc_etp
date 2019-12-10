@@ -4,10 +4,9 @@
  *  @date 2019-07-26
  *  @author bkLove
  */
-var os = require('os');
-var fs = require('fs');
+
 var config = require('../../../config/config');
-var util = require('../../../util/util');
+
 var Promise = require("bluebird");
 
 
@@ -17,12 +16,8 @@ var async = require('async');
 var _ = require("lodash");
 
 var simulationBacktest = require('./simulationBacktest');
+var log = require('../../../util/logg');
 
-var multer = require('multer');
-var xlsx = require('xlsx');
-var fs = require('fs');
-
-var log = config.logger;
 
 var limit = {
         divide_size         :   100

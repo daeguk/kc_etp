@@ -22,7 +22,7 @@ var simulModule = require('./simulModule');
 var simulAnalyze = require('./analyzeTimeserise');
 
 
-var log = config.logger;
+var log = require('../../../util/logg');
 
 var limit = {
         divide_size         :   100
