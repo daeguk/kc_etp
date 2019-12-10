@@ -893,71 +893,96 @@ var uploadPdf = function(req, res) {
 
                                     }else{
 
-                                        /*  
-                                        *   ###################################################################################
-                                        *   insert 상태 초기값 설정
-                                        *   ###################################################################################
-                                        */
-                                        var v_arr_insert_list   =   _.filter( dataLists, function(o) {
-                                            return ( typeof o.status == "undefined" || o.status == "" );
+                                        /* 등록건이 "KR1", "KR3", "KR6" 으로 시작하지 않는 경우 */
+                                        v_arr_insert_check   =   _.filter( dataLists, function(o) {
+                                            return ( typeof o.status == "undefined" || o.status == "" ) && ![ "KR1", "KR3", "KR6" ].includes( o.F16316.substr(0,3) );
                                         });
+                                        if( v_arr_insert_check && v_arr_insert_check.length > 0 ) {
 
-                                        /* 등록건이 존재하는 경우 */
-                                        if( v_arr_insert_list && v_arr_insert_list.length > 0 ) {
-                                            v_arr_insert_list.forEach( function(rowItem) {
+                                            for( var i=0; i < v_arr_insert_check.length; i++ ) {
+                                                var item    =   v_arr_insert_check[i];
 
-                                                var data            =   {};
+                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] 종목코드를 확인해 주세요." } );
 
-                                                data.F12506         =   paramData.F12506;               /* 일자 */
-                                                data.fmt_F12506     =   util.formatDate( data.F12506 ); /* 일자 */
-                                                data.F16012         =   paramData.F16012;               /* ETF종목코드 */
-                                                data.F16583         =   paramData.F16583;               /* 사무수탁회사번호 */
-                                                data.F16013         =   paramData.F16013;               /* ETF단축코드 */
+                                                /* 10 개 까지만 결과정보에 보관한다. */
+                                                if( resultMsg.errorList.length == 10  ) {
+                                                    break;
+                                                }
+                                            }
 
-                                                data.F16316         =   rowItem.F16316;                 /* 구성종목코드 */
-                                                data.F33837         =   0;                              /* 구성종목수 */
-                                                data.F16499         =   rowItem.F16499;                 /* 1CU단위증권수 */
-                                                data.fmt_F16499     =   Math.floor( 
-                                                    Number( data.F16499 ) * 100 
-                                                ) / 100;                                                /* 1CU단위증권수 */
-                                                data.F33861         =   ( [ "KR1", "KR3", "KR6" ].includes( rowItem.F16316.substr(0,3) ) ? "3" : "" );
-                                                data.F34840         =   rowItem.F34840;                 /* 액면금액설정현금액 */
-                                                data.fmt_F34840     =   Math.floor( 
-                                                    Number( data.F34840 ) * 100 
-                                                ) / 100;                                                /* 액면금액설정현금액 */
+                                            resultMsg.record_check  =   false;
+                                            resultMsg.result        =   false;
 
-                                                data.F33904         =   "";                             /* 선물 옵션 계약승수*/ 
-                                                data.F34743         =   0;                              /* ETF_PDF비중 */
-                                                data.fmt_F34743     =   0;                              /* ETF_PDF비중 */
-                                                data.F16004         =   rowItem.F16004;                 /* 해외시장종목명 */
-                                                data.status         =   "insert";
-                                                
-                                                rowItem.status      =   data.status;
+                                            callback(resultMsg);
 
-                                                data.F15007         =   0;                              /* kspjong_basic 기준가 (신규추가시 사용) */
-                                                data.F16588         =   0;                              /* 평가금액 */
-                                                data.F16499_prev    =   rowItem.F16499;              	/* CU shrs (변경전) */
-                                                data.F34840_prev    =   rowItem.F34840;              	/* 액면금액 (변경전) */
-                                                data.F16588_prev    =   0;                              /* 평가금액 (변경전) */
-                                                data.code_check     =   true;                           /* code_check */
+                                        }else{
 
-                                                rowItem.F16499_prev =   data.F16499_prev;
-                                                rowItem.F34840_prev =   data.F34840_prev;
-                                                rowItem.F16588_prev =   data.F16588_prev;
+                                            /*  
+                                            *   ###################################################################################
+                                            *   insert 상태 초기값 설정
+                                            *   ###################################################################################
+                                            */
+                                            var v_arr_insert_list   =   _.filter( dataLists, function(o) {
+                                                return ( typeof o.status == "undefined" || o.status == "" );
+                                            });
 
-                                                msg.pdf_list.push( data );
-                                            })
+                                            /* 등록건이 존재하는 경우 */
+                                            if( v_arr_insert_list && v_arr_insert_list.length > 0 ) {
+                                                v_arr_insert_list.forEach( function(rowItem) {
+
+                                                    var data            =   {};
+
+                                                    data.F12506         =   paramData.F12506;               /* 일자 */
+                                                    data.fmt_F12506     =   util.formatDate( data.F12506 ); /* 일자 */
+                                                    data.F16012         =   paramData.F16012;               /* ETF종목코드 */
+                                                    data.F16583         =   paramData.F16583;               /* 사무수탁회사번호 */
+                                                    data.F16013         =   paramData.F16013;               /* ETF단축코드 */
+
+                                                    data.F16316         =   rowItem.F16316;                 /* 구성종목코드 */
+                                                    data.F33837         =   0;                              /* 구성종목수 */
+                                                    data.F16499         =   rowItem.F16499;                 /* 1CU단위증권수 */
+                                                    data.fmt_F16499     =   Math.floor( 
+                                                        Number( data.F16499 ) * 100 
+                                                    ) / 100;                                                /* 1CU단위증권수 */
+                                                    data.F33861         =   ( [ "KR1", "KR3", "KR6" ].includes( rowItem.F16316.substr(0,3) ) ? "3" : "" );
+                                                    data.F34840         =   rowItem.F34840;                 /* 액면금액설정현금액 */
+                                                    data.fmt_F34840     =   Math.floor( 
+                                                        Number( data.F34840 ) * 100 
+                                                    ) / 100;                                                /* 액면금액설정현금액 */
+
+                                                    data.F33904         =   "";                             /* 선물 옵션 계약승수*/ 
+                                                    data.F34743         =   0;                              /* ETF_PDF비중 */
+                                                    data.fmt_F34743     =   0;                              /* ETF_PDF비중 */
+                                                    data.F16004         =   rowItem.F16004;                 /* 해외시장종목명 */
+                                                    data.status         =   "insert";
+                                                    
+                                                    rowItem.status      =   data.status;
+
+                                                    data.F15007         =   0;                              /* kspjong_basic 기준가 (신규추가시 사용) */
+                                                    data.F16588         =   0;                              /* 평가금액 */
+                                                    data.F16499_prev    =   rowItem.F16499;              	/* CU shrs (변경전) */
+                                                    data.F34840_prev    =   rowItem.F34840;              	/* 액면금액 (변경전) */
+                                                    data.F16588_prev    =   0;                              /* 평가금액 (변경전) */
+                                                    data.code_check     =   true;                           /* code_check */
+
+                                                    rowItem.F16499_prev =   data.F16499_prev;
+                                                    rowItem.F34840_prev =   data.F34840_prev;
+                                                    rowItem.F16588_prev =   data.F16588_prev;
+
+                                                    msg.pdf_list.push( data );
+                                                })
+                                            }
+
+
+                                            msg.pdf_list =   _.orderBy( msg.pdf_list
+                                                , [ "fmt_F12506", "status" ]
+                                                , [ "asc", "asc"]
+                                            );                                    
+
+                                            resultMsg.pdf_list      =   msg.pdf_list;
+
+                                            callback( null );
                                         }
-
-
-                                        msg.pdf_list =   _.orderBy( msg.pdf_list
-                                            , [ "fmt_F12506", "status" ]
-                                            , [ "asc", "asc"]
-                                        );                                    
-
-                                        resultMsg.pdf_list      =   msg.pdf_list;
-
-                                        callback( null );
                                     }
                                 }
 
