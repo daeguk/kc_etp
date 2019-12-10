@@ -665,27 +665,6 @@ export default {
                             }
                         }
 
-                        if( ![ "KR1", "KR3", "KR6" ].includes( dataJson.codeVal.substr(0,3) ) ) {
-
-                            if (await vm.$refs.confirm2.open(
-                                    '확인',
-                                    '종목코드를 확인해 주세요.',
-                                    {}
-                                    ,1
-                                )
-                            ) {
-                                dataJson.initYn     =   "Y";
-                                vm.fn_setInitData( vm, dataJson );
-
-                                vm.status = 0;                                
-                                vm.jongmok_state    =   "";
-
-                                return  false;
-                            }
-
-                            return  false;
-                        }                        
-
 
                         if (await vm.$refs.confirm2.open(
                                 '확인',
