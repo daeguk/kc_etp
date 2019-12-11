@@ -510,6 +510,12 @@ var getAnalyze_timeseries = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -2118,6 +2124,12 @@ var getBacktestResult = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
 
         var format = { language: 'sql', indent: '' };

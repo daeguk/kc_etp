@@ -6,7 +6,7 @@
  */
 
 var config = require('../../../config/config');
-
+var util = require('../../../util/util');
 var Promise = require("bluebird");
 
 
@@ -572,6 +572,12 @@ var modifyGroup = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -1767,6 +1773,12 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
         resultMsg.inputData             =   [];        
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
         Promise.using(pool.connect(), conn => {
 
@@ -3264,6 +3276,12 @@ var deleteAllSimul = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -3834,6 +3852,12 @@ var renameScenario = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -4035,6 +4059,12 @@ var copyScenario = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -4736,6 +4766,12 @@ var fnChangeGroup = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
 
         Promise.using(pool.connect(), conn => {
@@ -6267,6 +6303,12 @@ var applyShareUserInArr = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         resultMsg.share_count    =  0;
 
@@ -6700,6 +6742,12 @@ var applyShareUserRevokeInArr = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
 
         if( typeof paramData.only_shared_user != "undefined" && paramData.only_shared_user == "Y" ) {
@@ -7993,6 +8041,12 @@ var applyShareUserInResultGroup = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         resultMsg.share_count    =  0;
 
@@ -8683,6 +8737,12 @@ var applyShareUserRevokeInGroup = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
 
         resultMsg.share_count    =  0;
