@@ -572,7 +572,7 @@ export default {
 
         vm.chartFlag   =   false;
 
-        vm.fn_showWaitProgress( {'open':true, 'title':'시계열 분석 중입니다.'} );
+        
 
 
         /* 백테스트 수행으로 넘겨받은 값이 존재하는 경우 */
@@ -583,6 +583,8 @@ export default {
                 ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
                 ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
             ){
+
+                vm.fn_showWaitProgress( {'open':true, 'title':'시계열 분석 중입니다.'} );
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -621,7 +623,8 @@ export default {
 
             }
             else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
-
+                
+                vm.fn_showProgress(true);
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -646,11 +649,11 @@ export default {
                         ];
                     }
 
-                    vm.fn_showWaitProgress( false );
+                    vm.fn_showProgress( false );
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showWaitProgress( false );
+                    vm.fn_showProgress( false );
                 });
             }
         }
