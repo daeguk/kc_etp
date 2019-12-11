@@ -252,7 +252,7 @@ export default {
             grd.addColorStop(0, vm.lineColor1[idx]);
             grd.addColorStop(1, vm.lineColor2[idx]);
 
-            c.lineWidth = 1;
+            c.lineWidth = 1.5;
             c.setLineDash([]);
             c.strokeStyle = grd ;
 

@@ -383,10 +383,10 @@ export default {
         // ETP 차트 그리기
         c.beginPath();
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#C5E1A5");
-        grd.addColorStop(1, "#85c406");
+        grd.addColorStop(0, "#ffa726");
+        grd.addColorStop(1, "#ffa726");
 
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
 
@@ -412,8 +412,8 @@ export default {
         // INDEX 차트 그리기
         c.beginPath();
         grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#b8b8b8");
-        grd.addColorStop(1, "#8c8c8c");
+        grd.addColorStop(0, "#455a64");
+        grd.addColorStop(1, "#455a64");
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {        
           // console.log("draw_mintra... : " + index);
@@ -576,7 +576,7 @@ export default {
           // ETP POINT
           dhpos = this.getHPosByPos(wpos);
           c.beginPath();
-          c.fillStyle = "#85c406";
+          c.fillStyle = "#ffa726";
           c.arc(wpos, dhpos, 5, 0, Math.PI*2);
           c.fill();
           c.stroke();
@@ -584,7 +584,7 @@ export default {
           // INDEX POINT
           dhpos = this.getHPosByPos1(wpos);
           c.beginPath();
-          c.fillStyle = "#9e9e9e";
+          c.fillStyle = "#455a64";
           c.arc(wpos, dhpos, 5, 0, Math.PI*2);
           c.fill();
           c.stroke();

@@ -66,10 +66,10 @@
                         ></LineSimulationChart>
                         <ul>
                             <li>
-                                <span class="rcolor1">●</span> Scenario
+                                <span class="rcolor1"></span> Scenario
                             </li>
                             <li>
-                                <span class="rcolor2">●</span>
+                                <span class="rcolor2"></span>
                                 {{ simul_result_mast.bench_index_nm2 }}
                             </li>
                         </ul>
@@ -99,6 +99,16 @@
                                         width="31%"
                                     >{{ row.backtest /* Senario */ }}</td>
                                     <td class="txt_right" width="31%">{{ row.benchmark /* BM */ }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Best Year</th>
+                                    <td class="txt_right">2001</td>
+                                    <td class="txt_right">2001</td>
+                                </tr>
+                                <tr>
+                                    <th>Worst Year</th>
+                                    <td class="txt_right">2002</td>
+                                    <td class="txt_right">2003</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -355,6 +365,14 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="pt-3 pl-2 font_b">
+                                    <ul>
+                                        <li>※ 연율화 계산에서 사용된 일자 수는 <span class="text_red">252일</span>입니다.</li>
+                                        <li>※ 무위험이자율은 <span class="text_red">CD금리</span>를 사용합니다.</li>
+                                        <li>※ Beta(vs market)의 market은 <span class="text_red">KOSPI</span>시장을 의미합니다.</li>
+                                    </ul>
+                                </div>
+
                             </div>
                         </v-card>
                     </v-tab-item>

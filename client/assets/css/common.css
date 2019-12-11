@@ -133,6 +133,7 @@ button:focus { outline: none; }
 .text_red{color:#ff4366 !important}
 .text_green{color:#5e870b   !important}
 .text_orange{color:#ff821d !important;}
+.font_b{font-weight: bold;}
 .v-btn.primary{background-color:#85c406 !important;}
 .v-btn.primary--text{color:#85c406 !important;}
 .v-btn__content .primary--text{color:#85c406 !important; caret-color: #85c406 !important;}
@@ -1121,6 +1122,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .text_in01 .v-input__control .v-text-field__details .v-messages{min-height:0px !important;}
 .margin_n{margin:0 !important;}
 .more_menu_w li{display:block; padding:10px 15px; background:#ffffff; cursor: pointer;}
+.more_menu_w li .v-icon{padding-right:8px;}
 .more_menu_w li .v-btn{margin:0; height:30px ;padding-left:0;}
 .more_menu_w li .v-btn:before{opacity: 0 !important;}
 .mar15{margin-top:15px !important;}
@@ -1173,13 +1175,13 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_g_w{ display:inline-block; width: 100%; margin-bottom:20px;}
 .simul_g_w .simul_g_l{float: left; text-align: center;}
 .simul_g_w .simul_g_l ul li{display: inline-block; padding-right: 10px;}
-.simul_g_w .simul_g_l ul li span.rcolor1{ color:#85c406;}
-.simul_g_w .simul_g_l ul li span.rcolor2{ color:#8c8c8c;}
+.simul_g_w .simul_g_l ul li span.rcolor1{ width:60px; height:12px; background-color:#ffa726; display:inline-block;margin-right:10px;}
+.simul_g_w .simul_g_l ul li span.rcolor2{ width:60px; height:12px; background-color:#455a64; display:inline-block;margin-right:10px;}
 .simul_g_w .simul_g_r{float: right; width:400px;  margin-right: 20px;}
 .simul_g_w .simul_g_r.v2{width: 270px;}
 .simul_g_w .simul_g_r .ver11.v2{width: 100%; border-top:none;}
 .simul_g_w .simul_g_r .ver11.v2 thead th{border-top:none !important; border-bottom:1px solid #bbbbbb !important; background:#ffffff !important; color:#263147;}
-
+.simul_g_w .simul_g_r .ver11.v2 tr th{padding-top:12px; padding-bottom:12px;}
 
 .simul_g_w .simul_g_r ul{margin-top:33px; padding-left: 15px;}
 .simul_g_w .simul_g_r ul li{padding:5px;}
@@ -1242,4 +1244,3 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .m_intro_logo p{font-size: 22px; font-weight: 400; color:#ffffff; line-height:28px;}
 
 .m_intro_pop.v-dialog__content{display:block !important; height:auto !important ;}
-
