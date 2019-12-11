@@ -7897,7 +7897,6 @@ var getUserListSharedInGroup = function(req, res) {
                                         msg.v_arr_shared_grp.forEach( function( item, index, array ) {
                                             var v_check_data    =   _.filter( rows, {
                                                     'email'     :   item.email
-                                                ,   'owner_yn'  :   '0'
                                             });
                                             if( typeof v_check_data != "undefined" && v_check_data.length > 0 ) {
                                                 if( msg.v_arr_simul_in_grp.length == v_check_data.length ) {
