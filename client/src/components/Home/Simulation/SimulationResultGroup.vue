@@ -37,7 +37,7 @@
                     </span>
 
                     <span class="btn_r">
-                        <v-btn small flat icon @click="fn_open_share_modal( v_item, v_index )">
+                        <v-btn v-if="method_gubun == 'getScenInGrpCd'" small flat icon @click="fn_open_share_modal( v_item, v_index )">
                             <v-icon>share</v-icon>
                         </v-btn>
                     </span>
