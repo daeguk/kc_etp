@@ -572,7 +572,7 @@ export default {
 
         vm.chartFlag   =   false;
 
-        vm.fn_showProgress( true );
+        vm.fn_showWaitProgress( {'open':true, 'title':'시계열 분석 중입니다.'} );
 
 
         /* 백테스트 수행으로 넘겨받은 값이 존재하는 경우 */
@@ -612,11 +612,11 @@ export default {
 
                 }).then( function(e) {
 
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 })                
 
             }
@@ -646,11 +646,11 @@ export default {
                         ];
                     }
 
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 });
             }
         }
@@ -1657,7 +1657,7 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.fn_showProgress( true );
+                vm.fn_showWaitProgress( {'open':true, 'title':'자료생성 중입니다.'} );
 
                 step1().then( function(e){
                     if( e && e.result ) {
@@ -1674,10 +1674,10 @@ export default {
                 }).then( function(e3) {
                     return step5();
                 }).then( function(e4) {
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 });
                 
                 /* 일자별 지수 */

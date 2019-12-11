@@ -839,7 +839,7 @@ export default {
 
         fn_showWaitProgress: function( visible ) {
             var vm = this;
-            vm.$emit("fn_showWaitProgress", visible );
+            vm.$emit("fn_showWaitProgress", visible);
         },
 
         /*
@@ -1932,7 +1932,7 @@ export default {
             }
 
 
-            vm.fn_showWaitProgress( true );
+            vm.fn_showWaitProgress( {'open':true, 'title':'백테스트 실행 중입니다.</br> 종목수, 기간에 따라 실행시간이 늘어날 수 있습니다. (10초~1분 소요)'});
 
             util.axiosCall(
                     {
