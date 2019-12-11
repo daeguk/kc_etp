@@ -3380,7 +3380,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
         fn_set_analyze_data({ 
                 p_arr_analyze       :   arr_analyze
             ,   p_arr_analyze_db    :   arr_analyze_db
-            ,   p_arr_analyze_main  :   null
+            ,   p_arr_analyze_main  :   arr_analyze_main
 
             ,   p_anal              :   v_anal 
             ,   p_anal01            :   v_anal01
@@ -3388,7 +3388,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_type              :   "number"
             ,   p_percent_yn        :   "1"
             ,   p_position          :   5
-            ,   p_order_no          :   -1
+            ,   p_order_no          :   7
         });
 
 
@@ -3403,7 +3403,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
         fn_set_analyze_data({ 
                 p_arr_analyze       :   arr_analyze
             ,   p_arr_analyze_db    :   arr_analyze_db
-            ,   p_arr_analyze_main  :   null
+            ,   p_arr_analyze_main  :   arr_analyze_main
 
             ,   p_anal              :   v_anal 
             ,   p_anal01            :   v_anal01
@@ -3411,7 +3411,7 @@ function    fn_setAnal01( p_arr_analyze_temp ) {
             ,   p_type              :   "number"
             ,   p_percent_yn        :   "1"
             ,   p_position          :   5
-            ,   p_order_no          :   -1
+            ,   p_order_no          :   8
         });
 
 
@@ -3854,7 +3854,7 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
 
         v_result_data   =   Object.assign( {}, v_data );
 
-        v_result_data.backtest      =    fn_convert_data({
+        v_result_data.backtest      =  	fn_convert_data({
                 p_data              :   p_param.p_anal.backtest
             ,   p_data01            :   v_data.backtest02
             ,   p_type              :   p_param.p_type
@@ -3864,7 +3864,7 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
             ,   p_position          :   p_param.p_position
         });
 
-        v_result_data.benchmark     =    fn_convert_data({
+        v_result_data.benchmark     =  	fn_convert_data({
                 p_data              :   p_param.p_anal.benchmark
             ,   p_data01            :   v_data.benchmark02
             ,   p_type              :   p_param.p_type
@@ -3879,7 +3879,30 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
 
         /*  arr_analyze_main    START */
         if( p_param.p_arr_analyze_main != null ) {
-            v_result_data               =   Object.assign( {}, v_result_data );
+			
+			v_result_data   =   Object.assign( {}, v_data );
+
+			v_result_data.backtest      =  	fn_convert_data({
+					p_data              :   p_param.p_anal.backtest
+				,   p_data01            :   v_data.backtest02
+				,   p_type              :   p_param.p_type
+				,   p_percent_yn        :   p_param.p_percent_yn
+				,   p_show_percent_yn   :   "1"
+				,   p_show_data01_yn    :   "1"
+				,   p_position          :   2
+			});
+
+			v_result_data.benchmark     =  	fn_convert_data({
+					p_data              :   p_param.p_anal.benchmark
+				,   p_data01            :   v_data.benchmark02
+				,   p_type              :   p_param.p_type
+				,   p_percent_yn        :   p_param.p_percent_yn
+				,   p_show_percent_yn   :   "1"
+				,   p_show_data01_yn    :   "1"
+				,   p_position          :   2
+			});
+
+
             v_result_data.order_no      =   p_param.p_order_no;
 
             p_param.p_arr_analyze_main.push( v_result_data );
