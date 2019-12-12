@@ -29,9 +29,7 @@ export default {
     return {
       activeTab: 0,
       tabs: [
-        { id: 0, name: "ETP 운용정보"       , route: '/etp/manage/etpOperInfo' },
-        { id: 1, name: "지수관리"           , route: '/etp/manage/etpOperIndex' },
-        { id: 2, name: "PDF 관리"           , route: '/etp/manage/etpOperPdf' },
+        { id: 0, name: "LP 운용정보", route: '/lp/manage/lpOperInfo' },
       ],
       firstData : {}
     };
