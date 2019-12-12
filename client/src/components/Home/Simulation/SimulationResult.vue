@@ -873,8 +873,8 @@ export default {
 											item_sub.CONTRIBUTE_RATE
 										);
                                     });
-                                    
-                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                                        
+                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 
 									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
 									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
@@ -1167,7 +1167,7 @@ export default {
 														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
                                                     }
                                                     
-                                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 													item.dataLists.push( v_total_obj );
                                                     
                                                     vm.arr_result_contribute.push( item );
@@ -2449,7 +2449,11 @@ export default {
             
             return str.substring(0, i);
 
-        },			
+        },	
+        
+        customSort: function(a, b) {      
+            return b.CONTRIBUTE_RATE - a.CONTRIBUTE_RATE; 
+        }
 
     }
     
