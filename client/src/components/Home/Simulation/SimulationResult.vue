@@ -83,7 +83,7 @@
                                 <col width="33%" />
                             </colgroup>
                             <thead>
-                                <th></th>
+                                <th>분석지표</th>
                                 <th>Scenario</th>
                                 <th>{{ simul_result_mast.bench_index_nm2 }}</th>
                             </thead>
@@ -93,6 +93,7 @@
                                 <tr
                                     v-for="( row, index ) in  fn_sort_arr_analyze_main"
                                     v-bind:key="row + '_' + index + '_main'"
+                                    :style="row.style_background"
                                 >
                                     <td class="txt_left" width="34%">{{ row.anal_title /* 분석지표 */ }}</td>
                                     <td
@@ -536,9 +537,22 @@ export default {
         fn_sort_arr_analyze_main : function() {
             var vm = this;
 
-            return _.orderBy( vm.arr_analyze_main, [
+            vm.arr_analyze_main =   _.orderBy( vm.arr_analyze_main, [
                 "order_no"
             ], ["asc"]);
+
+
+            for( var i=0; i < vm.arr_analyze_main.length; i++ ) {
+                var v_row   =   vm.arr_analyze_main[i];
+
+                if( (i+1) % 2 == 0 ) {
+                    v_row.style_background    =   "background:#e7f2f7";
+                }else{
+                    v_row.style_background    =   "background:";
+                }
+            }
+
+            return  vm.arr_analyze_main;
         },
 
         /*
