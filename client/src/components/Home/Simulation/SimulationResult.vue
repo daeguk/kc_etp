@@ -76,11 +76,11 @@
                         <!-- </div> -->
                     </div>
                     <div class="simul_g_r">
-                        <table class="tbl_type ver11 v2">
+                        <table class="tbl_type ver11 v4 mt-2">
                             <colgroup>
-                                <col width="38%" />
-                                <col width="31%" />
-                                <col width="31%" />
+                                <col width="35%" />
+                                <col width="32%" />
+                                <col width="33%" />
                             </colgroup>
                             <thead>
                                 <th></th>
@@ -89,16 +89,17 @@
                             </thead>
 
                             <tbody>
+                                <!---tr 짝수열 bgcolor:#e7f2f7---->
                                 <tr
                                     v-for="( row, index ) in  fn_sort_arr_analyze_main"
                                     v-bind:key="row + '_' + index + '_main'"
                                 >
-                                    <th class="txt_left" width="38%">{{ row.anal_title /* 분석지표 */ }}</th>
+                                    <td class="txt_left" width="34%">{{ row.anal_title /* 분석지표 */ }}</td>
                                     <td
                                         class="txt_right"
-                                        width="31%"
+                                        width="33%"
                                     >{{ row.backtest /* Senario */ }}</td>
-                                    <td class="txt_right" width="31%">{{ row.benchmark /* BM */ }}</td>
+                                    <td class="txt_right" width="33%">{{ row.benchmark /* BM */ }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -873,8 +874,8 @@ export default {
 											item_sub.CONTRIBUTE_RATE
 										);
                                     });
-                                    
-                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                                        
+                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 
 									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
 									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
@@ -1167,7 +1168,7 @@ export default {
 														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
                                                     }
                                                     
-                                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 													item.dataLists.push( v_total_obj );
                                                     
                                                     vm.arr_result_contribute.push( item );
@@ -2449,7 +2450,11 @@ export default {
             
             return str.substring(0, i);
 
-        },			
+        },	
+        
+        customSort: function(a, b) {      
+            return b.CONTRIBUTE_RATE - a.CONTRIBUTE_RATE; 
+        }
 
     }
     

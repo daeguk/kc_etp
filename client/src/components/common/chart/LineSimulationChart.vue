@@ -383,8 +383,8 @@ export default {
         // ETP 차트 그리기
         c.beginPath();
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
-        grd.addColorStop(0, "#ffa726");
-        grd.addColorStop(1, "#ffa726");
+        grd.addColorStop(0, "#2ac9ad");
+        grd.addColorStop(1, "#2ac9ad");
 
         c.lineWidth = 1.5;
         c.setLineDash([]);
