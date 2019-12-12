@@ -141,9 +141,9 @@ export default {
                         { "title"   :   "Name"          ,   "data": "F16002"                ,   "orderable" : true, "width" : "18%", className:"txt_left"  },      /* 한글종목명 */
                         { "title"   :   "BasePrc"       ,   "data": "F03003"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 전일종가 */
                         { "title"   :   "Shrs"          ,   "data": "F30812"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 상장주식수 */
-                        { "title"   :   "Float rto"     ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 스타일포함비중 */
+                        { "title"   :   "Float rto"     ,   "data": "F30813"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* 스타일포함비중 */
                         { "title"   :   "Ceiling rto"   ,   "data": "ceiling_percnt"        ,   "orderable" : true, "width" : "14%", className:"txt_right"  },      /* CEILING비중 */
-                        { "title"   :   "Factor rto"    ,   "data": "F30813"                ,   "orderable" : true, "width" : "14%", className:"txt_right"  }       /* 유동주식비율 */
+                        { "title"   :   "Factor rto"    ,   "data": "style_includ_percnt"   ,   "orderable" : true, "width" : "14%", className:"txt_right"  }       /* 유동주식비율 */
                     ]
             });            
 
