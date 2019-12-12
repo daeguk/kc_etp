@@ -1185,6 +1185,7 @@ h4 span.excel_btn{float:right; margin-right:25px;}
 .simul_g_w .simul_g_r .ver11.v2 tr th{padding-top:12px; padding-bottom:12px;}
 .simul_g_w .simul_g_r .ver11.v4{width: 100%; border-top:none;}
 .simul_g_w .simul_g_r .ver11.v4 th{border-bottom:1px solid #d9d9d9;}
+.simul_g_w .simul_g_r .ver11.v4 th.txt_left{text-align: left;}
 .simul_g_w .simul_g_r .ver11.v4 tr td{padding:11px 15px 10px 10px;}
 .simul_g_w .simul_g_r .ver11.v4 tr.td_row_bg{background-color: #f8f8f8;}
 

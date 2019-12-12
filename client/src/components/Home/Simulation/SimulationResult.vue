@@ -83,7 +83,7 @@
                                 <col width="33%" />
                             </colgroup>
                             <thead>
-                                <th>분석지표</th>
+                                <th class="txt_left">분석지표</th>
                                 <th>Scenario</th>
                                 <th>{{ simul_result_mast.bench_index_nm2 }}</th>
                             </thead>
