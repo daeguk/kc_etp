@@ -374,15 +374,24 @@
     *   2019-07-26  bkLove(촤병국)
     -->
     <select id="getExistSubCntByGroup">
-        SELECT      /* simulation.getExistSubCntByGroup  하위에 시나리오 건수를 조회한다. ( 시나리오 그룹에서 삭제시 ) */
+        SELECT      /* simulation.getExistSubCntByGroup  하위에 본인 소유 시나리오 건수를 조회한다. ( 시나리오 그룹에서 삭제시 ) */
                     
                     COUNT( tm_simul_mast.scen_cd )  AS  exist_cnt           /* 존재 건수 */
 
           FROM  tm_simul_mast
 
+          JOIN  tm_simul_share
+            ON  (
+                            tm_simul_mast.grp_cd    =   tm_simul_share.grp_cd
+                    AND     tm_simul_mast.scen_cd   =   tm_simul_share.scen_cd
+
+
+                    AND     tm_simul_mast.grp_cd    =   #{scen_cd}          /* 그룹코드(상위코드) */
+                    AND     tm_simul_mast.grp_yn    =   '0'                 /* 그룹여부(1-그룹) */
+                )          
+
          WHERE  1 = 1
-           AND  tm_simul_mast.grp_cd                =   #{scen_cd}          /* 그룹코드(상위코드) */
-           AND  tm_simul_mast.grp_yn                =   '0'                 /* 그룹여부(1-그룹) */
+           AND  tm_simul_share.email    =   #{user_id}
 
          LIMIT  2
     </select>    

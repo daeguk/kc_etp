@@ -120,7 +120,7 @@ var util = {
     },
     processing: function(component, visible) {
         if (visible) {
-            component.open();
+            component.open(visible);
         } else {
             component.close();
         }

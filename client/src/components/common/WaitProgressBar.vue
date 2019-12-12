@@ -9,10 +9,10 @@
       >
         <v-flex class="subtitle-1 text-center">
         <v-card flat>
-            <v-flex class="pogress_1icon">
+            <v-flex class="progress_1icon">
                 <v-icon>error</v-icon>
              </v-flex>
-        <v-flex>Please wait a minute<br>잠시만 기다려주세요</v-flex>
+            <v-flex v-html="title" class="progress_txt"></v-flex>
         </v-card>
         </v-flex>
       </v-layout>
@@ -34,7 +34,8 @@ export default {
   props: [],
   data() {
     return {
-      dialog: false
+      dialog: false,
+      title: 'Please wait a minute<br>잠시만 기다려주세요'
     };
   },
   components: {
@@ -44,7 +45,11 @@ export default {
   beforeDestroy() {},
   mounted: function() {},
   methods: {
-    open() {
+    open(obj) 
+    {
+      if (obj.title) {
+        this.title = obj.title;
+      }
       this.dialog = true;
     },
     close() {

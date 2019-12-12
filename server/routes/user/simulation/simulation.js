@@ -6,7 +6,7 @@
  */
 
 var config = require('../../../config/config');
-
+var util = require('../../../util/util');
 var Promise = require("bluebird");
 
 
@@ -573,6 +573,12 @@ var modifyGroup = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -901,43 +907,45 @@ var modifyGroup = function(req, res) {
                                 msg = {};
                             }
 
-                            if( paramData.status  ==  "modify" ) {
-                                queryId =   "modifyTmSimulMastByGroup";
-                            }else if( paramData.status  ==  "delete" ) {
-                                queryId =   "deleteTmSimulMastByGroup";
+                            if( [ "delete" ].includes( paramData.status ) ) {
+                                callback(null, msg);
+                            }else{
+                                if( paramData.status  ==  "modify" ) {
+                                    queryId =   "modifyTmSimulMastByGroup";
+                                }
+
+                                paramData.start_year            =   "";         /* 시작년도 */
+                                paramData.rebalance_cycle_cd    =   "";         /* 리밸런싱주기 (COM006) */
+                                paramData.rebalance_date_cd     =   "";         /* 리밸런싱일자 (COM007) */
+                                paramData.init_invest_money     =   0;          /* 초기투자금액 */
+                                paramData.bench_mark_cd         =   "";         /* 벤치마크 (COM008) */
+                                paramData.importance_method_cd  =   "";         /* 비중설정방식 (COM009) */
+
+                                stmt = mapper.getStatement('simulation', queryId, paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        callback(resultMsg, msg);
+                                    }else{
+                                        callback(null, msg);
+                                    }
+                                    
+                                });
                             }
-
-                            paramData.start_year            =   "";         /* 시작년도 */
-                            paramData.rebalance_cycle_cd    =   "";         /* 리밸런싱주기 (COM006) */
-                            paramData.rebalance_date_cd     =   "";         /* 리밸런싱일자 (COM007) */
-                            paramData.init_invest_money     =   0;          /* 초기투자금액 */
-                            paramData.bench_mark_cd         =   "";         /* 벤치마크 (COM008) */
-                            paramData.importance_method_cd  =   "";         /* 비중설정방식 (COM009) */
-
-                            stmt = mapper.getStatement('simulation', queryId, paramData, format);
-                            log.debug(stmt, paramData);
-
-                            conn.query(stmt, function(err, rows) {
-
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    return callback(resultMsg);
-                                }
-
-                                if ( !rows || rows.length == 0 ) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
-
-                                    callback(resultMsg, msg);
-                                }else{
-                                    callback(null, msg);
-                                }
-                                
-                            });
 
                         } catch (err) {
 
@@ -949,7 +957,7 @@ var modifyGroup = function(req, res) {
                         }
                     },
 
-                    /* 6. 그룹 공유 정보를 조회한다. */
+                    /* 6. (등록건) 그룹 공유 정보를 조회한다. */
                     function( msg, callback) {
 
                         try {
@@ -959,36 +967,42 @@ var modifyGroup = function(req, res) {
                             }
 
 
-                            paramData.upper_grp_cd      =   paramData.grp_cd;
-                            paramData.upper_scen_cd     =   paramData.scen_cd;
-                            paramData.changeGrpCdYn     =   "0";
-                            stmt = mapper.getStatement('simulation', "getSimulShareUpperGrp", paramData, format);
-                            log.debug(stmt, paramData);
+                            if( [ "insert" ].includes( paramData.status ) ) {
 
-                            conn.query(stmt, function(err, rows) {
+                                paramData.upper_grp_cd      =   paramData.grp_cd;
+                                paramData.upper_scen_cd     =   paramData.scen_cd;
+                                paramData.changeGrpCdYn     =   "0";
+                                stmt = mapper.getStatement('simulation', "getSimulShareUpperGrp", paramData, format);
+                                log.debug(stmt, paramData);
 
-                                if (err) {
-                                    resultMsg.result = false;
-                                    resultMsg.msg = config.MSG.error01;
-                                    resultMsg.err = err;
+                                conn.query(stmt, function(err, rows) {
 
-                                    return callback(resultMsg);
-                                }
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
 
-                                if( rows && rows.length > 0  ) {
+                                        return callback(resultMsg);
+                                    }
 
-                                    var v_temp      =   _.filter( rows, {
-                                            'email'     :   paramData.user_id
-                                    });
+                                    if( rows && rows.length > 0  ) {
+
+                                        var v_temp      =   _.filter( rows, {
+                                                'email'     :   paramData.user_id
+                                        });
 
 
-                                    if( typeof v_temp != "undefined" && v_temp.length == 1 ) {
-                                        msg.v_simul_share_upper_grp     =   rows[0];
-                                    }                                        
-                                }                                    
+                                        if( typeof v_temp != "undefined" && v_temp.length == 1 ) {
+                                            msg.v_simul_share_upper_grp     =   rows[0];
+                                        }                                        
+                                    }                                    
 
+                                    callback(null, msg);
+                                });
+
+                            }else{
                                 callback(null, msg);
-                            });
+                            }
 
                         } catch (err) {
                             resultMsg.result = false;
@@ -999,7 +1013,7 @@ var modifyGroup = function(req, res) {
                         }
                     },
 
-                    /* 7. 등록, 수정, 삭제 공유정보 설정한다. */
+                    /* 7. (등록건) 공유정보 설정한다. */
                     function( msg, callback) {
 
                         try {
@@ -1012,27 +1026,9 @@ var modifyGroup = function(req, res) {
 
                             msg.arr_insert_list     =   [];
                             msg.arr_update_list     =   [];
-                            msg.arr_delete_list     =   [];
 
 
-                            if( [ "delete" ].includes( paramData.status ) ) {
-
-                                /* simul_share 삭제 건 */
-                                if( typeof msg.v_simul_share_upper_grp != "undefined" && Object.keys( msg.v_simul_share_upper_grp ).length > 0 ) {
-
-                                    msg.arr_delete_list.push({
-                                            "grp_cd"        :   msg.v_simul_share_upper_grp.grp_cd
-                                        ,   "scen_cd"       :   msg.v_simul_share_upper_grp.scen_cd
-                                        ,   "email"         :   paramData.user_id
-                                        ,   "owner_yn"      :   "1"
-                                    });
-
-                                    paramData.arr_delete_list   =   msg.arr_delete_list;
-                                    v_queryId                   =   "deleteShareUserInArr";
-                                }
-
-                            }else if( [ "insert" ].includes( paramData.status ) ) {
-
+                            if( [ "insert" ].includes( paramData.status ) ) {
 
                                 /* simul_share 수정 건 */
                                 if( typeof msg.v_simul_share_upper_grp != "undefined" && Object.keys( msg.v_simul_share_upper_grp ).length > 0 ) {
@@ -1065,7 +1061,7 @@ var modifyGroup = function(req, res) {
 
                             
                             if( v_queryId == "" ) {
-                                callback(null);
+                                callback(null, msg);
 
                             }else{
                                 stmt = mapper.getStatement('simulation', v_queryId, paramData, format);
@@ -1087,9 +1083,8 @@ var modifyGroup = function(req, res) {
 
                                     paramData.arr_insert_list   =   [];
                                     paramData.arr_update_list   =   [];
-                                    paramData.arr_delete_list   =   [];
 
-                                    callback(null);
+                                    callback(null, msg);
                                 });
                             }
 
@@ -1101,6 +1096,89 @@ var modifyGroup = function(req, res) {
                             return callback(resultMsg);
                         }
                     },
+
+                    /* 8. 삭제시 공유정보를 해제한다. */
+                    function( msg, callback) {
+
+                        try {
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+
+                            if( [ "delete" ].includes( paramData.status ) ) {
+
+                                var param                       =   {};
+
+                                param.moduleId                  =   "applyShareUserRevokeInArrModule";
+                                param.transaction               =   {};
+                                param.transaction.mapper        =   mapper;
+                                param.transaction.pool          =   pool;
+                                param.transaction.conn          =   conn;
+
+                                param.user_id                   =   paramData.user_id;
+                                param.inst_cd                   =   paramData.inst_cd;
+                                param.type_cd                   =   paramData.type_cd;
+                                param.uesr_large_typeid         =   paramData.large_type;
+                                param.krx_cd                    =   paramData.krx_cd;
+
+                                param.grp_cd                    =   paramData.grp_cd;
+                                param.scen_cd                   =   paramData.scen_cd;
+
+                                param.arr_checked_shared        =   [];
+                                param.arr_checked_shared.push({
+                                    "email"     :   paramData.user_id
+                                });
+                                param.group_delete_yn           =   "1";
+
+                                log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule START');
+
+                                /* 공유 대상자 해제 모듈을 호출한다. */
+                                applyShareUserRevokeInArrModule.call( this, req, res, param ).then( function(e) {
+
+                                    if( e && e.resultMsg && e.resultMsg.result ) {
+                                        log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule success END');
+                                        resultMsg   =   e.resultMsg;
+
+                                        callback(null);
+
+                                    }else{
+                                        log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule error END');
+                                        log.debug(e, param);
+
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = config.MSG.error01;
+
+                                        callback(resultMsg);
+                                    }
+
+                                }).catch( function(err){
+
+                                    log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule error END');
+                                    log.debug(err, param);
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback(resultMsg);
+                                });
+
+                            }else{
+                                callback(null);
+                            }
+
+                        } catch (err) {
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            return callback(resultMsg);
+                        }
+                    },
+   
 
                 ], function(err) {
 
@@ -1695,6 +1773,12 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
         resultMsg.analyzeList           =   [];
         resultMsg.jsonFileName          =   "";
         resultMsg.inputData             =   [];        
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
         Promise.using(pool.connect(), conn => {
 
@@ -3010,7 +3094,7 @@ var runBacktestWithSaveBasicInfo = function(req, res) {
                                     callback(resultMsg);
                                 }
 
-                            }).catch( function(expetion){
+                            }).catch( function(err){
 
                                 resultMsg.result = false;
                                 resultMsg.msg = config.MSG.error01;
@@ -3191,6 +3275,12 @@ var deleteAllSimul = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -3762,6 +3852,12 @@ var renameScenario = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
         var format = { language: 'sql', indent: '' };
         var stmt = "";
 
@@ -3963,6 +4059,12 @@ var copyScenario = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -4665,6 +4767,12 @@ var fnChangeGroup = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         Promise.using(pool.connect(), conn => {
 
@@ -4698,7 +4806,7 @@ var fnChangeGroup = function(req, res) {
 
                         }else{
 
-                            log.debug(err, paramData);
+                            log.debug(e, paramData);
                             conn.rollback();
 
                             resultMsg.result = false;
@@ -4709,7 +4817,7 @@ var fnChangeGroup = function(req, res) {
                             res.end();
                         }
 
-                    }).catch( function(expetion){
+                    }).catch( function(err){
 
                         log.debug('simulation.fnChangeGroup 완료.');
 
@@ -4718,7 +4826,7 @@ var fnChangeGroup = function(req, res) {
 
                         resultMsg.result = false;
                         resultMsg.msg = config.MSG.error01;
-                        resultMsg.err = expetion;
+                        resultMsg.err = err;
 
                         res.json(resultMsg);
                         res.end();
@@ -4756,17 +4864,18 @@ var fnChangeGroup = function(req, res) {
     }
 }
 
+
 /*
- * 그룹변경 모듈을 수행한다.
+ * arr 그룹변경 모듈을 수행한다.
  * 2019-05-20  bkLove(촤병국)
  */
-var changeGroupModle = async function(req, res, paramData) {
+var arrChangeGroupModle = async function(req, res, paramData) {
 
-    return await new Promise(function(resolve, reject) {
+    return await new Promise( async function(resolve, reject) {
 
         try {
-            log.debug('simulation.changeGroupModle 호출됨.');
 
+            var resultMsg = {};
 
             if(     !paramData || Object.keys( paramData ).length == 0 
                 ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
@@ -4789,7 +4898,145 @@ var changeGroupModle = async function(req, res, paramData) {
                 var mapper  = paramData.transaction.mapper;
                 var pool    = paramData.transaction.pool;
                 var conn    = paramData.transaction.conn;
-                var resultMsg = {};
+
+
+                var format = { language: 'sql', indent: '' };
+
+
+                var param   =   {
+                        user_id         :   paramData.user_id
+                    ,   inst_cd         :   paramData.inst_cd
+                    ,   type_cd         :   paramData.type_cd
+                    ,   large_type      :   paramData.large_type
+                    ,   krx_cd          :   paramData.krx_cd
+                };
+
+                param.transaction           =   {};
+                param.transaction.mapper    =   mapper;
+                param.transaction.pool      =   pool;
+                param.transaction.conn      =   conn;
+
+                if( typeof paramData.arr_simul_change_group == "undefined" || paramData.arr_simul_change_group.length == 0 ) {
+
+                    resultMsg.result = false;
+                    resultMsg.msg = "";
+                    resultMsg.err = "";
+
+                    resolve( { 
+                            result : true
+                        ,   resultMsg : resultMsg 
+                    });
+
+                }else{
+
+                    log.debug( "\n\n########## arrChangeGroupModle 그룹변경 START ############" );
+
+                    for( var i=0; i < paramData.arr_simul_change_group.length; i++ ) {
+                        var item            =   paramData.arr_simul_change_group[i];
+
+                        param.prev_grp_cd   =   item.grp_cd;
+                        param.prev_scen_cd  =   item.scen_cd;
+
+                        param.grp_cd        =   initGrpInfo.INIT_GRP_CD;
+                        param.org_grp_yn    =   "0";
+
+                        /* 그룹변경 모듈을 수행한다. */
+
+                        log.debug( "\n\n########## 개별 그룹변경 호출 START ( changeGroupModle  ) - " + param.prev_grp_cd + "/" + param.prev_scen_cd + "/" + param.grp_cd );
+                        await changeGroupModle.call( this, req, res, param ).then( function(e) {
+
+                            if( e && e.resultMsg && e.resultMsg.result ) {
+                                log.debug( "########## 개별 그룹변경 호출 success END" );
+                                resultMsg   =   e.resultMsg;                                                
+                            }else{
+                                log.debug( "########## 개별 그룹변경 호출 error END" );
+                                log.debug(e, param);
+
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = config.MSG.error01;
+                            }
+
+                        }).catch( function(err){
+
+                            log.debug( "########## 개별 그룹변경 호출 error END" );
+                            log.debug(err, param);
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+                        });
+                    }
+
+                    if( resultMsg.result ) {
+                        resolve( { 
+                                result : true
+                            ,   resultMsg : resultMsg 
+                        });
+                    }else{
+                        resolve( { 
+                                result : false
+                            ,   resultMsg : resultMsg 
+                        });                        
+                    }
+
+                    log.debug( "########## arrChangeGroupModle 그룹변경 success END ############\n\n" );
+                }
+            }
+
+        }catch( err ) {
+
+            log.debug( "########## arrChangeGroupModle 그룹변경 error END ############\n\n" );
+            log.debug(err, param);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+            resultMsg.err = err;
+
+            resolve( { 
+                    result : false
+                ,   resultMsg : resultMsg 
+            });
+        }
+
+    });    
+}
+
+
+/*
+ * 그룹변경 모듈을 수행한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var changeGroupModle = async function(req, res, paramData) {
+
+    return await new Promise(function(resolve, reject) {
+
+        try {
+            log.debug('simulation.changeGroupModle 호출됨.');
+
+            var resultMsg = {};
+
+            if(     !paramData || Object.keys( paramData ).length == 0 
+                ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
+                ||  !paramData.transaction.mapper
+                ||  !paramData.transaction.pool
+                ||  !paramData.transaction.conn
+            ) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+                resultMsg.err = config.MSG.error01;
+
+                resolve( { 
+                        result : false
+                    ,   resultMsg : resultMsg 
+                });                
+
+            }else{
+
+                var mapper  = paramData.transaction.mapper;
+                var pool    = paramData.transaction.pool;
+                var conn    = paramData.transaction.conn;
 
 
                 var format = { language: 'sql', indent: '' };
@@ -5634,20 +5881,15 @@ var changeGroupModle = async function(req, res, paramData) {
             });
         }
 
-    }).catch( function(expetion){
+    }).catch( function(err){
 
         log.debug('simulation.changeGroupModle 완료.');
 
-        log.debug(expetion, paramData);
+        log.debug(err, paramData);
 
         resultMsg.result = false;
         resultMsg.msg = config.MSG.error01;
-        resultMsg.err = expetion;
-
-        resolve( { 
-                result : false
-            ,   resultMsg : resultMsg 
-        });
+        resultMsg.err = err;
     });
 }
 
@@ -6061,6 +6303,12 @@ var applyShareUserInArr = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         resultMsg.share_count    =  0;
 
@@ -6463,6 +6711,7 @@ var applyShareUserInArr = function(req, res) {
     }
 }
 
+
 /*
  * 공유 대상자를 해제한다.
  * 2019-11-13  bkLove(촤병국)
@@ -6494,14 +6743,18 @@ var applyShareUserRevokeInArr = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         if( typeof paramData.only_shared_user != "undefined" && paramData.only_shared_user == "Y" ) {
             paramData.arr_checked_shared.push({
                 "email"     :   paramData.user_id
             })
         }
-
-        resultMsg.share_count    =  0;
 
         var format = { language: 'sql', indent: '' };
         var stmt = "";
@@ -6513,6 +6766,133 @@ var applyShareUserRevokeInArr = function(req, res) {
                 if (txerr) {
                     return log.error(txerr);
                 }
+
+                try{
+
+                    paramData.moduleId              =   "applyShareUserRevokeInArrModule";
+                    paramData.transaction           =   {};
+                    paramData.transaction.mapper    =   mapper;
+                    paramData.transaction.pool      =   pool;
+                    paramData.transaction.conn      =   conn;          
+
+                    log.debug('simulation.applyShareUserRevokeInArr -> simulation.applyShareUserRevokeInArrModule START');
+
+                    /* 공유 대상자 해제 모듈을 호출한다. */
+                    applyShareUserRevokeInArrModule.call( this, req, res, paramData ).then( function(e) {
+
+                        if( e && e.resultMsg && e.resultMsg.result ) {
+
+                            log.debug('simulation.applyShareUserRevokeInArr -> simulation.applyShareUserRevokeInArrModule success END');
+
+                            resultMsg   =   e.resultMsg;
+
+                            conn.commit();
+
+                            res.json(resultMsg);
+                            res.end();
+
+                        }else{
+
+                            log.debug('simulation.applyShareUserRevokeInArr -> simulation.applyShareUserRevokeInArrModule error END');
+
+                            log.debug(e, paramData);
+                            conn.rollback();
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = config.MSG.error01;
+
+                            res.json(resultMsg);
+                            res.end();
+                        }
+
+                    }).catch( function(err){
+
+                        log.debug('simulation.applyShareUserRevokeInArr -> simulation.applyShareUserRevokeInArrModule error END');
+
+                        log.debug(err, paramData);
+                        conn.rollback();
+
+                        resultMsg.result = false;
+                        resultMsg.msg = config.MSG.error01;
+                        resultMsg.err = err;
+
+                        res.json(resultMsg);
+                        res.end();
+                    });
+
+                } catch (err) {
+
+                    log.debug('simulation.applyShareUserRevokeInArr -> simulation.applyShareUserRevokeInArrModule error END');
+
+                    log.debug(err, paramData);
+                    conn.rollback();                            
+
+                    resultMsg.result = false;
+                    resultMsg.msg = config.MSG.error01;
+                    resultMsg.err = err;
+
+                    res.json(resultMsg);
+                    res.end();
+                }
+            });
+        });
+
+    } catch (expetion) {
+
+        log.debug('simulation.applyShareUserRevokeInArr 완료.');
+
+        log.debug(expetion, paramData);
+
+        resultMsg.result = false;
+        resultMsg.msg = config.MSG.error01;
+        resultMsg.err = expetion;
+
+        res.json(resultMsg);
+        res.end();
+    }
+}
+
+
+/*
+ * 공유 대상자 해제 모듈을 호출한다.
+ * 2019-05-20  bkLove(촤병국)
+ */
+var applyShareUserRevokeInArrModule = async function(req, res, paramData) {
+
+    return await new Promise(function(resolve, reject) {
+
+        try {
+            log.debug('simulation.applyShareUserRevokeInArrModule 호출됨.');
+
+            var resultMsg = {};
+
+            if(     !paramData || Object.keys( paramData ).length == 0 
+                ||  !paramData.transaction || Object.keys( paramData.transaction ).length == 0 
+                ||  !paramData.transaction.mapper
+                ||  !paramData.transaction.pool
+                ||  !paramData.transaction.conn
+            ) {
+
+                resultMsg.result = false;
+                resultMsg.msg = config.MSG.error01;
+                resultMsg.err = config.MSG.error01;
+
+                resolve( { 
+                        result : false
+                    ,   resultMsg : resultMsg 
+                });                
+
+            }else{
+
+                var mapper  = paramData.transaction.mapper;
+                var pool    = paramData.transaction.pool;
+                var conn    = paramData.transaction.conn;
+
+
+                var format = { language: 'sql', indent: '' };
+                var stmt = "";
+
 
                 async.waterfall([
 
@@ -6545,7 +6925,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                                 }
 
                                 if( rows && rows.length == 1 ) {
-                                    msg.v_simul_mast    =   rows[0];
+                                    msg.v_simul_mast        =   rows[0];
                                 }
 
                                 callback(null, msg);
@@ -6663,7 +7043,10 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 3. 선택된 시나리오 또는 그룹에 속한 공유자들을 해제한다. */
+                    /*  
+                        3. 선택된 시나리오 공유자 또는 그룹에 속한 공유자들을 조회한다. 
+                        ( 그룹 공유 후 복사하기 한 경우 - 그룹에 속한 공유자 중 owner_yn 이 '1' 이면서 선택된 사용자와 다른 공유자가 있는지 체크 )
+                    */
                     function(msg, callback) {
 
                         try{
@@ -6673,37 +7056,130 @@ var applyShareUserRevokeInArr = function(req, res) {
                             }
 
                             msg.arr_delete_list     =   [];
+                            paramData.arr_data_list =   [];
 
-                            if( msg.v_simul_mast.grp_yn == "1" ) {
+                            if(     typeof msg.v_simul_mast == "undefined"
+                                ||  Object.keys( msg.v_simul_mast ).length == 0
+                            ) {
+                                resultMsg.result = false;
+                                resultMsg.msg = "선택된 시나리오 정보가 존재하지 않습니다.";
+                                resultMsg.err = "선택된 시나리오 정보가 존재하지 않습니다.";
 
-                                /* 그룹 하위 시나리오 정보가 존재하는 경우 */
-                                if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0 ) {
-
-                                    paramData.arr_checked_shared.forEach( function( item, index, array) {
-
-                                        msg.v_arr_simul_in_grp.forEach( function( item_sub, index_sub, array_sub ) {
-
-                                            msg.arr_delete_list.push({
-                                                    "grp_cd"    :   item_sub.grp_cd
-                                                ,   "scen_cd"   :   item_sub.scen_cd
-                                                ,   "email"     :   item.email
-                                            });
-                                        });
-                                    });
-                                }
+                                callback(resultMsg);
 
                             }else{
 
-                                paramData.arr_checked_shared.forEach( function( item, index, array) {
+                                /* 그룹 하위 시나리오 정보가 존재하는 경우 */
+                                if( msg.v_simul_mast.grp_yn == "1" ) {
+                                    if( typeof msg.v_arr_simul_in_grp != "undefined" && msg.v_arr_simul_in_grp.length > 0 ) {                                        
+                                        paramData.arr_data_list     =   msg.v_arr_simul_in_grp;
+                                    }     
+                                }
 
-                                    msg.arr_delete_list.push({
+                                /* 시나리오 이면서 그룹이 없는 경우 */
+                                if( msg.v_simul_mast.grp_yn == "0" && msg.v_simul_mast.grp_cd == "*" ) {
+                                    paramData.arr_data_list.push({
                                             "grp_cd"    :   msg.v_simul_mast.grp_cd
                                         ,   "scen_cd"   :   msg.v_simul_mast.scen_cd
-                                        ,   "email"     :   item.email
                                     });
-                                });
-                            }                            
+                                }
+                                
 
+                                if( typeof paramData.arr_data_list != "undefined" && paramData.arr_data_list.length > 0 ) {
+
+                                    stmt = mapper.getStatement('simulation', 'getSimulShareInArr', paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        if (err) {
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return callback(resultMsg);
+                                        }
+
+                                        if( rows && rows.length > 0 ) {
+
+                                            var v_temp  =   [];
+                                            paramData.arr_checked_shared.forEach( function( item, index, array) {
+
+                                                /* 삭제인 경우 */
+                                                if( typeof paramData.group_delete_yn != "undefined" && paramData.group_delete_yn == "1" ) {
+
+                                                    /* 시나리오 또는 그룹 하위 시나리오 모든 공유 정보 추출 */
+                                                    v_temp  =   [];
+                                                    item.arr_simul_share_all	=	[ ...rows ];
+
+                                                    /* 시나리오 또는 그룹 하위 시나리오들의 본인 것만 추출 */
+                                                    v_temp  =   [];
+                                                    v_temp  =   _.filter( rows, function(o) {
+                                                        return  o.email == item.email;
+                                                    });
+                                                    item.arr_simul_share		=	[ ...v_temp ];
+                                                }
+                                                /* 삭제가 아닌 경우 */
+                                                else if( typeof paramData.group_delete_yn == "undefined" || paramData.group_delete_yn == "0" ) {
+
+                                                    /* 선택된 사용자의 시나리오 또는 그룹 하위 시나리오 공유자 추출 */
+                                                    v_temp  =   [];
+                                                    v_temp  =   _.filter( rows, function(o) {
+                                                        return  o.email == item.email;
+                                                    });
+                                                    item.arr_simul_share_all	=	[ ...v_temp ];
+
+                                                    /* 선택된 시나리오 또는 그룹 하위 시나리오들의 owner_yn 이 0 인 것만 추출 */
+                                                    v_temp  =   [];
+                                                    v_temp  =   _.filter( rows, function(o) {
+                                                        return  o.email == item.email && o.owner_yn == '0';
+                                                    });
+                                                    item.arr_simul_share		=	[ ...v_temp ];
+                                                }
+
+
+                                                if( typeof v_temp != "undefined" || v_temp.length > 0 ) {
+                                                    v_temp.forEach( function(o) {
+                                                        msg.arr_delete_list.push({
+                                                                "grp_cd"    :   o.grp_cd
+                                                            ,   "scen_cd"   :   o.scen_cd
+                                                            ,   "email"     :   item.email
+                                                        });
+                                                    });
+                                                }
+
+                                                item.arr_simul_change_group	=	_.differenceWith( item.arr_simul_share_all, item.arr_simul_share, function( a, b ) { return a.grp_cd == b.grp_cd && a.scen_cd == b.scen_cd } );
+                                            });
+                                        }
+
+                                        paramData.arr_data_list =   [];
+
+                                        callback(null, msg);
+                                    });
+
+                                }else{
+                                    callback(null, msg);
+                                }
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 4. 선택된 시나리오 공유자 또는 그룹에 속한 공유자들을 해제한다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
 
                             if( typeof msg.arr_delete_list != "undefined" && msg.arr_delete_list.length > 0 ) {
 
@@ -6744,7 +7220,91 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 4. 그룹에 속한 공유자 정보를 조회한다. */
+                    /* 5. 그룹 공유 후 복사하기를 한 시나리오에 대해 그룹이 해제되기에 그룹없음으로 그룹변경 시킨다. */
+                    function(msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            var v_arr_simul_change_group    =   [];
+                            paramData.arr_checked_shared.forEach( function( item, index, array ) {
+                                var v_temp    =   _.get( item, "arr_simul_change_group" );
+
+                                if( typeof v_temp != "undefined" && v_temp.length > 0 ) {
+                                    v_temp.forEach( function( item1, index1, array1 ) {
+                                        v_arr_simul_change_group.push( item1 );
+                                    });
+                                }
+                            });
+
+
+                            if( v_arr_simul_change_group.length > 0 ) {
+
+                                var param                   =   {};
+
+                                param.moduleId              =   "arrChangeGroupModle";
+
+                                param.transaction           =   {};
+                                param.transaction.mapper    =   mapper;
+                                param.transaction.pool      =   pool;
+                                param.transaction.conn      =   conn;
+
+                                param.user_id               =   paramData.user_id;
+                                param.inst_cd               =   paramData.inst_cd;
+                                param.type_cd               =   paramData.type_cd;
+                                param.large_type            =   paramData.large_type;
+                                param.krx_cd                =   paramData.krx_cd;
+
+                                param.arr_simul_change_group    =   v_arr_simul_change_group;
+
+
+                                /* 그룹변경 모듈을 수행한다. */
+                                arrChangeGroupModle.call( this, req, res, param ).then( function(e) {
+
+                                    if( e && e.resultMsg && e.resultMsg.result ) {
+                                        resultMsg   =   e.resultMsg;
+
+                                        callback(null, msg);                                             
+                                    }else{
+                                        log.debug(e, param);
+
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = config.MSG.error01;
+
+                                        callback( resultMsg );
+                                    }
+
+                                }).catch( function(err){
+
+                                    log.debug(err, param);
+
+                                    resultMsg.result = false;
+                                    resultMsg.msg = config.MSG.error01;
+                                    resultMsg.err = err;
+
+                                    callback( resultMsg );
+                                });
+
+
+                            }else{
+                                callback(null, msg);
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },
+
+                    /* 6. 그룹에 속한 공유자 정보를 조회한다. */
                     function(msg, callback) {
 
                         try{
@@ -6807,7 +7367,7 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                                             /* 그룹 하위 조회 */
                                             var v_temp  =   _.filter( rows, function(o) {
-                                                return  o.email == item.email && o.grp_cd == msg.upper_scen_cd && o.owner_yn == '0';
+                                                return  o.email == item.email && o.grp_cd == item.grp_cd && o.scen_cd == item.scen_cd && o.owner_yn == '0';
                                             });
 
 
@@ -6842,7 +7402,7 @@ var applyShareUserRevokeInArr = function(req, res) {
                         }
                     },
 
-                    /* 5. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 ) */
+                    /* 7. 선택된 사나리오 또는 그룹에 속한 공유자들을 해제한다. ( 그룹 하위에 속한 공유자가 없을시 그룹 공유자 정보 삭제 ) */
                     function(msg, callback) {
 
                         try{
@@ -6893,35 +7453,44 @@ var applyShareUserRevokeInArr = function(req, res) {
 
                     if (err) {
                         log.debug(err, stmt, paramData);
-                        conn.rollback();
+
+                        resolve( { 
+                                result : false
+                            ,   resultMsg : resultMsg 
+                        });                        
 
                     } else {
 
                         resultMsg.result        =   true;
-                        resultMsg.msg           =   "성공적으로 해제하였습니다.";
+                        resultMsg.msg           =   "";
                         resultMsg.err           =   null;
-
-                        conn.commit();
                     }
 
-                    res.json(resultMsg);
-                    res.end();
 
+                    resolve( { 
+                            result : true
+                        ,   resultMsg : resultMsg 
+                    });
                 });
+            }
+
+        } catch (expetion) {
+
+            log.debug('simulation.applyShareUserRevokeInArrModule 완료.');
+
+            log.debug(expetion, paramData);
+
+            resultMsg.result = false;
+            resultMsg.msg = config.MSG.error01;
+            resultMsg.err = expetion;
+
+            resolve( { 
+                    result : false
+                ,   resultMsg : resultMsg 
             });
-        });
+        }
 
-    } catch (expetion) {
-
-        log.debug(expetion, paramData);
-
-        resultMsg.result = false;
-        resultMsg.msg = config.MSG.error01;
-        resultMsg.err = expetion;
-
-        res.json(resultMsg);
-        res.end();
-    }
+    });
 }
 
 
@@ -7376,7 +7945,6 @@ var getUserListSharedInGroup = function(req, res) {
                                         msg.v_arr_shared_grp.forEach( function( item, index, array ) {
                                             var v_check_data    =   _.filter( rows, {
                                                     'email'     :   item.email
-                                                ,   'owner_yn'  :   '0'
                                             });
                                             if( typeof v_check_data != "undefined" && v_check_data.length > 0 ) {
                                                 if( msg.v_arr_simul_in_grp.length == v_check_data.length ) {
@@ -7472,6 +8040,12 @@ var applyShareUserInResultGroup = function(req, res) {
         paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
 
 
         resultMsg.share_count    =  0;
@@ -8164,6 +8738,12 @@ var applyShareUserRevokeInGroup = function(req, res) {
         paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
         paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
 
+        /*
+        *   입력변수에 '\' 입력시 ' \' ' 따옴표를 치환하게 되어 쿼리오류 발생. ( '\' 입력시 '\\' 로 치환함. )
+        *   written by bkLove(최병국)   2019-06-25
+        */
+       util.fn_replaceSpecialChar( paramData );        
+
 
         resultMsg.share_count    =  0;
 
@@ -8550,6 +9130,8 @@ module.exports.deleteAllSimul = deleteAllSimul;
 module.exports.renameScenario = renameScenario;
 module.exports.copyScenario = copyScenario;
 module.exports.fnChangeGroup = fnChangeGroup;
+module.exports.changeGroupModle = changeGroupModle;
+module.exports.arrChangeGroupModle = arrChangeGroupModle;
 module.exports.getScenarioShareCount = getScenarioShareCount;
 module.exports.getUserListForShare = getUserListForShare;
 module.exports.getUserListShared = getUserListShared;

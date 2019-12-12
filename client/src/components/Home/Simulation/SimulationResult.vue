@@ -66,39 +66,41 @@
                         ></LineSimulationChart>
                         <ul>
                             <li>
-                                <span class="rcolor1">●</span> Scenario
+                                <span class="rcolor1"></span> Scenario
                             </li>
                             <li>
-                                <span class="rcolor2">●</span>
+                                <span class="rcolor2"></span>
                                 {{ simul_result_mast.bench_index_nm2 }}
                             </li>
                         </ul>
                         <!-- </div> -->
                     </div>
                     <div class="simul_g_r">
-                        <table class="tbl_type ver11 v2">
+                        <table class="tbl_type ver11 v4 mt-2">
                             <colgroup>
-                                <col width="38%" />
-                                <col width="31%" />
-                                <col width="31%" />
+                                <col width="35%" />
+                                <col width="32%" />
+                                <col width="33%" />
                             </colgroup>
                             <thead>
-                                <th></th>
+                                <th class="txt_left">분석지표</th>
                                 <th>Scenario</th>
                                 <th>{{ simul_result_mast.bench_index_nm2 }}</th>
                             </thead>
 
                             <tbody>
+                                <!---tr 짝수열 bgcolor:#e7f2f7---->
                                 <tr
                                     v-for="( row, index ) in  fn_sort_arr_analyze_main"
                                     v-bind:key="row + '_' + index + '_main'"
+                                    :style="row.style_background"
                                 >
-                                    <th class="txt_left" width="38%">{{ row.anal_title /* 분석지표 */ }}</th>
+                                    <td class="txt_left" width="34%">{{ row.anal_title /* 분석지표 */ }}</td>
                                     <td
                                         class="txt_right"
-                                        width="31%"
+                                        width="33%"
                                     >{{ row.backtest /* Senario */ }}</td>
-                                    <td class="txt_right" width="31%">{{ row.benchmark /* BM */ }}</td>
+                                    <td class="txt_right" width="33%">{{ row.benchmark /* BM */ }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -132,8 +134,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="txt_left">일자</th>
-                                                        <th class="txt_right">Index</th>
-                                                        <th class="txt_right">Balance</th>
+														<th class="txt_right">Balance</th>
+                                                        <th class="txt_right">{{ simul_result_mast.fmt_scen_name_20 }}</th>
                                                         <th class="txt_right">Return</th>
                                                         <th
                                                             class="txt_right"
@@ -152,10 +154,10 @@
                                                         >{{ row.fmt_F12506 /* 일자 */ }}</td>
                                                         <td
                                                             class="txt_right"
-                                                        >{{ row.fmt_INDEX_RATE /* 지수 */ }}</td>
+                                                        >{{ row.fmt_balance /* balance */ }}</td>
                                                         <td
                                                             class="txt_right"
-                                                        >{{ row.fmt_balance /* balance */ }}</td>
+                                                        >{{ row.fmt_INDEX_RATE /* 지수 */ }}</td>
                                                         <td
                                                             class="txt_right"
                                                         >{{ row.fmt_RETURN_VAL /* return */ }}</td>
@@ -201,7 +203,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th width="20%" class="txt_left">일자</th>
-                                                        <th width="20%">Event</th>
+                                                        <th width="20%">이벤트</th>
                                                         <th width="20%" class="txt_left">종목</th>
                                                         <th width="20%" class="txt_right">변경전</th>
                                                         <th width="20%" class="txt_right">변경후</th>
@@ -272,7 +274,7 @@
                                 </tr>
                                 <tr>
                                     <th>비중설정방식</th>
-                                    <td>{{ simul_result_mast.fmt_rebalance_date_cd }}</td>
+                                    <td>{{ simul_result_mast.fmt_importance_method_cd }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -330,7 +332,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="txt_left">분석지표</th>
-                                                <th class="txt_right">백테스트</th>
+                                                <th class="txt_right">{{ simul_result_mast.fmt_scen_name_20 }}</th>
                                                 <th
                                                     class="txt_right"
                                                 >{{ simul_result_mast.bench_index_nm }}</th>
@@ -355,6 +357,14 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="pt-3 pl-2 font_b">
+                                    <ul>
+                                        <li>※ 연율화 계산에서 사용된 일자 수는 <span class="text_red">252일</span>입니다.</li>
+                                        <li>※ 무위험이자율은 <span class="text_red">CD금리</span>를 사용합니다.</li>
+                                        <li>※ Beta(vs market)의 market은 <span class="text_red">KOSPI</span>시장을 의미합니다.</li>
+                                    </ul>
+                                </div>
+
                             </div>
                         </v-card>
                     </v-tab-item>
@@ -527,9 +537,22 @@ export default {
         fn_sort_arr_analyze_main : function() {
             var vm = this;
 
-            return _.orderBy( vm.arr_analyze_main, [
+            vm.arr_analyze_main =   _.orderBy( vm.arr_analyze_main, [
                 "order_no"
             ], ["asc"]);
+
+
+            for( var i=0; i < vm.arr_analyze_main.length; i++ ) {
+                var v_row   =   vm.arr_analyze_main[i];
+
+                if( (i+1) % 2 == 0 ) {
+                    v_row.style_background    =   "background:#e7f2f7";
+                }else{
+                    v_row.style_background    =   "background:";
+                }
+            }
+
+            return  vm.arr_analyze_main;
         },
 
         /*
@@ -572,7 +595,7 @@ export default {
 
         vm.chartFlag   =   false;
 
-        vm.fn_showProgress( true );
+        
 
 
         /* 백테스트 수행으로 넘겨받은 값이 존재하는 경우 */
@@ -583,6 +606,8 @@ export default {
                 ||  ( vm.paramData.arr_rebalance && vm.paramData.arr_rebalance.length > 0 )
                 ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
             ){
+
+                vm.fn_showWaitProgress( {'open':true, 'title':'시계열 분석 중입니다.'} );
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -612,16 +637,17 @@ export default {
 
                 }).then( function(e) {
 
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 })                
 
             }
             else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
-
+                
+                vm.fn_showProgress(true);
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -862,8 +888,8 @@ export default {
 											item_sub.CONTRIBUTE_RATE
 										);
                                     });
-                                    
-                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                                        
+                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 
 									v_total_obj.fmt_START_WEIGHT	=	util.formatNumber( v_total_obj.START_WEIGHT * 100 ) + " %";
 									v_total_obj.fmt_END_WEIGHT		=	util.formatNumber( v_total_obj.END_WEIGHT * 100 ) 	+ " %";
@@ -1156,7 +1182,7 @@ export default {
 														v_total_obj.fmt_CONTRIBUTE_RATE	=	util.formatNumber( v_total_obj.CONTRIBUTE_RATE )	+ " %";
                                                     }
                                                     
-                                                    item.dataLists = _.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
+                                                    item.dataLists = item.dataLists.sort(vm.customSort); //_.orderBy(item.dataLists, 'CONTRIBUTE_RATE', 'desc');
 													item.dataLists.push( v_total_obj );
                                                     
                                                     vm.arr_result_contribute.push( item );
@@ -1446,7 +1472,7 @@ export default {
                             p_item_obj.fmt_bench_mark_cd        =   vm.fn_getCodeName( "COM008", p_item_obj.bench_mark_cd );
 
                             /* 비중설정 방식 */
-                            p_item_obj.fmt_rebalance_date_cd    =   vm.fn_getCodeName( "COM009", p_item_obj.rebalance_date_cd );
+                            p_item_obj.fmt_importance_method_cd =   vm.fn_getCodeName( "COM009", p_item_obj.importance_method_cd );
 
                             if( p_item_obj.bench_mark_cd == "0" ) {
                                 p_item_obj.bench_index_nm       =   "BM (N/A)";                                
@@ -1454,7 +1480,9 @@ export default {
                             }else{
                                 p_item_obj.bench_index_nm2       =   p_item_obj.bench_index_nm;
                                 p_item_obj.bench_index_nm       =   "BM (" + p_item_obj.bench_index_nm + ")";
-                            }                        
+                            }
+
+                            p_item_obj.fmt_scen_name_20         =   vm.fn_show_cutByte( p_item_obj.scen_name, 20 );
 
                             break;
 
@@ -1657,7 +1685,7 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.fn_showProgress( true );
+                vm.fn_showWaitProgress( {'open':true, 'title':'자료생성 중입니다.'} );
 
                 step1().then( function(e){
                     if( e && e.result ) {
@@ -1672,12 +1700,16 @@ export default {
                         return  step4();
                     }
                 }).then( function(e3) {
-                    return step5();
+                    if( e3 && e3.result ) {
+                        return  step5();
+                    }
                 }).then( function(e4) {
-                    vm.fn_showProgress( false );
+                    return step6();
+                }).then( function(e5) {
+                    vm.fn_showWaitProgress( false );
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.fn_showWaitProgress( false );
                 });
                 
                 /* 일자별 지수 */
@@ -1689,18 +1721,18 @@ export default {
                             excelInfo.sheetNm           =   "일자별 지수";
 
                             excelInfo.arrHeaderNm       =   [       
-                                    "일자", "Index", "Balance", "Return", vm.simul_result_mast.bench_index_nm
+                                    "일자", "Balance", vm.simul_result_mast.fmt_scen_name_20, "Return", vm.simul_result_mast.bench_index_nm
                                 ,   "BM(1000환산)", "BM return", "기준시총", "비교시총", "리밸런싱일 여부"
                             ];
 
 
                             excelInfo.arrHeaderKey      =   [       
-                                    "fmt_F12506", "INDEX_RATE", "fmt_balance", "RETURN_VAL", "fmt_bm_data01"
+                                    "fmt_F12506", "fmt_balance", "INDEX_RATE", "RETURN_VAL", "fmt_bm_data01"
                                 ,   "fmt_bm_1000_data", "fmt_bm_return_data", "F15028_S", "F15028_C", "fmt_rebalancing_yn"
                             ];
 
                             excelInfo.arrColsInfo       =   [       
-                                    {width : 15}, {width : 30}, {width : 15}, {width : 30}, {width : 15}
+                                    {width : 15}, {width : 15}, {width : 30}, {width : 30}, {width : 15}
                                 ,   {width : 15}, {width : 15}, {width : 30}, {width : 30}, {width : 15} 
                             ];
 
@@ -1737,7 +1769,7 @@ export default {
                                 excelInfo.sheetNm           =   "리밸런싱 내역";
 
                                 excelInfo.arrHeaderNm       =   [       
-                                    "일자", "Event", "종목", "변경전", "변경후"
+                                    "일자", "이벤트", "종목", "변경전", "변경후"
                                 ];
 
                                 excelInfo.arrHeaderKey      =   [       
@@ -1775,7 +1807,7 @@ export default {
                             excelInfo.sheetNm           =   "분석정보";
 
                             excelInfo.arrHeaderNm       =   [       
-                                "분석지표", "백테스트", vm.simul_result_mast.bench_index_nm
+                                "분석지표", vm.simul_result_mast.fmt_scen_name_20, vm.simul_result_mast.bench_index_nm
                             ];
 
                             excelInfo.arrHeaderKey      =   [       
@@ -1784,7 +1816,7 @@ export default {
 
 
                             excelInfo.arrColsInfo       =   [       
-                                {width : 45}, {width : 20}, {width : 20}
+                                {width : 45}, {width : 25}, {width : 25}
                             ];
 
                             excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.arr_analyze, excelInfo.arrHeaderKey );
@@ -1944,7 +1976,7 @@ export default {
                                                         dataWS['!ref'] = excel.utils.encode_range({
                                                             s: { c: 0, r: 0 },
                                                             e: { c: ( arr_row2.length * arr_excel_jongmok_header.length ), r: v_excel_row_data.length + 2 }
-                                                        });                                                    
+                                                        });
 
 
                                                         excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
@@ -1974,10 +2006,125 @@ export default {
                             resolve( { result : false } );
                         }
                     });
+                }
+
+                /* 시계열 분석 */
+                async function    step5() {
+
+                    return  await new Promise(function(resolve, reject) {
+
+                        try{
+
+                            if( typeof vm.simul_result_mast.time_series_upload_yn != "undefined" && vm.simul_result_mast.time_series_upload_yn == "1" ) {
+
+                                resolve( { result : true } );
+
+                            }else{
+
+                                excelInfo.sheetNm           =   "시계열 분석";
+
+                                var arr_excel_jongmok_header    =   [
+                                        {   "col_id"    :   "fmt_F12506_S"          ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "시작일"        }
+                                    ,   {   "col_id"    :   "fmt_F12506_E"          ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "종료일"        }
+                                    ,   {   "col_id"    :   "F16013"                ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "코드"          }
+                                    ,   {   "col_id"    :   "F16002"                ,   "width" :   30  ,   "hidden" : false    ,   "title" :   "종목"          }
+                                    ,   {   "col_id"    :   "fmt_START_WEIGHT"      ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "start_weight"  }
+                                    ,   {   "col_id"    :   "fmt_END_WEIGHT"        ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "end_weight"    }
+                                    ,   {   "col_id"    :   "fmt_CONTRIBUTE_RATE"   ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "기여율(%)"     }
+                                ];
+
+                                var v_excel_row_data    =   [];
+                                var v_arr_merge_cell    =   [];
+
+                                if( vm.arr_result_contribute.length > 0 ) {
+
+                                    if( arr_excel_jongmok_header.length > 0 ) {
+
+                                        var v_col_data      =   [];
+                                        var v_data_length   =   0;
+
+                                        vm.arr_result_contribute.forEach( function( item, index, array ) {
+
+                                            if( index > 0 ) {
+                                                v_excel_row_data.push( [] );
+                                            }
+
+                                            v_excel_row_data.push( [
+                                                        "지수변동 "
+                                                    +   item.fmt_F12506_B_INDEX_RATE
+                                                    +   " -> "
+                                                    +   item.fmt_F12506_E_INDEX_RATE 
+                                                    +   " "
+                                                    +   "( " + item.fmt_INDEX_CHNAGE_RATE + " )"
+                                                ]
+                                            )
+
+
+                                            v_arr_merge_cell.push({
+                                                    s : { r: v_excel_row_data.length-1 , c: 0 }
+                                                ,   e : { r: v_excel_row_data.length-1 , c: arr_excel_jongmok_header.length - 1 }
+                                            });
+
+
+                                            v_col_data  =   [];
+                                            arr_excel_jongmok_header.forEach( function( item_header, index_header, array_header ) {
+                                                if( typeof item_header.title != "undefined" ) {
+                                                    v_col_data.push( item_header.title );
+                                                }
+                                            });
+                                            v_excel_row_data.push( v_col_data );
+
+
+                                            if( typeof item.dataLists != "undefined" && item.dataLists.length > 0 ) {
+                                                item.dataLists.forEach( function( item1, index1, array1 ) {
+                                                    v_col_data  =   [];
+                                                    arr_excel_jongmok_header.forEach( function( item_header, index_header, array_header ) {
+                                                        if( item_header.col_id && typeof item_header.col_id != "undefined" ) {
+                                                            if( typeof item1[ item_header.col_id ] != "undefined" ) {
+                                                                v_col_data.push( item1[ item_header.col_id  ] );
+                                                            }else{
+                                                                v_col_data.push( "" );
+                                                            }
+                                                        }
+                                                    });
+
+                                                    v_excel_row_data.push( v_col_data );
+                                                });
+                                            }
+                                        })
+                                    }
+                                }
+
+                                dataWS = excel.utils.aoa_to_sheet( v_excel_row_data );
+
+
+                                var v_arr_cols          =   [];
+                                if( arr_excel_jongmok_header.length > 0 ) {                                 
+                                    for( var i=0; i < arr_excel_jongmok_header.length; i++ ) {
+                                        var v_header    =   arr_excel_jongmok_header[i];
+
+                                        v_arr_cols.push( { hidden : false, width : v_header.width } );
+                                    }
+
+                                    dataWS['!cols']     =   v_arr_cols;
+                                    dataWS['!merges']   =   v_arr_merge_cell;         
+                                }
+
+                                excel.utils.book_append_sheet( wb, dataWS, excelInfo.sheetNm );
+
+                                resolve( { result : true } );
+                            }
+
+                        }catch(ex) {
+                            console.log( "error", ex );
+                            
+                            resolve( { result : false } );
+                        }
+                    });
                 }                
 
                 /* 파일 저장 */
-                async function    step5() {
+                async function    step6() {
 
                     return  await new Promise(function(resolve, reject) {
 
@@ -2293,7 +2440,65 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
-        },		
+        },
+
+        fn_show_cutByte( str, len ) {
+            var vm              =   this;
+
+            var v_cut_data      =   vm.fn_cutByte( str, len );
+            var v_return_data   =   "";
+
+            if( vm.fn_getLength( str ) == vm.fn_getLength( v_cut_data ) ) {
+                v_return_data   +=  v_cut_data;
+            }else{
+                v_return_data   +=  v_cut_data + "...";
+            }
+
+            return  v_return_data;
+        },
+
+        /*
+         * 문자열을 길이만큼 자른다.
+         * 2019-09-06  bkLove(촤병국)
+         */
+        fn_cutByte( str, len) {
+
+            var count = 0;
+            
+            for(var i = 0; i < str.length; i++) {
+                if(escape(str.charAt(i)).length >= 4)
+                    count += 2;
+                else
+                    if(escape(str.charAt(i)) != "%0D")
+                        count++;
+
+                if(count >  len) {
+                    if(escape(str.charAt(i)) == "%0A")
+                        i--;
+                    break;		
+                }
+            }
+            
+            return str.substring(0, i);
+        },
+
+        fn_getLength( str ) {
+            var count = 0;
+            
+            for(var i = 0; i < str.length; i++) {
+                if(escape(str.charAt(i)).length >= 4)
+                    count += 2;
+                else
+                    if(escape(str.charAt(i)) != "%0D")
+                        count++;
+            }
+            
+            return count;
+        },
+
+        customSort: function(a, b) {      
+            return b.CONTRIBUTE_RATE - a.CONTRIBUTE_RATE; 
+        }
 
     }
     

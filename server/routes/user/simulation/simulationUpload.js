@@ -221,25 +221,22 @@ var uploadPortfolio = function(req, res) {
                             fn_excel_record_check( v_param, data2 );                            
 
 
-                            if( v_param.p_record_check ) {
+                            /* 리밸런싱 샘플 파일이 아닌 경우 - 엑셀 파일에 코드만 중복존재하는지 체크 */
+                            if( v_param.p_rebalance_file_yn == "0" ) {
+                                if( data.code == data2.code ) {
+                                    v_param.p_record_check  =   false;
 
-                                /* 리밸런싱 샘플 파일이 아닌 경우 - 엑셀 파일에 코드만 중복존재하는지 체크 */
-                                if( v_param.p_rebalance_file_yn == "0" ) {
-                                    if( data.code == data2.code ) {
-                                        v_param.p_record_check  =   false;
-
-                                        data.result             =   false;
-                                        data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] CODE 컬럼이 중복 존재합니다.";
-                                    }
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] CODE 컬럼이 중복 존재합니다.";
                                 }
-                                /* 리밸런싱 샘플인 경우 - 엑셀 파일에 날짜와 코드 둘다 중복존재하는지 체크 */
-                                else{
-                                    if( data.date == data2.date  && data.code == data2.code ) {
-                                        v_param.p_record_check  =   false;
+                            }
+                            /* 리밸런싱 샘플인 경우 - 엑셀 파일에 날짜와 코드 둘다 중복존재하는지 체크 */
+                            else{
+                                if( data.date == data2.date  && data.code == data2.code ) {
+                                    v_param.p_record_check  =   false;
 
-                                        data.result             =   false;
-                                        data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼 과 CODE 컬럼이 중복 존재합니다.";
-                                    }
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼 과 CODE 컬럼이 중복 존재합니다.";
                                 }
                             }
                         }
@@ -1014,7 +1011,7 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 }
 
                 if( p_param.p_column_check ) {
-                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETP 코드 */
+                    p_record_data.F16012        =   String( p_record_data.col01 );      /* ETF 코드 */
                     p_record_data.F16316        =   String( p_record_data.col02 );      /* 구성종목코드 */
                     p_record_data.F16499        =   String( p_record_data.col03 );      /* CU당 수량 */
                     p_record_data.F34840        =   String( p_record_data.col04 );      /* 액면금액 */

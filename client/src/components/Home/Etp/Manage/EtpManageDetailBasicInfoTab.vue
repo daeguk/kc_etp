@@ -70,7 +70,7 @@
                         </v-layout>
                         <v-layout row class="pa-0">
                             <v-flex xs3 style="padding:12px !important">지수방법론</v-flex>
-                            <v-flex xs7 class="text_r btn_pad1">
+                            <v-flex xs7 class="text_r btn_pad1" v-if="false">
                                 DBF_Bio_Theme_Methodology.pdf
                                 <v-btn flat icon color="primary">
                                     <v-icon>move_to_inbox</v-icon>
