@@ -1,15 +1,5 @@
 <template>
   <div>
-    <!-- 지수 상세 팝업 -->
-    <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
-      <IndexDetailInfo        
-        v-if="showIndexDetailDialog" 
-        :paramData="indexBasic" 
-        :showDialog="showIndexDetailDialog" 
-        :showView="false"
-        @fn_closePop="fn_close">
-      </IndexDetailInfo>
-    </v-dialog>
     <v-layout row>
       <v-flex xs12>
         <v-card flat ma-3>
@@ -21,17 +11,6 @@
                   {{this.etpBasic.F16002}}
                   <span class="grey--text">{{etpBasic.F16013}}</span>
                 </h3>
-                <!--div class="right_btn"  v-if="showEtpManageDetailDialog">
-                    <v-layout align-right>
-                        <v-flex xs12 sm4 text-xs-center>                                         
-                            <div class="btn_r">
-                                <v-btn icon  @click.stop="fn_close">
-                                    <v-icon>close</v-icon>
-                                </v-btn>
-                            </div>
-                        </v-flex>
-                    </v-layout>
-                </div-->
                 <div class="right_btn"  v-if="!showEtpManageDetailDialog">
                   <v-layout align-right>
                     <v-flex xs12 sm4 text-xs-center>
@@ -130,19 +109,24 @@
           </div>
         </v-card>
       </v-flex>
-      <!--v-flex class="conWidth_right">
-          <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
-      </v-flex-->
       <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-layout>
+    <!-- 지수 상세 팝업 -->
+    <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
+      <IndexDetailInfo        
+        v-if="showIndexDetailDialog" 
+        :paramData="indexBasic" 
+        :showDialog="showIndexDetailDialog" 
+        :showView="false"
+        @fn_closePop="fn_close">
+      </IndexDetailInfo>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-//import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
-import ComFavorItemSub from "@/components/common/control/ComFavorItemSub";
 import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
@@ -150,160 +134,141 @@ import util from "@/js/util.js";
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 
 export default {
-    props : [ "paramData", "showEtpManageDetailDialog" ],
-    data() {
-        return {
-            tab5: null,
-            items5: ["분석정보", "기본정보"],
+  props : [ "paramData", "showEtpManageDetailDialog" ],
+  data() {
+    return {
+      tab5: null,
+      items5: ["분석정보", "기본정보"],
 
-            toggle_one: '1M',
-            basicData           :   {},
-            etpBasic            :   {},
-            indexBasic          :   {},
-            etpInfos            :   {},
-            showEtpManageDetailDialogBySub : false,
-            showIndexDetailDialog : false
-        };
+      toggle_one: '1M',
+      basicData           :   {},
+      etpBasic            :   {},
+      indexBasic          :   {},
+      etpInfos            :   {},
+      showEtpManageDetailDialogBySub : false,
+      showIndexDetailDialog : false
+    };
+  },
+  components: {
+    ConfirmDialog : ConfirmDialog,
+    IndexDetailInfo : IndexDetailInfo,    
+    LineEtpMultiChart,
+    EtpManageDetailBasicInfoTab,
+    EtpManageDetailAnalysisTab,
+  },
+  mounted: function() {
+    // 메시지 박스 참조
+    this.$root.$confirm = this.$refs.confirm;
+    var vm = this;
+    // console.log( "EtpManageDetail.vue -> mounted" );
+    // console.log( vm.paramData );
+    vm.init(false);
+  },
+  created: function() {
+    var vm = this;
+    vm.$EventBus.$on('changeEtpInfo', data => {
+      vm.toggle_one = '1M';
+      vm.init(true);
+    });
+  },
+  updated: function() {
+  },
+  beforeDestory: function() {
+      this.$EventBus.$off('changeEtpInfo');
+  },
+  
+  methods: {
+    init: function(event) {
+      var vm = this;
+      vm.$nextTick().then(() => {
+          if(vm.paramData &&  (vm.paramData.F16012 || vm.paramData.F16257 || vm.paramData.F34239)) {
+              vm.basicData.F16012         =   vm.paramData.F16012;            /* 국제표준코드 */
+              vm.basicData.F16257         =   vm.paramData.F16257;            /* ETP기초지수코드 */
+              vm.basicData.F34239         =   vm.paramData.F34239;            /* ETP기초지수MID */
+              vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
+              vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
+              vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
+          }else if(vm.$route.query.F16012 && vm.$route.query.F16257 && vm.$route.query.F34239) {
+              vm.basicData.F16012         =   vm.$route.query.F16012;         /* 국제표준코드 */
+              vm.basicData.F16257         =   vm.$route.query.F16257;         /* ETP기초지수코드 */
+              vm.basicData.F34239         =   vm.$route.query.F34239;         /* ETP기초지수MID */
+              vm.paramData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
+              vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
+              vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
+          }
+          if(vm.basicData.F16012 || vm.basicData.F16257||  vm.basicData.F34239
+          )   {
+              // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+              vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+          }
+          if (event) {
+              // 분석정보 실행
+              vm.$EventBus.$emit('changeEtpAnalysisInfo');
+          }
+      });
     },
-    components: {
-        ConfirmDialog : ConfirmDialog,
-        IndexDetailInfo : IndexDetailInfo,    
-        LineEtpMultiChart,
-        EtpManageDetailBasicInfoTab,
-        EtpManageDetailAnalysisTab,
-        ComFavorItemSub
-    },
-    mounted: function() {
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
-        
+    /*
+      * ETP 의 기본정보를 조회한다.
+      * 2019-04-25  bkLove(촤병국)
+      */
+    fn_getEtpBasic: function() {
+        // console.log("fn_getEtpBasic");
         var vm = this;
-        
-        console.log( "EtpManageDetail.vue -> mounted" );
-        console.log( vm.paramData );
-        vm.init(false);
-        
-    },
-    created: function() {
-        var vm = this;
-        vm.$EventBus.$on('changeEtpInfo', data => {
-            vm.toggle_one = '1M';
-            vm.init(true);
-            
+        axios.post(Config.base_url + "/user/etp/getEtpBasic", {
+            data:   vm.basicData
+        }).then(function(response) {
+            // console.log(response);
+            if (response.data) {
+                
+                var msg = ( response.data.msg ? response.data.msg : "" );
+                if (!response.data.result) {
+                    if( msg ) {
+                        vm.showMessageBox('확인', msg,{},1);
+                        return  false;
+                    }
+                }
+
+                vm.etpBasic = response.data.etpBasic;
+                vm.etpBasic.F15001 = util.formatStringNum(vm.etpBasic.F15001);
+                vm.indexBasic = response.data.indexBasic;
+
+                vm.indexBasic.F16257        =   vm.etpBasic.F16257;
+                vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
+                vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;
+
+
+                vm.showEtpManageDetailDialogBySub   =   true;
+            }
         });
     },
-    updated: function() {
+    /*
+      * 이전화면으로 되돌린다.
+      * 2019-04-25  bkLove(촤병국)
+      */
+    fn_goBack() {
+        this.$router.go(-1);
     },
-    beforeDestory: function() {
-        this.$EventBus.$off('changeEtpInfo');
+    /*
+      * 팝업창을 종료한다.
+      * 2019-04-25  bkLove(촤병국)
+      */
+    fn_close : function() {
+        var vm = this;
+        vm.showIndexDetailDialog = false;
     },
-    
-    methods: {
-        init: function(event) {
-            var vm = this;
-            vm.$nextTick().then(() => {
-                if(     vm.paramData 
-                    &&  (       vm.paramData.F16012
-                            ||  vm.paramData.F16257
-                            ||  vm.paramData.F34239
-                        )
-                ) {
-                    vm.basicData.F16012         =   vm.paramData.F16012;            /* 국제표준코드 */
-                    vm.basicData.F16257         =   vm.paramData.F16257;            /* ETP기초지수코드 */
-                    vm.basicData.F34239         =   vm.paramData.F34239;            /* ETP기초지수MID */
-                    vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
-                    vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
-                    vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
-                }
-                else if(
-                        vm.$route.query.F16012  
-                    &&  vm.$route.query.F16257  
-                    &&  vm.$route.query.F34239  
-                ) {
-                    vm.basicData.F16012         =   vm.$route.query.F16012;         /* 국제표준코드 */
-                    vm.basicData.F16257         =   vm.$route.query.F16257;         /* ETP기초지수코드 */
-                    vm.basicData.F34239         =   vm.$route.query.F34239;         /* ETP기초지수MID */
-                    vm.paramData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
-                    vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
-                    vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
-                }
-                if(     vm.basicData.F16012
-                    ||  vm.basicData.F16257
-                    ||  vm.basicData.F34239
-                )   {
-                   // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
-                    vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-                }
-                if (event) {
-                    // 분석정보 실행
-                    vm.$EventBus.$emit('changeEtpAnalysisInfo');
-                }
-            });
-            
-        },
-        /*
-         * ETP 의 기본정보를 조회한다.
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_getEtpBasic: function() {
-            console.log("fn_getEtpBasic");
-            var vm = this;
-            axios.post(Config.base_url + "/user/etp/getEtpBasic", {
-                data:   vm.basicData
-            }).then(function(response) {
-                console.log(response);
-                if (response.data) {
-                    
-                    var msg = ( response.data.msg ? response.data.msg : "" );
-                    if (!response.data.result) {
-                        if( msg ) {
-                            vm.showMessageBox('확인', msg,{},1);
-                            return  false;
-                        }
-                    }
-
-                    vm.etpBasic = response.data.etpBasic;
-                    vm.etpBasic.F15001 = util.formatStringNum(vm.etpBasic.F15001);
-                    vm.indexBasic = response.data.indexBasic;
-
-                    vm.indexBasic.F16257        =   vm.etpBasic.F16257;
-                    vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
-                    vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;
-
-
-                    vm.showEtpManageDetailDialogBySub   =   true;
-                }
-            });
-        },
-        /*
-         * 이전화면으로 되돌린다.
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_goBack() {
-            this.$router.go(-1);
-        },
-        /*
-         * 팝업창을 종료한다.
-         * 2019-04-25  bkLove(촤병국)
-         */
-        fn_close : function() {
-            var vm = this;
-            vm.showIndexDetailDialog = false;
-        },
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
-        },
-        formatNumber:function(num) {
-            return util.formatNumber(num);
-        },
-        formatInt:function(num) {
-            return util.formatInt(num);
-        },
-        showDetail:function() {
-            var vm = this;
-            vm.showIndexDetailDialog = true;
-        }
+    showMessageBox: function(title, msg, option, gubun) {
+        this.$root.$confirm.open(title,msg, option, gubun);
+    },
+    formatNumber:function(num) {
+        return util.formatNumber(num);
+    },
+    formatInt:function(num) {
+        return util.formatInt(num);
+    },
+    showDetail:function() {
+        var vm = this;
+        vm.showIndexDetailDialog = true;
     }
-    
+  }
 };
 </script>

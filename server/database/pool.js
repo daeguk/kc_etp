@@ -25,6 +25,7 @@ const DB_INFO = {
   waitForConnections:false,
   supportBigNumbers: true,
   bigNumberStrings: true,
+  dateStrings: 'date'
 };
 
 module.exports = class {

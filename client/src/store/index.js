@@ -47,6 +47,7 @@ const store = new Vuex.Store({
       state.user.krx_cd = payload.krx_cd;
       state.user.hp_no = payload.hp_no;
       state.user.tel_no = payload.tel_no;
+      state.user.lp_auth = payload.lp_auth;
     },
     [Constant.SET_BEF_DATES]: (state, payload) => {
       state.befDates.bef1Week = payload.bef1Week;
@@ -70,6 +71,7 @@ const store = new Vuex.Store({
       state.user.krx_cd = "";
       state.user.hp_no = "";
       state.user.tel_no = "";
+      state.user.lp_auth = "";
     },
     [Constant.SET_INDEX]: (state, payload) => {
       for(let i=0; i < payload.length; i++) {

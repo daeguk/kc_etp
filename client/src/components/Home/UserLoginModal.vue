@@ -120,6 +120,7 @@ export default {
             krx_cd:response.data.results[0].krx_cd, 
             hp_no:response.data.results[0].hp_no, 
             tel_no:response.data.results[0].tel_no, 
+            lp_auth:response.data.results[0].lp_auth, 
           });
 
           vm.loginDialog = false;
