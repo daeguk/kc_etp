@@ -134,7 +134,7 @@
                                                     <tr>
                                                         <th class="txt_left">일자</th>
 														<th class="txt_right">Balance</th>
-                                                        <th class="txt_right">{{ fn_cutByte( simul_result_mast.scen_name, 15 ) }}</th>
+                                                        <th class="txt_right">{{ simul_result_mast.fmt_scen_name_20 }}</th>
                                                         <th class="txt_right">Return</th>
                                                         <th
                                                             class="txt_right"
@@ -331,7 +331,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="txt_left">분석지표</th>
-                                                <th class="txt_right">{{ fn_cutByte( simul_result_mast.scen_name, 15 ) }}</th>
+                                                <th class="txt_right">{{ simul_result_mast.fmt_scen_name_20 }}</th>
                                                 <th
                                                     class="txt_right"
                                                 >{{ simul_result_mast.bench_index_nm }}</th>
@@ -1466,7 +1466,9 @@ export default {
                             }else{
                                 p_item_obj.bench_index_nm2       =   p_item_obj.bench_index_nm;
                                 p_item_obj.bench_index_nm       =   "BM (" + p_item_obj.bench_index_nm + ")";
-                            }                        
+                            }
+
+                            p_item_obj.fmt_scen_name_20         =   vm.fn_show_cutByte( p_item_obj.scen_name, 20 );
 
                             break;
 
@@ -1705,7 +1707,7 @@ export default {
                             excelInfo.sheetNm           =   "일자별 지수";
 
                             excelInfo.arrHeaderNm       =   [       
-                                    "일자", "Balance", vm.fn_cutByte( vm.simul_result_mast.scen_name, 15 ), "Return", vm.simul_result_mast.bench_index_nm
+                                    "일자", "Balance", vm.simul_result_mast.fmt_scen_name_20, "Return", vm.simul_result_mast.bench_index_nm
                                 ,   "BM(1000환산)", "BM return", "기준시총", "비교시총", "리밸런싱일 여부"
                             ];
 
@@ -1791,7 +1793,7 @@ export default {
                             excelInfo.sheetNm           =   "분석정보";
 
                             excelInfo.arrHeaderNm       =   [       
-                                "분석지표", vm.fn_cutByte( vm.simul_result_mast.scen_name, 15 ), vm.simul_result_mast.bench_index_nm
+                                "분석지표", vm.simul_result_mast.fmt_scen_name_20, vm.simul_result_mast.bench_index_nm
                             ];
 
                             excelInfo.arrHeaderKey      =   [       
@@ -1800,7 +1802,7 @@ export default {
 
 
                             excelInfo.arrColsInfo       =   [       
-                                {width : 45}, {width : 20}, {width : 20}
+                                {width : 45}, {width : 25}, {width : 25}
                             ];
 
                             excelInfo.dataInfo  =   vm.fn_setExcelInfo( vm.arr_analyze, excelInfo.arrHeaderKey );
@@ -1992,7 +1994,7 @@ export default {
                     });
                 }
 
-                /* 기여도 */
+                /* 시계열 분석 */
                 async function    step5() {
 
                     return  await new Promise(function(resolve, reject) {
@@ -2005,7 +2007,7 @@ export default {
 
                             }else{
 
-                                excelInfo.sheetNm           =   "기여도";
+                                excelInfo.sheetNm           =   "시계열 분석";
 
                                 var arr_excel_jongmok_header    =   [
                                         {   "col_id"    :   "fmt_F12506_S"          ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "시작일"        }
@@ -2424,7 +2426,22 @@ export default {
             var vm = this;
 
             vm.$emit( "fn_showSimulation", { showSimulationId : 0 } );
-        },	
+        },
+
+        fn_show_cutByte( str, len ) {
+            var vm              =   this;
+
+            var v_cut_data      =   vm.fn_cutByte( str, len );
+            var v_return_data   =   "";
+
+            if( vm.fn_getLength( str ) == vm.fn_getLength( v_cut_data ) ) {
+                v_return_data   +=  v_cut_data;
+            }else{
+                v_return_data   +=  v_cut_data + "...";
+            }
+
+            return  v_return_data;
+        },
 
         /*
          * 문자열을 길이만큼 자른다.
@@ -2449,9 +2466,22 @@ export default {
             }
             
             return str.substring(0, i);
+        },
 
-        },	
-        
+        fn_getLength( str ) {
+            var count = 0;
+            
+            for(var i = 0; i < str.length; i++) {
+                if(escape(str.charAt(i)).length >= 4)
+                    count += 2;
+                else
+                    if(escape(str.charAt(i)) != "%0D")
+                        count++;
+            }
+            
+            return count;
+        },
+
         customSort: function(a, b) {      
             return b.CONTRIBUTE_RATE - a.CONTRIBUTE_RATE; 
         }
