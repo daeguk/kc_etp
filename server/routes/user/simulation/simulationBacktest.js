@@ -2509,20 +2509,50 @@ var getBacktestResult = function(req, res) {
 
                                         analJson.anal_title     =   rowData.anal_title;
 
-                                        analJson.backtest       =   rowData.backtest    +   ( rowData.backtest_percent_yn  == "1"   ? " %" : "" );
+                                        analJson.backtest       =   rowData.backtest    +   ( rowData.backtest != "N/A" && rowData.backtest_percent_yn  == "1"   ? " %" : "" );
                                         if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
                                             analJson.backtest   +=   " (" + rowData.backtest_year + ")";
                                         }
 
-                                        analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark_percent_yn == "1"   ? " %" : "" );
+                                        analJson.benchmark      =   rowData.benchmark   +   ( rowData.benchmark != "N/A" && rowData.benchmark_percent_yn == "1"   ? " %" : "" );
                                         if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
                                             analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
                                         }
 
                                         resultMsg.arr_analyze.push(analJson);
 
+
+
                                         if( rowData.title_order_no != null & rowData.title_order_no > 0 ) {
-                                            v_arr_analyze_main.push( Object.assign( analJson, { anal_title : rowData.title_anal_id, order_no : rowData.title_order_no } ) );
+
+                                            analJson                =   {};
+
+                                            analJson.anal_title     =   rowData.anal_title;
+
+
+                                            rowData.fmt_backtest    =   Number( rowData.backtest ).toFixed( 2 );
+                                            if( rowData.backtest != "N/A" &&  rowData.backtest_percent_yn == "1" ) {
+                                                rowData.fmt_backtest  +=  " %";
+                                            }
+                                            analJson.backtest       =   rowData.fmt_backtest;
+                                            if( rowData.backtest_year != null && rowData.backtest_year != "" ) {
+                                                analJson.backtest   +=   " (" + rowData.backtest_year + ")";
+                                            }
+
+
+                                            rowData.fmt_benchmark   =   Number( rowData.benchmark ).toFixed( 2 );
+                                            if( rowData.benchmark != "N/A" && rowData.benchmark_percent_yn == "1" ) {
+                                                rowData.fmt_benchmark  +=  " %";
+                                            }                                            
+                                            analJson.benchmark      =   rowData.fmt_benchmark;
+                                            if( rowData.benchmark_year != null && rowData.benchmark_year != "" ) {
+                                                analJson.benchmark   +=   " (" + rowData.benchmark_year + ")";
+                                            }
+
+                                            analJson.anal_title     =   rowData.title_anal_id;
+                                            analJson.order_no       =   rowData.title_order_no;
+
+                                            v_arr_analyze_main.push( analJson );
                                         }
                                     }
 
@@ -3909,66 +3939,67 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
         }
         /*  arr_analyze_main    END */
 
+
+        /* arr_analyze_db   START */
+        if( p_param.p_arr_analyze_db != null ) {
+
+            v_result_data       =   Object.assign( {}, v_data );
+
+            v_result_data.title_anal_id     =   "";
+            if( p_param.p_order_no > 0 ) {
+                v_result_data.title_anal_id =   v_result_data.anal_title;
+            }
+
+            v_result_data.title_order_no    =   p_param.p_order_no;
+            
+            v_result_data.backtest      =   fn_convert_data({
+                    p_data              :   p_param.p_anal.backtest
+                ,   p_data01            :   v_data.backtest02
+                ,   p_type              :   p_param.p_type
+                ,   p_percent_yn        :   p_param.p_percent_yn
+                ,   p_show_percent_yn   :   "0"
+                ,   p_show_data01_yn    :   "0"
+                ,   p_position          :   p_param.p_position
+            });
+
+            v_result_data.backtest_year             =   "";
+            if( v_data.backtest02 != "" ) {
+                v_result_data.backtest_year         =   v_data.backtest02;
+            }
+
+            v_result_data.backtest_percent_yn       =   "0";
+            if( typeof p_param.p_percent_yn != "undefined" ) {
+                v_result_data.backtest_percent_yn   =   p_param.p_percent_yn;
+            }
+
+        
+            v_result_data.benchmark     =   fn_convert_data({
+                    p_data              :   p_param.p_anal.benchmark
+                ,   p_data01            :   v_data.benchmark02
+                ,   p_type              :   p_param.p_type
+                ,   p_percent_yn        :   p_param.p_percent_yn
+                ,   p_show_percent_yn   :   "0"
+                ,   p_show_data01_yn    :   "0"
+                ,   p_position          :   p_param.p_position
+            });
+
+            v_result_data.benchmark_year            =   "";
+            if( v_data.benchmark02 != "" ) {
+                v_result_data.benchmark_year        =   v_data.benchmark02;
+            }
+
+            v_result_data.benchmark_percent_yn      =   "0";
+            if( typeof p_param.p_percent_yn != "undefined" ) {
+                v_result_data.benchmark_percent_yn  =   p_param.p_percent_yn;
+            }
+
+            p_param.p_arr_analyze_db.push( v_result_data );
+        }
+        /* arr_analyze_db   END */
+
+
     }
 /*  analyze     END */
-
-
-/* arr_analyze_db   START */
-    if( p_param.p_arr_analyze != null ) {
-
-        v_result_data       =   Object.assign( {}, v_data );
-
-        v_result_data.title_anal_id     =   "";
-        if( p_param.p_order_no > 0 ) {
-            v_result_data.title_anal_id =   v_result_data.anal_title;
-        }
-
-        v_result_data.title_order_no    =   p_param.p_order_no;
-        
-        v_result_data.backtest      =   fn_convert_data({
-                p_data              :   p_param.p_anal.backtest
-            ,   p_data01            :   v_data.backtest02
-            ,   p_type              :   p_param.p_type
-            ,   p_percent_yn        :   p_param.p_percent_yn
-            ,   p_show_percent_yn   :   "0"
-            ,   p_show_data01_yn    :   "0"
-            ,   p_position          :   2
-        });
-
-        v_result_data.backtest_year             =   "";
-        if( v_data.backtest02 != "" ) {
-            v_result_data.backtest_year         =   v_data.backtest02;
-        }
-
-        v_result_data.backtest_percent_yn       =   "0";
-        if( typeof p_param.p_percent_yn != "undefined" ) {
-            v_result_data.backtest_percent_yn   =   p_param.p_percent_yn;
-        }
-
-    
-        v_result_data.benchmark     =   fn_convert_data({
-                p_data              :   p_param.p_anal.benchmark
-            ,   p_data01            :   v_data.benchmark02
-            ,   p_type              :   p_param.p_type
-            ,   p_percent_yn        :   p_param.p_percent_yn
-            ,   p_show_percent_yn   :   "0"
-            ,   p_show_data01_yn    :   "0"
-            ,   p_position          :   2
-        });
-
-        v_result_data.benchmark_year            =   "";
-        if( v_data.benchmark02 != "" ) {
-            v_result_data.benchmark_year        =   v_data.benchmark02;
-        }
-
-        v_result_data.benchmark_percent_yn      =   "0";
-        if( typeof p_param.p_percent_yn != "undefined" ) {
-            v_result_data.benchmark_percent_yn  =   p_param.p_percent_yn;
-        }
-
-        p_param.p_arr_analyze_db.push( v_result_data );
-    }
-/* arr_analyze_db   END */
 
 }
 
