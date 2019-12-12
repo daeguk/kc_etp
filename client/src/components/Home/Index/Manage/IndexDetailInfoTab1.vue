@@ -54,7 +54,7 @@
                                     <v-card-title>● {{etp_item.F16002}}</v-card-title>
                                     <v-layout row>
                                         <v-flex xs6>추적배수</v-flex>
-                                        <v-flex xs6 class="text_r"></v-flex>
+                                        <v-flex xs6 class="text_r">{{ etp_item.F18453 }}</v-flex>
                                     </v-layout>
                                     <v-layout row>
                                         <v-flex xs6>시가총액</v-flex>
