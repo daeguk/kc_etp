@@ -146,11 +146,21 @@ export default {
               if(response.data.results.length > 0) {
                 if( vm.dterm == 0 || vm.dterm == 1 ) {
                     vm.intra_data   =   [];
-                    vm.intra_data   =   response.data.results.reverse();
+                    // vm.intra_data   =   response.data.results.reverse();
+
+                    vm.intra_data   =    _.orderBy( response.data.results, [
+                        "trd_hh"
+                    ], ["asc"]);
+
                     vm.draw_intra(vm.dmode);
                 }else{
                     vm.hist_data    =   [];
-                    vm.hist_data    =   response.data.results.reverse();
+                    // vm.hist_data    =   response.data.results.reverse();
+
+                    vm.hist_data   =    _.orderBy( response.data.results, [
+                        "trd_dd"
+                    ], ["asc"]);
+
                     vm.draw_hist(vm.dmode);
                 }
               }else {
