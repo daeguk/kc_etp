@@ -167,12 +167,12 @@ var uploadPdf = function(req, res) {
                             simulationUpload.fn_excel_record_check( v_param, data2 );
 
 
-                            if( data.F16316 != "" && data.F16316 == data2.F16316 ) {
+                            if( data.F16316 != "" && data2.F16316 != "" && data.F16316 == data2.F16316 ) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
                                 data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목코드 컬럼이 중복 존재합니다.";
-                            }else if( data.F16004 != "" && data.F16004 == data2.F16004 ) {
+                            }else if( data.F16004 != "" && data2.F16004 != "" && data.F16004 == data2.F16004 ) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
