@@ -3932,7 +3932,7 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
             ,   p_percent_yn        :   p_param.p_percent_yn
             ,   p_show_percent_yn   :   "0"
             ,   p_show_data01_yn    :   "0"
-            ,   p_position          :   p_param.p_position
+            ,   p_position          :   2
         });
 
         v_result_data.backtest_year             =   "";
@@ -3953,7 +3953,7 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
             ,   p_percent_yn        :   p_param.p_percent_yn
             ,   p_show_percent_yn   :   "0"
             ,   p_show_data01_yn    :   "0"
-            ,   p_position          :   p_param.p_position
+            ,   p_position          :   2
         });
 
         v_result_data.benchmark_year            =   "";
@@ -3965,10 +3965,11 @@ function    fn_set_analyze_data( p_param={ p_arr_analyze : [], p_arr_analyze_db:
         if( typeof p_param.p_percent_yn != "undefined" ) {
             v_result_data.benchmark_percent_yn  =   p_param.p_percent_yn;
         }
+
+        p_param.p_arr_analyze_db.push( v_result_data );
     }
 /* arr_analyze_db   END */
 
-    p_param.p_arr_analyze_db.push( v_result_data );            
 }
 
 
