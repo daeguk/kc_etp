@@ -2240,6 +2240,8 @@ var getBacktestResult = function(req, res) {
 
                                 if( typeof paramData.time_series_upload_yn != "undefined" && paramData.time_series_upload_yn == "1" ) {
 
+                                    resultMsg.simul_result_mast =   msg.v_simul_mast;
+
                                     callback( null, msg );
                                 }
                                 else{

@@ -1649,6 +1649,10 @@ var uploadTimeSeries = function(req, res) {
                         v_param.p_index             =   i;
                         fn_excel_record_check( v_param, data );
 
+                        if( !v_param.p_record_check ) {
+                            break;
+                        }                        
+
 
                         /* 날짜 */
                         dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
@@ -1664,16 +1668,17 @@ var uploadTimeSeries = function(req, res) {
 
                             /* 엑셀 레코드 밸리데이션을 수행한다. */
                             v_param.p_index             =   j;
-                            fn_excel_record_check( v_param, data2 );                            
+                            fn_excel_record_check( v_param, data2 );
 
-                            if( v_param.p_record_check ) {
+                            if( !v_param.p_record_check ) {
+                                break;
+                            }                            
 
-                                if( data.date == data2.date ) {
-                                    v_param.p_record_check  =   false;
+                            if( data.date == data2.date ) {
+                                v_param.p_record_check  =   false;
 
-                                    data.result             =   false;
-                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼이 중복 존재합니다.";
-                                }
+                                data.result             =   false;
+                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼이 중복 존재합니다.";
                             }
                         }
 
@@ -1903,6 +1908,7 @@ var uploadTimeSeries = function(req, res) {
 											
 
 											if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                                resultMsg.record_check  =   false;
 												resultMsg.result = false;
 												
 												return  callback(resultMsg);
