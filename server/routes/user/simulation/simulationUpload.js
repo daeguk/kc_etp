@@ -921,13 +921,13 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                     p_param.p_record_check      =   false;
                 }else{
 
-                    /* INDEX_RATE 값이 비이 있을시 0으로 디폴트값 설정 */
+                    /* PRICE 값이 비이 있을시 0으로 디폴트값 설정 */
                     if( typeof p_record_data.col02 == "undefined" || p_record_data.col02 == "" ) {
                         p_record_data.col02 =   "0";
                     }
 
-                    /* INDEX_RATE 체크 */
-                    p_param.p_column            =   "INDEX_RATE";
+                    /* PRICE 체크 */
+                    p_param.p_column            =   "PRICE";
                     p_param.p_data              =   p_record_data.col02;
                     fn_excel_column_check( p_param, p_record_data );
 
@@ -1374,13 +1374,13 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
 
                         break;
 
-                case    "INDEX_RATE"  :
+                case    "PRICE"  :
 
                         if (typeof p_param.p_data == "undefined") {
                             p_param.p_column_check          =   false;
 
                             p_record_data.result            =   false;
-                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼이 존재하지 않습니다.";
+                            p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] PRICE 컬럼이 존재하지 않습니다.";
 
                         }else{
                         
@@ -1391,13 +1391,13 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                                     p_param.p_column_check          =   false;
 
                                     p_record_data.result            =   false;
-                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 숫자형만 입력해 주세요.";                                
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] PRICE 컬럼은 숫자형만 입력해 주세요.";                                
                                 }
                             }catch(e) {
                                 p_param.p_column_check          =   false;
 
                                 p_record_data.result            =   false;
-                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 숫자형만 입력해 주세요.";
+                                p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] PRICE 컬럼은 숫자형만 입력해 주세요.";
                             }
 
                             if( p_param.p_column_check ) {
@@ -1405,7 +1405,7 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                                     p_param.p_column_check          =   false;
 
                                     p_record_data.result            =   false;
-                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] INDEX_RATE 컬럼은 0 ~ 10000 사이만 입력해 주세요.";
+                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] PRICE 컬럼은 0 ~ 10000 사이만 입력해 주세요.";
                                 }
                             }
                         }

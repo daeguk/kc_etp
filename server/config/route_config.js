@@ -56,7 +56,8 @@ module.exports = {
     { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfEmergencyHistNow', method: 'getEtpOperPdfEmergencyHistNow', session: 'check', type: 'post' },
     { file: './user/etp/etpOper', path: '/user/etp/getTmPdfBaiscMaxF12506', method: 'getTmPdfBaiscMaxF12506', session: 'uncheck', type: 'post' },
     { file: './user/etp/etpOper', path: '/user/etp/getNowDate', method: 'getNowDate', session: 'check', type: 'post' },
-    { file: './user/etp/etpOper', path: '/user/etp/getExistsNowPdfBaisc', method: 'getExistsNowPdfBaisc', session: 'check', type: 'post' },        
+    { file: './user/etp/etpOper', path: '/user/etp/getExistsNowPdfBaisc', method: 'getExistsNowPdfBaisc', session: 'check', type: 'post' },
+    { file: './user/etp/etpOper', path: '/user/etp/getPdfSampleFileDown', method: 'getPdfSampleFileDown', session: 'check', type: 'get' },
     { file: './user/etp/etpUpload', path: '/user/etp/uploadPdf', method: 'uploadPdf', session: 'check', type: 'post' },
     
 
@@ -186,6 +187,9 @@ module.exports = {
     { file: './user/simulation/simulation'          , path: '/user/simulation/getUserListSharedInGroup'         , method: 'getUserListSharedInGroup'            , session: 'check', type: 'post' },     // 공유된 공유자 조회 ( 결과화면-그룹비교 )
     { file: './user/simulation/simulation'          , path: '/user/simulation/applyShareUserInResultGroup'      , method: 'applyShareUserInResultGroup'         , session: 'check', type: 'post' },     // 공유 대상자 적용   ( 결과화면 )
     { file: './user/simulation/simulation'          , path: '/user/simulation/applyShareUserRevokeInGroup'      , method: 'applyShareUserRevokeInGroup'         , session: 'check', type: 'post' },     // 공유 대상자 해제   ( 결과화면-그룹비교 )
+    { file: './user/simulation/simulation'          , path: '/user/simulation/getTimeSeriesSampleFileDown'      , method: 'getTimeSeriesSampleFileDown'         , session: 'check', type: 'get'  },     // 시계열 샘플파일 다운로드
+    { file: './user/simulation/simulation'          , path: '/user/simulation/getRebalancingSampleFileDown'     , method: 'getRebalancingSampleFileDown'        , session: 'check', type: 'get'  },     // 리밸런싱 샘플파일 다운로드
+    { file: './user/simulation/simulation'          , path: '/user/simulation/getPortfolioSampleFileDown'       , method: 'getPortfolioSampleFileDown'          , session: 'check', type: 'get'  },     // 포트폴리오 샘플파일 다운로드
 
     { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/saveBacktestResult'               , method: 'saveBacktestResult'                  , session: 'check', type: 'post' },     // 백테스트 결과 저장
     { file: './user/simulation/simulationBacktest'  , path: '/user/simulation/getBacktestResult'                , method: 'getBacktestResult'                   , session: 'check', type: 'post' },     // 백테스트 결과 조회

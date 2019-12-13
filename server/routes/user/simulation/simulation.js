@@ -9112,6 +9112,100 @@ var fn_getByte  =   function( str ) {
 
 }
 
+/*
+*   시계열 샘플파일 다운로드를 수행한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var getTimeSeriesSampleFileDown = function(req, res) {
+    log.debug('simulation.getTimeSeriesSampleFileDown 호출됨.');
+
+    var paramData = {};
+    try {
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var savedFileNm = "timeseries_sample.xlsx";
+        var file = config.sampleDownFolder + "/" + savedFileNm;
+
+        log.debug( "#### getTimeSeriesSampleFileDown START ###", file, "#### getTimeSeriesSampleFileDown SEND ###" );
+
+        res.download( file, savedFileNm, function( err) {
+            log.error(paramData, err);
+        });
+        
+    } catch (err) {
+        log.error(paramData, err);
+    }
+};
+
+
+/*
+*   리밸런싱 샘플파일 다운로드를 수행한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var getRebalancingSampleFileDown = function(req, res) {
+    log.debug('simulation.getRebalancingSampleFileDown 호출됨.');
+
+    var paramData = {};
+    try {
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var savedFileNm = "rebalancing_sample.xlsx";
+        var file = config.sampleDownFolder + "/" + savedFileNm;
+
+        log.debug( "#### getRebalancingSampleFileDown START ###", file, "#### getRebalancingSampleFileDown SEND ###" );
+
+        res.download( file, savedFileNm, function( err) {
+            log.error(paramData, err);
+        });
+        
+    } catch (err) {
+        log.error(paramData, err);
+    }
+};
+
+/*
+*   포트폴리오 샘플파일 다운로드를 수행한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var getPortfolioSampleFileDown = function(req, res) {
+    log.debug('simulation.getPortfolioSampleFileDown 호출됨.');
+
+    var paramData = {};
+    try {
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var savedFileNm = "portfolio_sample.xlsx";
+        var file = config.sampleDownFolder + "/" + savedFileNm;
+
+        log.debug( "#### getPortfolioSampleFileDown START ###", file, "#### getPortfolioSampleFileDown SEND ###" );
+
+        res.download( file, savedFileNm, function( err) {
+            log.error(paramData, err);
+        });
+        
+    } catch (err) {
+        log.error(paramData, err);
+    }
+};
+
 
 module.exports.getInitGrpCd = getInitGrpCd;
 module.exports.getNextScenName = getNextScenName;
@@ -9142,3 +9236,6 @@ module.exports.getUserListForShareInResultGroup = getUserListForShareInResultGro
 
 module.exports.getUserListSharedInGroup = getUserListSharedInGroup;
 module.exports.applyShareUserRevokeInGroup = applyShareUserRevokeInGroup;
+module.exports.getTimeSeriesSampleFileDown = getTimeSeriesSampleFileDown;
+module.exports.getRebalancingSampleFileDown = getRebalancingSampleFileDown;
+module.exports.getPortfolioSampleFileDown = getPortfolioSampleFileDown;

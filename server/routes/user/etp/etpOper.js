@@ -2815,6 +2815,37 @@ var getExistsNowPdfBaisc = function(req, res) {
     }
 }
 
+/*
+*   PDF 샘플파일 다운로드를 수행한다.
+*   2019-09-06  bkLove(촤병국)
+*/
+var getPdfSampleFileDown = function(req, res) {
+    logg.debug('etpOper.getPdfSampleFileDown 호출됨.');
+
+    var paramData = {};
+    try {
+
+        paramData.user_id = ( req.session.user_id ? req.session.user_id : "" );
+        paramData.inst_cd = ( req.session.inst_cd ? req.session.inst_cd : "" );
+        paramData.type_cd = ( req.session.type_cd ? req.session.type_cd : "" );
+        paramData.large_type = ( req.session.large_type ? req.session.large_type : "" );
+        paramData.krx_cd = ( req.session.krx_cd ? req.session.krx_cd : "" );
+
+
+        var savedFileNm = "pdf_sample.xlsx";
+        var file = config.sampleDownFolder + "/" + savedFileNm;
+
+        logg.debug( "#### getPdfSampleFileDown START ###", file, "#### getPdfSampleFileDown SEND ###" );
+
+        res.download( file, savedFileNm, function( err) {
+            logg.error(paramData, err);
+        });
+        
+    } catch (err) {
+        logg.error(paramData, err);
+    }
+};
+
 module.exports.getEtpOperInfo = getEtpOperInfo;
 module.exports.getEtpOperIndex = getEtpOperIndex;
 module.exports.getEtpOperIndexOversea = getEtpOperIndexOversea;
@@ -2833,3 +2864,4 @@ module.exports.getEtpOperPdfEmergencyHistNow = getEtpOperPdfEmergencyHistNow;
 module.exports.getTmPdfBaiscMaxF12506 = getTmPdfBaiscMaxF12506;
 module.exports.getNowDate = getNowDate;
 module.exports.getExistsNowPdfBaisc = getExistsNowPdfBaisc;
+module.exports.getPdfSampleFileDown = getPdfSampleFileDown;
