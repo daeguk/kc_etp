@@ -900,7 +900,7 @@ var uploadPdf = function(req, res) {
                                             for( var i=0; i < v_arr_insert_check.length; i++ ) {
                                                 var item    =   v_arr_insert_check[i];
 
-                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] 종목코드를 확인해 주세요." } );
+                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] 구성종목코드를 확인해 주세요." } );
 
                                                 /* 10 개 까지만 결과정보에 보관한다. */
                                                 if( resultMsg.errorList.length == 10  ) {
