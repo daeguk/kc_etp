@@ -950,6 +950,26 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                     p_record_data.col01 =   "";
                 }
 
+                if( typeof p_record_data.col02 == "undefined" ) {
+                    p_record_data.col02 =   "";
+                }
+
+                /* CU shrs 값이 비이 있을시 0으로 디폴트값 설정 */
+                if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
+                    p_record_data.col03 =   "0";
+                }
+
+                /* 액면금액 값이 비이 있을시 0으로 디폴트값 설정 */
+                if( typeof p_record_data.col04 == "undefined" || p_record_data.col04 == "" ) {
+                    p_record_data.col04 =   "0";
+                }
+
+                if( typeof p_record_data.col05 == "undefined" ) {
+                    p_record_data.col05 =   "";
+                }
+
+
+
                 /* ETF 종목코드 체크 */
                 p_param.p_column            =   "F16012";
                 p_param.p_column_name       =   "ETF 종목코드";
@@ -959,10 +979,6 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                 if( !p_param.p_column_check ) {
                     p_param.p_record_check      =   false;
                 }else{
-
-                    if( typeof p_record_data.col02 == "undefined" ) {
-                        p_record_data.col02 =   "";
-                    }
 
                     /* 구성종목코드 체크 */
                     p_param.p_column            =   "F16316";
@@ -974,11 +990,6 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                         p_param.p_record_check      =   false;
                     }else{
 
-                        /* CU shrs 값이 비이 있을시 0으로 디폴트값 설정 */
-                        if( typeof p_record_data.col03 == "undefined" || p_record_data.col03 == "" ) {
-                            p_record_data.col03 =   "0";
-                        }
-
                         /* CU 체크 */
                         p_param.p_column            =   "QTY";
                         p_param.p_column_name       =   "CU당 수량";
@@ -989,11 +1000,6 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
                             p_param.p_record_check      =   false;
                         }else{
 
-                            /* 액면금액 값이 비이 있을시 0으로 디폴트값 설정 */
-                            if( typeof p_record_data.col04 == "undefined" || p_record_data.col04 == "" ) {
-                                p_record_data.col04 =   "0";
-                            }
-
                             /* 액면금액 체크 */
                             p_param.p_column            =   "QTY";
                             p_param.p_column_name       =   "액면금액";
@@ -1002,11 +1008,7 @@ function    fn_excel_record_check( p_param={ p_column_check : true, p_record_che
 
                             if( !p_param.p_column_check ) {
                                 p_param.p_record_check      =   false;
-                            }else{
-
-                                if( typeof p_record_data.col05 == "undefined" ) {
-                                    p_record_data.col05 =   "";
-                                }                                
+                            }else{                            
 
                                 /* CODE 명 체크 */
                                 p_param.p_column            =   "CODE_NAME";
