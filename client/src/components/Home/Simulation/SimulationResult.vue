@@ -2008,7 +2008,7 @@ export default {
                     });
                 }
 
-                /* 시계열 분석 */
+                /* 포트폴리오 분석 */
                 async function    step5() {
 
                     return  await new Promise(function(resolve, reject) {
@@ -2021,7 +2021,7 @@ export default {
 
                             }else{
 
-                                excelInfo.sheetNm           =   "시계열 분석";
+                                excelInfo.sheetNm           =   "포트폴리오 분석";
 
                                 var arr_excel_jongmok_header    =   [
                                         {   "col_id"    :   "fmt_F12506_S"          ,   "width" :   15  ,   "hidden" : false    ,   "title" :   "시작일"        }
