@@ -3312,6 +3312,8 @@ export default {
 
                 vm.fn_showProgress( true );
 
+                vm.rebalance_date           =   "";
+                vm.old_rebalance_date       =   "";
 
                 util.axiosCall(
                         {

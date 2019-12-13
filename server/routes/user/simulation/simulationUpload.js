@@ -186,6 +186,10 @@ var uploadPortfolio = function(req, res) {
                         fn_excel_record_check( v_param, data );
 
 
+                        if( !v_param.p_record_check ) {
+                            break;
+                        }
+
                         /* 리밸런싱 날자가 존재하는 엑셀 파일인 경우 */
                         if( v_param.p_rebalance_file_yn == "1" ) {
 
@@ -221,6 +225,10 @@ var uploadPortfolio = function(req, res) {
                             fn_excel_record_check( v_param, data2 );                            
 
 
+                            if( !v_param.p_record_check ) {
+                                break;
+                            }
+
                             /* 리밸런싱 샘플 파일이 아닌 경우 - 엑셀 파일에 코드만 중복존재하는지 체크 */
                             if( v_param.p_rebalance_file_yn == "0" ) {
                                 if( data.code == data2.code ) {
@@ -239,6 +247,10 @@ var uploadPortfolio = function(req, res) {
                                     data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼 과 CODE 컬럼이 중복 존재합니다.";
                                 }
                             }
+
+                            if( !v_param.p_record_check ) {
+                                break;
+                            }                            
                         }
 
                         data.row_no = i + v_param.p_startIndex + 1;
@@ -417,6 +429,7 @@ var uploadPortfolio = function(req, res) {
                                             
 
                                             if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                                resultMsg.record_check  =   false;
                                                 resultMsg.result = false;
                                                 
                                                 return  callback(resultMsg);
@@ -586,6 +599,7 @@ var uploadPortfolio = function(req, res) {
                                      **********************************************************************************************/
 
                                         if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                            resultMsg.record_check  =   false;
                                             resultMsg.result = false;
                                             
                                             return  callback(resultMsg);
@@ -732,6 +746,7 @@ var uploadPortfolio = function(req, res) {
                                          **********************************************************************************************/
 
                                             if( resultMsg.errorList && resultMsg.errorList.length > 0 ) {
+                                                resultMsg.record_check  =   false;
                                                 resultMsg.result = false;
                                                 
                                                 return  callback(resultMsg);
