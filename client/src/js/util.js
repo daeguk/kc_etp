@@ -449,7 +449,8 @@ var util = {
                         break;
 
                 case    "params"    :
-                        axiosParam.params       =   p_param.data;
+						axiosParam.data         =   {};
+                        axiosParam.data.params	=   p_param.data;
                         break;
             }
 
