@@ -113,10 +113,10 @@
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>iNAV</v-flex>
-                                    <v-flex xs6 class="text_r text_blue">
+                                    <v-flex xs6 class="text_r">
                                         {{ new Intl.NumberFormat().format( etpBasic.F15301  ) /* ETP지표가치(NAV/IV) */ }}
                                         <br>
-                                        <span>{{ etpBasic.F30818  /* 장중지표가치(iNAV/iIV)등락율 */ }}%</span>
+                                        <span :class="etpBasic.F30818 >= 0 ? 'text_red' : 'text_blue' " >{{ etpBasic.F30818  /* 장중지표가치(iNAV/iIV)등락율 */ }}%</span>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout row>
@@ -137,10 +137,10 @@
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs6>지수현재가</v-flex>
-                                    <v-flex xs6 class="text_r text_blue">
+                                    <v-flex xs6 class="text_r">
                                         {{ new Intl.NumberFormat().format( etpBasic.F15318 )    /* ETP기초지수현재가 */ }}
                                         <br>
-                                        <span>{{ etpBasic.F30823    /* ETF관련지수등락율 */ }}%</span>
+                                        <span :class="etpBasic.F30823 >= 0 ? 'text_red' : 'text_blue' ">{{ etpBasic.F30823    /* ETF관련지수등락율 */ }}%</span>
                                     </v-flex>
                                 </v-layout>
                             </v-card>
