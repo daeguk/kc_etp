@@ -449,8 +449,12 @@ var util = {
                         break;
 
                 case    "params"    :
-						axiosParam.data         =   {};
-                        axiosParam.data.params	=   p_param.data;
+                        if( p_param.method == "get" ) {
+                            axiosParam.params	    =   p_param.data;
+                        }else if( p_param.method == "post" ){
+                            axiosParam.data         =   {};
+                            axiosParam.data.params	=   p_param.data;
+                        }
                         break;
             }
 
