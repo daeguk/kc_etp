@@ -58,7 +58,7 @@
                         </v-layout>
                         <v-layout row>
                             <v-flex xs3>지수산출기관</v-flex>
-                            <v-flex xs7 class="text_r">{{ indexBasic.index_cal_method   /* 지수산출방식 */ }}</v-flex>
+                            <v-flex xs7 class="text_r">{{ etpBasic.agency_name   /* Agency Name */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs3>기준지수</v-flex>

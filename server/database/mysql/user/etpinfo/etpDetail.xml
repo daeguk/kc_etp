@@ -15,6 +15,16 @@
                 ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_F16017          /* format 상장일 */
                 ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  F34239_pad          /* ETP기초지수MID */
                 ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code /* 환율 코드 */
+
+                ,   IFNULL (
+                            (
+                                SELECT  tm_indexagency_map.agency_name
+                                  FROM  tm_indexagency_map
+                                 WHERE  1 = 1
+                                  AND  tm_indexagency_map.type_cd   =   td_etp_basic.F34769     /* ETP지수산출기관코드 */
+                            )
+                        ,   '' 
+                    )                                                   AS  agency_name
           FROM  td_etp_basic
           LEFT OUTER JOIN td_etffor_mast ON (
                     td_etp_basic.F16012 = td_etffor_mast.ISIN_CODE
