@@ -22,11 +22,11 @@
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>CU수량</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F34515 ) /* ETF_1CU당금액 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ ["3", "4"].includes( etpBasic.F16493 ) ? "N/A" : new Intl.NumberFormat().format( etpBasic.F34515 ) /* ETF_1CU당금액 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>CU당 주식수</v-flex>
-                            <v-flex xs6 class="text_r">{{ new Intl.NumberFormat().format( etpBasic.F16499 ) /* ETF_CU구성단위 */ }}</v-flex>
+                            <v-flex xs6 class="text_r">{{ ["3", "4"].includes( etpBasic.F16493 ) ? "N/A" : new Intl.NumberFormat().format( etpBasic.F16499 ) /* ETF_CU구성단위 */ }}</v-flex>
                         </v-layout>
                         <v-layout row>
                             <v-flex xs6>상장주식수</v-flex>
