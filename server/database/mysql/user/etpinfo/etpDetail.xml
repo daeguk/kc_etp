@@ -851,6 +851,12 @@
                           FROM  td_etfpdf_basic
                          WHERE  F16012 = #{F16012}
                    )
+              AND  F16316  NOT IN
+                    (
+                <foreach    collection="arr_not_in_F16316"   item="item"    index="index"   separator=" ," >
+                    #{item.F16316}
+                </foreach>
+                    )
         )       sub
         INNER  JOIN (
           SELECT  SUM( ROUND(F34743 / 100, 2 ) )              AS  TOT_PERCNT
@@ -861,7 +867,13 @@
                         SELECT  MAX( F12506 )
                           FROM  td_etfpdf_basic
                          WHERE  F16012 = #{F16012}
-                   )            
+                   )
+              AND  F16316  NOT IN
+                    (
+                <foreach    collection="arr_not_in_F16316"   item="item"    index="index"   separator=" ," >
+                    #{item.F16316}
+                </foreach>
+                    )
         )       tot_sub
         ORDER  BY  sub.PERCNT / tot_sub.TOT_PERCNT     DESC
     </select>

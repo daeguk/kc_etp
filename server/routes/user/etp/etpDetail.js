@@ -359,6 +359,8 @@ var getEtpWeightList = function(req, res) {
     var pool = req.app.get("pool");
     var mapper = req.app.get("mapper");
     var paramData = req.query;
+
+    paramData.arr_not_in_F16316 =   [ { "F16316" : "CASH00000001" } ];      //  설정현금액(CASH00000001) 제외
     var stmt = mapper.getStatement('etpDetail', 'getEtpWeightList', paramData, { language: 'sql', indent: ' '});
     log.debug(stmt, paramData);
 
