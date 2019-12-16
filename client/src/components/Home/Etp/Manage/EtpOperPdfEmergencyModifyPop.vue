@@ -36,12 +36,13 @@
                                         >
                                             <v-icon small color="primary">add</v-icon>자산추가
                                         </v-btn>
-
+                                        <v-spacer></v-spacer>
+                                        <EtpOperPdfEmergencyExcelInfoPop></EtpOperPdfEmergencyExcelInfoPop>
                                         <v-btn
                                             depressed
-                                            outline
                                             small
                                             color="primary"
+                                            class="ml-0 mr-0"
                                             @click.stop="fn_fileClick();"
                                         >업로드</v-btn>
                                         <input
@@ -50,7 +51,7 @@
                                             ref="pdfUpload"
                                             style="display:none;"
                                         />                                
-                                        <EtpOperPdfEmergencyExcelInfoPop></EtpOperPdfEmergencyExcelInfoPop>
+                                        
                                         <!-- 개발 중복 자산추가 팝업 end -->
                                         
                                     </v-toolbar>
