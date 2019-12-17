@@ -2240,7 +2240,7 @@ strlen : 202 (window : 202, linux : 201)
     }
     sms.smsSend(0, msg)
   } catch (error) {
-    logg.error(err);
+    logg.error(error);
   }
 }
 
