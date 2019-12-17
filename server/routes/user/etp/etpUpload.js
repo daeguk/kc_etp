@@ -50,6 +50,9 @@ var uploadPdf = function(req, res) {
         user_id: req.session.user_id,
     };
 
+    /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 */
+    var v_arr_insert_dest   =   [ "KR1", "KR3", "KR6", "CASH00000001", "KRD010010001", "USDZZ0000001", "JPYZZ0000001" ];
+
     var storage = multer.diskStorage({
 
         // 서버에 저장할 폴더
@@ -891,19 +894,17 @@ var uploadPdf = function(req, res) {
 
                                     }else{
 
-                                        /* 등록건이 "KR1", "KR3", "KR6" 으로 시작하지 않는 경우 */
+                                        /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
                                         v_arr_insert_check   =   _.filter( dataLists, function(o) {
                                             return      ( typeof o.status == "undefined" || o.status == "" ) 
-                                                    &&  (       ![ "CASH00000001" ].includes( o.F16316 )
-                                                            &&  ![ "KR1", "KR3", "KR6" ].includes( o.F16316.substr(0,3) )
-                                                    );
+                                                    &&  !_.some( _.map( v_arr_insert_dest, w => o.F16316.includes(w) ) )
                                         });
                                         if( v_arr_insert_check && v_arr_insert_check.length > 0 ) {
 
                                             for( var i=0; i < v_arr_insert_check.length; i++ ) {
                                                 var item    =   v_arr_insert_check[i];
 
-                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] '" + o.F16316 + "'를 찾을 수 없습니다. 입력값을 다시확인해주세요." } );
+                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] '" + item.F16316 + "'를 찾을 수 없습니다. 입력값을 다시확인해주세요." } );
 
                                                 /* 10 개 까지만 결과정보에 보관한다. */
                                                 if( resultMsg.errorList.length == 10  ) {

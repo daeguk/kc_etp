@@ -398,6 +398,9 @@ import EtpOperPdfEmergencyExcelInfoPop  from "@/components/Home/Etp/Manage/EtpOp
 
 var tblEmergeny01 = null;
 
+/* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 */
+var v_arr_insert_dest   =   [ "KR1", "KR3", "KR6", "CASH00000001", "KRD010010001", "USDZZ0000001", "JPYZZ0000001" ];
+
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
@@ -673,7 +676,8 @@ export default {
                             }
                         }
 
-                        if( ![ "CASH00000001" ].includes( dataJson.codeVal ) && ![ "KR1", "KR3", "KR6" ].includes( dataJson.codeVal.substr(0,3) ) ) {
+                        /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
+                        if( !_.some( _.map( v_arr_insert_dest, o => dataJson.codeVal.includes(o) ) )  ) {
 
                             if (await vm.$refs.confirm2.open(
                                     '확인',
