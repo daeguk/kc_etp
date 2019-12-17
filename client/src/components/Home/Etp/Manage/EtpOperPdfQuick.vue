@@ -277,11 +277,13 @@ console.log( vm.pdfData );
                 /* 0-PDF, 1-지수 수익율 */
                 if( vm.pdfData.F33929 == "0" ) {
                     gubun   =   "7";
+
+                    vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
                 }else if( vm.pdfData.F33929 == "1" ) {
                     gubun   =   "8";
-                }
 
-                vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
+                    vm.$emit( "fn_showDetailPdf", gubun, vm.pdfData );
+                }
             }
             
         },
