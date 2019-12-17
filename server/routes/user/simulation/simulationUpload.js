@@ -1282,12 +1282,7 @@ function    fn_excel_column_check( p_param={ p_column_check : true, p_column : "
                             }
 
                             if( p_param.p_column_check ) {
-                                if ( Number( p_param.p_data ) < 0 ) {
-                                    p_param.p_column_check          =   false;
-
-                                    p_record_data.result            =   false;
-                                    p_record_data.msg               =   "[" + (p_param.p_index + p_param.p_startIndex + 1) + " 행] " + v_column_name + " 컬럼은 0 보다 커야 합니다.";
-                                }else if ( String( p_param.p_data ).length > 15 ) {
+                                if ( String( p_param.p_data ).length > 15 ) {
                                     p_param.p_column_check          =   false;
 
                                     p_record_data.result            =   false;
