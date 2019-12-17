@@ -302,9 +302,13 @@ export default {
                 vm.etpBasic     =   table01.rows().data()[0];
               }
 //            vm.etpBasic     =   dataList[0];
-              vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
+
               vm.result_cnt   =   util.formatInt( dataList.length );
-              vm.$emit( "fn_setFirstData", vm.etpBasic );
+
+              if( typeof vm.etpBasic != "undefined" ) {
+                vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
+                vm.$emit( "fn_setFirstData", vm.etpBasic );
+              }
             }
             vm.$emit( "fn_setStateInfo", vm.stateInfo );
           }
