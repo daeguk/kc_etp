@@ -144,6 +144,10 @@ var uploadPortfolio = function(req, res) {
                 resultMsg.result        =   false;
                 resultMsg.msg           =   "레코드는 1건 이상 존재해야 합니다.";
 
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
             } else {
 
                 /* 
@@ -295,10 +299,6 @@ var uploadPortfolio = function(req, res) {
 
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
             if ( !v_param.p_count_check || !v_param.p_record_check ) {
-
-                if( dataLists.length > 0 ) {
-                    dataLists.splice( 0, 1 );
-                }                
 
                 if( !v_param.p_count_check ) {
                     resultMsg.errorList.push( { msg: resultMsg.msg } );
@@ -1609,7 +1609,7 @@ var uploadTimeSeries = function(req, res) {
                 ,   p_record_check      :   true    /* 엑셀 레코드 체크 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   1
+                ,   p_startIndex        :   0
                 ,   p_time_series_yn    :   "1"
             };                
 
@@ -1620,77 +1620,58 @@ var uploadTimeSeries = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length == 0) {
+            if (dataLists.length <= 1 ) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
                 resultMsg.msg           =   "레코드는 1건 이상 존재해야 합니다.";
 
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
             } else {
 
-                if( dataLists.length == 1 ) {
+                /* 비어 있는 열이 존재하는지 체크 */
+                if(     ( typeof dataLists[0].col01 == "undefined" || dataLists[0].col01 == "" )
+                    ||  ( typeof dataLists[0].col02 == "undefined" || dataLists[0].col02 == "" )
+                ) {
+                    v_param.p_record_check   =   false;
 
-                    v_param.p_index             =   0;
+                    resultMsg.result        =   false;
+                    resultMsg.msg           =   "비어 있는 열이 존재합니다. 다시 확인 해 주세요.";
 
-                    /* 엑셀 레코드 밸리데이션을 수행한다. */
-                    fn_excel_record_check( v_param, dataLists[0] );
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }
+
                 }else{
+                    
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }                    
 
-                    var dateCheck       =   [];
-                    for (var i = 0; i < dataLists.length-1; i++) {
-                        var data = dataLists[i];
+
+                    if( dataLists.length == 1 ) {
+
+                        v_param.p_index             =   0;
 
                         /* 엑셀 레코드 밸리데이션을 수행한다. */
-                        v_param.p_index             =   i;
-                        fn_excel_record_check( v_param, data );
+                        fn_excel_record_check( v_param, dataLists[0] );
+                    }else{
 
-                        if( !v_param.p_record_check ) {
-                            break;
-                        }                        
-
-
-                        /* 날짜 */
-                        dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
-                            return  item.date == String( data.date );
-                        });
-
-                        if( !dateCheck || dateCheck.length == 0 ) {
-                            arrExcelDate.push( { date : data.date } );
-                        }
-
-                        for (var j = i+1; j < dataLists.length; j++) {
-                            var data2 = dataLists[j];
+                        var dateCheck       =   [];
+                        for (var i = 0; i < dataLists.length-1; i++) {
+                            var data = dataLists[i];
 
                             /* 엑셀 레코드 밸리데이션을 수행한다. */
-                            v_param.p_index             =   j;
-                            fn_excel_record_check( v_param, data2 );
+                            v_param.p_index             =   i;
+                            fn_excel_record_check( v_param, data );
 
                             if( !v_param.p_record_check ) {
                                 break;
-                            }                            
+                            }                        
 
-                            if( data.date == data2.date ) {
-                                v_param.p_record_check  =   false;
-
-                                data.result             =   false;
-                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼이 중복 존재합니다.";
-                            }
-                        }
-
-                        data.row_no         =   i + v_param.p_startIndex + 1;
-                        data.rebalancing    =   "0";                /* 리밸런싱 여부(Y,N)-COM010 */
-                        data.F15028_S       =   0;                  /* 기준시총 */
-                        data.F15028_C       =   0;                  /* 비교시총 */
-
-                        /* 마지막 전 인덱스인 경우 */
-                        if( i == dataLists.length-2 ) {
-
-                            /* 마지막 레코드에 row_no 추가 */
-                            data                =   dataLists[i+1];
-                            data.row_no         =   i + v_param.p_startIndex + 2;
-                            data.rebalancing    =   "0";            /* 리밸런싱 여부(Y,N)-COM010 */
-                            data.F15028_S       =   0;              /* 기준시총 */
-                            data.F15028_C       =   0;              /* 비교시총 */
 
                             /* 날짜 */
                             dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
@@ -1699,6 +1680,50 @@ var uploadTimeSeries = function(req, res) {
 
                             if( !dateCheck || dateCheck.length == 0 ) {
                                 arrExcelDate.push( { date : data.date } );
+                            }
+
+                            for (var j = i+1; j < dataLists.length; j++) {
+                                var data2 = dataLists[j];
+
+                                /* 엑셀 레코드 밸리데이션을 수행한다. */
+                                v_param.p_index             =   j;
+                                fn_excel_record_check( v_param, data2 );
+
+                                if( !v_param.p_record_check ) {
+                                    break;
+                                }                            
+
+                                if( data.date == data2.date ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] DATE 컬럼이 중복 존재합니다.";
+                                }
+                            }
+
+                            data.row_no         =   i + v_param.p_startIndex + 1;
+                            data.rebalancing    =   "0";                /* 리밸런싱 여부(Y,N)-COM010 */
+                            data.F15028_S       =   0;                  /* 기준시총 */
+                            data.F15028_C       =   0;                  /* 비교시총 */
+
+                            /* 마지막 전 인덱스인 경우 */
+                            if( i == dataLists.length-2 ) {
+
+                                /* 마지막 레코드에 row_no 추가 */
+                                data                =   dataLists[i+1];
+                                data.row_no         =   i + v_param.p_startIndex + 2;
+                                data.rebalancing    =   "0";            /* 리밸런싱 여부(Y,N)-COM010 */
+                                data.F15028_S       =   0;              /* 기준시총 */
+                                data.F15028_C       =   0;              /* 비교시총 */
+
+                                /* 날짜 */
+                                dateCheck   =   arrExcelDate.filter( function( item, index, array ) {
+                                    return  item.date == String( data.date );
+                                });
+
+                                if( !dateCheck || dateCheck.length == 0 ) {
+                                    arrExcelDate.push( { date : data.date } );
+                                }
                             }
                         }
                     }

@@ -119,7 +119,7 @@ var uploadPdf = function(req, res) {
                 ,   p_record_check      :   true    /* 엑셀 레코드 체크 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   1
+                ,   p_startIndex        :   0
                 ,   p_pdf_yn            :   "1"
             };                
 
@@ -130,74 +130,100 @@ var uploadPdf = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length <= 0 ) {
+            if (dataLists.length <= 1 ) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
                 resultMsg.msg           =   "레코드는 1건 이상 존재해야 합니다.";
 
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
             } else {
 
+                /* 비어 있는 열이 존재하는지 체크 */
+                if(     ( typeof dataLists[0].col01 == "undefined" || dataLists[0].col01 == "" )
+                    ||  ( typeof dataLists[0].col02 == "undefined" || dataLists[0].col02 == "" )
+                    ||  ( typeof dataLists[0].col03 == "undefined" || dataLists[0].col03 == "" )
+                    ||  ( typeof dataLists[0].col04 == "undefined" || dataLists[0].col04 == "" )
+                    ||  ( typeof dataLists[0].col05 == "undefined" || dataLists[0].col05 == "" )
+                ) {
+                    v_param.p_record_check   =   false;
 
-                if( dataLists.length == 1 ) {
+                    resultMsg.result        =   false;
+                    resultMsg.msg           =   "비어 있는 열이 존재합니다. 다시 확인 해 주세요.";
 
-                    v_param.p_index         =   0;
-
-                    /* 엑셀 레코드 밸리데이션을 수행한다. */
-                    simulationUpload.fn_excel_record_check( v_param, dataLists[0] );
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }
+                    
                 }else{
 
-                    for (var i = 0; i < dataLists.length-1; i++) {
-                        var data = dataLists[i];
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }
+
+                    if( dataLists.length == 1 ) {
+
+                        v_param.p_index         =   0;
 
                         /* 엑셀 레코드 밸리데이션을 수행한다. */
-                        v_param.p_index         =   i;
-                        simulationUpload.fn_excel_record_check( v_param, data );
+                        simulationUpload.fn_excel_record_check( v_param, dataLists[0] );
+                    }else{
 
-
-                        if( data.col01 != paramData.F16012 ) {
-                            v_param.p_record_check  =   false;
-
-                            data.result             =   false;
-                            data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
-                        }
-
-                        for (var j = i+1; j < dataLists.length; j++) {
-                            var data2 = dataLists[j];
+                        for (var i = 0; i < dataLists.length-1; i++) {
+                            var data = dataLists[i];
 
                             /* 엑셀 레코드 밸리데이션을 수행한다. */
-                            v_param.p_index         =   j;
-                            simulationUpload.fn_excel_record_check( v_param, data2 );
+                            v_param.p_index         =   i;
+                            simulationUpload.fn_excel_record_check( v_param, data );
 
-
-                            if( data.F16316 != "" && data2.F16316 != "" && data.F16316 == data2.F16316 ) {
-                                v_param.p_record_check  =   false;
-
-                                data.result             =   false;
-                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 구성종목코드가 중복 존재합니다.";
-                            }else if( data.F16004 != "" && data2.F16004 != "" && data.F16004 == data2.F16004 ) {
-                                v_param.p_record_check  =   false;
-
-                                data.result             =   false;
-                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목명이 중복 존재합니다.";
-                            }
-                        }
-
-                        data.row_no = i + v_param.p_startIndex + 1;
-
-                        /* 마지막 전 인덱스인 경우 */
-                        if( i == dataLists.length-2 ) {
-
-                            /* 마지막 레코드에 row_no 추가 */
-                            data        =   dataLists[i+1];
-                            data.row_no =   i + v_param.p_startIndex + 2;
 
                             if( data.col01 != paramData.F16012 ) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
-                                data.msg                =   "[" + ( data.row_no ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
-                            }                            
+                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
+                            }
+
+                            for (var j = i+1; j < dataLists.length; j++) {
+                                var data2 = dataLists[j];
+
+                                /* 엑셀 레코드 밸리데이션을 수행한다. */
+                                v_param.p_index         =   j;
+                                simulationUpload.fn_excel_record_check( v_param, data2 );
+
+
+                                if( data.F16316 != "" && data2.F16316 != "" && data.F16316 == data2.F16316 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 구성종목코드가 중복 존재합니다.";
+                                }else if( data.F16004 != "" && data2.F16004 != "" && data.F16004 == data2.F16004 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목명이 중복 존재합니다.";
+                                }
+                            }
+
+                            data.row_no = i + v_param.p_startIndex + 1;
+
+                            /* 마지막 전 인덱스인 경우 */
+                            if( i == dataLists.length-2 ) {
+
+                                /* 마지막 레코드에 row_no 추가 */
+                                data        =   dataLists[i+1];
+                                data.row_no =   i + v_param.p_startIndex + 2;
+
+                                if( data.col01 != paramData.F16012 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( data.row_no ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
+                                }                            
+                            }
                         }
                     }
                 }
