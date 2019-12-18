@@ -14,7 +14,7 @@ var util = {
         } else {
             return "0.00" 
         }
-    },
+    },   
     /* 천단위 콤마 처리 */
     formatInt: function(num) {
       if (num != null && typeof num !== 'undefined') {
