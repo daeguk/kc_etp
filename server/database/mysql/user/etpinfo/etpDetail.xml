@@ -30,7 +30,7 @@
 							  	          (CASE WHEN td_etp_basic.F16493 = '1' OR td_etp_basic.F16493 = '2' THEN td_etffor_mast.R_BASIC_INDEX_DATE
 							  	                WHEN td_etp_basic.F16493 = '3' OR td_etp_basic.F16493 = '4' THEN td_etnfor_mast.R_BASIC_INDEX_DATE
 							               END)
-						      END AS R_BASIC_INDEX_DATE
+						      END AS R_BASIC_INDEX_DATE /* 기준일: 국내는 T-1로 표시 해외는 etf, efnfor_mast 정보로 처리 */
           FROM  td_etp_basic
           LEFT OUTER JOIN td_etffor_mast ON (
                     td_etp_basic.F16012 = td_etffor_mast.ISIN_CODE
