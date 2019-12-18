@@ -44,7 +44,7 @@
                                             color="primary"
                                             class="ml-0 mr-0"
                                             @click.stop="fn_fileClick();"
-                                        >업로드</v-btn>
+                                        >일괄변경 (엑셀업로드)</v-btn>
                                         <input
                                             type="file"
                                             name="pdfUpload"
@@ -398,6 +398,9 @@ import EtpOperPdfEmergencyExcelInfoPop  from "@/components/Home/Etp/Manage/EtpOp
 
 var tblEmergeny01 = null;
 
+/* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 */
+var v_arr_insert_dest   =   [ "KR1", "KR3", "KR6", "CASH00000001", "KRD010010001", "USDZZ0000001", "JPYZZ0000001" ];
+
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
@@ -673,7 +676,8 @@ export default {
                             }
                         }
 
-                        if( ![ "KR1", "KR3", "KR6" ].includes( dataJson.codeVal.substr(0,3) ) ) {
+                        /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
+                        if( !_.some( _.map( v_arr_insert_dest, o => dataJson.codeVal.includes(o) ) )  ) {
 
                             if (await vm.$refs.confirm2.open(
                                     '확인',
@@ -2287,125 +2291,126 @@ export default {
             var table = $("#" + vm.tblEmergeny01 ).DataTable();
             var tr = table.row( rowIndex );
 
-                /* 계산된 평가금액 */
-                var  v_F16588   =   0;
-                /* 1CU단위증권수 */
-                if( nowData.name == "F16499" ) {
+            /* 계산된 평가금액 */
+            var  v_F16588   =   0;
 
+            /* 1CU단위증권수 */
+            if( nowData.name == "F16499" ) {
+
+                if( tableData.status == "insert" ) {
 
                     if( Number( tableData.F34840 ) > 0 ) {
                         v_F16588    =   0;
 
+                    }else{                        
+
+                        /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
+                        //F33861 -> 시장구분
+                        //F33904 -> 계약승수                        
+                        /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
+                        if (tableData.F33861 == '4') {                        
+                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 ) * Number(tableData.F33904);
+                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                        } else {
+                            v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
+                        }
+                    }
+                }else{
+                    
+                    /* 
+                    *   상태값 normal 로 변경
+                    *
+                    *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
+                    *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
+                    */
+                    if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
+                        &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
+                        table.cell(rowIndex, 9).data( "normal" ).draw();
+                        vm.dataList[ rowIndex ].status  =   "normal";
                     }else{
-                        if( tableData.status == "insert" ) {
-
-                            /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
-                            //F33861 -> 시장구분
-                            //F33904 -> 계약승수                        
-                            /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
-                            if (tableData.F33861 == '4') {                        
-                                v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 ) * Number(tableData.F33904);
-                            /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
-                            } else {
-                                v_F16588    =   Number( tableData.F15007 ) * Number( nowData.F16499 );
-                            }
-                        }else{
-                            
-                            /* 
-                            *   상태값 normal 로 변경
-                            *
-                            *   수정한 [1CU단위증권수] 와 원본 [1CU단위증권수] 이 같고
-                            *   수정했던 [액면금액] 과 원본 [액면금액] 이 같은 경우
-                            */
-                            if(     Number( tableData.F16499_prev ) == Number( nowData.F16499 )
-                                &&  Number( tableData.F34840_prev ) == Number( tableData.F34840 ) ) {
-                                table.cell(rowIndex, 9).data( "normal" ).draw();
-                                vm.dataList[ rowIndex ].status  =   "normal";
-                            }else{
-                                table.cell(rowIndex, 9 ).data( "modify" ).draw();
-                                vm.dataList[ rowIndex ].status  =   "modify";
-                            }
-
-                            /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
-                            if( Number( tableData.F16499_prev ) == 0  ) {
-                                v_F16588    =   0;
-                            }else{
-                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
-                                v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F16499 ) / Number( tableData.F16499_prev );
-                            }
-                        }
+                        table.cell(rowIndex, 9 ).data( "modify" ).draw();
+                        vm.dataList[ rowIndex ].status  =   "modify";
                     }
 
-                    vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
+                    /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
+                    if( Number( tableData.F16499_prev ) == 0  ) {
+                        v_F16588    =   0;
+                    }else{
+                        /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
+                        v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F16499 ) / Number( tableData.F16499_prev );
+                    }
                 }
-                /* 액면금액 */
-                else if( nowData.name == "F34840" ) {
 
-                    if( tableData.status == "insert" ) {
+                vm.dataList[ rowIndex ].F16499      =   nowData.F16499;
+            }
+            /* 액면금액 */
+            else if( nowData.name == "F34840" ) {
 
-                        if( nowData.F34840 == 0 ) {
-                            /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
-                            //F33861 -> 시장구분
-                            //F33904 -> 계약승수                        
-                            /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
-                            if (tableData.F33861 == '4') {                        
-                                v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 ) * Number(tableData.F33904);
-                            /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
-                            } else {
-                                v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 );
-                            }
-                        }else{
-                            /* v_F16588 (계산된 평가금액)  */
+                if( tableData.status == "insert" ) {
+
+                    if( nowData.F34840 == 0 ) {
+                        /* v_F16588 (계산된 평가금액) = tableData.F15007 ( kspjong_basic 기준가 ) * nowData.F16499 ( 변경후 CU shrs ) */
+                        //F33861 -> 시장구분
+                        //F33904 -> 계약승수                        
+                        /* 선물 옵션 : 평가금액 = 기준가 * CU수량 * 단위 계약승수*/
+                        if (tableData.F33861 == '4') {                        
+                            v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 ) * Number(tableData.F33904);
+                        /* 코스피, 코스닥 그외 : 평가금액 = 기준가 * CU수량 */
+                        } else {
+                            v_F16588    =   Number( tableData.F15007 ) * Number( tableData.F16499 );
+                        }
+                    }else{
+                        /* v_F16588 (계산된 평가금액)  */
+                        v_F16588    =   0;
+                    }
+
+
+                }else {
+                                        
+                    /* 
+                    *   상태값 normal 로 변경
+                    *
+                    *   수정한 [액면금액] 과 원본 [액면금액] 이 같고
+                    *   수정했던 [1CU단위증권수] 과 원본 [1CU단위증권수] 이 같은 경우
+                    */
+                    if(     Number( tableData.F34840_prev ) == Number( nowData.F34840 )
+                        &&  Number( tableData.F16499_prev ) == Number( tableData.F16499 ) ) {
+                        table.cell(rowIndex, 9).data( "normal" ).draw();
+                        vm.dataList[ rowIndex ].status  =   "normal";
+                    }
+                    else{
+                        table.cell(rowIndex, 9 ).data( "modify" ).draw();
+                        vm.dataList[ rowIndex ].status  =   "modify";
+                    }
+
+                    if( Number( nowData.F34840 ) == 0 ) {
+
+                        /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
+                        if( Number( tableData.F16499_prev ) == 0  ) {
                             v_F16588    =   0;
-                        }
-
-
-                    }else {
-                                            
-                        /* 
-                        *   상태값 normal 로 변경
-                        *
-                        *   수정한 [액면금액] 과 원본 [액면금액] 이 같고
-                        *   수정했던 [1CU단위증권수] 과 원본 [1CU단위증권수] 이 같은 경우
-                        */
-                        if(     Number( tableData.F34840_prev ) == Number( nowData.F34840 )
-                            &&  Number( tableData.F16499_prev ) == Number( tableData.F16499 ) ) {
-                            table.cell(rowIndex, 9).data( "normal" ).draw();
-                            vm.dataList[ rowIndex ].status  =   "normal";
-                        }
-                        else{
-                            table.cell(rowIndex, 9 ).data( "modify" ).draw();
-                            vm.dataList[ rowIndex ].status  =   "modify";
-                        }
-
-                        if( Number( nowData.F34840 ) == 0 ) {
-
-                            /* 변경전 CU shrs 이 0 인 경우 ( 분모가 0 ) */
-                            if( Number( tableData.F16499_prev ) == 0  ) {
-                                v_F16588    =   0;
-                            }else{
-                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
-                                v_F16588    =   Number( tableData.F16588_prev ) * Number( tableData.F16499 ) / Number( tableData.F16499_prev );
-                            }
                         }else{
-                            /* 변경전 액면금액 이 0 인 경우 ( 분모가 0 ) */
-                            if( Number( tableData.F34840_prev ) == 0  ) {
-                                v_F16588    =   0;
-                            }else{
-                                /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F34840 ( 변경후 액면금액 ) / tableData.F34840_prev ( 변경전 액면금액 )  */
-                                v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F34840 ) / Number( tableData.F34840_prev );
-                            }
+                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F16499 ( 변경후 CU shrs ) / tableData.F16499_prev ( 변경전 CU shrs )  */
+                            v_F16588    =   Number( tableData.F16588_prev ) * Number( tableData.F16499 ) / Number( tableData.F16499_prev );
+                        }
+                    }else{
+                        /* 변경전 액면금액 이 0 인 경우 ( 분모가 0 ) */
+                        if( Number( tableData.F34840_prev ) == 0  ) {
+                            v_F16588    =   0;
+                        }else{
+                            /* v_F16588 (계산된 평가금액) = tableData.F16588_prev ( 변경전 평가금액 ) * nowData.F34840 ( 변경후 액면금액 ) / tableData.F34840_prev ( 변경전 액면금액 )  */
+                            v_F16588    =   Number( tableData.F16588_prev ) * Number( nowData.F34840 ) / Number( tableData.F34840_prev );
                         }
                     }
-
-                    vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
                 }
 
-                v_F16588 = Math.round(v_F16588);
-                table.cell( rowIndex, 6 ).data( v_F16588 ).draw();  /* 화면 table 의 평가금액 컬럼 데이터 변경 */
+                vm.dataList[ rowIndex ].F34840      =   nowData.F34840;
+            }
 
-                table.row( rowIndex ).invalidate().draw();
-                vm.dataList[ rowIndex ].F16588    =   v_F16588;         /* DB 에 저장하기 위해 계산된 평가금액 보관 */
+            v_F16588 = Math.round(v_F16588);
+            table.cell( rowIndex, 6 ).data( v_F16588 ).draw();  /* 화면 table 의 평가금액 컬럼 데이터 변경 */
+
+            table.row( rowIndex ).invalidate().draw();
+            vm.dataList[ rowIndex ].F16588    =   v_F16588;         /* DB 에 저장하기 위해 계산된 평가금액 보관 */
         },
 
         /*

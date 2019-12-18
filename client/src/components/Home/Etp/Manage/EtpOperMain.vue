@@ -50,7 +50,7 @@ export default {
       // this.$EventBus.$off('changeIndexInfo');
       // this.$EventBus.$off('changeEtpAnalysisInfo');
       // this.$EventBus.$off('changeEtpInfo');
-      this.$EventBus.$emit("showList", {tab_id:tab_id, paramData : ( ( paramData && Object.keys(paramData).length > 0 ) ? paramData : vm.firstData ) });
+      this.$EventBus.$emit("showList1", {tab_id:tab_id, paramData : ( ( paramData && Object.keys(paramData).length > 0 ) ? paramData : vm.firstData ) });
       //this.activeTab = id + 1;
       //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
     },

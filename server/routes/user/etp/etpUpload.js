@@ -50,6 +50,9 @@ var uploadPdf = function(req, res) {
         user_id: req.session.user_id,
     };
 
+    /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 */
+    var v_arr_insert_dest   =   [ "KR1", "KR3", "KR6", "CASH00000001", "KRD010010001", "USDZZ0000001", "JPYZZ0000001" ];
+
     var storage = multer.diskStorage({
 
         // 서버에 저장할 폴더
@@ -116,7 +119,7 @@ var uploadPdf = function(req, res) {
                 ,   p_record_check      :   true    /* 엑셀 레코드 체크 */
                 ,   p_record_data       :   {}      /* 엑셀 레코드 데이터 */
                 ,   p_index             :   0       /* 엑셀 index */
-                ,   p_startIndex        :   1
+                ,   p_startIndex        :   0
                 ,   p_pdf_yn            :   "1"
             };                
 
@@ -127,103 +130,113 @@ var uploadPdf = function(req, res) {
 
 
             /* 엑셀 건수 체크 */
-            if (dataLists.length <= 0 ) {
+            if (dataLists.length <= 1 ) {
                 v_param.p_count_check   =   false;
 
                 resultMsg.result        =   false;
                 resultMsg.msg           =   "레코드는 1건 이상 존재해야 합니다.";
 
+                if( dataLists.length > 0 ) {
+                    dataLists.splice( 0, 1 );
+                }
+
             } else {
 
+                /* 비어 있는 열이 존재하는지 체크 */
+                if(     ( typeof dataLists[0].col01 == "undefined" || dataLists[0].col01 == "" )
+                    ||  ( typeof dataLists[0].col02 == "undefined" || dataLists[0].col02 == "" )
+                    ||  ( typeof dataLists[0].col03 == "undefined" || dataLists[0].col03 == "" )
+                    ||  ( typeof dataLists[0].col04 == "undefined" || dataLists[0].col04 == "" )
+                    ||  ( typeof dataLists[0].col05 == "undefined" || dataLists[0].col05 == "" )
+                ) {
+                    v_param.p_record_check   =   false;
 
-                if( dataLists.length == 1 ) {
+                    resultMsg.result        =   false;
+                    resultMsg.msg           =   "비어 있는 열이 존재합니다. 다시 확인 해 주세요.";
 
-                    v_param.p_index         =   0;
-
-                    /* 엑셀 레코드 밸리데이션을 수행한다. */
-                    simulationUpload.fn_excel_record_check( v_param, dataLists[0] );
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }
+                    
                 }else{
 
-                    for (var i = 0; i < dataLists.length-1; i++) {
-                        var data = dataLists[i];
+                    if( dataLists.length > 0 ) {
+                        dataLists.splice( 0, 1 );
+                    }
+
+                    v_param.p_startIndex    =   1;
+                    if( dataLists.length == 1 ) {
+
+                        v_param.p_index         =   0;
 
                         /* 엑셀 레코드 밸리데이션을 수행한다. */
-                        v_param.p_index         =   i;
-                        simulationUpload.fn_excel_record_check( v_param, data );
+                        simulationUpload.fn_excel_record_check( v_param, dataLists[0] );
+                    }else{
 
-                        if( !v_param.p_record_check ) {
-                            break;
-                        }
-
-                        if( data.col01 != paramData.F16012 ) {
-                            v_param.p_record_check  =   false;
-
-                            data.result             =   false;
-                            data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETF 코드를 잘못 입력하셨습니다.";
-                        }
-
-                        if( !v_param.p_record_check ) {
-                            break;
-                        }
-
-
-                        for (var j = i+1; j < dataLists.length; j++) {
-                            var data2 = dataLists[j];
+                        for (var i = 0; i < dataLists.length-1; i++) {
+                            var data = dataLists[i];
 
                             /* 엑셀 레코드 밸리데이션을 수행한다. */
-                            v_param.p_index         =   j;
-                            simulationUpload.fn_excel_record_check( v_param, data2 );
+                            v_param.p_index         =   i;
+                            simulationUpload.fn_excel_record_check( v_param, data );
 
-
-                            if( !v_param.p_record_check ) {
-                                break;
-                            }
-
-                            if( data.F16316 != "" && data2.F16316 != "" && data.F16316 == data2.F16316 ) {
-                                v_param.p_record_check  =   false;
-
-                                data.result             =   false;
-                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목코드 컬럼이 중복 존재합니다.";
-                            }else if( data.F16004 != "" && data2.F16004 != "" && data.F16004 == data2.F16004 ) {
-                                v_param.p_record_check  =   false;
-
-                                data.result             =   false;
-                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목명 컬럼이 중복 존재합니다.";
-                            }
-
-
-                            if( !v_param.p_record_check ) {
-                                break;
-                            }
-                        }
-
-                        data.row_no = i + v_param.p_startIndex + 1;
-
-                        /* 마지막 전 인덱스인 경우 */
-                        if( i == dataLists.length-2 ) {
-
-                            /* 마지막 레코드에 row_no 추가 */
-                            data        =   dataLists[i+1];
-                            data.row_no =   i + v_param.p_startIndex + 2;
 
                             if( data.col01 != paramData.F16012 ) {
                                 v_param.p_record_check  =   false;
 
                                 data.result             =   false;
-                                data.msg                =   "[" + ( data.row_no ) + " 행] ETF 코드를 잘못 입력하셨습니다.";
-                            }                            
-                        }
+                                data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
+                            }
 
-                        if( !v_param.p_record_check ) {
-                            break;
+                            for (var j = i+1; j < dataLists.length; j++) {
+                                var data2 = dataLists[j];
+
+                                /* 엑셀 레코드 밸리데이션을 수행한다. */
+                                v_param.p_index         =   j;
+                                simulationUpload.fn_excel_record_check( v_param, data2 );
+
+
+                                if( data.F16316 != "" && data2.F16316 != "" && data.F16316 == data2.F16316 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 구성종목코드가 중복 존재합니다.";
+                                }else if( data.F16004 != "" && data2.F16004 != "" && data.F16004 == data2.F16004 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( i + v_param.p_startIndex + 1 ) + " 행] 과 [" + ( j + v_param.p_startIndex + 1 ) + " 행] 종목명이 중복 존재합니다.";
+                                }
+                            }
+
+                            data.row_no = i + v_param.p_startIndex + 1;
+
+                            /* 마지막 전 인덱스인 경우 */
+                            if( i == dataLists.length-2 ) {
+
+                                /* 마지막 레코드에 row_no 추가 */
+                                data        =   dataLists[i+1];
+                                data.row_no =   i + v_param.p_startIndex + 2;
+
+                                if( data.col01 != paramData.F16012 ) {
+                                    v_param.p_record_check  =   false;
+
+                                    data.result             =   false;
+                                    data.msg                =   "[" + ( data.row_no ) + " 행] ETF종목코드가 다릅니다. '" + paramData.F16012 + "' 를 넣어주세요.";
+                                }                            
+                            }
                         }
                     }
                 }
             }
 
+            var v_error_check   =   _.some( dataLists, function(o) {
+                return ( typeof o.msg != "undefined" && o.msg != "" );
+            });            
+
 
             /* 건수 체크 와 레코드 체크 결과 정상이 아닌 경우 오류 노출 */
-            if ( !v_param.p_count_check || !v_param.p_record_check ) {
+            if ( !v_param.p_count_check || !v_param.p_record_check || v_error_check ) {
 
                 if( !v_param.p_count_check ) {
                     resultMsg.errorList.push( { msg: resultMsg.msg } );
@@ -414,59 +427,55 @@ var uploadPdf = function(req, res) {
                                                     ) / 100;                                                    /* 액면금액설정현금액 */
 
 
-                                                    /* 액면금액이 0 보다 큰 경우 평가금액 0 으로 설정 */
-                                                    if( Number( item.F34840 ) > 0 ) {
-                                                        data.F16588         =   0;                              /* 평가금액 */
-                                                    }else{
-                                                        if( 
-                                                            !(      Number( data.F16499_prev ) == Number( filterData[0].F16499 )
-                                                                &&  Number( data.F34840_prev ) == Number( item.F34840 )
-                                                            ) 
-                                                        ) {
-                                                            data.status         =   "modify";
 
-                                                            if( data.status == "modify" ) {
+                                                    if( 
+                                                        !(      Number( data.F16499_prev ) == Number( filterData[0].F16499 )
+                                                            &&  Number( data.F34840_prev ) == Number( item.F34840 )
+                                                        ) 
+                                                    ) {
+                                                        data.status         =   "modify";
 
-                                                                if( Number( data.F16499_prev ) == 0 ) {
-                                                                    data.F16588         =   0;                  /* 평가금액 */
+                                                        if( data.status == "modify" ) {
+
+                                                            if( Number( data.F16499_prev ) == 0 ) {
+                                                                data.F16588         =   0;                  /* 평가금액 */
+                                                            }else{
+                                                                data.F16588         =   (
+                                                                    Number( data.F16588_prev ) * Number( filterData[0].F16499 ) / Number( data.F16499_prev )
+                                                                );                                          /* 평가금액 */
+                                                            }
+                                                        }                                                        
+                                                    }
+
+
+                                                    if( 
+                                                        !(      Number( data.F34840_prev ) == Number( filterData[0].F34840 )
+                                                            &&  Number( data.F16499_prev ) == Number( item.F16499 )
+                                                        ) 
+                                                    ) {
+                                                        data.status         =   "modify";
+
+                                                        if( data.status == "modify" ) {
+
+                                                            if( Number( data.F34840 ) == 0 ) {
+
+                                                                if( Number( data.F16499_prev ) == 0  ) {
+                                                                    v_F16588    =   0;
+                                                                }else{
+                                                                    v_F16588    =   Number( data.F16588_prev ) * Number( data.F16499 ) / Number( data.F16499_prev );
+                                                                }
+
+                                                            }else{
+
+                                                                if( Number( data.F34840_prev ) == 0 ) {
+                                                                    data.F16588         =   0;              /* 평가금액 */
                                                                 }else{
                                                                     data.F16588         =   (
-                                                                        Number( data.F16588_prev ) * Number( filterData[0].F16499 ) / Number( data.F16499_prev )
-                                                                    );                                          /* 평가금액 */
+                                                                        Number( data.F16588_prev ) * Number( filterData[0].F34840 ) / Number( data.F34840_prev )
+                                                                    );                                      /* 평가금액 */
                                                                 }
-                                                            }                                                        
-                                                        }
-
-
-                                                        if( 
-                                                            !(      Number( data.F34840_prev ) == Number( filterData[0].F34840 )
-                                                                &&  Number( data.F16499_prev ) == Number( item.F16499 )
-                                                            ) 
-                                                        ) {
-                                                            data.status         =   "modify";
-
-                                                            if( data.status == "modify" ) {
-
-                                                                if( Number( data.F34840 ) == 0 ) {
-
-                                                                    if( Number( data.F16499_prev ) == 0  ) {
-                                                                        v_F16588    =   0;
-                                                                    }else{
-                                                                        v_F16588    =   Number( data.F16588_prev ) * Number( data.F16499 ) / Number( data.F16499_prev );
-                                                                    }
-
-                                                                }else{
-
-                                                                    if( Number( data.F34840_prev ) == 0 ) {
-                                                                        data.F16588         =   0;              /* 평가금액 */
-                                                                    }else{
-                                                                        data.F16588         =   (
-                                                                            Number( data.F16588_prev ) * Number( filterData[0].F34840 ) / Number( data.F34840_prev )
-                                                                        );                                      /* 평가금액 */
-                                                                    }
-                                                                }
-                                                            }                                                        
-                                                        }
+                                                            }
+                                                        }                                                        
                                                     }
                                                     
                                                     // data.F33904         =   filterData[0].F33904;           /* 선물 옵션 계약승수*/ 
@@ -652,7 +661,7 @@ var uploadPdf = function(req, res) {
                                                     else if( filterData && filterData.length > 1 ){
                                                         resultMsg.errorList.push( { 
                                                                 result  :   false
-                                                            ,   msg     :   "[" + data.row_no + " 행] CODE 컬럼 값 (" + data.F16316 + ") 이 DB 에 중복 존재합니다."
+                                                            ,   msg     :   "[" + data.row_no + " 행] 구성종목코드 (" + data.F16316 + ") 가 DB 에 중복 존재합니다."
                                                         });
                                                     }
 
@@ -828,7 +837,7 @@ var uploadPdf = function(req, res) {
                                                     else if( filterData && filterData.length > 1 ){
                                                         resultMsg.errorList.push( { 
                                                                 result  :   false
-                                                            ,   msg     :   "[" + data.row_no + " 행] CODE 컬럼 값 (" + data.F16316 + ") 이 DB 에 중복 존재합니다."
+                                                            ,   msg     :   "[" + data.row_no + " 행] 구성종목코드 (" + data.F16316 + ") 가 DB 에 중복 존재합니다."
                                                         });
                                                     }
 
@@ -912,16 +921,17 @@ var uploadPdf = function(req, res) {
 
                                     }else{
 
-                                        /* 등록건이 "KR1", "KR3", "KR6" 으로 시작하지 않는 경우 */
+                                        /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
                                         v_arr_insert_check   =   _.filter( dataLists, function(o) {
-                                            return ( typeof o.status == "undefined" || o.status == "" ) && ![ "KR1", "KR3", "KR6" ].includes( o.F16316.substr(0,3) );
+                                            return      ( typeof o.status == "undefined" || o.status == "" ) 
+                                                    &&  !_.some( _.map( v_arr_insert_dest, w => o.F16316.includes(w) ) )
                                         });
                                         if( v_arr_insert_check && v_arr_insert_check.length > 0 ) {
 
                                             for( var i=0; i < v_arr_insert_check.length; i++ ) {
                                                 var item    =   v_arr_insert_check[i];
 
-                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] 구성종목코드를 확인해 주세요." } );
+                                                resultMsg.errorList.push( { msg : "[" + ( item.row_no ) + " 행] '" + item.F16316 + "'를 찾을 수 없습니다. 입력값을 다시확인해주세요." } );
 
                                                 /* 10 개 까지만 결과정보에 보관한다. */
                                                 if( resultMsg.errorList.length == 10  ) {

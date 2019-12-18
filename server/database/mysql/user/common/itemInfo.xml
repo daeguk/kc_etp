@@ -640,6 +640,8 @@
             ,base.F33960
             ,base.F33961
 
+            ,base.F33929
+
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -730,6 +732,8 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+
+            ,base.F33929
 
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
@@ -823,6 +827,8 @@
             ,base.F33960
             ,base.F33961
 
+            ,base.F33929
+
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -914,6 +920,8 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+
+            ,base.F33929
 
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
@@ -1007,6 +1015,8 @@
             ,base.F33960
             ,base.F33961
 
+            ,base.F33929
+
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
            (SELECT * 
@@ -1099,6 +1109,8 @@
             ,base.F34783
             ,base.F33960
             ,base.F33961
+
+            ,base.F33929
 
         FROM kc_etp.td_etp_basic base
         LEFT OUTER JOIN 
