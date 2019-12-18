@@ -242,7 +242,7 @@ export default {
     this.className = "conWidth_100";
   },
   created: function() {
-debugger;
+
     this.$EventBus.$on('showList1', data => {
       this.className = "conWidth_100";
       this.showEtpOerInfo                     =   data.tab_id;
