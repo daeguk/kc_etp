@@ -1652,6 +1652,7 @@ var uploadTimeSeries = function(req, res) {
                     }                    
 
 
+                    v_param.p_startIndex    =   1;
                     if( dataLists.length == 1 ) {
 
                         v_param.p_index             =   0;
