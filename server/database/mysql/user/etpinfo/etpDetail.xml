@@ -27,8 +27,8 @@
                     )                                                   AS  agency_name
                 , CASE WHEN td_etp_basic.F34241 = 'K' THEN 'T-1'
 					             WHEN td_etp_basic.F34241 = 'F' THEN 
-							  	          (CASE WHEN td_etp_basic.F16493 = '1' OR td_etp_basic.F16493 = '2' THEN td_etffor_mast.R_BASIC_INDEX_DATE
-							  	                WHEN td_etp_basic.F16493 = '3' OR td_etp_basic.F16493 = '4' THEN td_etnfor_mast.R_BASIC_INDEX_DATE
+							  	          (CASE WHEN td_etp_basic.F16493 = '1' OR td_etp_basic.F16493 = '2' THEN IFNULL(td_etffor_mast.R_BASIC_INDEX_DATE, 'N/A')
+							  	                WHEN td_etp_basic.F16493 = '3' OR td_etp_basic.F16493 = '4' THEN IFNULL(td_etnfor_mast.R_BASIC_INDEX_DATE, 'N/A')
 							               END)
 						      END AS R_BASIC_INDEX_DATE /* 기준일: 국내는 T-1로 표시 해외는 etf, efnfor_mast 정보로 처리 */
           FROM  td_etp_basic
