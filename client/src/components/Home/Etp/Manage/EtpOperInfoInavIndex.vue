@@ -391,8 +391,7 @@ export default {
                     H. 환헷지
                     iNAV=전일NAV*(1+기초지수등락율*배율)
                     */
-                    if (vm.etpBasic.F34240 == 'H') {
-                        debugger;
+                    if (vm.etpBasic.F34240 == 'H') {                        
                         vm.iNav = vm.F03329 * ( 1 + vm.F30823 * vm.F18453 );
                     /* 
                     F. 환노출일반
@@ -457,8 +456,12 @@ export default {
             }
         },
         formatNumber:function(num) {
-            var parts = num.toString().split(".");
-            return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+            if (num != null && typeof num !== 'undefined') {
+                var parts = num.toString().split(".");
+                return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");            
+            } else {
+                return num;
+            }
         },
         formatDigit:function(num, digit) {
             return util.formatDigit(num, digit)
