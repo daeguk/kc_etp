@@ -254,7 +254,7 @@ export default {
           grd.addColorStop(0, "#b8b8b8");
           grd.addColorStop(1, "#8c8c8c");
         }        
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         // vm.chartDataPosArr = [];
@@ -373,7 +373,7 @@ export default {
           grd.addColorStop(0, "#b8b8b8");
           grd.addColorStop(1, "#8c8c8c");
         }        
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.chartDataPosArr = [];
@@ -535,7 +535,7 @@ export default {
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
 
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {
@@ -703,7 +703,7 @@ export default {
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
 
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.sArr.forEach(function(item, index) {

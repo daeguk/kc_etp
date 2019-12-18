@@ -219,7 +219,7 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.chartDataPosArr = [];
@@ -325,7 +325,7 @@ export default {
         var grd = c.createLinearGradient(vm.crect.x1, vm.crect.y1, vm.crect.x2, vm.crect.y1);
         grd.addColorStop(0, "#C5E1A5");
         grd.addColorStop(1, "#85c406");
-        c.lineWidth = 1;
+        c.lineWidth = 1.5;
         c.setLineDash([]);
         c.strokeStyle = grd ;
         vm.chartDataPosArr = [];
