@@ -84,7 +84,7 @@
                         </ul>
                         <ul v-else>
                             <li class="list_tit case2 txt_point">①전일NAV</li>
-                            <li class="align_r">{{F03329}}</li>
+                            <li class="align_r">{{formatNumber(F03329)}}</li>
                         </ul>
 
                         <ul v-if="SimulationSwitch == true">
@@ -110,7 +110,7 @@
                             <li class="input_mid" v-if="SimulationSwitch == true">
                                 <v-text-field v-model="F15318" outline class="txt_right"></v-text-field>
                             </li>
-                            <li v-else class="align_r text_red">{{F15318}}</li>
+                            <li v-else class="align_r text_red">{{formatNumber(F15318)}}</li>
                         </ul>
                         <!--ul class="bot_line2">
                                                     <li class="list_tit"><b>지수기준가</b><br><span>기준일</span></li>
@@ -129,7 +129,7 @@
                                 </div>
                                 <div v-else>
                                     <li class="align_r">
-                                        {{F15007}}
+                                        {{formatNumber(F15007)}}
                                     </li><br>
                                     <span class="float_r">{{etpBasic.R_BASIC_INDEX_DATE}}</span>
                                 </div>
@@ -206,12 +206,12 @@
                                 <b>외부공표 iNAV</b>
                             </li>
                             <li class="text_red align_r" v-if="etpBasic.F30818 >= 0">                                        
-                                <b>{{formatDigit(etpBasic.F15301, 4)}}</b>
+                                <b>{{formatNumber(formatDigit(etpBasic.F15301, 4))}}</b>
                                 <br>
                                 <span class="float_r">{{formatDigit(etpBasic.F30818, 4)}}%</span>
                             </li>
                             <li class="text_blue align_r" v-if="etpBasic.F30818 < 0">                                        
-                                <b>{{formatDigit(etpBasic.F15301, 4)}}</b>
+                                <b>{{formatNumber(formatDigit(etpBasic.F15301, 4))}}</b>
                                 <br>
                                 <span class="float_r">{{formatDigit(etpBasic.F30818, 4)}}%</span>
                             </li>
@@ -219,12 +219,12 @@
                         <ul class="result">
                             <li class="list_tit txt_point1">iNAV 계산결과</li>
                             <li class="align_r text_red" v-if="iNavRate >=0 ">
-                                <b>{{formatDigit(iNav, 4)}}</b>
+                                <b>{{formatNumber(formatDigit(iNav, 4))}}</b>
                                 <br>
                                 <span class="float_r">{{formatDigit(iNavRate, 4)}}%</span>
                             </li>
                             <li class="align_r text_blue" v-if="iNavRate < 0">
-                                <b>{{formatDigit(iNav, 4)}}</b>
+                                <b>{{formatNumber(formatDigit(iNav, 4))}}</b>
                                 <br>
                                 <span class="float_r">{{formatDigit(iNavRate, 4)}}%</span>
                             </li>                            
@@ -457,7 +457,8 @@ export default {
             }
         },
         formatNumber:function(num) {
-            return new Intl.NumberFormat().format(num);
+            var parts = num.toString().split(".");
+            return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
         },
         formatDigit:function(num, digit) {
             return util.formatDigit(num, digit)
