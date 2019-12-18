@@ -49,6 +49,7 @@ module.exports = {
     { file: './user/etp/etpOper', path: '/user/etp/getEtpOperPdfModify', method: 'getEtpOperPdfModify', session: 'check', type: 'post' },
     { file: './user/etp/etpOper', path: '/user/etp/getJongmokData', method: 'getJongmokData', session: 'check', type: 'post' },
     { file: './user/etp/etpOper', path: '/user/etp/getFutureBasic1', method: 'getFutureBasic1', session: 'check', type: 'post' },
+    { file: './user/etp/etpOper', path: '/user/etp/getInitData', method: 'getInitData', session: 'check', type: 'post' },
 
     { file: './user/etp/etpOper', path: '/user/etp/saveEtpOperPdfModify', method: 'saveEtpOperPdfModify', session: 'check', type: 'post' },
     { file: './user/etp/etpOper', path: '/user/etp/getPdfByGroupNo', method: 'getPdfByGroupNo', session: 'check', type: 'post' },

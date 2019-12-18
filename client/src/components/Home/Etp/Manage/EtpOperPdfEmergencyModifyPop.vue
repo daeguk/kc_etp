@@ -398,9 +398,6 @@ import EtpOperPdfEmergencyExcelInfoPop  from "@/components/Home/Etp/Manage/EtpOp
 
 var tblEmergeny01 = null;
 
-/* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 */
-var v_arr_insert_dest   =   [ "KR1", "KR3", "KR6", "CASH00000001", "KRD010010001", "USDZZ0000001", "JPYZZ0000001" ];
-
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
@@ -430,6 +427,7 @@ export default {
 
             ,   status: 0
             ,   arr_show_error_message : []
+            ,   v_arr_insert_dest   :   []
 
             ,   limit : {
                     max_size : 1        /* 파일 사이즈 (Mb) */
@@ -677,7 +675,7 @@ export default {
                         }
 
                         /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
-                        if( !_.some( _.map( v_arr_insert_dest, o => dataJson.codeVal.includes(o) ) )  ) {
+                        if( !_.some( _.map( vm.v_arr_insert_dest, o => dataJson.codeVal.includes(o.com_dtl_cd) ) )  ) {
 
                             if (await vm.$refs.confirm2.open(
                                     '확인',
@@ -864,6 +862,10 @@ export default {
 //        searchParam.F16012              =   "KR7322410002";
         searchParam.initYn              =   "Y";
 
+        /* 초기 설정 데이터를 조회한다. */
+        vm.fn_initData();
+
+        /* ETP PDF 정보를 조회한다. */
         vm.fn_getEtpOperPdfModify( searchParam );
     },
         
@@ -1269,6 +1271,99 @@ export default {
 
                 resolve(false);
             });
+        },
+
+        /*
+         * 초기 설정 데이터를 조회한다.
+         * 2019-07-26  bkLove(촤병국)
+         */
+        fn_initData() {
+            var vm = this;
+
+            /*  COM014 - 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상코드 */
+            var arrComMstCd = [ "COM014" ];
+
+            vm.arr_show_error_message   =   [];
+            vm.v_arr_insert_dest        =   [];
+
+            return  new Promise(function(resolve, reject) {
+
+//                util.processing(vm.$refs.progress, true);
+
+                util.axiosCall(
+                        {
+                                "url"       :   Config.base_url + "/user/etp/getInitData"
+                            ,   "data"      :   { arrComMstCd : arrComMstCd }
+                            ,   "method"    :   "post"
+                        }
+                    ,   function(response) {
+
+                            try{
+                                if (response && response.data) {
+
+                                    var msg = ( response.data.msg ? response.data.msg : "" );
+
+                                    if (!response.data.result) {
+                                        if( msg ) {
+                                            vm.arr_show_error_message.push( msg );
+                                        }
+
+                                        // if( vm.$refs && vm.$refs.progress ) {
+                                        //     util.processing(vm.$refs.progress, false);
+                                        // }
+
+                                        resolve( { result : false } );                                        
+
+                                    }else{
+
+                                        if( response.data.arr_code_list && response.data.arr_code_list.length > 0 ) {
+
+                                            vm.v_arr_insert_dest    = _.filter( response.data.arr_code_list, function(o) {
+                                                if ( o.com_mst_cd == "COM014" ) {
+                                                    return  o;
+                                                }
+                                            });
+                                        }
+
+                                        // if( vm.$refs && vm.$refs.progress ) {
+                                        //     util.processing(vm.$refs.progress, false);
+                                        // }
+
+                                        resolve( { result : true } );
+                                    }
+                                }else{
+
+                                    // if( vm.$refs && vm.$refs.progress ) {
+                                    //     util.processing(vm.$refs.progress, false);
+                                    // }
+
+                                    resolve( { result : false } );
+                                }
+
+                            }catch(ex) {
+
+                                // if( vm.$refs && vm.$refs.progress ) {
+                                //     util.processing(vm.$refs.progress, false);
+                                // }
+
+                                resolve( { result : false } );
+                                console.log( "error", ex );
+                            }
+                        }
+                    ,   function(error) {
+
+                            // if( vm.$refs && vm.$refs.progress ) {
+                            //     util.processing(vm.$refs.progress, false);
+                            // }
+
+                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            resolve( { result : false } );
+                        }
+                );
+
+            }).catch( function(e1) {
+                console.log( e1 );
+            });                
         },        
 
         /*
