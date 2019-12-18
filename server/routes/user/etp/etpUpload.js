@@ -164,6 +164,7 @@ var uploadPdf = function(req, res) {
                         dataLists.splice( 0, 1 );
                     }
 
+                    v_param.p_startIndex    =   1;
                     if( dataLists.length == 1 ) {
 
                         v_param.p_index         =   0;
