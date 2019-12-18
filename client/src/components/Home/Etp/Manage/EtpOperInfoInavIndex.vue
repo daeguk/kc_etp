@@ -129,7 +129,7 @@
                                 </div>
                                 <div v-else>
                                     <li class="align_r">
-                                        {{formatNumber(F15007)}}
+                                        {{formatNumber(formatDigit(F15007, 4))}}
                                     </li><br>
                                     <span class="float_r">{{etpBasic.R_BASIC_INDEX_DATE}}</span>
                                 </div>
@@ -310,7 +310,7 @@ export default {
                                 // 추적수익률
                                 vm.F15302 = vm.etpBasic.F15302;
                                 // 기준가
-                                vm.F15007 = vm.formatDigit(vm.etpBasic.F15318 - vm.etpBasic.F15319, 4);
+                                vm.F15007 = vm.etpBasic.F15318 - vm.etpBasic.F15319;
                                 // 매매기준율
                                 vm.F30819 = vm.etpBasic.F30819;
                                 // 장전 기준윻
@@ -319,7 +319,7 @@ export default {
                                 // 기초 지수 현재가
                                 vm.F15318 = vm.etpBasic.F15318;
                                 //기초지수 등락률 
-                                vm.F30823 = vm.formatDigit(vm.etpBasic.F30823, 5);
+                                vm.F30823 = vm.etpBasic.F30823;
                                 // 전일ETP기초지수등락율
                                 vm.F34374 = vm.etpBasic.F34374;
                                 // 예상배당수익률 : 배당율
@@ -328,11 +328,11 @@ export default {
                                 vm.F18453 = vm.etpBasic.F18453;
                                 // 변동률 
                                 vm.F15004 = (vm.F30819 / vm.F30824-1) * 100;
-                                vm.F15004 = vm.formatDigit(vm.F15004, 5);
+                                
                                 // (ETP계산유형: F, A, K, I)매매기준율 /장전 매매 기준율
-                                vm.F15004_1 = vm.formatDigit(vm.etpBasic.F30819 / vm.etpBasic.F30824, 5);
+                                vm.F15004_1 = vm.etpBasic.F30819 / vm.etpBasic.F30824;
                                 // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
-                                vm.F15004_2 = vm.formatDigit((vm.etpBasic.F30819 - vm.etpBasic.F30824) / vm.etpBasic.F30824, 5);
+                                vm.F15004_2 = (vm.etpBasic.F30819 - vm.etpBasic.F30824) / vm.etpBasic.F30824;
                                 // 예상배당 수익률
                                 vm.F18101 = vm.etpBasic.F18101;
                                 // 환율 보정 계수 
