@@ -87,14 +87,14 @@
                                             <b>iNAV 계산결과</b>
                                         </li>
                                         <li class="text_red"    v-if="iNav_percent >= 0">
-                                            <b>{{formatNumber(iNav_amt)}}</b>
+                                            <b>{{formatNumber(iNav_amt.toFixed(2))}}</b>
                                             <br>
-                                            <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
+                                            <span class="float_r">{{formatNumber(iNav_percent.toFixed(2))}}%</span>
                                         </li>
                                         <li class="text_blue"   v-if="iNav_percent < 0">
-                                            <b>{{formatNumber(iNav_amt)}}</b>
+                                            <b>{{formatNumber(iNav_amt.toFixed(2))}}</b>
                                             <br>
-                                            <span class="float_r">{{formatNumber(iNav_percent)}}%</span>
+                                            <span class="float_r">{{formatNumber(iNav_percent.toFixed(2))}}%</span>
                                         </li>                                        
                                     </ul>
                                 </v-flex>
@@ -224,7 +224,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += "<input type='text' id='F16499' class='txt_right' value='"+util.formatNumber(data)+"'>";
+                        htm += "<input type='text' id='F16499' class='txt_right' value='"+vm.formatNumber(data)+"'>";
                         
                         return htm;
                     },
@@ -244,13 +244,13 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                         
-                        htm += "<input type='text' id='F15001' class='txt_right' value='"+util.formatNumber(data)+"'>";
+                        htm += "<input type='text' id='F15001' class='txt_right' value='"+vm.formatNumber(data)+"'>";
 
                         
                         if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+util.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(row.F15004)+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+util.formatNumber(row.F15004)+"%</span>";                    
+                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(row.F15004)+"%</span>";                    
                         }
 
                         return htm;
@@ -261,7 +261,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                        htm += "<input type='text' id='F15007' class='txt_right' value='"+util.formatNumber(data)+"'>";
+                        htm += "<input type='text' id='F15007' class='txt_right' value='"+vm.formatNumber(data)+"'>";
 
                         return htm;
                     },
@@ -271,7 +271,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                        htm = util.formatNumber(data);
+                        htm = vm.formatNumber(data);
 
                         return htm;
                     },
@@ -334,7 +334,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = "";
                         
-                        htm += util.formatNumber(data);
+                        htm += vm.formatNumber(data);
 
                         return htm;
                     },
@@ -354,12 +354,12 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                        htm += util.formatNumber(data);
+                        htm += vm.formatNumber(data);
 
                         if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+util.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(row.F15004)+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+util.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(row.F15004)+"%</span>";
                         }
 
                         return htm;
@@ -370,7 +370,7 @@ export default {
                     "render": function ( data, type, row ) {
                         let htm = ""
                             
-                        htm = util.formatNumber(data);
+                        htm = vm.formatNumber(data);
 
                         return htm;
                     },
@@ -551,8 +551,13 @@ export default {
 
             util.processing(this.$refs.progress, false);
         },
-        formatNumber:function(num) {
-            return util.formatNumber(num);
+        formatNumber:function(num) {            
+            if (num != null && typeof num !== 'undefined') {
+                var parts = num.toString().split(".");
+                return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");            
+            } else {
+                return num;
+            }
         },
         formatInt:function(num) {
             return util.formatInt(num);
@@ -624,7 +629,7 @@ export default {
                     market_tot_amt += jongItem.market_amt;
 
                     /* 등락률 재계산 */
-                    item.F15004 = vm.formatNumber((item.F15001 / item.F15007)-1) * 100;
+                    item.F15004 = (item.F15001 / item.F15007)-1 * 100;
 
                     if (index == (vm.pdfList.length-1)) {                                
                         
@@ -729,7 +734,7 @@ export default {
                         }
                         /* CU수량="F16499", 비중="F34743", 기준가="F15007", CU시가총액="F16588", 등락율="F15004", 현재가="F15001"  인 경우 */
                         else if( [ "F16499", "F34743", "F15007", "F16588", "F15004", "F15001" ].includes( o ) ) {
-                            tempObj[o]  =   Number( util.NumtoStr( util.formatNumber( dataRow[o] ) ) );
+                            tempObj[o]  =   Number( util.NumtoStr( vm.formatNumber( dataRow[o] ) ) );
                         }
                         else{
                             tempObj[o]  =   dataRow[o];
