@@ -2204,7 +2204,7 @@ strlen : 202 (window : 202, linux : 201)
         wItem.fld005 = tmp.data[j].F16012;
         wItem.fld006 = util.padZero(tmp.data[j].F33837, 4);
         wItem.fld007 = tmp.data[j].F16316;
-        wItem.fld008 = util.padZero(Number(tmp.data[j].F16499) * 100, 18); // 백엔드에서 나누기 100 해서 씀
+        wItem.fld008 = util.padZero(Math.floor(Number(tmp.data[j].F16499) * 100), 18); // 백엔드에서 나누기 100 해서 씀
 
     logg.debug1("tmp F16499 : " + tmp.data[j].F16499);
     logg.debug1("wItem fld008 : " + wItem.fld008);
@@ -2216,7 +2216,7 @@ strlen : 202 (window : 202, linux : 201)
         wItem.fld011 = util.padZero(tmp.data[j].F34840, 18);    /* 액면금액 ( written by bkLove 2019-08-05 ) */
     logg.debug1("tmp F34840 : " + tmp.data[j].F34840);
     logg.debug1("wItem fld011 : " + wItem.fld011);
-        wItem.fld013 = util.padZero(tmp.data[j].F16588, 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
+        wItem.fld013 = util.padZero(Math.floor(Number(tmp.data[j].F16588)), 18);    /* 평가금액 ( written by bkLove 2019-08-05 ) */
     logg.debug1("tmp F16588 : " + tmp.data[j].F16588);
     logg.debug1("wItem fld013 : " + wItem.fld013);
             
