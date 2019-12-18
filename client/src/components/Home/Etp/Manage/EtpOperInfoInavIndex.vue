@@ -125,13 +125,13 @@
                             <li>
                                 <div v-if="SimulationSwitch == true">
                                     <v-text-field   v-model="F15007" outline class="txt_right"></v-text-field>
-                                    <span class="float_r">{{formatDate(etpBasic.F12506)}}</span>
+                                    <span class="float_r">{{etpBasic.R_BASIC_INDEX_DATE}}</span>
                                 </div>
                                 <div v-else>
                                     <li class="align_r">
                                         {{F15007}}
                                     </li><br>
-                                    <span class="float_r">{{formatDate(etpBasic.F12506)}}</span>
+                                    <span class="float_r">{{etpBasic.R_BASIC_INDEX_DATE}}</span>
                                 </div>
                             </li>
                         </ul>
