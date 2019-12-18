@@ -871,7 +871,76 @@ var uploadPdf = function(req, res) {
                             }
                         },
 
-                        /* 5. CU 수량, 액면금액이 변경되었는지 체크한다. */
+                        /* 5. 공통코드를 조회한다. ( COM014 - 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상코드 ) */
+                        function( msg, callback ) {
+
+                            try {
+
+                                if( !msg || Object.keys( msg ).length == 0 ) {
+                                    msg = {};
+                                }
+
+                                msg.v_arr_insert_dest   =   [];
+
+                                paramData.arrComMstCd   =   [];
+
+                                /* 등록건인 경우 */
+                                var v_arr_insert_check   =   _.filter( dataLists, function(o) {
+                                    return ( typeof o.status == "undefined" || o.status == "" );
+                                });                                  
+
+                                if( typeof v_arr_insert_check == "undefined" || v_arr_insert_check.length == 0 ) {
+                                    
+                                    callback(null, msg);
+                                }else{
+
+                                    /*  COM014 - 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상코드 */
+                                    paramData.arrComMstCd   =   [ "COM014" ];
+                                    stmt = mapper.getStatement('simulation', 'getInitData', paramData, format);
+                                    log.debug(stmt, paramData);
+
+                                    conn.query(stmt, function(err, rows) {
+
+                                        try {
+
+                                            if (err) {
+                                                log.error(err, stmt, paramData);
+
+                                                resultMsg.result = false;
+                                                resultMsg.msg = config.MSG.error01;
+                                                resultMsg.err = err;
+
+                                                return callback(resultMsg);
+                                            }
+
+                                            if ( rows && rows.length > 0 )  {
+                                                msg.v_arr_insert_dest   =   rows;
+                                            }
+
+
+                                            callback(null, msg);
+
+                                        } catch (err) {
+
+                                            resultMsg.result = false;
+                                            resultMsg.msg = config.MSG.error01;
+                                            resultMsg.err = err;
+
+                                            return  callback(resultMsg);
+                                        }                                    
+                                    });
+                                }
+
+                            } catch (err) {
+                                resultMsg.result = false;
+                                resultMsg.msg = config.MSG.error01;
+                                resultMsg.err = err;
+
+                                callback(resultMsg);
+                            }
+                        },                        
+
+                        /* 6. CU 수량, 액면금액이 변경되었는지 체크한다. */
                         function( msg, callback ) {
 
                             try {
@@ -921,13 +990,17 @@ var uploadPdf = function(req, res) {
 
                                     }else{
 
+                                        if( typeof msg.v_arr_insert_dest == "undefined" ) {
+                                            msg.v_arr_insert_dest   =   [];
+                                        }
+
                                         /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
                                         v_arr_insert_check   =   _.filter( dataLists, function(o) {
                                             return      ( typeof o.status == "undefined" || o.status == "" ) 
-                                                    &&  !_.some( _.map( v_arr_insert_dest, w => o.F16316.includes(w) ) )
+                                                    &&  !_.some( _.map( msg.v_arr_insert_dest, w => o.F16316.includes(w.com_dtl_cd) ) )
                                         });
+                                        
                                         if( v_arr_insert_check && v_arr_insert_check.length > 0 ) {
-
                                             for( var i=0; i < v_arr_insert_check.length; i++ ) {
                                                 var item    =   v_arr_insert_check[i];
 
