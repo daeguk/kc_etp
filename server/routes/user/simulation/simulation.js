@@ -7125,8 +7125,8 @@ var applyShareUserRevokeInArrModule = async function(req, res, paramData) {
                                     }     
                                 }
 
-                                /* 시나리오 이면서 그룹이 없는 경우 */
-                                if( msg.v_simul_mast.grp_yn == "0" && msg.v_simul_mast.grp_cd == "*" ) {
+                                /* 그룹이 아닌 시나리오인 경우 */
+                                if( msg.v_simul_mast.grp_yn == "0" ) {
                                     paramData.arr_data_list.push({
                                             "grp_cd"    :   msg.v_simul_mast.grp_cd
                                         ,   "scen_cd"   :   msg.v_simul_mast.scen_cd
