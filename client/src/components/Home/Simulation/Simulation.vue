@@ -2424,6 +2424,7 @@ export default {
                                             else if( e && e.confirm == "N" ) {
                                                 vm.rebalance_cycle_cd       =   vm.old_rebalance_cycle_cd;
                                                 vm.rebalance_date_cd        =   vm.old_rebalance_date_cd;
+                                                vm.disabled_rebalance_cd    =   vm.arr_rebalance_disabled_check[ vm.rebalance_cycle_cd ];
                                             }else{
                                                 vm.old_rebalance_cycle_cd   =   vm.rebalance_cycle_cd;
                                                 vm.change_rebalance_yn      =   "0";
