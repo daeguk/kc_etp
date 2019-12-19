@@ -14,8 +14,12 @@
                 ,   DATE_FORMAT( td_etp_basic.F12506, '%Y.%m.%d' )      AS  fmt_F12506              /* 입회일 */
                 ,   DATE_FORMAT( td_etp_basic.F16017, '%Y.%m.%d' )      AS  fmt_F16017          /* format 상장일 */
                 ,   LPAD( td_etp_basic.F34239, 3, '0' )                 AS  F34239_pad          /* ETP기초지수MID */
-                ,   td_etffor_mast.EX_RATE_CODE                                     AS  ex_rate_code /* 환율 코드 */
-
+                , CASE WHEN td_etp_basic.F34241 = 'K' THEN ''
+					 		         WHEN td_etp_basic.F34241 = 'F' THEN 
+                			(CASE WHEN td_etp_basic.F16493 = '1' OR td_etp_basic.F16493 = '2' THEN IFNULL(td_etffor_mast.EX_RATE_CODE, 'N/A')
+							  	          WHEN td_etp_basic.F16493 = '3' OR td_etp_basic.F16493 = '4' THEN IFNULL(td_etnfor_mast.EX_RATE_CODE, 'N/A')
+							         END)
+						       END AS  ex_rate_code /* 환율 코드 */
                 ,   IFNULL (
                             (
                                 SELECT  tm_indexagency_map.agency_name
