@@ -248,9 +248,9 @@ export default {
 
                         
                         if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(vm.formatDigit(row.F15004, 2))+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(row.F15004)+"%</span>";                    
+                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(vm.formatDigit(row.F15004, 2))+"%</span>";                    
                         }
 
                         return htm;
@@ -357,9 +357,9 @@ export default {
                         htm += vm.formatNumber(data);
 
                         if (row.F15004 >= 0) {
-                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_red'>"+vm.formatNumber(vm.formatDigit(row.F15004, 2))+"%</span>";
                         } else {
-                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(row.F15004)+"%</span>";
+                            htm += "<br><span class='text_S text_blue'>"+vm.formatNumber(vm.formatDigit(row.F15004, 2))+"%</span>";
                         }
 
                         return htm;
@@ -551,13 +551,16 @@ export default {
 
             util.processing(this.$refs.progress, false);
         },
-        formatNumber:function(num) {            
-            if (num != null && typeof num !== 'undefined') {
+        formatNumber:function(num) {
+           if (num != null && typeof num !== 'undefined') {
                 var parts = num.toString().split(".");
                 return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");            
             } else {
                 return num;
             }
+        },
+        formatDigit:function(num, digit) {
+            return util.formatDigit(num, digit)
         },
         formatInt:function(num) {
             return util.formatInt(num);
@@ -599,7 +602,7 @@ export default {
             var index = 0;
             util.processing(vm.$refs.progress, true);
             for (let item of vm.pdfList) {                        
-                await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {
+                await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {                    
                     /* 종목 정보 바인딩 */                            
                     item.F16588 = jongItem.market_amt; /* 시가 총액 */
                     item.F15001 = jongItem.F15001;  /* 현재가 */
@@ -629,8 +632,8 @@ export default {
                     market_tot_amt += jongItem.market_amt;
 
                     /* 등락률 재계산 */
-                    item.F15004 = (item.F15001 / item.F15007)-1 * 100;
-
+                    item.F15004 = ((item.F15001 / item.F15007)-1) * 100;
+                    
                     if (index == (vm.pdfList.length-1)) {                                
                         
                         vm.market_tot_amt = market_tot_amt;
