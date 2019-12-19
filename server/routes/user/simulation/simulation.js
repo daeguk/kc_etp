@@ -1141,7 +1141,7 @@ var modifyGroup = function(req, res) {
                                         log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule success END');
                                         resultMsg   =   e.resultMsg;
 
-                                        callback(null);
+                                        callback(null, msg);
 
                                     }else{
                                         log.debug('simulation.modifyGroup -> simulation.applyShareUserRevokeInArrModule error END');
@@ -1167,7 +1167,7 @@ var modifyGroup = function(req, res) {
                                 });
 
                             }else{
-                                callback(null);
+                                callback(null, msg);
                             }
 
                         } catch (err) {
@@ -1178,6 +1178,55 @@ var modifyGroup = function(req, res) {
                             return callback(resultMsg);
                         }
                     },
+
+                    /* 9. 삭제시 시뮬레이션 기본 정보를 삭제한다. */
+                    function( msg, callback) {
+
+                        try{
+
+                            if( !msg || Object.keys( msg ).length == 0 ) {
+                                msg = {};
+                            }
+
+                            if( [ "delete" ].includes( paramData.status ) ) {
+
+                                stmt = mapper.getStatement('simulation', "deleteTmSimulMastByGroup", paramData, format);
+                                log.debug(stmt, paramData);
+
+                                conn.query(stmt, function(err, rows) {
+
+                                    if (err) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        return callback(resultMsg);
+                                    }
+
+                                    if ( !rows || rows.length == 0 ) {
+                                        resultMsg.result = false;
+                                        resultMsg.msg = config.MSG.error01;
+                                        resultMsg.err = err;
+
+                                        callback( resultMsg );
+                                    }else{
+                                        callback( null );
+                                    }
+                                    
+                                });
+                            }else{
+                                callback( null );
+                            }
+
+                        } catch (err) {
+
+                            resultMsg.result = false;
+                            resultMsg.msg = config.MSG.error01;
+                            resultMsg.err = err;
+
+                            callback(resultMsg);
+                        }
+                    },                    
    
 
                 ], function(err) {
