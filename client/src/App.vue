@@ -13,8 +13,8 @@ export default {
   name: 'app',
   data () {
     return {
-      IndexMast: [],
-      EtpMast: [],
+      // IndexMast: [],
+      // EtpMast: [],
       ws: null,
     }
   },
@@ -26,8 +26,9 @@ export default {
     // 실시간 데이터 테스트 완료 (2019.11.02)
     // this.initWebSocket();
     this.setBefDates();
-    this.getEtpMast();
-    this.getIndexMast();
+    // ETP / INDEX MASTER 처리 (초기 접속 속도 문제로 블록킹)
+    // this.getEtpMast();
+    // this.getIndexMast();
 
     // PC / MOBILE 분기 처리
     var filter = "win16|win32|win64|mac|macintel"; 

@@ -48,6 +48,7 @@ const store = new Vuex.Store({
       state.user.hp_no = payload.hp_no;
       state.user.tel_no = payload.tel_no;
       state.user.lp_auth = payload.lp_auth;
+      state.user.simul_auth = payload.simul_auth;
     },
     [Constant.SET_BEF_DATES]: (state, payload) => {
       state.befDates.bef1Week = payload.bef1Week;

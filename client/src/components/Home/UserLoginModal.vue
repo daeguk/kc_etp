@@ -121,6 +121,7 @@ export default {
             hp_no:response.data.results[0].hp_no, 
             tel_no:response.data.results[0].tel_no, 
             lp_auth:response.data.results[0].lp_auth, 
+            simul_auth:response.data.results[0].simul_auth, 
           });
 
           vm.loginDialog = false;

@@ -65,6 +65,7 @@ export default {
     // console.log(this.$store.state.user);
     var type_cd = this.$store.state.user.type_cd;
     var lp_auth = this.$store.state.user.lp_auth;
+    var simul_auth = this.$store.state.user.simul_auth;
     var email = this.$store.state.user.email;
 /*
 (1) 로그인없이 들어올경우 - 1,2
@@ -91,7 +92,8 @@ console.log("lp_auth : " + lp_auth);
       this.menuList.push(this.allMenuList[6]);
     }
 
-    if(email.indexOf("test@") !== -1 || email.indexOf("test_etn@") !== -1) {
+    if(simul_auth == 'Y') {
+    // if(email.indexOf("test@") !== -1 || email.indexOf("test_etn@") !== -1) {
       this.menuList.push(this.allMenuList[7]);      //  시뮬레이션
     }
 
