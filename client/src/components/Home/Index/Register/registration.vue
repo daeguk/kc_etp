@@ -987,7 +987,7 @@ export default {
             }
 
             /* 2. 지수 ID 중복 체크 */
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getJisuDuplCheck"
@@ -997,9 +997,7 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -1020,20 +1018,17 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
-
         },
 
         /*
@@ -1082,8 +1077,7 @@ export default {
             this.formData.append( "files", this.$refs.methodFile.files[0] );
             this.formData.append( "data", JSON.stringify(this.form) );
 
-            vm.$emit( "fn_showProgress", true );
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/registerJisu"
@@ -1093,11 +1087,8 @@ export default {
                         ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                     }
                 ,   async function(response) {
-
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( response.data ) {
 
                                 var resultData = response.data;
@@ -1115,15 +1106,12 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -1237,7 +1225,7 @@ export default {
                     table01.clear().draw();
                 }
 
-                vm.$emit( "fn_showProgress", true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -1250,8 +1238,7 @@ export default {
                     ,   async function(response) {
 
                             try{
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
 
                                 if( response.data ) {
                                     selfThis.jisuUploadResult = response.data.result;
@@ -1278,17 +1265,13 @@ export default {
 
                             }catch(ex) {
                                 resolve( { result : false } );
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
-
                             resolve( { result : false } );
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( error ) {
                                 vm.$root.confirmt.open('확인',error,{},4);
                             }
@@ -1307,7 +1290,7 @@ export default {
             var selfThis = this;
 
             /* 1. 기관정보를 조회한다. */
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getDomainInst"
@@ -1317,15 +1300,10 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
-
                                 var msg = ( response.data.message ? response.data.message : "" );
-
                                 if (!response.data.success) {
-
                                     if( msg ) {
                                         if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                             return false;
@@ -1338,14 +1316,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vvm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -1507,9 +1483,3 @@ export default {
     }
 };
 </script>
-
-
-
-
-
-

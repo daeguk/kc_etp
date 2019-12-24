@@ -410,12 +410,9 @@
             
             <sharePopup01 
                 v-if="share_modal_flag" 
-                
                 :share_row_data="share_row_data"
-                 @fn_close_share_modal="fn_close_share_modal" 
-                 @fn_showProgress="fn_showProgress"></sharePopup01>
-
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
+                 @fn_close_share_modal="fn_close_share_modal">
+            </sharePopup01>
         </v-flex>
     </v-layout>
 </template>
@@ -424,20 +421,13 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import sharePopup01 from "@/components/common/popup/sharePopup01";
 
 var table01 = null;
-
-
 export default {
 
     data() {
@@ -474,7 +464,6 @@ export default {
         };
     },
     components: {
-        ConfirmDialog,        
         Simulation,
         sharePopup01
     },
@@ -491,16 +480,6 @@ export default {
     },
 
     methods: {
-
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
         /*
          * 시나리오 버튼 클릭시
          * 2019-07-26  bkLove(촤병국)
@@ -544,8 +523,7 @@ export default {
             vm.now_status               =   "";
             vm.arr_simul_list           =   [];
             
-            vm.fn_showProgress( true );
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/simulation/getSimulList"
@@ -553,7 +531,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         if (response && response.data) {
                             var msg = ( response.data.msg ? response.data.msg : "" );
@@ -569,7 +547,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {
                         }
@@ -650,7 +628,7 @@ export default {
                         param.scen_cd       =   p_item.scen_cd;         /* 선택한 시나리오 코드 */
                     }
 
-                    vm.fn_showProgress( true );
+                    vm.$root.progresst.open();
 
                     util.axiosCall(
                             {
@@ -659,7 +637,7 @@ export default {
                                 ,   "method"    :   "post"
                             }
                         ,   async function(response) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
 
                                 try{
                                     if (response && response.data) {
@@ -690,7 +668,7 @@ export default {
                                 }
                             }
                         ,   function(error) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
@@ -794,7 +772,7 @@ export default {
                     p_param.grp_cd  =   p_item.grp_cd;
                     p_param.scen_cd =   p_item.scen_cd;
 
-                    vm.fn_showProgress( true );
+                    vm.$root.progresst.open();
 
                     util.axiosCall(
                             {
@@ -803,7 +781,7 @@ export default {
                                 ,   "method"    :   "post"
                             }
                         ,   async function(response) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
 
                                 try{
 
@@ -826,7 +804,7 @@ export default {
                                 }
                             }
                         ,   function(error) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
@@ -867,7 +845,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -927,7 +905,7 @@ export default {
             p_param.grp_cd      =   p_item.grp_cd;
             p_param.scen_cd     =   p_item.scen_cd;
 
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -943,8 +921,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                 if (!response.data.result) {
-
-                                    vm.fn_showProgress( false );
+                                    vm.$root.progresst.close();
 
                                     if( msg ) {
                                         vm.arr_show_error_message.push( msg );
@@ -984,14 +961,14 @@ export default {
                                 });                                
                             }
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                         }catch(ex) {
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -1085,8 +1062,7 @@ export default {
                 dataList    :   param_comp
             };
 
-
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -1095,7 +1071,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   async function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
 
@@ -1147,7 +1123,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -1289,7 +1265,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -1371,7 +1347,7 @@ export default {
                                     ,   "method"    :   "post"
                                 }
                             ,   function(response) {
-                                    vm.fn_showProgress( false );
+                                    vm.$root.progresst.close();
 
                                     try{
 
@@ -1452,7 +1428,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -1657,7 +1633,7 @@ export default {
                 p_param.scen_name   =   v_obj.val();
 
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -1677,24 +1653,24 @@ export default {
                                         vm.arr_show_error_message.push( msg );
                                     }
 
-                                    vm.fn_showProgress( false );
+                                    vm.$root.progresst.close();
 
                                 }else{
 
                                     /* 시뮬레이션 목록정보를 조회한다. */
                                     vm.fn_getSimulList();
 
-                                    vm.fn_showProgress( false );
+                                    vm.$root.progresst.close();
                                 }
                             }
 
                             }catch(ex) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1813,8 +1789,7 @@ export default {
                 p_param.only_shared_user        =   "Y";
                 p_param.arr_checked_shared      =   [];
 
-
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -1830,9 +1805,7 @@ export default {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
 
                                     if (!response.data.result) {
-
-                                        vm.fn_showProgress( false );
-
+                                        vm.$root.progresst.close();
                                         if( msg ) {
 
                                             if ( vm.$refs.confirm2.open(
@@ -1847,27 +1820,23 @@ export default {
 
                                         resolve( { result : false } );
                                     }else{
-                                        vm.fn_showProgress( false );
-
+                                        vm.$root.progresst.close();
                                         resolve( { result : true } );
                                     }
 
                                 }else{
-                                    vm.fn_showProgress( false );
-
+                                    vm.$root.progresst.close();
                                     resolve( { result : false } );
                                 }
 
                             }catch(ex) {
-                                vm.fn_showProgress( false );
-
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                                 resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
-                            vm.fn_showProgress( false );
-
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }

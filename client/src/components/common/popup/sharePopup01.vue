@@ -7,7 +7,7 @@
 
                     <v-dialog v-model="dialog" persistent width="500px">
 
-                        <!-- 공유하기 팝업창--->
+                        <!-- 공유하기 팝업창-->
                         <div>
                             <v-card flat>
                                 <h5>
@@ -21,7 +21,7 @@
                                     </v-card-title>
                                 </h5>
 
-                                <!--1table-->
+                                <!-- 1table-->
                                 <div class="simul_share_search">
                                     <v-text-field
                                         ref="ref_txt_search"
@@ -143,11 +143,6 @@
                     </v-dialog>
                 </v-card>
             </v-flex>
-
-            <v-flex>
-                <ConfirmDialog ref="confirm2"></ConfirmDialog>
-            </v-flex>            
-
         </v-layout>
     </v-container>
 </template>
@@ -157,12 +152,9 @@
 
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 export default {
   props: [ "share_row_data" ],
@@ -179,9 +171,6 @@ export default {
 
         ,   arr_user_list_for_share_cp  :   []          /* arr_user_list_for_share 복사본 */
     };
-  },
-  components: {
-        ConfirmDialog,
   },
   computed: {},
   created: function() {
@@ -235,8 +224,7 @@ export default {
                 return  false;
             }
 
-
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
 
             /* 공유된 공유자를 조회한다. */
             vm.fn_get_user_list_shared().then( function(e){
@@ -248,9 +236,7 @@ export default {
                 }
 
             }).then( function(e) {
-
-                vm.$emit( "fn_showProgress", false );
-
+              vm.$root.progresst.close();
             });
 
         },        
@@ -494,7 +480,7 @@ export default {
                 p_param.scen_cd                 =   vm.share_row_data.scen_cd;
                 p_param.arr_checked_for_share   =   vm.arr_checked_for_share;
 
-                vm.$emit( "fn_showProgress", true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -510,9 +496,7 @@ export default {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
 
                                     if (!response.data.result) {
-
-                                        vm.$emit( "fn_showProgress", false );
-
+                                        vm.$root.progresst.close();
                                         if( msg ) {
 
                                             if ( vm.$refs.confirm2.open(
@@ -527,28 +511,23 @@ export default {
 
                                         resolve( { result : false } );
                                     }else{
-
-                                        vm.$emit( "fn_showProgress", false );
-
+                                        vm.$root.progresst.close();
                                         resolve( { result : true } );
                                     }
 
                                 }else{
-
-                                    vm.$emit( "fn_showProgress", false );
-
+                                    vm.$root.progresst.close();
                                     resolve( { result : false } );
                                 }
 
                             }catch(ex) {
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                                 resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
@@ -622,9 +601,7 @@ export default {
                 p_param.scen_cd                 =   vm.share_row_data.scen_cd;
                 p_param.arr_checked_shared      =   vm.arr_checked_shared;
 
-
-                vm.$emit( "fn_showProgress", true );
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/simulation/applyShareUserRevokeInArr"
@@ -639,8 +616,7 @@ export default {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
 
                                     if (!response.data.result) {
-
-                                        vm.$emit( "fn_showProgress", false );
+                                        vm.$root.progresst.close();
 
                                         if( msg ) {
 
@@ -656,27 +632,23 @@ export default {
 
                                         resolve( { result : false } );
                                     }else{
-                                        vm.$emit( "fn_showProgress", false );
-
+                                        vm.$root.progresst.close();
                                         resolve( { result : true } );
                                     }
 
                                 }else{
-                                    vm.$emit( "fn_showProgress", false );
-
+                                    vm.$root.progresst.close();
                                     resolve( { result : false } );
                                 }
 
                             }catch(ex) {
-                                vm.$emit( "fn_showProgress", false );
-
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                                 resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
@@ -727,7 +699,7 @@ export default {
                     }
                 });
 
-				vm.arr_user_list_for_share  =   [];
+        				vm.arr_user_list_for_share  =   [];
 
                 vm.$nextTick(function(e) {
                     vm.arr_user_list_for_share  =   filterData;

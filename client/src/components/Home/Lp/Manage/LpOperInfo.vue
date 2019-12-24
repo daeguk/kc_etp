@@ -266,7 +266,6 @@ export default {
             vm.result_cnt   =   0;
             if (!response.data.result) {
               if( msg ) {
-                // vm.showMessageBox('확인', msg,{},1);
                 vm.$root.confirmt.open('확인', msg, {}, 1);
                 return  false;
               }
@@ -293,7 +292,6 @@ export default {
       }, function(error) {
         vm.$root.progresst.close();
         if( error ) {
-          // vm.$emit("showMessageBox", '확인', error ,{},4);
           vm.$root.confirmt.open('확인', msg, {}, 4);
         }                        
       }
@@ -1084,7 +1082,6 @@ export default {
           }
 
           if( !tableList || tableList.length == 0 ) {
-              // vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
               vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
               return  false;
           }            

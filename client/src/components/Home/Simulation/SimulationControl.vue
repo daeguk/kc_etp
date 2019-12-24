@@ -12,8 +12,6 @@
 
         <!-- 시뮬레이션 목록화면 -->
         <SimulationList         v-if="[ 0, 1 ].includes( showSimulationId ) && activeTab==0" 
-
-                                @fn_showProgress="fn_showProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationList>
 
@@ -21,9 +19,6 @@
         <Simulation             v-if="[ 0, 1 ].includes( showSimulationId ) && activeTab==1"
 
                                 :paramData  =   "paramData"
-
-                                @fn_showProgress="fn_showProgress"
-                                @fn_showWaitProgress="fn_showWaitProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </Simulation>
 
@@ -31,9 +26,6 @@
         <SimulationResult       v-if="showSimulationId == 2"
 
                                 :paramData  =   "paramData"
-
-                                @fn_showProgress="fn_showProgress"
-                                @fn_showWaitProgress="fn_showWaitProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationResult>
 
@@ -41,8 +33,6 @@
         <SimulationResultGroup   v-if="showSimulationId == 3"
 
                                 :paramData  =   "paramData"
-
-                                @fn_showProgress="fn_showProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationResultGroup>
 
@@ -50,17 +40,8 @@
         <SimulationTimeSeriesUpload   v-if="showSimulationId == 4"
 
                                 :paramData  =   "paramData"
-
-                                @fn_showProgress="fn_showProgress"
                                 @fn_showSimulation="fn_showSimulation">
         </SimulationTimeSeriesUpload>        
-
-        <v-flex>
-            <ProgressBar ref="progress2"></ProgressBar>
-            <WaitProgressBar ref="wait_progress"></WaitProgressBar>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>   
-        
     </v-container>
 </template>
 
@@ -68,15 +49,9 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-import WaitProgressBar from "@/components/common/WaitProgressBar.vue";
-
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import SimulationList from "@/components/Home/Simulation/SimulationList.vue";
 import SimulationResult from "@/components/Home/Simulation/SimulationResult.vue";
@@ -102,26 +77,14 @@ export default {
         };
     },
     components: {
-            ProgressBar
-        ,   WaitProgressBar
-        ,   ConfirmDialog
-
-        ,   Simulation
-        ,   SimulationList
-        ,   SimulationResult
-        ,   SimulationResultGroup
-        ,   SimulationTimeSeriesUpload
+        Simulation,
+        SimulationList,
+        SimulationResult,
+        SimulationResultGroup,
+        SimulationTimeSeriesUpload
     },
-    
-    created() {
-        var vm = this;
-    },
-
-    mounted() {
-        var vm = this;
-     
-    },
-
+    created() {},
+    mounted() {},
     methods: {
 
         /*
@@ -189,36 +152,6 @@ export default {
 
             vm.activeTab            =   tab_id;
         },
-
-        /*
-         *  메시지 팝업창을 노출한다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-            this.$refs.confirm2.open( title,msg, option, gubun );
-        },
-
-        /*
-         *  진행 progress 를 보여준다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function(visible) {
-
-            if( this.$refs && this.$refs.progress2 ) {
-                util.processing( this.$refs.progress2, visible );
-            }
-        },         
-
-        /*
-         *  진행 progress 를 보여준다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showWaitProgress: function(visible) {
-
-            if( this.$refs && this.$refs.wait_progress ) {
-                util.processing( this.$refs.wait_progress, visible );
-            }
-        },      
 
         /*
          *  param 과 일치하는 정보를 보여준다.

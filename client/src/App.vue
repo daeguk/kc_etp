@@ -3,6 +3,7 @@
     <router-view></router-view>
     <ConfirmDialog ref="confirmt"></ConfirmDialog>
     <ProgressBar ref="progresst"></ProgressBar>
+    <WaitProgressBar ref="wprogresst"></WaitProgressBar>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import util from "@/js/util.js"
 import Constant from "@/store/store_constant.js"
 import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ProgressBar from "@/components/common/ProgressBar.vue";
+import WaitProgressBar from "@/components/common/WaitProgressBar.vue";
 
 export default {
   name: 'app',
@@ -33,6 +35,7 @@ export default {
   mounted: function() {
     this.$root.confirmt = this.$refs.confirmt;
     this.$root.progresst = this.$refs.progresst;
+    this.$root.wprogresst = this.$refs.wprogresst;
     // 실시간 데이터 테스트 완료 (2019.11.02)
     // this.initWebSocket();
     this.setBefDates();

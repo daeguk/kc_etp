@@ -367,15 +367,6 @@ export default {
             });
         },        
 
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
         fn_showWaitProgress: function( visible ) {
             var vm = this;
             vm.$emit("fn_showWaitProgress", visible );
@@ -392,7 +383,7 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 var param = {};
                 param.show_owner_yn     =   "";
@@ -404,7 +395,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -433,8 +424,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -452,8 +442,7 @@ export default {
             var vm = this;
 
             vm.arr_show_error_message   =   [];
-
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -462,7 +451,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
                             if (response && response.data) {
@@ -482,7 +471,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
@@ -503,8 +492,7 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  new Promise(function(resolve, reject) {
-
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -513,7 +501,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
                                 if (response && response.data) {
@@ -547,7 +535,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -567,7 +555,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -576,7 +564,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
                             if (response && response.data) {
@@ -614,7 +602,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -641,7 +629,6 @@ export default {
                 vm.arr_show_error_message.push( "초기 데이터 [벤치마크] 값이 존재하지 않습니다." );
             }
 
-        /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
                 return  false;
             }
@@ -683,7 +670,6 @@ export default {
             /* 마스트 정보를 밸리데이션 체크한다. */
             vm.fn_validationSimulMast();
 
-        /**************/
             if( vm.arr_show_error_message && vm.arr_show_error_message.length > 0  ) {
                 return  false;
             }
@@ -739,8 +725,7 @@ export default {
                 formData.append( "data", JSON.stringify( p_param ) );                
 
 
-                vm.fn_showProgress( true );
-
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -751,7 +736,7 @@ export default {
                             ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                         }
                     ,   async function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -826,8 +811,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1025,17 +1009,16 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 step1().then( function(e){
                     return step2();
 
                 }).then( function(e) {
-                    vm.fn_showProgress( false );
-
+                    vm.$root.progresst.close();
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.$root.progresst.close();
                 });
                 
 

@@ -828,15 +828,6 @@ export default {
 
         },
 
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
         fn_showWaitProgress: function( visible ) {
             var vm = this;
             vm.$emit("fn_showWaitProgress", visible);
@@ -1172,7 +1163,7 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 var param = {};
                 param.show_owner_yn     =   "";
@@ -1184,7 +1175,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -1214,7 +1205,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1262,7 +1253,7 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -1271,8 +1262,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   async function(response) {
-                            vm.fn_showProgress( false );
-
+                            vm.$root.progresst.close();
                             try{
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -1326,8 +1316,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1347,7 +1336,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -1356,7 +1345,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
                             if (response && response.data) {
@@ -1376,7 +1365,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
@@ -1402,7 +1391,7 @@ export default {
 
             return  new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -1411,7 +1400,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
                                 if (response && response.data) {
@@ -1470,7 +1459,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1725,7 +1714,7 @@ export default {
                 tr.find( "td:eq(2)" ).text( rowItem.F16002 );                   /* 종목명 */
 
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
             /* 선택된 종목의 구성정보를 조회한다. */
                 util.axiosCall(
@@ -1735,7 +1724,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
                                 if (response && response.data) {
@@ -1771,7 +1760,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -2026,7 +2015,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -2035,7 +2024,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
                             if (response && response.data) {
@@ -2130,7 +2119,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -2145,7 +2134,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showProgress( true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -2154,7 +2143,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
 
                         try{
                             vm.detail_init_yn   =   "N";
@@ -2216,7 +2205,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showProgress( false );
+                        vm.$root.progresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -2643,7 +2632,7 @@ export default {
 
                 vm.$nextTick( function(){
                     
-                    vm.fn_showProgress( true );
+                    vm.$root.progresst.open();
 
                     util.axiosCall(
                             {
@@ -2659,7 +2648,7 @@ export default {
                                 ,   "method"    :   "post"
                             }
                         ,   function(response) {
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
 
                                 try{
                                     if (response && response.data) {
@@ -2694,8 +2683,7 @@ export default {
                             }
                         ,   function(error) {
                                 resolve( { result : false } );
-
-                                vm.fn_showProgress( false );
+                                vm.$root.progresst.close();
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
@@ -3311,7 +3299,7 @@ export default {
                 formData.append("rebalance_date_cd", vm.rebalance_date_cd );
                 formData.append("files", file);
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 vm.rebalance_date           =   "";
                 vm.old_rebalance_date       =   "";
@@ -3325,8 +3313,7 @@ export default {
                             ,   "headers"       :   {   "Content-Type": "multipart/form-data"   }
                         }
                     ,   async function(response) {
-                            vm.fn_showProgress( false );
-
+                            vm.$root.progresst.close();
                             try{
 
                                 if( response.data ) {
@@ -3438,7 +3425,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );

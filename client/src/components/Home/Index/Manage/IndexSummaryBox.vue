@@ -45,8 +45,7 @@ export default {
                     params = {state : '03'}
                 }
             }
-
-            vm.$emit("showProgress", true ); 
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -66,18 +65,15 @@ export default {
                                     vm.item.updateDate = response.data.results[0].updateDate;
                                 }
                             }
-                            vm.$emit("showProgress", false); 
+                            vm.$root.progresst.close();
 
                         }catch(ex) {
-                            vm.$emit("showProgress", false); 
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit("showProgress", false); 
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인', error,{},4);      
                         }

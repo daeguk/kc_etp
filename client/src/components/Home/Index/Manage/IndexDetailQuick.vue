@@ -268,7 +268,7 @@ export default {
             
             console.log( "ComIndexJongmok.vue -> fn_getIndexDetailList" );
             
-            vm.$emit("showProgress", true);
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -292,17 +292,15 @@ export default {
                                 vm.form.jisuSearchYn    =   "Y";
                                 vm.$emit( "fn_getIndexDetailList", vm.indexBasic, indexDetailList, vm.form );
                             }
-                            vm.$emit("showProgress", false);
+                            vm.$root.progresst.close();
 
                         }catch(ex) {
-                            vm.$emit("showProgress", false);
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "showProgress", false );
-                        
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -327,7 +325,7 @@ export default {
                 return false;
             }
 
-            vm.$emit( "showProgress", true ); 
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -341,7 +339,7 @@ export default {
 
                         try{
 
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             if (response && response.data) {
                                 var jongmokDataList = response.data.dataList;
 
@@ -358,14 +356,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "showProgress", false );
-                        
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -382,11 +378,8 @@ export default {
         fn_getIndexListByFirst : function() {
 
             var vm = this;
-            
             // console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
-
-            vm.$emit( "showProgress", true ); 
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getIndexList"
@@ -399,9 +392,8 @@ export default {
 
                         try{
 
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             if (response && response.data) {
-
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
@@ -420,14 +412,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "showProgress", false );
-                        
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -451,7 +441,7 @@ export default {
                 jisuTable.clear().draw();
             }
 
-            vm.$emit( "showProgress", true ); 
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -465,7 +455,7 @@ export default {
 
                         try{
 
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             if (response && response.data) {
 
                                 var msg = ( response.data.msg ? response.data.msg : "" );
@@ -483,14 +473,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "showProgress", false ); 
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "showProgress", false );
-                        
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }

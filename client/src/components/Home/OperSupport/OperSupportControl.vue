@@ -11,45 +11,25 @@
       <v-tabs-items v-model="activeTab">
         <v-tab-item  >
             <IndexCode      v-if="activeTab==0" 
-
-                            :org_data_list="org_data_list"
-                        
-                            @fn_showMessageBox="fn_showMessageBox"
-                            @fn_showProgress="fn_showProgress">
+                            :org_data_list="org_data_list">
             </IndexCode>
         </v-tab-item>
         <v-tab-item >
             <OperComCode    v-if="activeTab==1" 
-
-                            :org_data_list="org_data_list"
-
-                            @fn_showMessageBox="fn_showMessageBox"
-                            @fn_showProgress="fn_showProgress">
+                            :org_data_list="org_data_list">
             </OperComCode>
         </v-tab-item>        
       </v-tabs-items>
     </v-flex>
-
-
-        <v-flex>
-            <ProgressBar ref="progress2"></ProgressBar>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>       
-
   </v-layout>
 </template>
 
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-
 import IndexCode from "@/components/Home/OperSupport/IndexCode.vue";
 import OperComCode from "@/components/Home/OperSupport/OperComCode.vue";
 
@@ -71,11 +51,8 @@ export default {
     }, 
 
     components: {
-            ProgressBar
-        ,   ConfirmDialog
-
-        ,   IndexCode
-        ,   OperComCode
+      IndexCode,   
+      OperComCode
     }, 
 
     created() {
@@ -125,25 +102,6 @@ export default {
         },
 
         /*
-         *  메시지 팝업창을 노출한다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-            this.$refs.confirm2.open( title,msg, option, gubun );
-        },
-
-        /*
-         *  진행 progress 를 보여준다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function(visible) {
-
-            if( this.$refs && this.$refs.progress2 ) {
-                util.processing( this.$refs.progress2, visible );
-            }
-        },
-
-        /*
          * 지수구분코드를 조회한다.
          * 2019-10-11  bkLove(촤병국)
          */
@@ -152,9 +110,7 @@ export default {
 
 
             return  await new Promise(function(resolve, reject) {
-
-                vm.fn_showProgress( true );
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/operSupport/getIndexCode"
@@ -162,7 +118,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -171,7 +127,7 @@ export default {
 
                                     if (!response.data.result) {
                                         if( msg ) {
-                                            vm.fn_showMessageBox( '확인', msg, {}, 1 );
+                                            vm.$root.confirmt.open('확인', msg, {}, 1 );
                                         }
 
                                         resolve( { result : false } );
@@ -189,9 +145,9 @@ export default {
                             }
                         }
                     ,   function(error) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error ) {
-                                vm.fn_showMessageBox( '확인', error, {}, 4 );
+                                vm.$root.confirmt.open('확인', error, {}, 4 );
                             }
 
                             resolve( { result : false } );
@@ -213,7 +169,7 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -222,7 +178,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -231,7 +187,7 @@ export default {
 
                                     if (!response.data.result) {
                                         if( msg ) {
-                                            vm.fn_showMessageBox( '확인', msg, {}, 1 );
+                                            vm.$root.confirmt.open('확인', msg, {}, 1 );
                                         }
 
                                         resolve( { result : false } );
@@ -249,10 +205,9 @@ export default {
                             }
                         }
                     ,   function(error) {
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error ) {
-                                vm.fn_showMessageBox( '확인', error, {}, 4 );
+                                vm.$root.confirmt.open('확인', error, {}, 4 );
                             }
 
                             resolve( { result : false } );

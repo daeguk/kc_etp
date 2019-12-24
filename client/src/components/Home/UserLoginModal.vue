@@ -154,9 +154,6 @@ export default {
       let msg = "기관 메일 계정 확인후, 계정을 발급해드리고 있습니다. 담당자에게 문의하시기 바랍니다. (코스콤 정보사업실 민선기 과장 : 02-767-8752)"
       alert(msg);
     },
-    showMessageBox: function(title, msg, option, gubun) {
-         this.$refs.confirm.open(title,msg, option, gubun);
-    }    
   }
 }
 </script>

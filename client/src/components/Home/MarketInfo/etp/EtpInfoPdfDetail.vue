@@ -179,7 +179,7 @@ export default {
                     if(     !vm.searchParam.F16012          /* 국제표준코드 */
                         ||  !vm.searchParam.F16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     ) {
-                        vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
+                        vm.$root.confirmt.open('확인','기준코드가 존재하지 않습니다.',{},1);
                         return  false;
                     }
                 }
@@ -195,7 +195,7 @@ export default {
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
                             if( msg ) {
-                                vm.$emit("showMessageBox", '확인', msg,{},1);
+                                vm.$root.confirmt.open('확인', msg,{},1);
                                 return  false;
                             }
                         }
@@ -209,7 +209,7 @@ export default {
 
                 }).catch(error => {
                     util.processing(vm.$refs.progress, false);
-                    vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                    vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
             }
             
@@ -464,7 +464,7 @@ export default {
                                         var msg = ( response.data.msg ? response.data.msg : "" );
                                         if (!response.data.result) {
                                             if( msg ) {
-                                                vm.$emit("showMessageBox", '확인', msg,{},1);
+                                                vm.$root.confirmt.open('확인', msg,{},1);
                                                 resolve(false);
                                             }
                                         }
@@ -496,7 +496,7 @@ export default {
                                 }
 
                                 if( error ) {
-                                    vm.$emit("showMessageBox", '확인', msg,{},4);
+                                    vm.$root.confirmt.open('확인', msg,{},4);
                                 }
 
                                 resolve(false);
@@ -512,7 +512,7 @@ export default {
                     util.processing(vm.$refs.progress, false);
                 }
 
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
 
                 resolve(false);
             })

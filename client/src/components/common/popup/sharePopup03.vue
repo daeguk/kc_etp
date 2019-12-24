@@ -173,17 +173,11 @@ export default {
 
                 return  false;
             }
-
-
-            vm.$emit( "fn_showProgress", true );
-
+            vm.$root.progresst.open();
             /* 공유할 공유자를 조회한다. */
             vm.fn_get_user_list_for_share().then( function(e){
-
-                vm.$emit( "fn_showProgress", false );
-
+              vm.$root.progresst.close();
             });
-
         },        
 
         /*
@@ -353,7 +347,7 @@ export default {
                 p_param.arr_scen_in_grp         =   vm.share_row_data.arr_scen_in_grp;
                 p_param.arr_checked_for_share   =   vm.arr_checked_for_share;
 
-                vm.$emit( "fn_showProgress", true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -369,9 +363,7 @@ export default {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
 
                                     if (!response.data.result) {
-
-                                        vm.$emit( "fn_showProgress", false );
-
+                                        vm.$root.progresst.close();
                                         if( msg ) {
 
                                             if ( vm.$refs.confirm2.open(
@@ -386,28 +378,23 @@ export default {
 
                                         resolve( { result : false } );
                                     }else{
-
-                                        vm.$emit( "fn_showProgress", false );
-
+                                        vm.$root.progresst.close();
                                         resolve( { result : true } );
                                     }
 
                                 }else{
-
-                                    vm.$emit( "fn_showProgress", false );
-
+                                    vm.$root.progresst.close();
                                     resolve( { result : false } );
                                 }
 
                             }catch(ex) {
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                                 resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }

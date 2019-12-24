@@ -3,15 +3,9 @@
     <v-flex grow :class="className">
       <KrxIndexList v-if="activeTab == 1"></KrxIndexList>       
       <FngIndexList v-if="activeTab == 2"></FngIndexList>       
-<!--        
-      <IndexDetailInfo v-if="showIndexDetailDialog" :showDialog="true" :showView="true"  :paramData="paramData"></IndexDetailInfo>
-      <EtpManageDetail v-if="showEtpDetailDialog" :paramData="paramData" :showEtpManageDetailDialog="showEtpDetailDialog"></EtpManageDetail>
-      <ConfirmDialog ref="confirm"></ConfirmDialog>
-      <ProgressBar ref="progress"></ProgressBar>
-      -->
     </v-flex>
     <v-flex :class="FaverClassName">
-      <ComFavorItemSub v-if="showFaver"  :faverSize = "faverSize" @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+      <ComFavorItemSub v-if="showFaver"  :faverSize = "faverSize" @showDetail="showDetail"></ComFavorItemSub>
     </v-flex>
   </v-layout> 
 </template>
@@ -24,9 +18,6 @@ import today from "./today.vue";
 import KrxIndexList from "./KrxIndexList.vue";
 import FngIndexList from "./FngIndexList.vue";
 import ComFavorItemSub from "@/components/common/control/ComFavorItemSub"; 
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
 import EtpManageDetail from "@/components/Home/Etp/Manage/EtpManageDetail.vue";         /*ETP 상세정보*/
 
@@ -47,8 +38,6 @@ export default {
 
     components: {
         ComFavorItemSub : ComFavorItemSub,
-        ConfirmDialog : ConfirmDialog,
-        ProgressBar : ProgressBar,
         IndexDetailInfo : IndexDetailInfo,
         EtpManageDetail :   EtpManageDetail,
         KrxIndexList,
@@ -57,9 +46,8 @@ export default {
 
     mounted: function() {
         // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         this.className = "conWidth_100";
-        console.log("activeTab : " + this.activeTab);
+        // console.log("activeTab : " + this.activeTab);
     },
     created: function() {
         this.$EventBus.$on('showList', data => {
@@ -103,16 +91,8 @@ export default {
                 vm.showMarketInfo = 0;
                 vm.showFaver = true;
             }
-
-
             vm.className = "conWidth_left";  
             vm.FaverClassName = "conWidth_right";   
-        },
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
-        },
-        showProgress: function(visible) {
-            util.processing(this.$refs.progress, visible);
         },
     }   
 

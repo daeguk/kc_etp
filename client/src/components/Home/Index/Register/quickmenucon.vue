@@ -83,7 +83,7 @@ export default {
 
             var vm = this;
 
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getStatusList"
@@ -91,11 +91,8 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
 
                                 var msg = ( response.data.msg ? response.data.msg : "" );
@@ -112,14 +109,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vvm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -133,10 +128,9 @@ export default {
          * 2019-04-10  bkLove(촤병국)
          */
         fn_getIndexSelectList() {
-
             var vm = this;
 
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getIndexSelectList"
@@ -144,13 +138,9 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
-
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
@@ -163,14 +153,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }

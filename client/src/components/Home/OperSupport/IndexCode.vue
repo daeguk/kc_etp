@@ -166,25 +166,6 @@ export default {
     },
 
     methods: {
-
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
-        /*
-         * 메시지창을 보여준다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-            vm.$emit( "fn_showMessageBox", title,msg, option, gubun);
-        },        
-
         /*
          * 조회된 내용에서 필터를 수행한다.
          * 2019-10-11  bkLove(촤병국)
@@ -241,7 +222,7 @@ export default {
 
 
             if( !vm.show_data_list || vm.show_data_list.length == 0 ) {
-                vm.fn_showMessageBox( '확인','조회된 내용이 1건 이상 존재해야 합니다.',{}, 1 );
+                vm.$root.confirmt.open( '확인','조회된 내용이 1건 이상 존재해야 합니다.',{}, 1 );
                 return  false;
             }          
 

@@ -1057,7 +1057,7 @@ export default {
             }
 
             /* 2. 지수 ID 중복 체크 */
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getJisuDuplCheck"
@@ -1067,9 +1067,7 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
@@ -1091,14 +1089,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('확인',error,{},4);
                         }
@@ -1193,8 +1189,7 @@ export default {
             this.formData.append( "files", this.$refs.methodFile1.files[0] );
             this.formData.append( "data", JSON.stringify(this.modForm) );
 
-            vm.$emit( "fn_showProgress", true );
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/modifyJisu"
@@ -1204,18 +1199,14 @@ export default {
                         ,   "headers"   :   {   "Content-Type": "multipart/form-data"   }
                     }
                 ,   async function(response) {
-
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( response.data ) {
-
                                 var resultData = response.data;
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                 if( msg ) {
-                                    if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                         if (!response.data.result) {
                                             return false;
                                         }
@@ -1226,17 +1217,14 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1252,7 +1240,7 @@ export default {
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
-                    vm.$emit( 'showMessageBox', '확인','지수사업자만 삭제 하실수 있습니다.',{},1 );
+                    vm.$root.confirmt.open('확인','지수사업자만 삭제 하실수 있습니다.',{},1 );
                     return  false;
                 }
             }
@@ -1268,10 +1256,7 @@ export default {
                     return false;
                 }
             }
-
-
-            vm.$emit( "fn_showProgress", true );
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/deleteJisu"
@@ -1281,16 +1266,14 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( response.data ) {
 
                                 var resultData = response.data;
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                 if( msg ) {
-                                    if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                         if (!response.data.result) {
                                             return false;
                                         }
@@ -1301,17 +1284,15 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
+                        vm.$root.progresst.close();
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );            
@@ -1382,7 +1363,7 @@ export default {
                     /* 1. 확장자가 존재하지 않는지 확인 */
                     if (lastDot == -1) {
 
-                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                        if( await vm.$root.confirmt.open('확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
                             resolve( {result : false} );
                             return  false;;
                         }
@@ -1394,7 +1375,7 @@ export default {
                     /* 2. 허용되는 확장자에 포함되는지 확인 */
                     if (!allowExt.includes(fileExt)) {
 
-                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                        if( await vm.$root.confirmt.open('확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
                             resolve( {result : false} );
                             return  false;;
                         }
@@ -1425,9 +1406,7 @@ export default {
                 if( table01 ) {
                     table01.clear().draw();
                 }                  
-
-                vm.$emit( "fn_showProgress", true );
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/index/fileuploadSingle"
@@ -1439,14 +1418,13 @@ export default {
                     ,   async function(response) {
 
                             try{
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 if( response.data ) {
                                     selfThis.jisuUploadResult = response.data.result;
                                     
                                     if( !response.data.result ) {
 
-                                        if( await vm.$emit("showMessageBox", '확인', response.data.msg ,{},1) ) {
+                                        if( await vm.$root.confirmt.open('확인', response.data.msg ,{},1) ) {
                                             resolve( { result : false } );
                                             return false;
                                         }
@@ -1466,19 +1444,15 @@ export default {
 
                             }catch(ex) {
                                 resolve( { result : false } );
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
-
                             resolve( { result : false } );
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인',error,{},4);
+                                vm.$root.confirmt.open('확인',error,{},4);
                             }
                         }
                 );
@@ -1495,7 +1469,7 @@ export default {
             var selfThis = this;
 
             /* 1. 기관정보를 조회한다. */
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getDomainInst"
@@ -1505,17 +1479,14 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
-
                                 var msg = ( response.data.message ? response.data.message : "" );
 
                                 if (!response.data.success) {
 
                                     if( msg ) {
-                                        if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                        if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                             return false;
                                         }
                                     }
@@ -1526,16 +1497,14 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1646,9 +1615,7 @@ export default {
             if( table01 ) {
                 table01.clear().draw();
             }
-
-
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getRegistedJisuData"
@@ -1658,8 +1625,7 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
 
                             if (response && response.data) {
 
@@ -1668,7 +1634,7 @@ export default {
                                 if (!response.data.result) {
 
                                     if( msg ) {
-                                        if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                        if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                             return false;
                                         }
                                     }
@@ -1703,16 +1669,15 @@ export default {
                             }
 
                         }catch(ex) {
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        vm.$emit( "fn_showProgress", false );
+                        vm.$root.progresst.close();
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1749,14 +1714,14 @@ export default {
 
                     if( maxSize > 0 ) {
                         if( file.size == 0 ) {
-                            if( await vm.$emit("showMessageBox", '확인', title + ' 파일용량이 0 byte 입니다.' ,{},1) ) {
+                            if( await vm.$root.confirmt.open('확인', title + ' 파일용량이 0 byte 입니다.' ,{},1) ) {
                                 resolve( { result: false } );
                                 return false;
                             }
                         }
 
                         if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                            if( await vm.$emit("showMessageBox", '확인', title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.' ,{},1) ) {
+                            if( await vm.$root.confirmt.open('확인', title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.' ,{},1) ) {
                                 resolve( { result: false } );            
                                 return false;
                             }
@@ -1792,9 +1757,3 @@ export default {
     }
 };
 </script>
-
-
-
-
-
-

@@ -60,7 +60,6 @@
                             :arr_result_header="arr_result_daily01_header"
                             :arr_checked="arr_checked"
                             :bm_header="bm_daily_header"
-                            @fn_showMessageBox="fn_showMessageBox"
                         ></LineSimulationChartG>
                         <!-- </div> -->
                     </div>
@@ -198,17 +197,13 @@
                 v-if="share_grp_modal_flag"
                 :share_row_data="share_row_data"
                 @fn_close_share_modal="fn_close_share_modal"
-                @fn_showProgress="fn_showProgress"
             ></sharePopup02>
 
             <sharePopup03
                 v-if="share_scen_modal_flag"
                 :share_row_data="share_row_data"
                 @fn_close_share_modal="fn_close_share_modal"
-                @fn_showProgress="fn_showProgress"
             ></sharePopup03>            
-
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
     </v-layout>
 </template>
@@ -217,7 +212,6 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
@@ -225,7 +219,6 @@ import _ from "lodash";
 import excel from "xlsx";
 
 import LineSimulationChartG  from "@/components/common/chart/LineSimulationChartG.vue";
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import sharePopup02 from "@/components/common/popup/sharePopup02";
 import sharePopup03 from "@/components/common/popup/sharePopup03";
 
@@ -317,7 +310,7 @@ export default {
 
         vm.chartFlag   =   false;
 
-        vm.fn_showProgress( true );
+        vm.$root.progresst.open();
 
         /* 초기 데이터를 설정한다. */
         vm.fn_init().then(function(e){
@@ -333,10 +326,10 @@ export default {
                 return step3();
             }
         }).then(function(e){
-            vm.fn_showProgress( false );
+            vm.$root.progresst.close();
         }).catch( function(e) {
             console.log( e );
-            vm.fn_showProgress( false );
+            vm.$root.progresst.close();
         });
 
 
@@ -500,7 +493,7 @@ export default {
 
             }).catch( function(e1) {
                 console.log( e1 );
-                vm.fn_showProgress( false );
+                vm.$root.progresst.close();
             });
         }
 
@@ -601,7 +594,7 @@ export default {
 
             }).catch( function(e1) {
                 console.log( e1 );
-                vm.fn_showProgress( false );
+                vm.$root.progresst.close();
             });
         }
 
@@ -731,33 +724,12 @@ export default {
 
             }).catch( function(e1) {
                 console.log( e1 );
-                vm.fn_showProgress( false );
+                vm.$root.progresst.close();
             });
         }
     },
 
     methods: {
-
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
-        /*
-         *  메시지 팝업창을 노출한다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-
-            if( this.$refs && this.$refs.confirm2 ) {
-                this.$refs.confirm2.open( title,msg, option, gubun );
-            }
-        },
-
         /*
          * 초기 데이터를 설정한다.
          * 2019-10-24  bkLove(촤병국)
@@ -801,7 +773,7 @@ export default {
 
             return  await new Promise(function(resolve, reject) {
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -810,7 +782,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -843,8 +815,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -864,8 +835,7 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  await new Promise(function(resolve, reject) {
-
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -874,8 +844,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
-
+                            vm.$root.progresst.close();
                             try{
 
                                 vm.arr_result_anal01            =   [];
@@ -908,8 +877,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -929,8 +897,7 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return  await new Promise(function(resolve, reject) {
-
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -939,7 +906,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
 
                             try{
 
@@ -974,8 +941,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -1039,7 +1005,7 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 step1().then( function(e){
                     if( e && e.result ) {
@@ -1048,10 +1014,10 @@ export default {
                 }).then( function(e3) {
                     return step3();
                 }).then( function(e4) {
-                    vm.fn_showProgress( false );
+                    vm.$root.progresst.close();
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.$root.progresst.close();
                 });
                 
 

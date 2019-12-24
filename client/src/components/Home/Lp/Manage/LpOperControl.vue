@@ -7,8 +7,6 @@
         :toggle="toggle"
         :state="state"
         @showDetail="showDetail" 
-        @showMessageBox="showMessageBox"
-        @fn_showProgress="fn_showProgress"
         @fn_showDetailIndex="fn_showDetailIndex"
         @fn_showDetailPdf="fn_showDetailPdf"
         @fn_pageMove="fn_pageMove"
@@ -19,27 +17,18 @@
         @fn_setCustomizeData="fn_setCustomizeData"
         @fn_setStateInfo="fn_setStateInfo">
       </EtpOperInfo>
-
-      <!-- 메시지 관리 -->
-      <ConfirmDialog ref="confirm"></ConfirmDialog>
-
-      <ProgressBar ref="progress"></ProgressBar>
-
       <!-- ETP 상세 -->
       <EtpManageDetail
         v-if="showEtpDetailDialog" 
         :paramData="paramData" 
         :showEtpManageDetailDialog="showEtpManageDetailDialog">
       </EtpManageDetail>            
-
     </v-flex>
-
     <v-flex :class="FaverClassName">
       <ComEtpFavorItemSub
         v-if="showFaver"   
         :faverSize = "faverSize"
-        @showDetail="showDetail" 
-        @showMessageBox="showMessageBox">
+        @showDetail="showDetail">
       </ComEtpFavorItemSub>
     </v-flex>
   </v-layout> 
@@ -49,14 +38,11 @@
 
 import $                            from "jquery";
 import dt                           from "datatables.net";
-import buttons                      from "datatables.net-buttons";
 import select                       from "datatables.net-select";
 import _                            from "lodash";
 import Config                       from "@/js/config.js";
 import util                         from "@/js/util.js";
 
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
-import ProgressBar                  from "@/components/common/ProgressBar.vue";
 import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
 import ComEtpFavorItemSub              from "@/components/common/control/ComEtpFavorItemSub"; 
 
@@ -125,13 +111,9 @@ export default {
     EtpOperPdfHistPop               :   EtpOperPdfHistPop,                  /* PDF 수정내역 팝업 */
     EtpOperPdfInavCalcPop           :   EtpOperPdfInavCalcPop,              /* (PDF) iNAV 계산기 팝업 */
     EtpOperInfoInavIndex            :   EtpOperInfoInavIndex,               /* (지수수익율) iNAV 계산기 팝업 */
-
     EtpOperInfo                     :   EtpOperInfo,                        /* ETP 운용정보 */
     EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
     EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
-
-    ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
-    ProgressBar                     :   ProgressBar,
     ComEtpFavorItemSub              :   ComEtpFavorItemSub,
   },
   watch : {
@@ -144,9 +126,6 @@ export default {
   },
 
   mounted: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;
-
     this.className = "conWidth_100";
   },
   created: function() {
@@ -184,8 +163,6 @@ export default {
   beforeUpdated: function() {
   },
   updated: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;    
   },
   methods: {
     showDetail: function(gubun, paramData) {
@@ -231,14 +208,6 @@ export default {
       this.className = "conWidth_left";
       this.FaverClassName = "conWidth_right";
     },
-    showMessageBox: function(title, msg, option, gubun) {
-      this.$root.$confirm.open(title,msg, option, gubun);
-    },
-    fn_showProgress: function(visible) {
-      if( this.$refs && this.$refs.progress ) {
-        util.processing(this.$refs.progress, visible);
-      }
-    },      
     async fn_showDetailIndex(gubun, paramData) {
       /* 지수관리 -> 지수구성정보 상세팝업 */
       if( gubun == '3' ) {

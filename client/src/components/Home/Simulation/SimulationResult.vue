@@ -62,7 +62,6 @@
                             v-if="chartFlag"
                             :arr_result_daily="arr_result_daily"
                             :simul_result_mast="simul_result_mast"
-                            @fn_showMessageBox="fn_showMessageBox"
                         ></LineSimulationChart>
                         <ul>
                             <li>
@@ -446,7 +445,6 @@
                 v-if="share_modal_flag"
                 :share_row_data="share_row_data"
                 @fn_close_share_modal="fn_close_share_modal"
-                @fn_showProgress="fn_showProgress"
             ></sharePopup01>
 
             <ConfirmDialog ref="confirm2"></ConfirmDialog>
@@ -607,7 +605,7 @@ export default {
                 ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
             ){
 
-                vm.fn_showWaitProgress( {'open':true, 'title':'시계열 분석 중입니다.'} );
+                vm.$root.wprogresst.open({'open':true, 'title':'시계열 분석 중입니다.'});
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -637,7 +635,7 @@ export default {
 
                 }).then( function(e) {
 
-                    vm.fn_showWaitProgress( false );
+                    vm.$root.wprogresst.close();
                     
                 }).catch( function(e) {
                     console.log( e );
@@ -647,7 +645,7 @@ export default {
             }
             else if( vm.paramData.grp_cd && vm.paramData.scen_cd ) {
                 
-                vm.fn_showProgress(true);
+                vm.$root.progresst.open();
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -671,12 +669,11 @@ export default {
                             ,   "포트폴리오 분석"
                         ];
                     }
-
-                    vm.fn_showProgress( false );
+                    vm.$root.progresst.close();
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showProgress( false );
+                    vm.$root.progresst.close();
                 });
             }
         }
@@ -950,32 +947,11 @@ export default {
     },
 
     methods: {
-
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-07-26  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
         fn_showWaitProgress: function( visible ) {
             var vm = this;
             vm.$emit("fn_showWaitProgress", visible );
         },
         
-        /*
-         *  메시지 팝업창을 노출한다.
-         *  2019-07-26  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-
-            if( this.$refs && this.$refs.confirm2 ) {
-                this.$refs.confirm2.open( title,msg, option, gubun );
-            }
-        },
-
         /*
          * 백테스트 결과를 조회한다.
          * 2019-08-14  bkLove(촤병국)
@@ -1224,7 +1200,6 @@ export default {
                         ,   function(error) {
                                 resolve( { result : false } );
 
-    //                            vm.fn_showProgress( false );
                                 if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
@@ -1251,9 +1226,6 @@ export default {
             vm.arr_show_error_message   =   [];
 
             return await new Promise(function(resolve, reject) {
-
-//                vm.fn_showProgress( true );
-
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/simulation/getInitData1"
@@ -1261,8 +1233,6 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-//                            vm.fn_showProgress( false );
-
                             try{
 
                                 if (response && response.data) {
@@ -1318,8 +1288,6 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-//                            vm.fn_showProgress( false );
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
@@ -2328,8 +2296,7 @@ export default {
             }
 
             return await new Promise(function(resolve, reject) {
-
-                vm.fn_showProgress( true );
+                vm.$root.progresst.open();
 
                 util.axiosCall(
                         {
@@ -2338,8 +2305,7 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-                            vm.fn_showProgress( false );
-
+                            vm.$root.progresst.close();
                             try{
 
                                 if (response && response.data) {
@@ -2369,8 +2335,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            vm.fn_showProgress( false );
+                            vm.$root.progresst.close();
                             if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                         }
                 );

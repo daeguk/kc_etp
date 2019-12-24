@@ -41,19 +41,8 @@
 </template>
 
 <script>
-import $ from "jquery";
-import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
-import util       from "@/js/util.js";
-import select from "datatables.net-select";
-import Config from "@/js/config.js";
-import _ from "lodash";
-
-import MastPopup02 from "@/components/common/popup/MastPopup02";
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 var table01 = null;
-
 
 export default {
 
@@ -79,25 +68,6 @@ export default {
     },
 
     methods: {
-
-        /*
-         * 진행 progress 를 보여준다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_showProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showProgress", visible );
-        },
-
-        /*
-         * 메시지창을 보여준다.
-         * 2019-10-11  bkLove(촤병국)
-         */
-        fn_showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-            vm.$emit( "fn_showMessageBox", title,msg, option, gubun);
-        },
-
     }
 };
 </script>

@@ -378,11 +378,11 @@ export default {
     methods: {
 
         getMarketIndexList: function() {
-            console.log("getMarketIndexList");
+            // console.log("getMarketIndexList");
             var vm = this;
             var idx = 0;
 
-            vm.$emit('showProgress', true);
+            vm.$root.progresst.open();
             axios.get(Config.base_url + "/user/marketinfo/getMarketIndexList", {
                     params: {
                        
@@ -411,9 +411,9 @@ export default {
                         fnGuideIndexTable.rows.add(vm.getSliceData(vm.fnGuideLists, 'fn')).draw();
                     }
                 }
-                vm.$emit('showProgress', false);
+                vm.$root.progresst.close();
             }).catch(error => {
-                vm.$emit("showProgress", false);
+                vm.$root.progresst.close();
             });
         },
         getSliceData: function(items, gubun) {
