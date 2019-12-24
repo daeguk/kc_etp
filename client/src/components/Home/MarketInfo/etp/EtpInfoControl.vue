@@ -18,8 +18,6 @@
       <marketMixAssets v-if="showMarketInfo == 10" @showDetail="showDetail"></marketMixAssets>               
       <marketOversea v-if="showMarketInfo == 11" @showDetail="showDetail"></marketOversea>                   
       <marketLeverageInverse v-if="showMarketInfo == 12" @showDetail="showDetail"></marketLeverageInverse>   
-      <ConfirmDialog ref="confirm"></ConfirmDialog>
-      <ProgressBar ref="progress"></ProgressBar>
     </v-flex>
     <v-flex :class="FaverClassName">
       <ComFavorItemSub v-if="showFaver" :faverSize = "faverSize" @showDetail="showDetail"></ComFavorItemSub>

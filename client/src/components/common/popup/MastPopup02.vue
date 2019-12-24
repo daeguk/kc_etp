@@ -54,12 +54,6 @@
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
-
-                <v-flex>
-                    <ConfirmDialog ref="confirm2"></ConfirmDialog>
-                    <ProgressBar ref="progress2"></ProgressBar>
-                </v-flex>
-                
               </v-layout>
             </v-card>   
           </v-dialog>
@@ -81,13 +75,9 @@ import indexListAll from "./indexListAll.vue";
 
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 export default {
   props: [],
@@ -114,9 +104,6 @@ export default {
     kosdaqList,      
     etfList,
     etnList,
-
-    ProgressBar,
-    ConfirmDialog    
   },
   computed: {},
   created: function() {
@@ -226,7 +213,7 @@ export default {
                         }
 
                         if( error ) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
 
                         resolve( { result : false } );

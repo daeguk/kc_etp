@@ -14,7 +14,8 @@
                         </div>
                     </v-card-title>
                 </v-card>
-                  <!---step1---><!---세션 param의 inst_cd 같은거 -->
+                  <!-- step1 -->
+                  <!-- 세션 param의 inst_cd 같은거 -->
                             <v-card class="register_wrap  pt0" color="lighten-1" flat xs12>
                                 <h4>1.발행사 정보</h4>
                                 <v-container fluid>
@@ -55,12 +56,12 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="e1 = 2">Continue</v-btn>
-                            </div-->
+                            </div -->
 
 
-                        <!---step2--->
+                        <!-- step2 -->
                             <v-card class="register_wrap" color="lighten-1"  flat xs12 >
                                 <h4>2.기본 정보</h4>
                                 <v-container fluid>
@@ -176,7 +177,7 @@
                                             <v-subheader class="subheader_r">상장신청일</v-subheader>
                                         </v-flex>
                                         <v-flex xs4>
-                                            <!--달력-->
+                                            <!-- 달력 -->
                                             <v-layout row wrap >
                                                 <v-flex xs4 sm6 md4 >
                                                     <v-menu   
@@ -216,7 +217,7 @@
                                                     </v-menu>
                                                 </v-flex>
                                             </v-layout>
-                                            <!--달력end-->
+                                            <!-- 달력end -->
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
@@ -226,7 +227,7 @@
                                             <v-subheader class="subheader_r">상장일</v-subheader>
                                         </v-flex>
                                         <v-flex xs4>
-                                            <!--달력-->
+                                            <!-- 달력 -->
                                             <v-layout row wrap>
                                                 <v-flex xs4 sm6 md4>
                                                     <v-menu
@@ -270,12 +271,12 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep1()">Continue</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 1">Cancel</v-btn>
-                            </div-->
+                            </div -->
 
-                        <!---step3--->
+                        <!-- step3 -->
                             
                             <v-card class="register_wrap" color="lighten-1"  flat xs12 >
                                 <div v-show="masterData.kor_for_type==='F'">
@@ -635,13 +636,13 @@
                             </div>       
                             </v-card>
 
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep2()" v-if="masterData.kor_for_type==='F'">Continue</v-btn>
                                 <v-btn color="primary" depressed dark @click="e1 = 6" v-else-if="masterData.kor_for_type==='K'">Continue</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 2">Cancel</v-btn>
-                            </div-->
+                            </div -->
 
-                        <!---step4--->
+                        <!-- step4 -->
                             <v-card class="register_wrap" color="lighten-1"  flat xs12  v-show="masterData.kor_for_type==='F'">
                                 <h4>4.실시간 지수 분배처</h4>
                                 <v-container fluid>
@@ -753,13 +754,13 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegisterStep4()">Continue</v-btn>
 
                                 <v-btn color="grey" depressed dark @click="e1 = 3">Cancel</v-btn>
-                            </div-->
+                            </div -->
 
-                        <!---step5--->
+                        <!-- step5 -->
                             <v-card class="register_wrap" color="lighten-1" flat xs12  v-show="masterData.kor_for_type==='F'">
                                 <h4>5.참고지수정보 (상품구분이 ETF일때만 입력가능 합니다.)</h4>
                                 <v-container fluid>
@@ -828,12 +829,12 @@
                                     </v-layout>
                                 </v-container>
                             </v-card>
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="e1 = 6">Continue</v-btn>
 
                                 <v-btn color="grey" depressed dark @click="e1 = 4">Cancel</v-btn>
-                            </div-->
-                        <!---step6--->
+                            </div -->
+                        <!-- step6 -->
                             <v-card class="register_wrap" color="lighten-1" flat xs12>
                                 <h4>6.iNAV/iV</h4>
                                 <v-container fluid>
@@ -860,10 +861,9 @@
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  === ''&& !inputDisabled" @click.prevent="fn_insertEtpRegister('S')">저장</v-btn>
                                 <v-btn color="primary" depressed dark   v-if="masterData.seq  !== ''&& !inputDisabled" @click.prevent="fn_insertEtpRegister('U')">수정</v-btn>
                                 </div>
-                                  <ConfirmDialog ref="confirm" ></ConfirmDialog>
                             </v-card>
 
-                            <!--div class="text-xs-center pt-3 mt-3">
+                            <!-- div class="text-xs-center pt-3 mt-3">
                                 <v-btn color="primary" depressed dark @click="fn_insertEtpRegister()" 
                                  v-if="masterData.paramInstTypeCd  === '0001' && masterData.seq  == ''" >저장</v-btn>
                                   <v-btn color="primary" depressed dark @click="fn_updateEtpRegister()" 
@@ -872,9 +872,9 @@
 
                                 <v-btn color="grey" depressed dark @click="e1 = 5" v-if="masterData.kor_for_type === 'F'">Cancel</v-btn>
                                 <v-btn color="grey" depressed dark @click="e1 = 3" v-if="masterData.kor_for_type === 'K'">Cancel</v-btn>
-                            </div-->
+                            </div -->
 
-                        <!---step7--->
+                        <!-- step7 -->
                             <v-card class="register_wrap" color="lighten-1"  flat xs12  v-show="masterData.paramInstTypeCd === koscomSuperUser || masterData.paramInstTypeCd === koscomUser " >
                                 <h4>7.코스콤</h4>
                                 <v-container fluid>
@@ -1005,7 +1005,6 @@
 
 <script>
 import Config from "@/js/config.js";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 export default {
     data() {
         return {
@@ -1051,14 +1050,8 @@ export default {
             seq : 0
         };
     },
-    components: {
-        ConfirmDialog : ConfirmDialog,
-    },
     mounted: function() {
-      
-             
         this.getEtpRegisterView();
-        this.$root.$confirm = this.$refs.confirm;        // 메시지 박스 참조
     },
     created: function() {
           
@@ -1092,14 +1085,14 @@ export default {
             .then(function(response) {
                 console.log("'##getEtpRegisterView 호출 >>> result##", response.data);
                 if(!response.data.result){
-                    if( vm.$root.$confirm.open(
+                    if( vm.$root.confirmt.open(
                         '[오류]',
                         response.data.msg,
                         {}
                     ,   1
                         )
                     ) {
-                            if( "Y" == vm.$root.$confirm.val ) {
+                            if( "Y" == vm.$root.confirmt.val ) {
                                 vm.$emit("movePage", 0); 
                             }
                     }
@@ -1453,14 +1446,14 @@ export default {
    
                 if(arg ==='S' && hudleYn =='Y'){
                     console.log("fn_insertEtpRegister 호출>> this.masterData ", vm.masterData);
-                    if( await this.$root.$confirm.open(
+                    if( await this.$root.confirmt.open(
                             "[저장]",
                             "저장하시겠습니까?",
                             {}
                         ,   2
                         )
                     ){
-                        if( "Y" != this.$root.$confirm.val ) {
+                        if( "Y" != this.$root.confirmt.val ) {
                             return false;
                         }
                     } 
@@ -1489,19 +1482,19 @@ export default {
                             
                             console.log("insertEtpRegister result>>>", response);
                             if( response.data.result ) {
-                                if(  vm.$root.$confirm.open(
+                                if(  vm.$root.confirmt.open(
                                     '[저장]',
                                     '저장이 완료되었습니다.',
                                     {}
                                 ,   1
                                     )
                                 ) {
-                                    if( "Y" == vm.$root.$confirm.val ) {
+                                    if( "Y" == vm.$root.confirmt.val ) {
                                         vm.$emit("movePage", 0); 
                                     }
                                 }
                             }else{
-                                if( vm.$root.$confirm.open(
+                                if( vm.$root.confirmt.open(
                                     '[오류]',
                                     response.data.msg,
                                     {}
@@ -1517,27 +1510,27 @@ export default {
                 }else if(arg ==='U' && hudleYn =='Y'){
                     console.log("fn_updateEtpRegister 호출>> this.masterData ", vm.masterData);
                     if(vm.masterData.isin_stat_cd =='0002' && vm.masterData.idx_rec_yn =='N'){
-                        if( await this.$root.$confirm.open(
+                        if( await this.$root.confirmt.open(
                                 '[저장]',
                                 '기초지수입수여부가 "N"으로 변경되어 종목신청상태로 돌아갑니다.',
                                 {}
                             ,   2
                                 )
                             ) {
-                                if( "Y" != this.$root.$confirm.val ) {
+                                if( "Y" != this.$root.confirmt.val ) {
                                     return false;
                                 }
                             }
                     }
 
-                    if( await this.$root.$confirm.open(
+                    if( await this.$root.confirmt.open(
                                 '[수정]',
                                 '수정하시겠습니까',
                                 {}
                             ,   2
                                 )
                             ) {
-                                if( "Y" != this.$root.$confirm.val ) {
+                                if( "Y" != this.$root.confirmt.val ) {
                                     return false;
                                 }
                             }
@@ -1557,14 +1550,14 @@ export default {
                                 
                                 console.log("updateEtpRegister result>>>", response);
                             if( response.data.result ) {
-                                if( vm.$root.$confirm.open(
+                                if( vm.$root.confirmt.open(
                                     '[수정]',
                                     '수정이 완료되었습니다.',
                                     {}
                                 ,   1
                                     )
                                 ) {
-                                    if( "Y" == vm.$root.$confirm.val ) {
+                                    if( "Y" == vm.$root.confirmt.val ) {
                                             vm.$emit("movePage", 0); 
                                     }
                                     
@@ -1572,7 +1565,7 @@ export default {
                                 //alert('수정이 완료되었습니다.');
                             
                             }else{
-                                if( vm.$root.$confirm.open(
+                                if( vm.$root.confirmt.open(
                                     '[오류]',
                                     response.data.msg,
                                     {}

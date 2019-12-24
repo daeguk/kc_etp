@@ -64,10 +64,6 @@
                     
                 </v-card>
             </v-flex>
-            <v-flex>
-                <ProgressBar ref="progress"></ProgressBar>
-                <ConfirmDialog ref="confirm2"></ConfirmDialog>
-            </v-flex>             
         </v-layout>       
     </v-dialog>
 
@@ -77,12 +73,8 @@
 <script>
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
-
 import Config from '@/js/config.js';
 import util       from "@/js/util.js";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexFixJongmokInout = null;
 var tableIndexFixModify = null;
@@ -90,11 +82,6 @@ var tableIndexFixModify = null;
 
 export default {
     props: [ "indexBasic", "indexFixDialog" ],
-
-    components : {
-        ProgressBar: ProgressBar,
-        ConfirmDialog: ConfirmDialog
-    },    
 
     data() {
         return {
@@ -163,7 +150,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        if ( vm.$refs.confirm2.open( '확인', msg, {}, 1 ) ) {}
+                                        if ( vm.$root.confirmt.open( '확인', msg, {}, 1 ) ) {}
                                         return  false;
                                     }
                                 }
@@ -254,7 +241,7 @@ export default {
                         }
 
                         if( error ) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                     }
             );

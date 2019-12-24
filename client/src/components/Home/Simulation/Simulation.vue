@@ -288,10 +288,6 @@
                 </v-card>
             </v-card>
         </v-flex>
-
-        <v-flex>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>
     </v-layout>
 </template>
 
@@ -299,14 +295,12 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import _ from "lodash";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import SimulationExcelupModal  from "@/components/Home/simulation/SimulationExcelupModal.vue";
 
 var table01 = null;
@@ -403,7 +397,6 @@ export default {
 
     components: {
         MastPopup02,
-        ConfirmDialog,
         SimulationExcelupModal : SimulationExcelupModal,      
     },    
 
@@ -693,14 +686,14 @@ export default {
 
 			var vm = this;
 
-			if( await vm.$refs.confirm2.open(
+			if( await vm.$root.confirmt.open(
 						'[시뮬레이션]',
 						'입력된 내용이 모두 초기화 됩니다. 그래도 진행하시겠습니까?',
 						{}
 					,   2
 				)
 			) {
-				if( "Y" == vm.$refs.confirm2.val ) {
+				if( "Y" == vm.$root.confirmt.val ) {
 					vm.start_year             		=	"2000";   	/* 시작년도 */
 					vm.rebalance_cycle_cd          	=  	"1";        /* COM006 - 리밸런싱주기( 1- 매년, 2-반기, 3-분기, 4,-매월, 5-매주 ) */
 					vm.rebalance_date_cd           	=   "1";        /* COM007 - 리밸런싱일자 ( 1. 첫영업일, 2.동시만기익일, 3. 동시만기 익주 첫영업일 4. 옵션만기익, 5. 옵션만기 익주 첫영업일 ) */
@@ -826,11 +819,6 @@ export default {
 				vm.fn_setTotalRecord();
 			}
 
-        },
-
-        fn_showWaitProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showWaitProgress", visible);
         },
 
         /*
@@ -1206,7 +1194,7 @@ export default {
                             resolve( { result : false } );
 
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1224,7 +1212,7 @@ export default {
             var vm = this;
 
             if( v_obj.val() == "" ) {
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '종목코드를 입력해 주세요.',
                         {}
@@ -1238,7 +1226,7 @@ export default {
             }
 
             if( v_obj.val().length < 6 ) {
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '종목코드를 6자리 이상 입력해 주세요.',
                         {}
@@ -1268,7 +1256,7 @@ export default {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
                                     if (!response.data.result) {
                                         if( msg ) {
-                                            if (await vm.$refs.confirm2.open(
+                                            if (await vm.$root.confirmt.open(
                                                     '확인',
                                                     msg,
                                                     {}
@@ -1282,7 +1270,7 @@ export default {
                                         var dataList = response.data.dataList;
 
                                         if ( !dataList || dataList.length == 0 ) {
-                                            if (await vm.$refs.confirm2.open(
+                                            if (await vm.$root.confirmt.open(
                                                     '확인',
                                                     '종목코드(' + v_obj.val() + ')가 존재하지 않습니다.',
                                                     {}
@@ -1293,7 +1281,7 @@ export default {
                                             }
                                         }
                                         else if ( dataList.length > 1 ) {
-                                            if (await vm.$refs.confirm2.open(
+                                            if (await vm.$root.confirmt.open(
                                                     '확인',
                                                     '종목코드(' + v_obj.val() + ')가 여러건 존재합니다.',
                                                     {}
@@ -1317,7 +1305,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1366,7 +1354,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
         },
@@ -1460,7 +1448,7 @@ export default {
                             resolve( { result : false } );
 
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1761,7 +1749,7 @@ export default {
                             resolve( { result : false } );
 
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1921,7 +1909,7 @@ export default {
             }
 
 
-            vm.fn_showWaitProgress( {'open':true, 'title':'백테스트 실행 중입니다.</br> 종목수, 기간에 따라 실행시간이 늘어날 수 있습니다. (10초~1분 소요)'});
+            vm.$root.wprogresst.open({'open':true, 'title':'백테스트 실행 중입니다.</br> 종목수, 기간에 따라 실행시간이 늘어날 수 있습니다. (10초~1분 소요)'});
 
             util.axiosCall(
                     {
@@ -1952,7 +1940,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showWaitProgress( false );
+                        vm.$root.wprogresst.close();
 
                         try{
                             if (response && response.data) {
@@ -2000,8 +1988,8 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showWaitProgress( false );
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        vm.$root.wprogresst.close();
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -2120,7 +2108,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -2206,7 +2194,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -2282,7 +2270,7 @@ export default {
 
                                             if( Number( vm.excel_start_year ) > Number( vm.start_year ) ) {
 
-                                                if( await vm.$refs.confirm2.open(
+                                                if( await vm.$root.confirmt.open(
                                                             '[시뮬레이션]',
                                                             vm.excel_start_year + " 년도 이후로만 선택해 주세요.",
                                                             {}
@@ -2684,7 +2672,7 @@ export default {
                         ,   function(error) {
                                 resolve( { result : false } );
                                 vm.$root.progresst.close();
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
 
@@ -3426,7 +3414,7 @@ export default {
                             resolve( { result : false } );
 
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -3452,7 +3440,7 @@ export default {
 
                 /* 1. 확장자가 존재하지 않는지 확인 */
                 if (lastDot == -1) {
-                    if( await vm.$refs.confirm2.open(
+                    if( await vm.$root.confirmt.open(
                                 '[엑셀파일 유형확인]'
                             ,   "엑셀유형의 파일인지 확인 해 주세요."
                             ,   {}
@@ -3469,7 +3457,7 @@ export default {
                 /* 2. 허용되는 확장자에 포함되는지 확인 */
                 if (!allowExt.includes(fileExt)) {
 
-                    if( vm.$refs.confirm2.open(
+                    if( vm.$root.confirmt.open(
                                 '[엑셀파일 유형확인]',
                                 "엑셀유형의 파일인지 확인 해 주세요.",
                                 {}
@@ -3509,7 +3497,7 @@ export default {
 
                     if( maxSize > 0 ) {
                         if( file.size == 0 ) {
-                            if( await vm.$refs.confirm2.open(
+                            if( await vm.$root.confirmt.open(
                                         '확인',
                                         title + ' 파일용량이 0 byte 입니다.',
                                         {}
@@ -3521,7 +3509,7 @@ export default {
                         }
 
                         if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                            if( await vm.$refs.confirm2.open(
+                            if( await vm.$root.confirmt.open(
                                         '확인',
                                         title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
                                         {}

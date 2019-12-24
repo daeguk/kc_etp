@@ -212,7 +212,7 @@ export default {
 
             if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -253,7 +253,7 @@ export default {
 
 				if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
 
-					if ( vm.$refs.confirm2.open(
+					if ( vm.$root.confirmt.open(
 							'확인',
 							"기본정보가 존재하지 않습니다.",
 							{}
@@ -294,7 +294,7 @@ export default {
 
 											if( msg ) {
 
-												if ( vm.$refs.confirm2.open(
+												if ( vm.$root.confirmt.open(
 														'확인',
 														msg,
 														{}
@@ -324,7 +324,7 @@ export default {
 								}
 							}
 						,   function(error) {
-								if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+								if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
 
 								resolve( { result : false } );
 							}
@@ -349,7 +349,7 @@ export default {
 
                 if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
 
-                    if ( vm.$refs.confirm2.open(
+                    if ( vm.$root.confirmt.open(
                             '확인',
                             "기본정보가 존재하지 않습니다.",
                             {}
@@ -384,7 +384,7 @@ export default {
 
                                             if( msg ) {
 
-                                                if ( vm.$refs.confirm2.open(
+                                                if ( vm.$root.confirmt.open(
                                                         '확인',
                                                         msg,
                                                         {}
@@ -412,7 +412,7 @@ export default {
                                 }
                             }
                         ,   function(error) {
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                                 resolve( { result : false } );
                             }
                     );
@@ -436,7 +436,7 @@ export default {
 
             if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -455,7 +455,7 @@ export default {
 
             if( !temp || temp.length == 0 ) {
 
-                if ( await vm.$refs.confirm2.open(
+                if ( await vm.$root.confirmt.open(
                         '확인',
                         '공유할 대상자가 1건 이상 선택되어야 합니다.',
                         {}
@@ -499,7 +499,7 @@ export default {
                                         vm.$root.progresst.close();
                                         if( msg ) {
 
-                                            if ( vm.$refs.confirm2.open(
+                                            if ( vm.$root.confirmt.open(
                                                     '확인',
                                                     msg,
                                                     {}
@@ -528,7 +528,7 @@ export default {
                         }
                     ,   function(error) {
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
                 );
@@ -559,7 +559,7 @@ export default {
 
             if( !vm.share_row_data || !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd  ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -574,7 +574,7 @@ export default {
 
             if( !p_checkedItem || !p_checkedItem.email ) {
 
-                if ( await vm.$refs.confirm2.open(
+                if ( await vm.$root.confirmt.open(
                         '확인',
                         '공유해제할 대상자가 선택되어야 합니다.',
                         {}
@@ -620,7 +620,7 @@ export default {
 
                                         if( msg ) {
 
-                                            if ( vm.$refs.confirm2.open(
+                                            if ( vm.$root.confirmt.open(
                                                     '확인',
                                                     msg,
                                                     {}
@@ -649,7 +649,7 @@ export default {
                         }
                     ,   function(error) {
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
                 );

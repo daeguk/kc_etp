@@ -230,7 +230,7 @@ export default {
         }
 
         if( !checkResult ) {
-          if( await this.$root.$confirm.open(
+          if( await this.$root.confirmt.open(
             '[지수 조치현황]',
             '지수 정보가 없습니다.',
             {},   1

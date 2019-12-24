@@ -40,24 +40,15 @@
                 </table>
                 </v-card>
             </v-flex>
-
-                       
         </v-layout>
-
-             <ConfirmDialog ref="confirm"></ConfirmDialog>
-             <ProgressBar ref="progress"></ProgressBar>
-
     </v-container>      
 </template>
 
 <script>
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js';
 import util       from "@/js/util.js";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 import AreaIndexChart   from  '@/components/common/chart/AreaIndexChart.vue';
 var table = null;
 
@@ -92,8 +83,6 @@ export default {
         };
     },
     components: {
-        ConfirmDialog: ConfirmDialog,
-        ProgressBar: ProgressBar,
         AreaIndexChart: AreaIndexChart
     },
     computed: {},
@@ -177,7 +166,7 @@ export default {
                 ,   function(response) {
                         // console.log(response);
                         if (response.data.success == false) {
-                            vm.$refs.confirm.open('', '지수 목록이 없습니다', {}, 1);
+                            vm.$root.confirmt.open('', '지수 목록이 없습니다', {}, 1);
                         } else {                             
                             var items = response.data.results;  
 
@@ -214,7 +203,7 @@ export default {
                         }
 
                         if( error ) {
-                            vm.$refs.confirm.open('', error, {}, 1);
+                            vm.$root.confirmt.open('', error, {}, 1);
                         }
                     }
             );
@@ -238,7 +227,7 @@ export default {
                 ,   function(response) {
                         // console.log(response);
                         if (response.data.success == false) {
-                            vm.$refs.confirm.open('', '관리지수 목록이 없습니다', {}, 1);
+                            vm.$root.confirmt.open('', '관리지수 목록이 없습니다', {}, 1);
                         } else {
                             
                             var items = response.data.results;  
@@ -263,7 +252,7 @@ export default {
                         }
 
                         if( error ) {
-                            vm.$refs.confirm.open('', error, {}, 1);
+                            vm.$root.confirmt.open('', error, {}, 1);
                         }
                     }
             );

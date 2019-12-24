@@ -62,9 +62,6 @@
     </div>
       <!---table2 -->
     </v-flex>
-    <v-flex>
-        <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex> 
   </v-layout>
   </v-container>
 </template>
@@ -73,16 +70,11 @@
 <script>
 var subscribe_table = "";
 var req_table = "";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js';
  export default {
-    components: {
-        ConfirmDialog: ConfirmDialog
-    },
     props: [],
     data() {
         return {
@@ -116,9 +108,6 @@ import Config from '@/js/config.js';
 
     },
     mounted: function() {
-        // ConfirmDialog 변수 
-        this.$root.$confirm = this.$refs.confirm;
-
         var vm = this;
         subscribe_table = $('#subscribe_table').DataTable( {
                 "processing": true,
@@ -254,13 +243,13 @@ import Config from '@/js/config.js';
             }
 
 
-            if (await this.$root.$confirm.open(
+            if (await this.$root.confirmt.open(
 					'정보공개',
 					this.message,
 					{}, 2
 				)
 			) {
-                this.updateIndexOpenYn(this.$root.$confirm.val, item);                
+                this.updateIndexOpenYn(this.$root.confirmt.val, item);                
             }
         },
 

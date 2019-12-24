@@ -36,18 +36,8 @@
                 <InfoOpenReq></InfoOpenReq>
             </v-flex>
         </v-layout>
-        <v-layout>
-            <v-flex>
-             <ConfirmDialog ref="confirm"></ConfirmDialog>
-             <ProgressBar ref="progress"></ProgressBar>
-            </v-flex>
-        </v-layout>
     </v-container>
-
-    
 </template>
-
-
 
 <script>
 import Config from '@/js/config.js';
@@ -55,13 +45,10 @@ import util       from "@/js/util.js";
 import IndexSummaryCard from "./IndexSummaryCard.vue";
 import IndexSummaryBox from "./IndexSummaryBox.vue";
 import InfoOpenReq from "./InfoOpenReq.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 export default {
     props: [],
     data() {
         return {
-            
             cardItem1: {
                 name: "DBF 2차 산업혁명 지수",
                 subTitle: "the Newest Index",
@@ -150,12 +137,8 @@ export default {
         IndexSummaryCard: IndexSummaryCard,
         IndexSummaryBox: IndexSummaryBox,
         InfoOpenReq: InfoOpenReq,
-        ConfirmDialog: ConfirmDialog,
-        ProgressBar: ProgressBar
     },
     mounted: function() {
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         this.getIndexSummaryInfo();
     },
     created: function() {},
@@ -177,7 +160,7 @@ export default {
                         try{
 
                             if (response.data.success == false) {
-                                vm.$root.$confirm.open('', '지수정보가 없습니다.', {}, 1);
+                                vm.$root.confirmt.open('', '지수정보가 없습니다.', {}, 1);
                             } else {
                                 if(response.data.results1[0]) {
                                     console.log(response.data.results1);
@@ -236,7 +219,7 @@ export default {
                         util.processing(vm.$refs.progress, false);
 
                         if ( error ) {
-                            vm.$root.$confirm.open('확인', error,{},4);
+                            vm.$root.confirmt.open('확인', error,{},4);
                         }
                     }
             ); 

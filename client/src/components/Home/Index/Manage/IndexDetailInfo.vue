@@ -123,7 +123,6 @@
                         </v-layout>
                     </div>
                 </v-card>
-                <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
             </v-flex>
         </v-layout>
     </div>
@@ -134,7 +133,6 @@
 import IndexDetailInfoTab1 from "./IndexDetailInfoTab1.vue";
 import IndexDetailInfoTab2 from "./IndexDetailInfoTab2.vue";
 import IndexDetailInfoTab3 from "./IndexDetailInfoTab3.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import LineIndexChart02   from  '@/components/common/chart/LineIndexChart02.vue';
 import LineIndexChart01   from  '@/components/common/chart/LineIndexChart01.vue';
 
@@ -171,7 +169,6 @@ export default {
         };
     },
     components: {
-        ConfirmDialog : ConfirmDialog,
         IndexDetailInfoTab1: IndexDetailInfoTab1,
         IndexDetailInfoTab2: IndexDetailInfoTab2,
         IndexDetailInfoTab3: IndexDetailInfoTab3,
@@ -201,7 +198,6 @@ export default {
     },
     mounted: function() {
         // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
         var vm = this;
 
         if( vm.showView ) {
@@ -299,7 +295,7 @@ export default {
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm.open( '확인', "지수정보가 없습니다.", {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', "지수정보가 없습니다.", {}, 1 ) ) {}
                             } else {
                                 var items = response.data.results;
 
@@ -324,7 +320,7 @@ export default {
                 ,   function(error) {
 
                         if( error ) {
-                            if ( vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                            if ( vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                     }
             );

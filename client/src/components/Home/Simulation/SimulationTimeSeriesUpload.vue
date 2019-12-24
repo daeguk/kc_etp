@@ -367,11 +367,6 @@ export default {
             });
         },        
 
-        fn_showWaitProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showWaitProgress", visible );
-        },
-
         /*
          * 상위 그룹정보를 조회한다.
          * 2019-07-26  bkLove(촤병국)

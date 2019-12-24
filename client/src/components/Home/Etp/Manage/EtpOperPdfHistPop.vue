@@ -312,7 +312,7 @@ export default {
                     }
                 ,   function(error) {
                     vm.$root.progresst.close();
-                    if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                    if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                 }
             );
 

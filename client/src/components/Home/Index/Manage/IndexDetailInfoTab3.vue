@@ -62,9 +62,6 @@
     </div>
       <!---table2 -->
     </v-flex>
-    <v-flex>
-        <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex> 
   </v-layout>
   </v-container>
 </template>
@@ -73,17 +70,12 @@
 <script>
 var subscribe_table = "";
 var req_table = "";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import util       from "@/js/util.js";
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import select from 'datatables.net-select'
 import Config from '@/js/config.js';
  export default {
-    components: {
-        ConfirmDialog: ConfirmDialog
-    },
     props: [],
     data() {
         return {
@@ -117,9 +109,6 @@ import Config from '@/js/config.js';
 
     },
     mounted: function() {
-        // ConfirmDialog 변수 
-        this.$root.$confirm = this.$refs.confirm;
-
         var vm = this;
         subscribe_table = $('#subscribe_table').DataTable( {
                 "processing": true,
@@ -213,7 +202,7 @@ import Config from '@/js/config.js';
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
                             } else {
                                 var items = response.data.results;
             
@@ -229,7 +218,7 @@ import Config from '@/js/config.js';
                     }
                 ,   function(error) {
 
-                        if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
 
@@ -253,7 +242,7 @@ import Config from '@/js/config.js';
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
                             } else {
                                 var items = response.data.results;
                                                     
@@ -269,7 +258,7 @@ import Config from '@/js/config.js';
                     }
                 ,   function(error) {
 
-                        if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
 
@@ -289,13 +278,13 @@ import Config from '@/js/config.js';
             }
 
 
-            if (await this.$root.$confirm.open(
+            if (await this.$root.confirmt.open(
 					'정보공개',
 					this.message,
 					{}, 2
 				)
 			) {
-                this.updateIndexOpenYn(this.$root.$confirm.val, item);                
+                this.updateIndexOpenYn(this.$root.confirmt.val, item);                
             }
         },
 
@@ -325,7 +314,7 @@ import Config from '@/js/config.js';
                         }
                     ,   function(error) {
 
-                            if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 

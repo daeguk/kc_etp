@@ -84,11 +84,6 @@
                     </v-dialog>
                 </v-card>
             </v-flex>
-
-            <v-flex>
-                <ConfirmDialog ref="confirm2"></ConfirmDialog>
-            </v-flex>            
-
         </v-layout>
     </v-container>
 </template>
@@ -98,12 +93,9 @@
 
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
-
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 
 export default {
   props: [ "share_row_data" ],
@@ -118,9 +110,6 @@ export default {
 
         ,   arr_user_list_for_share_cp  :   []          /* arr_user_list_for_share 복사본 */
     };
-  },
-  components: {
-        ConfirmDialog,
   },
   computed: {},
   created: function() {
@@ -162,7 +151,7 @@ export default {
 
             if( !vm.share_row_data  ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -195,7 +184,7 @@ export default {
 
 				if( !vm.share_row_data ) {
 
-					if ( vm.$refs.confirm2.open(
+					if ( vm.$root.confirmt.open(
 							'확인',
 							"기본정보가 존재하지 않습니다.",
 							{}
@@ -232,7 +221,7 @@ export default {
 
 											if( msg ) {
 
-												if ( vm.$refs.confirm2.open(
+												if ( vm.$root.confirmt.open(
 														'확인',
 														msg,
 														{}
@@ -262,7 +251,7 @@ export default {
 								}
 							}
 						,   function(error) {
-								if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+								if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
 
 								resolve( { result : false } );
 							}
@@ -287,7 +276,7 @@ export default {
 
             if( !vm.share_row_data || !vm.share_row_data.arr_scen_in_grp || vm.share_row_data.arr_scen_in_grp.length == 0 ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -302,7 +291,7 @@ export default {
             /* 그룹비교 */
             if( vm.share_row_data.method_gubun == "getScenInGrpCd" && ( !vm.share_row_data.grp_cd || !vm.share_row_data.scen_cd ) ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -321,7 +310,7 @@ export default {
 
             if( !temp || temp.length == 0 ) {
 
-                if ( await vm.$refs.confirm2.open(
+                if ( await vm.$root.confirmt.open(
                         '확인',
                         '공유할 대상자가 1건 이상 선택되어야 합니다.',
                         {}
@@ -366,7 +355,7 @@ export default {
                                         vm.$root.progresst.close();
                                         if( msg ) {
 
-                                            if ( vm.$refs.confirm2.open(
+                                            if ( vm.$root.confirmt.open(
                                                     '확인',
                                                     msg,
                                                     {}
@@ -395,7 +384,7 @@ export default {
                         }
                     ,   function(error) {
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
                 );

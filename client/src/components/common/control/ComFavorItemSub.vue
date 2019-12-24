@@ -100,8 +100,6 @@
 
                 <!--자산추가 팝업 end -->
             </v-list-tile-content>
-            <ProgressBar ref="progress"></ProgressBar>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-list>
 
     </v-container>
@@ -111,13 +109,10 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var etf_table = null;
 var etn_table = null;
@@ -150,10 +145,6 @@ export default {
             showEtpDetailDialog : false,            
             faverClass: 'btn_icon_star v-icon material-icons',
         };
-    },
-    components: {
-        ProgressBar : ProgressBar,
-        ConfirmDialog: ConfirmDialog
     },
     computed: {
         
@@ -501,7 +492,7 @@ export default {
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm2.open( '확인', '삭제 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', '삭제 중 오류가 발생했습니다.', {}, 1 ) ) {}
                             }
 
                         }catch(ex) {
@@ -511,7 +502,7 @@ export default {
                 ,   function(error) {
 
                         if( error ) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                     }
             );            
@@ -565,7 +556,7 @@ export default {
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm2.open( '확인', '처리 중 오류가 발생했습니다.', {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', '처리 중 오류가 발생했습니다.', {}, 1 ) ) {}
                             }
 
                         }catch(ex) {
@@ -575,7 +566,7 @@ export default {
                 ,   function(error) {
 
                         if( error ) {
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                     }
             );

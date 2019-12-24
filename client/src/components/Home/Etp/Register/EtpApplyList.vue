@@ -41,7 +41,7 @@
                         </v-flex>
                     </v-layout>
                 </v-card>
-                 <!---실제적용 테이블--->
+                 <!-- 실제적용 테이블 -->
                 <v-card flat>
                     <table id="example1" class="tbl_type">
                          <thead>
@@ -75,14 +75,14 @@
                             <v-btn depressed color="primary" dark @click="downloadExcel">엑셀</v-btn>
                     </v-card-actions>
                 </v-card>
-                <!---실제적용 테이블end--->
-                <!---회사 연락처 팝업 --->
+                <!-- 실제적용 테이블end -->
+                <!-- 회사 연락처 팝업 -->
                 <companyContactModal :companyContactModal="this.companyContactModal" @close="hideContactkPop"></companyContactModal>
                 <!-- 회사 연락처 팝업   end  -->
-                <!---기초지수 팝업 내용 --->
+                <!-- 기초지수 팝업 내용 -->
                 <idxConfirmModal :idxConfirmModal="this.idxConfirmModal" @close="hideIdxListPop"></idxConfirmModal>
                 <!-- 기초지수 팝업 내용  end  -->
-                <!---inav 팝업 내용 --->
+                <!-- inav 팝업 내용 -->
                 <iNavConfirmModal :iNavConfirmModal="this.iNavConfirmModal" @close="hideInavListPop"></iNavConfirmModal>
                 <!-- inav 팝업 내용  end  -->
              </v-flex>
@@ -93,13 +93,11 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import Config from "@/js/config.js";
 import companyContactModal from "./companyContactModal";
 import idxConfirmModal from "./idxConfirmModal";
 import iNavConfirmModal from "./iNavConfirmModal";
 import excel from "xlsx";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var table = null;
 
@@ -141,7 +139,6 @@ export default {
         companyContactModal,
         idxConfirmModal,
         iNavConfirmModal
-    
     },
     computed: {},
     created: function() {
@@ -154,7 +151,6 @@ export default {
         vm.getEtpApplyIndexCnt();
         vm.getEtpApplyCodeCnt();
         vm.getEtpApplyInavCnt();
-        this.$root.$confirm = this.$refs.confirm;
     },
     methods: {
 
@@ -516,7 +512,7 @@ export default {
             var delList = $('input[name=seq]:checked');
              console.log("delList: " + delList.length );
             if(delList.length == 0){
-                if( vm.$root.$confirm.open(
+                if( vm.$root.confirmt.open(
                         '[오류]',
                         '삭제할 항목을 선택하여 주십시요',
                         {}
@@ -537,7 +533,7 @@ export default {
                 }
             }).then(function(response) {
                 if (response.data.result == false) {
-                   if( vm.$root.$confirm.open(
+                   if( vm.$root.confirmt.open(
                                 '[오류]',
                                 response.data.msg,
                                 {}
@@ -554,7 +550,7 @@ export default {
                         vm.getEtpApplyIndexCnt();
                         vm.getEtpApplyCodeCnt();
                         vm.getEtpApplyInavCnt();
-                    if(  vm.$root.$confirm.open(
+                    if(  vm.$root.confirmt.open(
                             '[삭제]',
                             '삭제가 완료되었습니다.',
                             {}

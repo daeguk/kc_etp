@@ -26,10 +26,6 @@
             </table>
         </v-card> 
          </v-flex>     
-         <v-flex>
-             <ConfirmDialog ref="confirm"></ConfirmDialog>
-             
-         </v-flex>   
         </v-layout>
     </v-container>    
 
@@ -40,17 +36,12 @@
 
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var reqTable;
 
 export default {
-    components: {
-        ConfirmDialog: ConfirmDialog
-    },
     props: [],
     data() {
         return {
@@ -61,9 +52,6 @@ export default {
         };
     },
     mounted: function() {
-         // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;
-
         var vm = this;
 
         $('#index_table, tbody').on('click', 'button', function () {
@@ -122,7 +110,7 @@ export default {
                         try{
 
                             if (response.data.success == false) {
-                                if ( vm.$refs.confirm.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
+                                if ( vm.$root.confirmt.open( '확인', "해당 신청현황이 없습니다", {}, 1 ) ) {}
                             } else {
                                 var items = response.data.results;
                                 
@@ -139,7 +127,7 @@ export default {
                     }
                 ,   function(error) {
 
-                        if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
 
@@ -155,14 +143,14 @@ export default {
             }
 
 
-            if (await this.$root.$confirm.open(
+            if (await this.$root.confirmt.open(
 					'승인',
 					this.message,
                     {}
                     ,2
 				)
 			) {
-                this.updateIndexOpenYn(this.$root.$confirm.val, item);                
+                this.updateIndexOpenYn(this.$root.confirmt.val, item);                
             }
         },
         
@@ -191,7 +179,7 @@ export default {
                         }
                     ,   function(error) {
 
-                            if ( error && vm.$refs.confirm.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -201,8 +189,8 @@ export default {
 };
 </script>
 <style scoped>
-table.v-table tbody td,
-table.v-table tbody th {
+  table.v-table tbody td,
+  table.v-table tbody th {
     height: 30px;
-}
+  }
 </style>

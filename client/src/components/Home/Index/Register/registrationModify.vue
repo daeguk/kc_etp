@@ -1180,7 +1180,7 @@ export default {
 
 
             if( await vm.$root.confirmt.open('[신규 지수 등록]','저장하시겠습니까?',{}, 2)) {
-                if( "Y" != this.$root.$confirm2.val ) {
+                if( "Y" != this.$root.confirmt.val ) {
                     return false;
                 }
             }             
@@ -1245,14 +1245,14 @@ export default {
                 }
             }
 
-            if( await this.$root.$confirm2.open(
+            if( await this.$root.confirmt.open(
                         '[지수삭제]',
                         '삭제하시겠습니까?',
                         {}
                     ,   2
                 )
             ) {
-                if( "Y" != this.$root.$confirm2.val ) {
+                if( "Y" != this.$root.confirmt.val ) {
                     return false;
                 }
             }

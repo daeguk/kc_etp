@@ -639,7 +639,7 @@ export default {
                     
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showWaitProgress( false );
+                    vm.$root.wprogresst.close();
                 })                
 
             }
@@ -947,11 +947,6 @@ export default {
     },
 
     methods: {
-        fn_showWaitProgress: function( visible ) {
-            var vm = this;
-            vm.$emit("fn_showWaitProgress", visible );
-        },
-        
         /*
          * 백테스트 결과를 조회한다.
          * 2019-08-14  bkLove(촤병국)
@@ -1307,7 +1302,7 @@ export default {
 
             vm.arr_show_error_message   =   [];
 
-            vm.fn_showWaitProgress( true );
+            vm.$root.wprogresst.open()
 
             var paramData   =  {};
 
@@ -1321,7 +1316,7 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-                        vm.fn_showWaitProgress( false );
+                        vm.$root.wprogresst.close();
 
                         try{
 
@@ -1360,7 +1355,7 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.fn_showWaitProgress( false );
+                        vm.$root.wprogresst.close();
                         if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
                     }
             );
@@ -1653,7 +1648,7 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.fn_showWaitProgress( {'open':true, 'title':'자료생성 중입니다.'} );
+                vm.$root.wprogresst.open({'title':'자료생성 중입니다.'});
 
                 step1().then( function(e){
                     if( e && e.result ) {
@@ -1674,10 +1669,10 @@ export default {
                 }).then( function(e4) {
                     return step6();
                 }).then( function(e5) {
-                    vm.fn_showWaitProgress( false );
+                    vm.$root.wprogresst.close();
                 }).catch( function(e) {
                     console.log( e );
-                    vm.fn_showWaitProgress( false );
+                    vm.$root.wprogresst.close();
                 });
                 
                 /* 일자별 지수 */
