@@ -33,7 +33,7 @@
                     </v-list>
 
 
-                    <ComFavorItemSub    @showDetail="showDetail" @showMessageBox="showMessageBox"></ComFavorItemSub>
+                    <ComFavorItemSub    @showDetail="showDetail"></ComFavorItemSub>
 
                 </v-navigation-drawer>
             </v-card>
@@ -107,11 +107,6 @@ export default {
 
             vm.$emit( "showDetail", gubun, paramData );
         },
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        }           
     }
 };
 </script>

@@ -89,8 +89,7 @@
                   <v-tab-item>
                     <EtpManageDetailAnalysisTab     
                       v-if="showEtpManageDetailDialogBySub"
-                      :etpBasic="paramData"
-                      @showMessageBox="showMessageBox">
+                      :etpBasic="paramData">
                     </EtpManageDetailAnalysisTab>
                   </v-tab-item>
                   <v-tab-item>
@@ -99,7 +98,6 @@
                       :paramData="paramData"
                       :etpBasic="etpBasic"
                       :indexBasic="indexBasic"
-                      @showMessageBox="showMessageBox"
                       @showDetail="showDetail">
                     </EtpManageDetailBasicInfoTab>
                   </v-tab-item>
@@ -109,7 +107,6 @@
           </div>
         </v-card>
       </v-flex>
-      <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-layout>
     <!-- 지수 상세 팝업 -->
     <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
@@ -128,7 +125,6 @@
 import EtpManageDetailBasicInfoTab from "./EtpManageDetailBasicInfoTab.vue";
 import EtpManageDetailAnalysisTab from "./EtpManageDetailAnalysisTab.vue";
 import LineEtpMultiChart   from  '@/components/common/chart/LineEtpMultiChart.vue';
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import Config from "@/js/config.js";
 import util from "@/js/util.js";
 import IndexDetailInfo from "@/components/Home/Index/Manage/IndexDetailInfo.vue";   /*지수 상세정보*/
@@ -150,19 +146,15 @@ export default {
     };
   },
   components: {
-    ConfirmDialog : ConfirmDialog,
-    IndexDetailInfo : IndexDetailInfo,    
+    IndexDetailInfo,    
     LineEtpMultiChart,
     EtpManageDetailBasicInfoTab,
     EtpManageDetailAnalysisTab,
   },
   mounted: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;
-    var vm = this;
     // console.log( "EtpManageDetail.vue -> mounted" );
     // console.log( vm.paramData );
-    vm.init(false);
+    this.init(false);
   },
   created: function() {
     var vm = this;
@@ -174,37 +166,37 @@ export default {
   updated: function() {
   },
   beforeDestory: function() {
-      this.$EventBus.$off('changeEtpInfo');
+    this.$EventBus.$off('changeEtpInfo');
   },
   
   methods: {
     init: function(event) {
       var vm = this;
       vm.$nextTick().then(() => {
-          if(vm.paramData &&  (vm.paramData.F16012 || vm.paramData.F16257 || vm.paramData.F34239)) {
-              vm.basicData.F16012         =   vm.paramData.F16012;            /* 국제표준코드 */
-              vm.basicData.F16257         =   vm.paramData.F16257;            /* ETP기초지수코드 */
-              vm.basicData.F34239         =   vm.paramData.F34239;            /* ETP기초지수MID */
-              vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
-              vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
-              vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
-          }else if(vm.$route.query.F16012 && vm.$route.query.F16257 && vm.$route.query.F34239) {
-              vm.basicData.F16012         =   vm.$route.query.F16012;         /* 국제표준코드 */
-              vm.basicData.F16257         =   vm.$route.query.F16257;         /* ETP기초지수코드 */
-              vm.basicData.F34239         =   vm.$route.query.F34239;         /* ETP기초지수MID */
-              vm.paramData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
-              vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
-              vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
-          }
-          if(vm.basicData.F16012 || vm.basicData.F16257||  vm.basicData.F34239
-          )   {
-              // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
-              vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
-          }
-          if (event) {
-              // 분석정보 실행
-              vm.$EventBus.$emit('changeEtpAnalysisInfo');
-          }
+        if(vm.paramData &&  (vm.paramData.F16012 || vm.paramData.F16257 || vm.paramData.F34239)) {
+            vm.basicData.F16012         =   vm.paramData.F16012;            /* 국제표준코드 */
+            vm.basicData.F16257         =   vm.paramData.F16257;            /* ETP기초지수코드 */
+            vm.basicData.F34239         =   vm.paramData.F34239;            /* ETP기초지수MID */
+            vm.paramData.perf_class   = 'perf_chart_w2'; /* performanc 그래프 class */
+            vm.paramData.tbl_class   = 'tbl_type ver5'; /* performanc 테이블 class */
+            vm.paramData.chart_size  = '960'; /* performanc 차트 사이즈 */
+        }else if(vm.$route.query.F16012 && vm.$route.query.F16257 && vm.$route.query.F34239) {
+            vm.basicData.F16012         =   vm.$route.query.F16012;         /* 국제표준코드 */
+            vm.basicData.F16257         =   vm.$route.query.F16257;         /* ETP기초지수코드 */
+            vm.basicData.F34239         =   vm.$route.query.F34239;         /* ETP기초지수MID */
+            vm.paramData.perf_class   = 'perf_chart_w'; /* performanc 그래프 class */
+            vm.paramData.tbl_class   = 'tbl_type ver4'; /* performanc 테이블 class */
+            vm.paramData.chart_size  = '1180'; /* performanc 차트 사이즈 */
+        }
+        if(vm.basicData.F16012 || vm.basicData.F16257||  vm.basicData.F34239
+        )   {
+            // vm.$refs.etpBtn_1m.$el.click();     /* ETP 차트 정보를 조회한다. */
+            vm.fn_getEtpBasic();                /* ETP 의 기본정보를 조회한다. */
+        }
+        if (event) {
+            // 분석정보 실행
+            vm.$EventBus.$emit('changeEtpAnalysisInfo');
+        }
       });
     },
     /*
@@ -223,7 +215,7 @@ export default {
                 var msg = ( response.data.msg ? response.data.msg : "" );
                 if (!response.data.result) {
                     if( msg ) {
-                        vm.showMessageBox('확인', msg,{},1);
+                        vm.$root.confirmt.open('확인', msg,{},1);
                         return  false;
                     }
                 }
@@ -255,9 +247,6 @@ export default {
     fn_close : function() {
         var vm = this;
         vm.showIndexDetailDialog = false;
-    },
-    showMessageBox: function(title, msg, option, gubun) {
-        this.$root.$confirm.open(title,msg, option, gubun);
     },
     formatNumber:function(num) {
         return util.formatNumber(num);

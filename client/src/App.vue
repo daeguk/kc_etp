@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <router-view></router-view>
+    <ConfirmDialog ref="confirmt"></ConfirmDialog>
+    <ProgressBar ref="progresst"></ProgressBar>
   </div>
 </template>
 
@@ -8,6 +10,8 @@
 import Config from "@/js/config.js"
 import util from "@/js/util.js"
 import Constant from "@/store/store_constant.js"
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import ProgressBar from "@/components/common/ProgressBar.vue";
 
 export default {
   name: 'app',
@@ -18,11 +22,17 @@ export default {
       ws: null,
     }
   },
+  components: {
+    ConfirmDialog,
+    ProgressBar
+  },
   created() {
     // this.$router.push({ path: '/landing'});
 
   },
-  mounted: function() {      
+  mounted: function() {
+    this.$root.confirmt = this.$refs.confirmt;
+    this.$root.progresst = this.$refs.progresst;
     // 실시간 데이터 테스트 완료 (2019.11.02)
     // this.initWebSocket();
     this.setBefDates();

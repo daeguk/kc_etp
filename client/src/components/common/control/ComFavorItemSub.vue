@@ -592,6 +592,7 @@ export default {
 
         /* 전체 종목 etn 종목리스트 */
         getEtnList: function() {
+            var vm = this;
             util.processing(this.$refs.progress, true);
             // console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getETNList", {
@@ -600,14 +601,14 @@ export default {
             }).then(response => {
                 // console.log(response);
 
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
+                if( vm.$refs.progress ) {
+                    util.processing(vm.$refs.progress, false);
                 }
                 if (response.data.success == false) {
-                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
-                    this.etnList = items;
+                    vm.etnList = items;
                     etn_table.clear().draw();
                     etn_table.rows.add(items).draw();
                                         
@@ -616,12 +617,13 @@ export default {
                 if( this.$refs.progress ) {
                     util.processing(this.$refs.progress, false);
                 }
-                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
 
         /* 전체 종목 etf 종목리스트 */
         getEtfList: function() {
+          var vm = this;
             // console.log("etn_grid");
             util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getETFList", {
@@ -634,7 +636,7 @@ export default {
                     util.processing(this.$refs.progress, false);
                 }
                 if (response.data.success == false) {
-                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     this.etfList = items;
@@ -647,12 +649,13 @@ export default {
                 if( this.$refs.progress ) {
                     util.processing(this.$refs.progress, false);
                 }
-                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
 
         /* 전체 종목 index 종목리스트 */
         getIndexList: function() {
+            var vm = this;
             // console.log("etn_grid");
             util.processing(this.$refs.progress, true);
             axios.get(Config.base_url + "/user/common/getIndexList", {
@@ -665,7 +668,7 @@ export default {
                 }
 
                 if (response.data.success == false) {
-                    this.$emit("showMessageBox", '확인','종목정보가 없습니다.',{},1);
+                    vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
                 } else {
                     var items = response.data.results;
                     this.indexList = items;
@@ -678,7 +681,7 @@ export default {
                 if( this.$refs.progress ) {     
                     util.processing(this.$refs.progress, false);
                 }
-                this.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
 
@@ -703,15 +706,6 @@ export default {
                 console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
                 console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
 
-                //if(     !param.F16012        /* 국제표준코드  */
-                //    ||  !param.F16257        /* ETP기초지수코드  */
-                //    ||  !param.F34239        /* ETP기초지수MID  */
-                //    ||  param.F34239 < 0
-                //) {
-                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                //    return  false;
-                //}
-
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
                 vm.paramData.F34239     =   param.F34239;           /* ETP기초지수MID */
@@ -730,14 +724,6 @@ export default {
                 console.log( "param.F16257=["       + param.F16257     + "]     /* 지수코드  */" );
                 console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
                 console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
-
-                //if(     !param.F16257          /* 지수코드  */
-                //    ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
-                //    ||  !param.MARKET_ID        /* 시장 ID  */
-                //) {
-                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                //    return  false;
-                //}
 
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */

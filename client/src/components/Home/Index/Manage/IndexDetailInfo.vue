@@ -90,12 +90,10 @@
                         </div>
 
                         <div class="pad_gleft1">
-                            <LineIndexChart01 v-if="chartFlag==1" :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart01>
-                            <LineIndexChart02 v-if="chartFlag==2" :indexBasic="results" @showMessageBox="showMessageBox"></LineIndexChart02>
+                            <LineIndexChart01 v-if="chartFlag==1" :indexBasic="results"></LineIndexChart01>
+                            <LineIndexChart02 v-if="chartFlag==2" :indexBasic="results"></LineIndexChart02>
                         </div>                        
                     </div>
-
-
                     <div class="tab2_w">
                         <v-layout row wrap>
                             <v-flex xs12>
@@ -112,13 +110,13 @@
 
                                 <v-tabs-items v-model="tab">
                                     <v-tab-item>
-                                        <IndexDetailInfoTab1 :basicData = "basicData" @showMessageBox="showMessageBox"    v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
+                                        <IndexDetailInfoTab1 :basicData = "basicData"  v-if="openSubIndexInfoTab"></IndexDetailInfoTab1>
                                     </v-tab-item>
                                     <v-tab-item>
-                                        <IndexDetailInfoTab2 :basicData = "results" :etpList="etpList"  :showDialog="showDialog" :showView="showView" @showMessageBox="showMessageBox"   v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
+                                        <IndexDetailInfoTab2 :basicData = "results" :etpList="etpList"  :showDialog="showDialog" :showView="showView" v-if="openSubIndexInfoTab"></IndexDetailInfoTab2>
                                     </v-tab-item>
                                     <v-tab-item  v-if="!showDialog">
-                                        <IndexDetailInfoTab3 @showMessageBox="showMessageBox"></IndexDetailInfoTab3>
+                                        <IndexDetailInfoTab3></IndexDetailInfoTab3>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-flex>
@@ -355,10 +353,6 @@ export default {
 
                 vm.openSubIndexInfoTab      =   true;
             });
-        },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
         },
 
         formatInt:function(num) {

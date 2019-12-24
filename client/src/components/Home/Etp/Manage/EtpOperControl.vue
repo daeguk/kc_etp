@@ -7,8 +7,6 @@
         :toggle="toggle"
         :state="state"
         @showDetail="showDetail" 
-        @showMessageBox="showMessageBox"
-        @fn_showProgress="fn_showProgress"
         @fn_showDetailIndex="fn_showDetailIndex"
         @fn_showDetailPdf="fn_showDetailPdf"
         @fn_pageMove="fn_pageMove"
@@ -24,8 +22,6 @@
       <EtpOperIndex
         v-if="showEtpOerInfo == 1" 
         @showDetail="showDetail" 
-        @fn_showProgress="fn_showProgress"
-        @showMessageBox="showMessageBox"
         @fn_showDetailIndex="fn_showDetailIndex">
       </EtpOperIndex>
 
@@ -35,16 +31,9 @@
         :paramData="paramData"
         :reloadYn="reloadYn"
         :toggle="toggle"
-        @showMessageBox="showMessageBox"
-        @fn_showProgress="fn_showProgress"
         @fn_showDetailIndex="fn_showDetailIndex"
         @fn_showDetailPdf="fn_showDetailPdf">
       </EtpOperPdf>
-
-      <!-- 메시지 관리 -->
-      <ConfirmDialog ref="confirm"></ConfirmDialog>
-
-      <ProgressBar ref="progress"></ProgressBar>
 
       <!-- 지수 상세 팝업 -->
       <v-dialog v-model="showIndexDetailDialog" persistent max-width="1400">
@@ -93,7 +82,6 @@
         v-if="showEtpOperPdfEmergencyModifyPop"
         :paramData="paramData" 
         :showDialog="showEtpOperPdfEmergencyModifyPop"
-        @showMessageBox="showMessageBox"
         @fn_closePop="fn_close" >
       </EtpOperPdfEmergencyModifyPop>
 
@@ -102,7 +90,6 @@
         v-if="showEtpOperPdfHistPop"
         :paramData="paramData" 
         :showDialog="showEtpOperPdfHistPop"
-        @showMessageBox="showMessageBox"
         @fn_closePop="fn_close" >
       </EtpOperPdfHistPop>            
 
@@ -111,7 +98,6 @@
         v-if="showEtpOperPdfInavCalcPop"
         :paramData="paramData" 
         :showDialog="showEtpOperPdfInavCalcPop" 
-        @showMessageBox="showMessageBox"
         @fn_closePop="fn_close" >
       </EtpOperPdfInavCalcPop>
 
@@ -120,7 +106,6 @@
         <EtpOperInfoInavIndex
           v-if="showEtpOperIndexInavCalcPop"
           :paramData = "paramData"
-          @showMessageBox="showMessageBox"
           @fn_close = "fn_close">
         </EtpOperInfoInavIndex>
       </v-dialog>
@@ -130,8 +115,7 @@
       <ComEtpFavorItemSub
         v-if="showFaver"   
         :faverSize = "faverSize"
-        @showDetail="showDetail" 
-        @showMessageBox="showMessageBox">
+        @showDetail="showDetail">
       </ComEtpFavorItemSub>
     </v-flex>
   </v-layout> 
@@ -147,8 +131,6 @@ import _                            from "lodash";
 import Config                       from "@/js/config.js";
 import util                         from "@/js/util.js";
 
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
-import ProgressBar                  from "@/components/common/ProgressBar.vue";
 import ComIndexFixPopup             from "@/components/common/popup/ComIndexFixPopup.vue";
 import ComEtpFavorItemSub              from "@/components/common/control/ComEtpFavorItemSub"; 
 
@@ -222,8 +204,6 @@ export default {
     EtpOperIndex                    :   EtpOperIndex,                       /* 지수관리 */
     EtpOperPdf                      :   EtpOperPdf,                         /* PDF 관리 */
 
-    ConfirmDialog                   :   ConfirmDialog,                      /* 공통 메시지창 */
-    ProgressBar                     :   ProgressBar,
     ComEtpFavorItemSub              :   ComEtpFavorItemSub,
   },
   watch : {
@@ -236,9 +216,6 @@ export default {
   },
 
   mounted: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;
-
     this.className = "conWidth_100";
   },
   created: function() {
@@ -277,8 +254,6 @@ export default {
   beforeUpdated: function() {
   },
   updated: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;    
   },
   methods: {
     showDetail: function(gubun, paramData) {
@@ -324,14 +299,6 @@ export default {
       this.className = "conWidth_left";
       this.FaverClassName = "conWidth_right";
     },
-    showMessageBox: function(title, msg, option, gubun) {
-      this.$root.$confirm.open(title,msg, option, gubun);
-    },
-    fn_showProgress: function(visible) {
-      if( this.$refs && this.$refs.progress ) {
-        util.processing(this.$refs.progress, visible);
-      }
-    },      
     async fn_showDetailIndex(gubun, paramData) {
       /* 지수관리 -> 지수구성정보 상세팝업 */
       if( gubun == '3' ) {
@@ -353,13 +320,8 @@ export default {
           checkResult = true;
         }
 
-        if( !checkResult ) {
-          if( await this.$root.$confirm.open(
-            '[지수 조치현황]',
-            '지수 정보가 없습니다.',
-            {},   1
-            )
-          ) {
+        if(!checkResult) {
+          if(await this.$root.confirmt.open('[지수 조치현황]', '지수 정보가 없습니다.', {}, 1)) {
             return false;
           }                    
         }

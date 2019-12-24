@@ -130,9 +130,6 @@
     </v-layout>
   </v-container>
 </template>
-<style scoped>
-.v-menu__content{box-shadow: none !important;}
-</style>
 
 <script>
 import util       from "@/js/util.js";
@@ -317,10 +314,6 @@ export default {
       this.$emit( "showDetail", gubun, paramData );
     },
 
-    /*
-      *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
-      *  2019-05-03  bkLove(촤병국)
-      */        
     fn_closePdfTooltip() {
       this.showLpSpreadTooltip = false; 
       Config.showLpSpreadTooltip = false;
@@ -329,3 +322,6 @@ export default {
 };
 </script>
 
+<style scoped>
+  .v-menu__content{box-shadow: none !important;}
+</style>

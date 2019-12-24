@@ -5,13 +5,13 @@
                 <v-container>
                     <v-layout>
                         <v-flex xs4 mr-2>
-                            <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem1" :chartItem="chartItem1"></IndexSummaryCard>
                         </v-flex>
                         <v-flex xs4 mr-2>
-                            <IndexSummaryCard :item="cardItem2" :chartItem="chartItem2" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem2" :chartItem="chartItem2"></IndexSummaryCard>
                         </v-flex>
                         <v-flex xs4>
-                            <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryCard>
+                            <IndexSummaryCard :item="cardItem3" :chartItem="chartItem3"></IndexSummaryCard>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -19,16 +19,16 @@
         </v-layout>
         <v-layout row wrap mt-2  class="mt-2">
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem1" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem1"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem2" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem2"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3 pr-2>
-                <IndexSummaryBox :item="boxItem3" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem3"></IndexSummaryBox>
             </v-flex>
             <v-flex xs3>
-                <IndexSummaryBox :item="boxItem4" @showMessageBox="showMessageBox" @showProgress="showProgress"></IndexSummaryBox>
+                <IndexSummaryBox :item="boxItem4"></IndexSummaryBox>
             </v-flex>
         </v-layout>
         <v-layout row wrap class="mt-2">
@@ -242,12 +242,6 @@ export default {
             ); 
 
         }, 
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
-        },
-        showProgress: function(visible) {
-            util.processing(this.$refs.progress, visible);
-        },
     }
 };
 </script>

@@ -51,12 +51,6 @@
             </v-card>
 
         </v-dialog>
-
-        <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>             
-
     </v-container>
 </template>
 
@@ -69,8 +63,6 @@ import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
-import ProgressBar from "@/components/common/ProgressBar.vue";
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexDetailList = null;
 
@@ -87,10 +79,6 @@ export default {
                         +   "." 
                         +   new Date().getDate(),
         };
-    },
-    components : {
-        ProgressBar: ProgressBar,
-        ConfirmDialog: ConfirmDialog
     },
     mounted () {
 
@@ -150,11 +138,8 @@ export default {
          * 2019-04-16  bkLove(촤병국)
          */
         fn_getIndexDetailList : function() {
-
             var vm = this;
-
-            util.processing(vm.$refs.progress, true);
-
+            vm.$root.progresst.open();
             tableIndexDetailList.clear().draw();
             vm.indexDetailList  =   [];
 
@@ -183,40 +168,21 @@ export default {
                                     vm.indexDetailList  =   indexDetailList;
                                 }
                             }
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                         }catch(ex) {
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-                        
-                        if( error ) {
-                            vm.showMessageBox( '확인', error,{},4 );
-                        }
+                      vm.$root.progresst.close();
+                      vm.$root.confirmt.open('확인', error, {}, 4);
                     }
             );
      
         },
-
         fn_closePop() {
-            var vm = this;
-
-            vm.$emit( "fn_closePop", "close" );
-        },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$refs.confirm2.open(title,msg, option, gubun);
+          this.$emit( "fn_closePop", "close" );
         },
 
         /*
@@ -229,7 +195,7 @@ export default {
             var tableList = tableIndexDetailList.rows().data();
 
             if( !tableList || tableList.length == 0 ) {
-                vm.showMessageBox( '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1 );
+                vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1 );
                 return  false;
             }          
 

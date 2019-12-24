@@ -140,9 +140,6 @@
         </v-card>
     </v-dialog>
     </v-flex>
-    <v-flex>
-        <ProgressBar ref="progress"></ProgressBar>
-    </v-flex>
     </v-container>
 </template>
 
@@ -153,13 +150,11 @@
 
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
 import { nav_cal_common } from '@/js/common/mixins/mixins_nav_cal.js';
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var pdf_table = null;
 export default {
@@ -178,9 +173,6 @@ export default {
             SimulationRender: {}, 
             DefaultRender: {},
         };
-    },
-    components: {
-        ProgressBar: ProgressBar
     },
     mixins : [ nav_cal_common ],
     created: function() {
@@ -428,10 +420,8 @@ export default {
         getiNavData(F16012) {
             var vm = this;
             let simulationMode = false; /* 데이터를 DB 상에서 가져 오기 때문에 무조건 false로 넘김*/
-            util.processing(vm.$refs.progress, true);
-            console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
-
-
+            vm.$root.progresst.open();
+            // console.log( "EtpOperPdfInavCalcPop.vue -> getiNavData" );
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/etp/getiNavData"
@@ -457,7 +447,7 @@ export default {
                                 var index = 0;
                                 /* pdf데이터가 없을 경우 */
                                 if (vm.pdfList.length == 0) {
-                                    util.processing(vm.$refs.progress, false);                      
+                                    vm.$root.progresst.close();
                                 }
                                 for (let item of vm.pdfList) {                                            
                                     await vm.iNavCalulator(item, simulationMode).then(function(jongItem) {
@@ -517,27 +507,19 @@ export default {
                                     });                        
                                 }
                             } else {
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }
+                              vm.$root.progresst.close();
                             }
 
                         }catch(ex) {
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
                         console.log(error);
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }                        
-
+                        vm.$root.progresst.close();
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                            vm.$root.confirmt.open('확인', error ,{},4);
                         }                        
                     }
             );            
@@ -549,7 +531,7 @@ export default {
             pdf_table.clear().draw();
             pdf_table.rows.add(this.pdfList).draw();
 
-            util.processing(this.$refs.progress, false);
+            vm.$root.progresst.close();
         },
         formatNumber:function(num) {
            if (num != null && typeof num !== 'undefined') {
@@ -600,7 +582,7 @@ export default {
             var market_amt = 0;
             var market_tot_amt = 0;
             var index = 0;
-            util.processing(vm.$refs.progress, true);
+            vm.$root.progresst.open();
             for (let item of vm.pdfList) {                        
                 await vm.iNavCalulator(item, vm.SimulationSwitch).then(function(jongItem) {                    
                     /* 종목 정보 바인딩 */                            
@@ -689,7 +671,7 @@ export default {
             var tableList = pdf_table.rows().data();
 
             if( !tableList || tableList.length == 0 ) {
-                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
                 return  false;
             }          
 

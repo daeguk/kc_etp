@@ -69,21 +69,27 @@
       </v-flex>  
       <v-flex class="conWidth_right">
         <!-- [ETP 운영정보] Quick 메뉴 정보 -->
-        <LpOperInfoQuick
+        <EtpOperInfoQuick
           :etpBasic = "etpBasic"
           :toggle = "toggle"
+
           @fn_setInavData = "fn_setInavData"
           @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
           @fn_setEtpLpspread = "fn_setEtpLpspread"
           @fn_setCustomizeData = "fn_setCustomizeData"
+
           @showDetail="showDetail" 
+          @showMessageBox="showMessageBox"
           @fn_showDetailIndex="fn_showDetailIndex">
-        </LpOperInfoQuick>
+        </EtpOperInfoQuick>
       </v-flex>       
     </v-layout>
-    <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
+  <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
   </v-container>
 </template>
+<style scoped>
+.v-menu__content{box-shadow: none !important;}
+</style>
 
 <script>
 import $      from 'jquery';
@@ -94,7 +100,7 @@ import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import Constant from "@/store/store_constant.js"
 
-import LpOperInfoQuick         from    "@/components/Home/Lp/Manage/LpOperInfoQuick.vue";
+import EtpOperInfoQuick         from    "@/components/Home/Etp/Manage/EtpOperInfoQuick.vue";
 import EtpLpModal   from  '@/components/common/modal/EtpLpModal.vue';
 
 var table01 = null;
@@ -104,7 +110,7 @@ export default {
   props : [ "toggle", "state" ],
   components: {
     //indexDetailrtmenupop: indexDetailrtmenupop
-    LpOperInfoQuick,
+    EtpOperInfoQuick,
     EtpLpModal,
   },
   data() {
@@ -250,14 +256,13 @@ export default {
           table01.clear().draw();
       }
     }
-
-    vm.$root.progresst.open();
+    vm.$emit( "fn_showProgress", true );
     util.axiosCall(
       {"url" : Config.base_url + "/user/etp/getEtpOperInfo"
         ,"data" : {F34241  :   vm.stateInfo.gubun}
         ,"method" : "post"
       }, function(response) {
-        vm.$root.progresst.close();
+        vm.$emit( "fn_showProgress", false );
         try{
           if (response.data) {
             var dataList = response.data.dataList;
@@ -266,8 +271,7 @@ export default {
             vm.result_cnt   =   0;
             if (!response.data.result) {
               if( msg ) {
-                // vm.showMessageBox('확인', msg,{},1);
-                vm.$root.confirmt.open('확인', msg, {}, 1);
+                vm.showMessageBox('확인', msg,{},1);
                 return  false;
               }
             }
@@ -287,14 +291,13 @@ export default {
             vm.$emit( "fn_setStateInfo", vm.stateInfo );
           }
         }catch(ex) {
-          vm.$root.progresst.close();
+          vm.$emit( "fn_showProgress", false );
           console.log( "error", ex );
         }
       }, function(error) {
-        vm.$root.progresst.close();
+        vm.$emit( "fn_showProgress", false );
         if( error ) {
-          // vm.$emit("showMessageBox", '확인', error ,{},4);
-          vm.$root.confirmt.open('확인', msg, {}, 4);
+          vm.$emit("showMessageBox", '확인', error ,{},4);
         }                        
       }
     );
@@ -1063,6 +1066,10 @@ export default {
           var vm = this;
           vm.$emit( "showDetail", gubun, paramData );
       },
+      showMessageBox: function(title, msg, option, gubun) {
+          var vm = this;
+          vm.$emit( "showMessageBox", title, msg, option, gubun );
+      },
       fn_showDetailIndex( gubun, paramData) {
           var vm = this;
           vm.$emit( "fn_showDetailIndex", gubun, paramData );
@@ -1084,8 +1091,7 @@ export default {
           }
 
           if( !tableList || tableList.length == 0 ) {
-              // vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
-              vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+              vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
               return  false;
           }            
 
@@ -1231,8 +1237,3 @@ export default {
   }
 };
 </script>
-
-
-<style scoped>
-.v-menu__content  {box-shadow: none !important;}
-</style>

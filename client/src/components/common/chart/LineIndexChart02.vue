@@ -141,7 +141,7 @@ export default {
         }).then(function(response) {
           // console.log(response);
           if (response.data.success == false) {
-             vm.$emit("showMessageBox", '확인', "해당 지수의 데이터가 없습니다" ,{},1 );
+             vm.$root.confirmt.open('확인', "해당 지수의 데이터가 없습니다" ,{},1 );
           } else {
               if(response.data.results.length > 0) {
                 if( vm.dterm == 0 || vm.dterm == 1 ) {
@@ -164,7 +164,7 @@ export default {
                     vm.draw_hist(vm.dmode);
                 }
               }else {
-                vm.$emit("showMessageBox", '확인', "해당 지수의 데이터가 없습니다" ,{},1 );
+                vm.$root.confirmt.open('확인', "해당 지수의 데이터가 없습니다" ,{},1 );
               }
           }
         });

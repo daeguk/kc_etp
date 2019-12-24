@@ -78,7 +78,7 @@ export default {
     // console.log("ydifflen : " + this.ydifflen);
 
     if( !this.arr_result_daily || this.arr_result_daily.length == 0 ) {
-        vm.$emit("fn_showMessageBox", '확인', "시뮬레이션 결과 데이터가 없습니다" ,{},1 );
+        vm.$root.confirmt.open('확인', "시뮬레이션 결과 데이터가 없습니다" ,{},1 );
 
         return  false;
     }

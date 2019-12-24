@@ -573,17 +573,13 @@
                      
             </v-container>     
         </v-form>
-
-        <ConfirmDialog ref="confirm2" v-show="false"></ConfirmDialog>
     </v-card>
 </template>
 
 
 <script>
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import Constant from "@/store/store_constant.js";
@@ -594,9 +590,6 @@ var table01 = null;
 export default {
     props: [ "editData" ],
 
-    components: {
-        ConfirmDialog: ConfirmDialog
-    },
     data() {
         return {
 
@@ -710,8 +703,8 @@ export default {
     mounted() {
 
         // 메시지 박스 참조
-        this.$root.$confirm2 = this.$refs.confirm2;
-
+        var vm = this;
+        
         this.dragAndDropCapable = this.determineDragAndDropCapable();
 
         if (this.dragAndDropCapable) {
@@ -770,7 +763,7 @@ export default {
                     if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                         if( typeCd != "0003" ) {
 
-                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                             return  false;
                         }
                     }                    
@@ -827,7 +820,7 @@ export default {
                     if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                         if( typeCd != "0003" ) {
 
-                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                             return  false;
                         }
                     }                    
@@ -871,7 +864,7 @@ export default {
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( typeCd != "0003" ) {
 
-                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                         return  false;
                     }
                 }                
@@ -935,7 +928,7 @@ export default {
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( typeCd != "0003" ) {
 
-                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                         return  false;
                     }
                 }                
@@ -1031,7 +1024,7 @@ export default {
             /* 1. 지수 ID 필수 체크 */
             if (!vm.modForm.jisu_id) {
 
-                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] is required" ,{},1) ){
+                if( await vm.$root.confirmt.open('확인', "[지수 ID] is required" ,{},1) ){
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1039,7 +1032,7 @@ export default {
                 
             } else if (vm.modForm.jisu_id.length > 10) {
 
-                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 10자리 까지만 입력 가능합니다." ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', "[지수 ID] 10자리 까지만 입력 가능합니다." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1047,7 +1040,7 @@ export default {
 
             } else if (vm.modForm.jisu_id.length < 5) {
 
-                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 5자리 이상 입력해 주세요." ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', "[지수 ID] 5자리 이상 입력해 주세요." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1055,7 +1048,7 @@ export default {
 
             } else if( !regType.test( vm.modForm.jisu_id ) ) {
 
-                if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 숫자와 영문자만 가능합니다." ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', "[지수 ID] 숫자와 영문자만 가능합니다." ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.modForm.duplCheckResult = false;
                     return false;
@@ -1082,7 +1075,7 @@ export default {
 
                                 if (response.data.result == true) {
 
-                                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 이미 존재합니다." ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', "[지수 ID] 이미 존재합니다." ,{},1) ) {
                                         vm.$refs.jisu_id.focus();
                                         vm.modForm.duplCheckResult = false;
                                         return false;
@@ -1090,7 +1083,7 @@ export default {
 
                                 } else {
 
-                                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 사용 가능합니다." ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', "[지수 ID] 사용 가능합니다." ,{},1) ) {
                                         vm.modForm.duplCheckResult = true;
                                         return false;
                                     }
@@ -1107,7 +1100,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1129,7 +1122,7 @@ export default {
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
-                    vm.$emit( 'showMessageBox', '확인','지수사업자만 수정 하실수 있습니다.',{},1 );
+                    vm.$root.confirmt.open('확인','지수사업자만 수정 하실수 있습니다.',{},1 );
                     return  false;
                 }
             }
@@ -1142,7 +1135,7 @@ export default {
 
                 if (!this.modForm.duplCheckResult) {
 
-                    if( await vm.$emit("showMessageBox", '확인', "[지수 ID] 중복확인을 해주세요." ,{},1) ) {
+                    if( await vm.$root.confirmt.open('확인', "[지수 ID] 중복확인을 해주세요." ,{},1) ) {
                         this.$refs.jisu_id.focus();
 
                         return false;
@@ -1170,14 +1163,14 @@ export default {
 
                 if( !this.modForm.show_method_file ) {
 
-                    if( await vm.$emit("showMessageBox", '확인', msgTitle + " 지수방법론을 필수로 업로드 해주세요." ,{},1) ) {
+                    if( await vm.$root.confirmt.open('확인', msgTitle + " 지수방법론을 필수로 업로드 해주세요." ,{},1) ) {
                         return false;
                     }
                 }
 
                 if( this.modForm.jisu_file_id == -1 ) {
 
-                    if( await vm.$emit("showMessageBox", '확인', msgTitle + " 소급지수를 필수로 업로드 해주세요." ,{},1) ) {
+                    if( await vm.$root.confirmt.open('확인', msgTitle + " 소급지수를 필수로 업로드 해주세요." ,{},1) ) {
                         return false;
                     }
                 }
@@ -1190,13 +1183,7 @@ export default {
             }
 
 
-            if( await this.$root.$confirm2.open(
-                        '[신규 지수 등록]',
-                        '저장하시겠습니까?',
-                        {}
-                    ,   2
-                )
-            ) {
+            if( await vm.$root.confirmt.open('[신규 지수 등록]','저장하시겠습니까?',{}, 2)) {
                 if( "Y" != this.$root.$confirm2.val ) {
                     return false;
                 }

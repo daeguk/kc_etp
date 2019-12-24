@@ -34,20 +34,11 @@
             </v-flex >
             <v-flex  class="conWidth_right">
                 <IndexDetailQuick   @fn_getIndexDetailList="fn_getIndexDetailList"
-                                    @fn_getIndexJongmokList="fn_getIndexJongmokList"
-                                    @showProgress="showProgress"
-                                    @showMessageBox="showMessageBox">
+                                    @fn_getIndexJongmokList="fn_getIndexJongmokList">
                 </IndexDetailQuick>                
             </v-flex>
             
         </v-layout>
-
-        <v-dialog v-model="progress" persistent  content-class="progressbar_w">     
-                        <template>
-                            <v-progress-circular :size="50" indeterminate></v-progress-circular>
-                            </template>
-        </v-dialog>
-        <ConfirmDialog ref="confirm"></ConfirmDialog>
     </v-container>
 </template>
 
@@ -56,18 +47,15 @@
 
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 import IndexDetailQuick from "@/components/Home/Index/Manage/IndexDetailQuick.vue";
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 var tableIndexList = null;
 
 export default {
     components: {
-        IndexDetailQuick     :   IndexDetailQuick,
-        ConfirmDialog: ConfirmDialog,
+        IndexDetailQuick,
     },
     data() {
         return {
@@ -88,7 +76,7 @@ export default {
 
         var vm = this;        
 
-        console.log( "IndexDetailList.vue -> mounted" );
+        // console.log( "IndexDetailList.vue -> mounted" );
     },
     created: function() {},
     beforeDestory: function() {},
@@ -102,8 +90,7 @@ export default {
         fn_getIndexDetailList : function( paramIndexBasic, paramIndexDetailList, paramForm ) {
             
             var vm = this;
-            vm.progress = true;
-            console.log( "IndexDetail.vue -> fn_getIndexDetailList" );
+            // console.log( "IndexDetail.vue -> fn_getIndexDetailList" );
 
             if( paramIndexBasic ) {
                 vm.indexBasic   =   paramIndexBasic;
@@ -155,7 +142,6 @@ export default {
             }
 
             vm.form.resultsCnt  =   paramIndexDetailList.length;
-            vm.progress = false;
         },
 
 
@@ -166,8 +152,7 @@ export default {
         fn_getIndexJongmokList : function( paramJongmokDataList, paramForm ) {
 
             var vm = this;
-            vm.progress = true;
-            console.log( "IndexDetail.vue -> fn_getIndexJongmokList" );
+            // console.log( "IndexDetail.vue -> fn_getIndexJongmokList" );
 
             if( paramForm ) {
                 vm.form =   paramForm;
@@ -214,19 +199,9 @@ export default {
 
                 vm.form.resultsCnt  =   paramJongmokDataList.length;
             }
-            vm.progress = false;
-        },
-             
-        showProgress: function(visible) {
-            this.progress = visible;
-        },
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$refs.confirm.open(title,msg, option, gubun);
         },
         fn_closePop() {
-            var vm = this;
-
-            vm.$emit( "fn_closePop", "close" );
+            this.$emit( "fn_closePop", "close" );
         }
     }
 };

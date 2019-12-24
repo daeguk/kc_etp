@@ -1,47 +1,40 @@
 <template>
-    <v-container>
-        <v-layout row wrap class="con_wrap">
-            <v-flex grow class="conWidth_left">
-                <v-card flat>
-                    <v-card-title primary-title class="title_wrap02">
-                        <h3 class="headline subtit  w100" pb-0>
-                            지수관리
-                            <span class="text_result">{{ result_cnt }}</span>
-                            <span class="text_result_t"> results</span>
-                            <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
-                            <div class="right_btn"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
-                        </h3>
-                     </v-card-title>
-                    
-                    <v-card flat>
-                        <table id="tableOperIndex" class="tbl_type ver7"></table>
-
-                    </v-card>
-                </v-card>
-           </v-flex>
-           <v-flex class="conWidth_right">
-                <!-- [지수관리] Quick 메뉴 정보 -->
-                    <EtpOperIndexQuick  :indexBasic = "indexBasic"
-
-                                        @showDetail="showDetail" 
-                                        @showMessageBox="showMessageBox"
-                                        @fn_showDetailIndex="fn_showDetailIndex"
-                                        @fn_setEtpOperIndexOversea="fn_setEtpOperIndexOversea">
-                    </EtpOperIndexQuick>
-           </v-flex>
-        </v-layout>
-    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData"
-      @closeIndexModal="closeIndexModal"></IndexInfoModal>
-    </v-container>
+  <v-container>
+    <v-layout row wrap class="con_wrap">
+      <v-flex grow class="conWidth_left">
+        <v-card flat>
+          <v-card-title primary-title class="title_wrap02">
+              <h3 class="headline subtit  w100" pb-0>
+                지수관리
+                <span class="text_result">{{ result_cnt }}</span>
+                <span class="text_result_t"> results</span>
+                <span class="sub_txt">기준일 : {{ fmt_F12506 }}</span>
+                <div class="right_btn"><button type='button'  class="exceldown_btn" @click.stop="fn_downExcel"></button></div>
+              </h3>
+            </v-card-title>
+            <v-card flat>
+                <table id="tableOperIndex" class="tbl_type ver7"></table>
+            </v-card>
+        </v-card>
+      </v-flex>
+      <v-flex class="conWidth_right">
+      <!-- [지수관리] Quick 메뉴 정보 -->
+        <EtpOperIndexQuick  :indexBasic = "indexBasic"
+                            @showDetail="showDetail" 
+                            @fn_showDetailIndex="fn_showDetailIndex"
+                            @fn_setEtpOperIndexOversea="fn_setEtpOperIndexOversea">
+        </EtpOperIndexQuick>
+      </v-flex>
+    </v-layout>
+    <IndexInfoModal v-if="IndexModalFlag" :indexInfo="paramData" @closeIndexModal="closeIndexModal"></IndexInfoModal>
+  </v-container>
 </template>
 
 
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 //import indexDetailrtmenupop from "./indexDetailrtmenupop.vue";
@@ -89,6 +82,9 @@ export default {
     },
     created: function() {},
     beforeDestory: function() {},
+    destroyed: function() {
+      // console.log("destoyed...... EtpOperIndex......");
+    },
 
     methods: {
         /*
@@ -124,7 +120,7 @@ export default {
 
             vm.indexList    =   [];
 
-            vm.$emit( "fn_showProgress", true );
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -138,7 +134,7 @@ export default {
 
                         try{
 
-                            vm.$emit( "fn_showProgress", false );
+                            vm.$root.progresst.close();
 
                             vm.result_cnt = 0;
                             if (response.data) {
@@ -146,7 +142,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -170,10 +166,9 @@ export default {
                         }
                     }
                 ,   function(error) {
-                        vm.$emit( "fn_showProgress", false );
-
+                        vm.$root.progresst.close();
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                            vm.$root.confirmt.open('확인', error ,{},4);
                         }
                     }
             );
@@ -560,13 +555,6 @@ export default {
 
             vm.$emit( "showDetail", gubun, paramData );
         },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },
-
         fn_showDetailIndex( gubun, paramData) {
             var vm = this;
 
@@ -589,7 +577,7 @@ export default {
             var tableList = tableOperIndex.rows().data();
 
             if( !tableList || tableList.length == 0 ) {
-                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
                 return  false;
             }          
 

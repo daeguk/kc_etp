@@ -81,8 +81,7 @@
                         </v-list-tile-content>
                         <ComEtpFavorItemSub     v-if="showFaver" 
                                                 :faverSize = "faverSize"
-                                                @showDetail="showDetail" 
-                                                @showMessageBox="showMessageBox">
+                                                @showDetail="showDetail" >
                         </ComEtpFavorItemSub>
 
                     </v-list>
@@ -160,15 +159,6 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdf
             vm.$emit( "showDetail", gubun, paramData );
         },
 
-        /*
-         *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
-         *  2019-05-03  bkLove(촤병국)
-         */        
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },
-
         fn_setEtpOperPdfByRate : function() {
 
             var vm = this;
@@ -176,19 +166,19 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdf
 
             /* 기초 데이터가 존재하는지 체크 */
             if( !vm.pdfData || Object.keys( vm.pdfData ).length == 0 ) {
-                vm.$emit("showMessageBox", '확인','기초 데이터가 존재하지 않습니다.',{},1);
+                vm.$root.confirmt.open('확인','기초 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* 기준 데이터가 존재하는지 체크 */
             if( !vm.pdfData.F16012 || !vm.pdfData.F16493 ) {
-                vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
+                vm.$root.confirmt.open('확인','기준 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
             if( !( vm.pdfData.F16493 == "1" || vm.pdfData.F16493 == "2" ) ) {
-                vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
+                vm.$root.confirmt.open('확인','ETF 상품만 가능합니다.',{},1);
                 return  false;
             }
 
@@ -200,40 +190,32 @@ console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showPdfTooltip=", Config.showPdf
             var paramData   =   {};
             paramData.togglePdfByRate    =   vm.togglePdfByRate;            
 
-//            vm.$emit("showMessageBox", '확인','개발중입니다..',{},1);
-//            return  false;
               vm.$emit( "fn_setEtpOperPdfByRate", paramData );
         },
 
         fn_showDetailPdf : function( gubun ) {
             var vm = this;
 
-console.log( " EtpOperPdfQuick.vue -> fn_showDetailPdf #################" );
-console.log( vm.pdfData );
+// console.log( " EtpOperPdfQuick.vue -> fn_showDetailPdf #################" );
+// console.log( vm.pdfData );
 
             /* 기초 데이터가 존재하는지 체크 */
             if( !vm.pdfData || Object.keys( vm.pdfData ).length == 0 ) {
-                vm.$emit("showMessageBox", '확인','기초 데이터가 존재하지 않습니다.',{},1);
+                vm.$root.confirmt.open('확인','기초 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* 기준 데이터가 존재하는지 체크 */
             if( !vm.pdfData.F16012 || !vm.pdfData.F16493 ) {
-                vm.$emit("showMessageBox", '확인','기준 데이터가 존재하지 않습니다.',{},1);
+                vm.$root.confirmt.open('확인','기준 데이터가 존재하지 않습니다.',{},1);
                 return  false;
             }
 
             /* ETF 인지 체크 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
             if( !( vm.pdfData.F16493 == "1" || vm.pdfData.F16493 == "2" ) ) {
-                vm.$emit("showMessageBox", '확인','ETF 상품만 가능합니다.',{},1);
+                vm.$root.confirmt.open('확인','ETF 상품만 가능합니다.',{},1);
                 return  false;
             }
-/*
-            if( !vm.pdfData.F16583 ) {
-                vm.$emit("showMessageBox", '확인','사무수탁회사번호가 존재하지 않습니다.',{},1);
-                return  false;
-            }
-*/
             /* PDF 긴급반영인 경우 */
             if( gubun == 6 ) {
 
@@ -241,12 +223,12 @@ console.log( vm.pdfData );
 //                vm.toggleIanvPop            =   false;
                 vm.togglePdfByRate          =   false;
                 
-                console.log( "krx_cd >>>>>>>>>>>>>>>>>>>>>" + vm.$store.state.user.krx_cd );
+                // console.log( "krx_cd >>>>>>>>>>>>>>>>>>>>>" + vm.$store.state.user.krx_cd );
 
                 var typeCd  =   vm.$store.state.user.type_cd;
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( vm.$store.state.user.krx_cd != vm.pdfData.F33960 ) {
-                        vm.$emit("showMessageBox", '확인','타 발행사의 종목은 PDF 긴급반영 하실 수 없습니다.',{},1);
+                        vm.$root.confirmt.open('확인','타 발행사의 종목은 PDF 긴급반영 하실 수 없습니다.',{},1);
                         return  false;
                     }
                 }
@@ -258,7 +240,7 @@ console.log( vm.pdfData );
                     }
 
                     if( vm.exists_now_pdf_yn != "Y" ) {
-                        vm.$emit("showMessageBox", '확인','과거 PDF 는 수정할 수 없습니다',{},1);
+                        vm.$root.confirmt.open('확인','과거 PDF 는 수정할 수 없습니다',{},1);
                         return  false;
                     }
 
@@ -296,10 +278,8 @@ console.log( vm.pdfData );
             var vm = this;
 
             return await new Promise(function(resolve, reject) {
-                console.log( "fn_getExistsNowPdfBaisc called" );
-
-                vm.$emit( "fn_showProgress", true );
-
+                // console.log( "fn_getExistsNowPdfBaisc called" );
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getExistsNowPdfBaisc"
@@ -307,10 +287,8 @@ console.log( vm.pdfData );
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-
                             try{
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 if (response.data) {
 
                                     var msg = ( response.data.msg ? response.data.msg : "" );
@@ -326,28 +304,23 @@ console.log( vm.pdfData );
                                 resolve({ result : true });
 
                             }catch(ex) {
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
                                 resolve({ result : false });
                             }
                         }
                     ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                                vm.$root.confirmt.open('확인', error ,{},4);
                             }
-
                             resolve({ result : false });
                         }
                 );
-
-
             }).catch( function(e) {
                 console.log( e );
-
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                vm.$root.progresst.close();
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
 
 //                resolve(false);
             });

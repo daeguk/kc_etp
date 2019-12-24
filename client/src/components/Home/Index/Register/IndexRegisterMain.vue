@@ -9,8 +9,8 @@
                             <span class="grey--text">지수의 기본정보 및 소급지수를 등록합니다.</span>
                         </h3>
                     </v-card-title>
-                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress" @fn_moveRegisterPage="fn_moveRegisterPage"></registrationModify>
-                    <registration v-show="!editYn" @fn_refresh="fn_refresh" @showMessageBox="showMessageBox" @fn_showProgress="fn_showProgress"></registration>
+                    <registrationModify v-if="editYn" :editData="editData" :key="editData.jisu_id" @fn_refresh="fn_refresh" @fn_moveRegisterPage="fn_moveRegisterPage"></registrationModify>
+                    <registration v-show="!editYn" @fn_refresh="fn_refresh"></registration>
                 </v-card>
             </v-flex>
             <v-flex shrink   class="conWidth_right">
@@ -21,29 +21,21 @@
                                     <v-btn nomal depressed class="btn_orange01" dark  @click="fn_jisuRegister()">신규지수등록</v-btn>
                                 </v-list-tile-content>
                             </v-list-tile>
-                            <quickmenucon v-if="refreshYn" @showMessageBox="showMessageBox"></quickmenucon>
+                            <quickmenucon v-if="refreshYn"></quickmenucon>
                         </v-list>
                 </v-card>
             </v-flex>
 
         </v-layout>
-
-        <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
-        <ProgressBar ref="progress"></ProgressBar>
     </v-container>
 </template>
-
 
 <script>
 import Config from "@/js/config.js";
 import util   from "@/js/util.js";
-
 import registration from "./registration.vue";
 import quickmenucon from "./quickmenucon.vue";
 import registrationModify from "./registrationModify.vue";
-import ConfirmDialog    from "@/components/common/ConfirmDialog.vue";
-import ProgressBar      from "@/components/common/ProgressBar.vue";
-
 import Constant from "@/store/store_constant.js";
 
 export default {
@@ -60,11 +52,9 @@ export default {
     },
     
     components: {
-        registration: registration,
-        quickmenucon: quickmenucon,
-        registrationModify: registrationModify,
-        ConfirmDialog: ConfirmDialog,
-        ProgressBar : ProgressBar,
+        registration,
+        quickmenucon,
+        registrationModify,
     },
 
     created() {
@@ -83,8 +73,6 @@ export default {
     },
 
     mounted() {
-        // 메시지 박스 참조
-        this.$root.$confirm = this.$refs.confirm;        
     },
 
     methods: {
@@ -101,19 +89,19 @@ export default {
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
-                    vm.showMessageBox( '확인','지수사업자만 등록하실수 있습니다.',{},1 );
+                    vm.$root.confirmt.open('확인','지수사업자만 등록하실수 있습니다.',{},1 );
                     return  false;
                 }
             }
 
-            if( await vm.$root.$confirm.open(
+            if( await vm.$root.confirmt.open(
                         '[신규지수등록]',
                         '현재 작성중인 내용은 사라집니다. \n[신규지수등록] 화면으로 이동하시겠습니까?',
                         {}
                     ,   2
                 )
             ) {
-                if( "Y" != vm.$root.$confirm.val ) {
+                if( "Y" != vm.$root.confirmt.val ) {
                     return false;
                 }
             }
@@ -150,16 +138,6 @@ export default {
                 vm.$EventBus.$emit( "indexRegisterMain_registration_call", "clear" );
             });
         },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            this.$root.$confirm.open(title,msg, option, gubun);
-        },
-
-        fn_showProgress: function(visible) {
-            if( this.$refs && this.$refs.progress ) {
-                util.processing(this.$refs.progress, visible);
-            }
-        }
     }
 };
 </script>

@@ -374,10 +374,6 @@
                 </v-card>
             </v-dialog>
         </v-flex>
-        <v-flex>
-            <ProgressBar ref="progress"></ProgressBar>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>
     </v-container>
 </template>
 
@@ -391,9 +387,6 @@ import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import Config from "@/js/config.js";
 import tool       from "@/js/common/tool/tool.js";
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
-
-import ProgressBar from "@/components/common/ProgressBar.vue";
 import EtpOperPdfEmergencyExcelInfoPop  from "@/components/Home/Etp/Manage/EtpOperPdfEmergencyExcelInfoPop.vue";
 
 var tblEmergeny01 = null;
@@ -401,9 +394,7 @@ var tblEmergeny01 = null;
 export default {
     props : [ "showDialog", "paramData" ],
     components : {
-        ProgressBar: ProgressBar,
-        ConfirmDialog: ConfirmDialog,
-        EtpOperPdfEmergencyExcelInfoPop : EtpOperPdfEmergencyExcelInfoPop,
+      EtpOperPdfEmergencyExcelInfoPop,
     },
     data() {
         return {
@@ -435,17 +426,13 @@ export default {
         };
     },
     created: function() {
-
-        var vm = this;
     },
     mounted: function() {
 
         var vm = this;
 
-//        this.$root.$confirm2 = this.$refs.confirm2;
-
-        console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
-        console.log( vm.paramData );
+        // console.log( ">>>>>> EtpOperPdfEmergencyModifyPop.vue ==> " );
+        // console.log( vm.paramData );
 
         tblEmergeny01   =   $('#' + vm.tblEmergeny01 ).DataTable( {
             "processing": true,
@@ -657,13 +644,7 @@ export default {
 
                         if( insertDuplCheck.length  > 1 || duplCheck.length > 0 || duplCheck1.length > 1 ) {
                             vm.status = 1;
-                            if (await vm.$refs.confirm2.open(
-                                    '확인',
-                                    '구성종목코드(' + dataJson.codeVal + ')가 이미 추가되어 있습니다.',
-                                    {}
-                                    ,1
-                                )
-                            ) {
+                            if (await vm.$root.confirmt.open('확인','구성종목코드(' + dataJson.codeVal + ')가 이미 추가되어 있습니다.',{},1)) {
                                 dataJson.initYn     =   "Y";
                                 vm.fn_setInitData( vm, dataJson );
 
@@ -677,13 +658,7 @@ export default {
                         /* 종목코드가 DB 에 존재하지 않고, 등록해야 될 대상정보 목록 에 존재하지 않는 경우 메시지 출력 */
                         if( !_.some( _.map( vm.v_arr_insert_dest, o => dataJson.codeVal.includes(o.com_dtl_cd) ) )  ) {
 
-                            if (await vm.$refs.confirm2.open(
-                                    '확인',
-                                    '종목코드를 확인해 주세요.',
-                                    {}
-                                    ,1
-                                )
-                            ) {
+                            if (await vm.$root.confirmt.open('확인','종목코드를 확인해 주세요.',{},1)) {
                                 dataJson.initYn     =   "Y";
                                 vm.fn_setInitData( vm, dataJson );
 
@@ -697,13 +672,7 @@ export default {
                         }                        
 
 
-                        if (await vm.$refs.confirm2.open(
-                                '확인',
-                                '구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다. 종목명을 입력해 주세요.',
-                                {}
-                                ,1
-                            )
-                        ) {
+                        if (await vm.$root.confirmt.open('확인','구성종목코드(' + dataJson.codeVal + ')가 존재하지 않습니다. 종목명을 입력해 주세요.',{},1)) {
                             dataJson.code_check     =   true;
                             dataJson.now_date       =   vm.search_date;
                             dataJson.fmt_now_date   =   vm.fmt_search_date;
@@ -800,7 +769,6 @@ export default {
             vm.fn_deleteTableData( data, tr, rowIndex );
         });
 
-
         /* PDF 업로드 파일 영역 */
         this.$refs.pdfUpload.addEventListener(
             "change",
@@ -884,7 +852,7 @@ export default {
         /** 코드 검색건수가 여러건인 경우  **/
             if ( dataList && dataList.length > 1 ) {
                 vm.status = 1;
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '구성종목코드(' + dataJson.codeVal + ')가 여러건 존재합니다.',
                         {}
@@ -911,7 +879,7 @@ export default {
 
             if( duplCheck.length  > 0 ) {
                 vm.status = 1;
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',
                         {}
@@ -949,7 +917,7 @@ export default {
 
                 if( filterData.length > 1 || filterData1.length > 0 ) {
                     vm.status = 1;
-                    if (await vm.$refs.confirm2.open(
+                    if (await vm.$root.confirmt.open(
                             '확인',
                             '구성종목코드(' + dataJson.codeVal + ')가 이미 존재합니다.',
                             {}
@@ -1018,7 +986,7 @@ export default {
 
             var vm = this;
 
-            console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfModify");
+            // console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfModify");
 
             if (tblEmergeny01) {
                 tblEmergeny01.clear().draw();
@@ -1039,14 +1007,14 @@ export default {
 
                 if( !vm.search_date ) {
                     vm.status = 1;
-                    if ( await vm.$refs.confirm2.open(
+                    if ( await vm.$root.confirmt.open(
                             '확인',
                             '최근일자 정보가 존재하지 않습니다.',
                             {}
                             ,1
                         )
                     ) {
-                        if(vm.$refs.confirm2.val == 'Y') {
+                        if(vm.$root.confirmt.val == 'Y') {
                             vm.status = 0;
                             return  false;
                         }
@@ -1059,8 +1027,7 @@ export default {
                 searchParam.isEtfYn     =   "Y";
                 searchParam.search_date =   vm.search_date;
 
-                util.processing(vm.$refs.progress, true);
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getEtpOperPdfModify"
@@ -1070,10 +1037,7 @@ export default {
                     ,   async function(response) {
 
                             try{
-
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }
+                              vm.$root.progresst.close();
 
                                 if (response.data) {
 
@@ -1081,14 +1045,8 @@ export default {
                                     if (!response.data.result) {
                                         if( msg ) {
                                             vm.status = 1;
-                                            if ( await vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {
-                                                if(vm.$refs.confirm2.val == 'Y') {
+                                            if ( await vm.$root.confirmt.open('확인', msg, {} ,1)) {
+                                                if(vm.$root.confirmt.val == 'Y') {
                                                     vm.status = 0;
                                                     return  false;
                                                 }
@@ -1160,20 +1118,13 @@ export default {
                                 }
 
                             }catch(ex) {
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }
-
-                                console.log( "error", ex );
+                              vm.$root.progresst.close();
+                              console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                          vm.$root.progresst.close();
+                          if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1196,7 +1147,7 @@ export default {
 
                     resolve(true);
                 }else{
-                    util.processing(vm.$refs.progress, true);
+                    vm.$root.progresst.open();
 
                     util.axiosCall(
                             {
@@ -1208,9 +1159,7 @@ export default {
 
                                 try{
 
-                                    if( vm.$refs && vm.$refs.progress ) {
-                                        util.processing(vm.$refs.progress, false);
-                                    }                                    
+                                    vm.$root.progresst.close();
 
                                     if (response.data) {
 
@@ -1230,23 +1179,15 @@ export default {
                                     resolve(true);
 
                                 }catch(ex) {
-                                    if( vm.$refs && vm.$refs.progress ) {
-                                        util.processing(vm.$refs.progress, false);
-                                    }
-
-                                    console.log( "error", ex );
-                                    resolve(false);
+                                  vm.$root.progresst.close();
+                                  console.log( "error", ex );
+                                  resolve(false);
                                 }
                             }
                         ,   function(error) {
-
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }                                
-
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-
-                                resolve(false);
+                              vm.$root.progresst.close();
+                              if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
+                              resolve(false);
                             }
                     );
 
@@ -1254,22 +1195,12 @@ export default {
                 }
 
             }).catch( function(e) {
-                console.log( e );
+              console.log( e );
+              vm.$root.progresst.close();
+              if ( vm.$root.confirmt.open('확인', '서버로 부터 응답을 받지 못하였습니다.', {} ,4)) {
+              }
 
-                if( vm.$refs.progress ) {
-                    util.processing(vm.$refs.progress, false);
-                }
-
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '서버로 부터 응답을 받지 못하였습니다.',
-                        {}
-                        ,4
-                    )
-                ) {
-                }
-
-                resolve(false);
+              resolve(false);
             });
         },
 
@@ -1287,9 +1218,6 @@ export default {
             vm.v_arr_insert_dest        =   [];
 
             return  new Promise(function(resolve, reject) {
-
-//                util.processing(vm.$refs.progress, true);
-
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getInitData"
@@ -1308,10 +1236,6 @@ export default {
                                             vm.arr_show_error_message.push( msg );
                                         }
 
-                                        // if( vm.$refs && vm.$refs.progress ) {
-                                        //     util.processing(vm.$refs.progress, false);
-                                        // }
-
                                         resolve( { result : false } );                                        
 
                                     }else{
@@ -1324,39 +1248,19 @@ export default {
                                                 }
                                             });
                                         }
-
-                                        // if( vm.$refs && vm.$refs.progress ) {
-                                        //     util.processing(vm.$refs.progress, false);
-                                        // }
-
                                         resolve( { result : true } );
                                     }
                                 }else{
-
-                                    // if( vm.$refs && vm.$refs.progress ) {
-                                    //     util.processing(vm.$refs.progress, false);
-                                    // }
-
                                     resolve( { result : false } );
                                 }
 
                             }catch(ex) {
-
-                                // if( vm.$refs && vm.$refs.progress ) {
-                                //     util.processing(vm.$refs.progress, false);
-                                // }
-
                                 resolve( { result : false } );
                                 console.log( "error", ex );
                             }
                         }
                     ,   function(error) {
-
-                            // if( vm.$refs && vm.$refs.progress ) {
-                            //     util.processing(vm.$refs.progress, false);
-                            // }
-
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
                 );
@@ -1380,57 +1284,34 @@ export default {
                     ||  dataJson.codeVal.length == 0
                 ) {
                     vm.status = 1;
-                    if (await vm.$refs.confirm2.open(
-                            '확인',
-                            '구성종목코드를 입력해 주세요.',
-                            {}
-                            ,1
-                        )
-                    ) {
+                    if (await vm.$root.confirmt.open('확인','구성종목코드를 입력해 주세요.',{},1)) {
                         vm.status = 0;
                         vm.jongmok_state    =   "";
-
                         return  false;
                     }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
                     vm.status = 1;
-                    if (await vm.$refs.confirm2.open(
-                            '확인',
-                            '구성종목코드를 6자리 이상 입력해 주세요.',
-                            {}
-                            ,1
-                        )
-                    ) {
+                    if (await vm.$root.confirmt.open('확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1)) {
                         vm.status = 0;
                         vm.jongmok_state    =   "";
-
                         return  false;
                     }
                 }
 
                 if(  dataJson.codeVal.length < 6 ) {
                     vm.status = 1;
-                    if (await vm.$refs.confirm2.open(
-                            '확인',
-                            '구성종목코드를 6자리 이상 입력해 주세요.',
-                            {}
-                            ,1
-                        )
-                    ) {
+                    if (await vm.$root.confirmt.open('확인','구성종목코드를 6자리 이상 입력해 주세요.',{},1)) {
                         vm.status = 0;
                         vm.jongmok_state    =   "";
-
                         return  false;
                     }
                 }                
             }
 
             return  await new Promise(function(resolve, reject) {
-
-                util.processing(vm.$refs.progress, true);
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getJongmokData"
@@ -1441,22 +1322,14 @@ export default {
 
                             try{
 
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }                                
-
+                                vm.$root.progresst.close();
+  
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
                                     if (!response.data.result) {
                                         if( msg ) {
                                             vm.status = 1;
-                                            if (await vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {                                
+                                            if (await vm.$root.confirmt.open('확인',msg,{},1)) {                                
                                                 dataJson.initYn     =   "Y";
                                                 vm.fn_setInitData( vm, dataJson );
 
@@ -1476,25 +1349,18 @@ export default {
                                 }
 
                             }catch(ex) {
+                              vm.$root.progresst.close();
+                              console.log( "error", ex );
 
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }                                
-                                console.log( "error", ex );
-
-                                vm.jongmok_state    =   "";
-                                resolve( { result : false } );
+                              vm.jongmok_state    =   "";
+                              resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             vm.jongmok_state    =   "";
 
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
 
                             resolve( { result : false } );
                         }
@@ -1519,9 +1385,7 @@ export default {
             console.log("EtpOperPdfEmergencyModifyPop -> fn_getFutureBasic");
 
             return  await new Promise(function(resolve, reject) {
-
-                util.processing(vm.$refs.progress, true);
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getFutureBasic1"
@@ -1531,23 +1395,13 @@ export default {
                     ,   async function(response) {
 
                             try{
-
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }                                
-
+                                vm.$root.progresst.close();
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
                                     if (!response.data.result) {
                                         if( msg ) {
                                             vm.status = 1;
-                                            if (await vm.$refs.confirm2.open(
-                                                    '확인',
-                                                    msg,
-                                                    {}
-                                                    ,1
-                                                )
-                                            ) {   
+                                            if (await vm.$root.confirmt.open('확인',msg,{},1)) {   
                                                 dataJson.initYn     =   "Y";                             
                                                 vm.fn_setInitData( vm, dataJson );
 
@@ -1567,27 +1421,20 @@ export default {
                                 }
 
                             }catch(ex) {
+                              vm.$root.progresst.close();
+                              console.log( "error", ex );
 
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }                                
-                                console.log( "error", ex );
-
-                                vm.jongmok_state    =   "";
-                                resolve( { result : false } );
+                              vm.jongmok_state    =   "";
+                              resolve( { result : false } );
                             }
                         }
                     ,   function(error) {
+                          vm.$root.progresst.close();
+                          vm.jongmok_state    =   "";
 
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }                        
+                          if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
 
-                            vm.jongmok_state    =   "";
-
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-
-                            resolve( { result : false } );
+                          resolve( { result : false } );
                         }
                 );                
 
@@ -2005,7 +1852,7 @@ export default {
             //   }
             // });
 
-            util.processing(vm.$refs.progress, true);
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -2019,16 +1866,7 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }                            
-                            
-                            // try{
-                            //     tool.smsSend(0, "ETP PDF 변경신청 접수되었습니다.");
-                            // }catch( e ) {
-                            //    vm.$emit('showMessageBox', '확인', '문자발송 중 오류가 발생하였으나 긴급반영 처리는 완료되었습니다.',{},1) ;
-                            // }
+                            vm.$root.progresst.close();
 
                             if (response.data) {
 
@@ -2036,14 +1874,8 @@ export default {
                                 if (!response.data.result) {
                                     if( msg ) {
                                         vm.status = 1;
-                                        if ( await vm.$refs.confirm2.open(
-                                                '확인',
-                                                msg,
-                                                {}
-                                                ,1
-                                            )
-                                        ) {
-                                            if(vm.$refs.confirm2.val == 'Y') {
+                                        if ( await vm.$root.confirmt.open('확인',msg,{},1)) {
+                                            if(vm.$root.confirmt.val == 'Y') {
                                                 vm.status = 0;                                
                                                 return  false;
                                             }
@@ -2058,21 +1890,13 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-                                                        
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        vm.$root.progresst.close();
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
             
@@ -2081,10 +1905,8 @@ export default {
         fn_getPdfByGroupNo() {
             var vm = this;
 
-            console.log("EtpOperPdfEmergencyModifyPop -> fn_getPdfByGroupNo");            
-
-            util.processing(vm.$refs.progress, true);
-
+            // console.log("EtpOperPdfEmergencyModifyPop -> fn_getPdfByGroupNo");            
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/etp/getPdfByGroupNo"
@@ -2095,24 +1917,15 @@ export default {
 
                         try{
 
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             if (response.data) {
 
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
                                         vm.status = 1;
-                                        if ( await vm.$refs.confirm2.open(
-                                                '확인',
-                                                msg,
-                                                {}
-                                                ,1
-                                            )
-                                        ) {
-                                            if(vm.$refs.confirm2.val == 'Y') {
+                                        if ( await vm.$root.confirmt.open('확인',msg,{},1)) {
+                                            if(vm.$root.confirmt.val == 'Y') {
                                                 vm.status = 0;                                
                                                 return  false;
                                             }
@@ -2257,19 +2070,13 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-                            console.log( "error", ex );
+                          vm.$root.progresst.close();
+                          console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }                        
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                      vm.$root.progresst.close();
+                      if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
 
@@ -2355,14 +2162,9 @@ export default {
             if( vm.jongmok_state != "" ) {
                 vm.status = 1;
 
-                var jongmokCodeData = tr.find("input[name='jongmok']" );
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '구성종목코드(' + jongmokCodeData.eq(0).val() + ')가 처리 중입니다. 다시 삭제버튼을 눌러주세요.',
-                        {}
-                        ,1
-                    )
-                ) {
+                let jongmokCodeData = tr.find("input[name='jongmok']" );
+                let tmp = '구성종목코드(' + jongmokCodeData.eq(0).val() + ')가 처리 중입니다. 다시 삭제버튼을 눌러주세요.';
+                if ( vm.$root.confirmt.open('확인', tmp,{},1)) {
                     vm.jongmok_state = "";
                     vm.status = 0;
 
@@ -2529,14 +2331,8 @@ export default {
 
             if( filterData.length > 0 ) {
                 vm.status = 1;
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '구성종목코드 빈 항목이 존재합니다.',
-                        {}
-                        ,1
-                    )
-                ) {
-                    if(vm.$refs.confirm2.val == 'Y') {
+                if ( vm.$root.confirmt.open('확인','구성종목코드 빈 항목이 존재합니다.',{},1)) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;
                         return  false;
                     }
@@ -2556,14 +2352,8 @@ export default {
 
             if( filterData.length > 0 ) {
                 vm.status = 1;
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '종목명 빈 항목이 존재합니다.',
-                        {}
-                        ,1
-                    )
-                ) {
-                    if(vm.$refs.confirm2.val == 'Y') {
+                if ( vm.$root.confirmt.open('확인','종목명 빈 항목이 존재합니다.',{},1)) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;
                         return  false;
                     }
@@ -2594,14 +2384,8 @@ export default {
 
             if( filterData.length == 0 ) {
                 vm.status = 1;
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '수정건이 1건 이상 존재해야 합니다.',
-                        {}
-                        ,1
-                    )
-                ) {
-                    if(vm.$refs.confirm2.val == 'Y') {
+                if ( vm.$root.confirmt.open('확인','수정건이 1건 이상 존재해야 합니다.',{},1)) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;
                         return  false;
                     }
@@ -2630,14 +2414,8 @@ export default {
 
             if( filterData.length > 0 ) {
                 vm.status = 1;
-                if ( vm.$refs.confirm2.open(
-                        '확인',
-                        '구성종목코드가 확인 되지 않은 건이 존재합니다.',
-                        {}
-                        ,1
-                    )
-                ) {
-                    if(vm.$refs.confirm2.val == 'Y') {
+                if ( vm.$root.confirmt.open('확인','구성종목코드가 확인 되지 않은 건이 존재합니다.',{},1)) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;
                         return  false;
                     }
@@ -2760,8 +2538,7 @@ export default {
                 formData.append( "files", file );
                 formData.append( "data", JSON.stringify( p_param ) );   
 
-                util.processing(vm.$refs.progress, true);
-
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"           :   Config.base_url + "/user/etp/uploadPdf"
@@ -2771,9 +2548,7 @@ export default {
                             ,   "headers"       :   {   "Content-Type": "multipart/form-data"   }
                         }
                     ,   async function(response) {
-
-                            util.processing(vm.$refs.progress, false);
-
+                            vm.$root.progresst.close();
                             try{
 
                                 if( response.data ) {
@@ -2840,9 +2615,8 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-
-                            util.processing(vm.$refs.progress, false);
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            vm.$root.progresst.close();
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -2868,14 +2642,8 @@ export default {
 
                 /* 1. 확장자가 존재하지 않는지 확인 */
                 if (lastDot == -1) {
-                    if( await vm.$refs.confirm2.open(
-                                '[엑셀파일 유형확인]'
-                            ,   "엑셀유형의 파일인지 확인 해 주세요."
-                            ,   {}
-                            ,   1
-                        )
-                    ) {
-                        check   =   false;
+                    if( await vm.$root.confirmt.open('[엑셀파일 유형확인]',"엑셀유형의 파일인지 확인 해 주세요.",{},1)) {
+                      check   =   false;
                     }
                 }
 
@@ -2885,13 +2653,7 @@ export default {
                 /* 2. 허용되는 확장자에 포함되는지 확인 */
                 if (!allowExt.includes(fileExt)) {
 
-                    if( vm.$refs.confirm2.open(
-                                '[엑셀파일 유형확인]',
-                                "엑셀유형의 파일인지 확인 해 주세요.",
-                                {}
-                            ,   1
-                        )
-                    ) {        
+                    if( vm.$root.confirmt.open('[엑셀파일 유형확인]',"엑셀유형의 파일인지 확인 해 주세요.",{}, 1)) {        
                         check   =   false;
                     }
                 }
@@ -2925,25 +2687,13 @@ export default {
 
                     if( maxSize > 0 ) {
                         if( file.size == 0 ) {
-                            if( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        title + ' 파일용량이 0 byte 입니다.',
-                                        {}
-                                    ,   1
-                                )
-                            ) {
-                                check = false;
-                            }
+                          if( await vm.$root.confirmt.open('확인',title + ' 파일용량이 0 byte 입니다.',{}, 1)) {
+                            check = false;
+                          }
                         }
 
                         if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                            if( await vm.$refs.confirm2.open(
-                                        '확인',
-                                        title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
-                                        {}
-                                    ,   1
-                                )
-                            ) {                       
+                            if( await vm.$root.confirmt.open('확인',title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',{}, 1)) {                       
                                 check = false;
                             }
                         }

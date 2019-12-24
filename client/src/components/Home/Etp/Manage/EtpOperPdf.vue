@@ -64,15 +64,10 @@
            <v-flex class="conWidth_right">
                 <!-- [PDF 관리] Quick 메뉴 정보 -->
                 <EtpOperPdfQuick
-
                     :pdfData="pdfData"
                     :indexBasic = "indexBasic"
                     :toggle= "toggle"
-
                     @showDetail="showDetail"
-                    @showMessageBox="showMessageBox"
-
-                    @fn_showProgress="fn_showProgress"
                     @fn_showDetailIndex="fn_showDetailIndex"
                     @fn_setEtpOperPdfByRate="fn_setEtpOperPdfByRate"
                     @fn_showDetailPdf="fn_showDetailPdf">
@@ -88,9 +83,7 @@
 import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 import EtpOperPdfQuick from "@/components/Home/Etp/Manage/EtpOperPdfQuick.vue";
@@ -152,7 +145,9 @@ export default {
     
     },
     beforeDestory: function() {
-        var vm = this;
+    },
+    destroyed: function() {
+      // console.log("destoyed...... EtpOperPdf......");
     },
 
     methods: {
@@ -221,7 +216,7 @@ export default {
                     if(     !vm.searchParam.F16012          /* 국제표준코드 */
                         ||  !vm.searchParam.F16493          /* ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
                     ) {
-                        vm.$emit("showMessageBox", '확인','기준코드가 존재하지 않습니다.',{},1);
+                        vm.$root.confirmt.open('확인','기준코드가 존재하지 않습니다.',{},1);
                         return  false;
                     }
                 }
@@ -229,7 +224,7 @@ export default {
 // console.log(vm.searchParam);
                 vm.pdfDataList  =   [];
 
-                vm.$emit( "fn_showProgress", true );
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   url
@@ -239,15 +234,14 @@ export default {
                     ,   function(response) {
 
                             try{
-
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
 
                                 if (response.data) {
 
                                     var msg = ( response.data.msg ? response.data.msg : "" );
                                     if (!response.data.result) {
                                         if( msg ) {
-                                            vm.$emit("showMessageBox", '확인', msg,{},1);
+                                            vm.$root.confirmt.open('확인', msg,{},1);
                                             return  false;
                                         }
                                     }
@@ -267,10 +261,9 @@ export default {
                             }
                         }
                     ,   function(error) {
-                            vm.$emit( "fn_showProgress", false );
-
+                            vm.$root.progresst.close();
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                                vm.$root.confirmt.open('확인', error ,{},4);
                             }
                         }
                 );
@@ -310,7 +303,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -329,7 +322,7 @@ export default {
                 ,   function(error) {
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인', error ,{},4);
+                            vm.$root.confirmt.open('확인', error ,{},4);
                         }
                     }
             );
@@ -362,10 +355,8 @@ export default {
             var vm = this;
 
             return  new Promise(function(resolve, reject) {
-                console.log( "fn_getPdfExistYnByNow called" );
-                
-                vm.$emit( "fn_showProgress", true );
-
+                // console.log( "fn_getPdfExistYnByNow called" );
+                vm.$root.progresst.open();
                 util.axiosCall(
                         {
                                 "url"       :   Config.base_url + "/user/etp/getPdfExistYnByNow"
@@ -373,16 +364,13 @@ export default {
                             ,   "method"    :   "post"
                         }
                     ,   function(response) {
-
                             try{
-
-                                vm.$emit( "fn_showProgress", false );
-
+                                vm.$root.progresst.close();
                                 if (response.data) {
                                     var msg = ( response.data.msg ? response.data.msg : "" );
                                     if (!response.data.result) {
                                         if( msg ) {
-                                            vm.$emit("showMessageBox", '확인',msg,{},4);
+                                            vm.$root.confirmt.open('확인',msg,{},4);
                                             resolve(false);
                                         }
                                     }
@@ -395,7 +383,7 @@ export default {
                                 resolve(true);
 
                             }catch(ex) {
-                                vm.$emit( "fn_showProgress", false );
+                                vm.$root.progresst.close();
                                 console.log( "error", ex );
 
                                 resolve(false);
@@ -406,7 +394,7 @@ export default {
                             
 
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인', error ,{},4);
+                                vm.$root.confirmt.open('확인', error ,{},4);
                             }
 
                             resolve(false);
@@ -416,9 +404,8 @@ export default {
 
             }).catch( function(e) {
                 console.log( e );
-
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
+                vm.$root.progresst.close();
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
 
                 resolve(false);
             })
@@ -438,8 +425,7 @@ export default {
                 if( vm.searchParam.show_date ) {
                     resolve(true);
                 }else{
-                    vm.$emit( "fn_showProgress", true );
-
+                    vm.$root.progresst.open();
                     util.axiosCall(
                             {
                                     "url"       :   Config.base_url + "/user/etp/getTmPdfBaiscMaxF12506"
@@ -454,7 +440,7 @@ export default {
                                         var msg = ( response.data.msg ? response.data.msg : "" );
                                         if (!response.data.result) {
                                             if( msg ) {
-                                                vm.$emit("showMessageBox", '확인', msg,{},1);
+                                                vm.$root.confirmt.open('확인', msg,{},1);
                                                 resolve(false);
                                             }
                                         }
@@ -463,25 +449,20 @@ export default {
                                             vm.searchParam.show_date    =   response.data.dateInfo.fmt_F12506;
                                         }
                                     }
-
-                                    vm.$emit( "fn_showProgress", false );
+                                    vm.$root.progresst.close();
                                     resolve(true);
 
                                 }catch(ex) {
-                                    vm.$emit( "fn_showProgress", false );
+                                    vm.$root.progresst.close();
                                     console.log( "error", ex );
-
                                     resolve(false);
                                 }
                             }
                         ,   function(error) {
-
-                                vm.$emit( "fn_showProgress", false );
-
+                                vm.$root.progresst.close();
                                 if( error ) {
-                                    vm.$emit("showMessageBox", '확인', msg,{},4);
+                                    vm.$root.confirmt.open('확인', msg,{},4);
                                 }
-
                                 resolve(false);
                             }
                     );
@@ -490,9 +471,8 @@ export default {
 
             }).catch( function(e) {
                 console.log( e );
-
-                vm.$emit( "fn_showProgress", false );
-                vm.$emit("showMessageBox", '확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
+                vm.$root.progresst.close();
+                vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
 
                 resolve(false);
             })
@@ -778,7 +758,6 @@ export default {
                 }
             }
         },        
-
         showDetail: function(gubun, paramData) {
 
             var vm = this;
@@ -789,31 +768,16 @@ export default {
                 vm.fn_init();
             }
         },
-
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-
-            vm.$emit( "showMessageBox", title, msg, option, gubun );
-        },
-        
         fn_showDetailIndex(gubun, paramData) {
             var vm = this;
 
             vm.$emit( "fn_showDetailIndex", gubun, paramData );
         },
-
         fn_showDetailPdf(gubun, paramData) {
             var vm = this;
 
             vm.$emit( "fn_showDetailPdf", gubun, paramData );
         },
-
-        fn_showProgress( param ) {
-            var vm = this;
-
-            vm.$emit( "fn_showProgress", param );
-        },
-
         /*
          *  엑셀을 다운로드 한다.
          *  2019-07-09  bkLove(촤병국)
@@ -824,7 +788,7 @@ export default {
             var tableList = tblPdfList.rows().data();
 
             if( !tableList || tableList.length == 0 ) {
-                vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+                vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
                 return  false;
             }          
 

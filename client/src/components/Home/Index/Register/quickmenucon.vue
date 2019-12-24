@@ -101,7 +101,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -121,7 +121,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vvm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -154,7 +154,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -172,7 +172,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -190,7 +190,7 @@ export default {
 
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
-                    vm.$emit("showMessageBox", '확인','지수사업자만 수정 하실수 있습니다.',{},1);
+                    vm.$root.confirmt.open('확인','지수사업자만 수정 하실수 있습니다.',{},1);
                     return  false;
                 }
             }

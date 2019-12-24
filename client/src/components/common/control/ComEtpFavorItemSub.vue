@@ -579,15 +579,6 @@ export default {
                 console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
                 console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
 
-                //if(     !param.F16012        /* 국제표준코드  */
-                //    ||  !param.F16257        /* ETP기초지수코드  */
-                //    ||  !param.F34239        /* ETP기초지수MID  */
-                //    ||  param.F34239 < 0
-                //) {
-                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                //    return  false;
-                //}
-
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
                 vm.paramData.F34239     =   param.F34239;           /* ETP기초지수MID */
@@ -607,14 +598,6 @@ export default {
                 console.log( "param.F16257=["       + param.F16257     + "]     /* 지수코드  */" );
                 console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
                 console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
-
-                //if(     !param.F16257          /* 지수코드  */
-                //    ||  !param.LARGE_TYPE       /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */
-                //    ||  !param.MARKET_ID        /* 시장 ID  */
-                //) {
-                //    vm.$emit("showMessageBox", '확인','지수정보가 존재하지 않습니다. 관리자에게 문의해 주세요.', {}, 1);
-                //    return  false;
-                //}
 
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */

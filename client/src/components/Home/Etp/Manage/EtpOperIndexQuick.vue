@@ -84,16 +84,6 @@ export default {
             vm.$emit("showDetail", gubun, paramData);
         },
 
-        /*
-         *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
-         *  2019-05-03  bkLove(촤병국)
-         */
-
-        showMessageBox: function(title, msg, option, gubun) {
-            var vm = this;
-            vm.$emit("showMessageBox", title, msg, option, gubun);
-        },
-
         fn_setEtpOperIndexOversea : function() {
             var vm = this;
             vm.toggleIndexOversea  =   !vm.toggleIndexOversea;

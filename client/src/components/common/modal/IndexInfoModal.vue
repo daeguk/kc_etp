@@ -72,11 +72,6 @@
               <v-tab-item>
                 <IndexInfoTab1 v-if="tabFlag" :indexBasic="indexBasic" :etpList="etpList"></IndexInfoTab1>
               </v-tab-item>
-              <!--
-              <v-tab-item  v-if="!showDialog">
-                <IndexDetailInfoTab3 @showMessageBox="showMessageBox"></IndexDetailInfoTab3>
-              </v-tab-item>
-              -->
             </v-tabs-items>
           </v-flex>
         </v-layout>

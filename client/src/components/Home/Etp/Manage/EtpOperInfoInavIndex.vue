@@ -233,7 +233,6 @@
                 </v-layout>
             </v-card>
         </div>
-        <ProgressBar ref="progress"></ProgressBar>        
     </v-card>
 </template>   
 
@@ -243,8 +242,8 @@ import dt      from 'datatables.net'
 import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
-import ProgressBar from "@/components/common/ProgressBar.vue";
 var table01 = null;
+
 export default {
     props : [ "paramData" ],
     data() {
@@ -271,9 +270,6 @@ export default {
             readonly: true
         };
     },   
-    components: {
-        ProgressBar: ProgressBar
-    },    
     mounted: function() {        
         this.init(this.paramData.F16012);
     },
@@ -284,10 +280,8 @@ export default {
     methods: {
         init: function(F16012) {
             var vm = this;            
-            util.processing(vm.$refs.progress, true);
-            console.log( "EtpOperInfoInavIndex.vue -> getiNavIndexData" );
-
-
+            vm.$root.progresst.open();
+            // console.log( "EtpOperInfoInavIndex.vue -> getiNavIndexData" );
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/etp/getiNavIndexData"
@@ -344,28 +338,19 @@ export default {
                                 
                                 vm.indexInavCal();
                             }else{
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }
+                              vm.$root.progresst.close();
                             }
 
                         }catch(ex) {
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
-                            console.log( "error", ex );
+                          vm.$root.progresst.close();
+                          console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
-                        if( error ) {
-                            vm.$emit("showMessageBox", '확인', error ,{},4);
-                        }                            
+                      vm.$root.progresst.close();
+                      if( error ) {
+                          vm.$root.confirmt.open('확인', error ,{},4);
+                      }                            
                     }
             );            
 
@@ -373,7 +358,7 @@ export default {
         indexInavCal : function() {
             var vm = this;
             try {
-                util.processing(vm.$refs.progress, true);
+                vm.$root.progresst.open();
                 // 지수 등락률
                 vm.F30823 = (vm.F15318 / vm.F15007) - 1 ;
                 // 변동률 
@@ -450,9 +435,9 @@ export default {
                 // (ETP계산유형: T)(매매기준율 - 장전 매매 기준율)/ 장전매매기준율
                 vm.F15004_2 = vm.formatDigit((vm.F30819 - vm.F30824) / vm.F30824, 5);
                 
-                util.processing(vm.$refs.progress, false);
+                vm.$root.progresst.close();
             }catch(e) {
-                util.processing(vm.$refs.progress, false);
+                vm.$root.progresst.close();
             }
         },
         formatNumber:function(num) {

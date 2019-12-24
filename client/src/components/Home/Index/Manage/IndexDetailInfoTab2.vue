@@ -623,7 +623,7 @@ export default {
             
             if ((perf_table.rows().count()) + sel_items.length > 5) {
 
-                vm.$emit("showMessageBox", '확인','자산 비교는 5개 까지 가능 합니다.',{},1);
+                vm.$root.confirmt.open('확인','자산 비교는 5개 까지 가능 합니다.',{},1);
                 return;
             } 
 
@@ -665,7 +665,7 @@ export default {
                                     try{
                                         
                                         if (response.data.success == false) {
-                                            vm.$emit("showMessageBox", '확인','데이터가 없습니다.',{},1);
+                                            vm.$root.confirmt.open('확인','데이터가 없습니다.',{},1);
                                         } else {
                                             var items = response.data.results[0];
                                                             
@@ -693,13 +693,13 @@ export default {
                             ,   function(error) {
 
                                     if( error ) {
-                                        vm.$emit("showMessageBox", '확인', error,{}, 4);
+                                        vm.$root.confirmt.open('확인', error,{}, 4);
                                     }
                                 }
                         );
 
                     } else {                            
-                            vm.$emit("showMessageBox", '확인',sel_items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
+                            vm.$root.confirmt.open('확인',sel_items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
                     }
                    
             }

@@ -47,6 +47,8 @@ export default {
     pageMove : function(tab_id, paramData) {
       var vm = this;
 
+console.log("EtpOperMain : pageMove........");
+console.log(paramData);
       // this.$EventBus.$off('changeIndexInfo');
       // this.$EventBus.$off('changeEtpAnalysisInfo');
       // this.$EventBus.$off('changeEtpInfo');

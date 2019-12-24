@@ -89,14 +89,11 @@
         <EtpOperInfoQuick
           :etpBasic = "etpBasic"
           :toggle = "toggle"
-
           @fn_setInavData = "fn_setInavData"
           @fn_setEtpPerformanceData = "fn_setEtpPerformanceData"
           @fn_setEtpLpspread = "fn_setEtpLpspread"
           @fn_setCustomizeData = "fn_setCustomizeData"
-
           @showDetail="showDetail" 
-          @showMessageBox="showMessageBox"
           @fn_showDetailIndex="fn_showDetailIndex">
         </EtpOperInfoQuick>
       </v-flex>       
@@ -104,16 +101,11 @@
   <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
   </v-container>
 </template>
-<style scoped>
-.v-menu__content{box-shadow: none !important;}
-</style>
 
 <script>
 import $      from 'jquery';
 import dt      from 'datatables.net';
-import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
-import dtFc from "datatables.net-fixedcolumns";
 
 import Config from '@/js/config.js';
 import Constant from "@/store/store_constant.js"
@@ -252,6 +244,9 @@ export default {
       vm.fn_getEtpOperInfo( vm.stateInfo.gubun );
     });   
   },
+  destroyed: function() {
+    // console.log("destoyed...... EtpOperInfo......");
+  },
   methods: {
   /*
   *  ETP 운영정보를 조회한다.
@@ -274,13 +269,13 @@ export default {
           table01.clear().draw();
       }
     }
-    vm.$emit( "fn_showProgress", true );
+    vm.$root.progresst.open();
     util.axiosCall(
       {"url" : Config.base_url + "/user/etp/getEtpOperInfo"
         ,"data" : {F34241  :   vm.stateInfo.gubun}
         ,"method" : "post"
       }, function(response) {
-        vm.$emit( "fn_showProgress", false );
+        vm.$root.progresst.close();
         try{
           if (response.data) {
             var dataList = response.data.dataList;
@@ -289,7 +284,7 @@ export default {
             vm.result_cnt   =   0;
             if (!response.data.result) {
               if( msg ) {
-                vm.showMessageBox('확인', msg,{},1);
+                vm.$root.confirmt.open('확인', msg,{},1);
                 return  false;
               }
             }
@@ -313,13 +308,13 @@ export default {
             vm.$emit( "fn_setStateInfo", vm.stateInfo );
           }
         }catch(ex) {
-          vm.$emit( "fn_showProgress", false );
+          vm.$root.progresst.close();
           console.log( "error", ex );
         }
       }, function(error) {
-        vm.$emit( "fn_showProgress", false );
+        vm.$root.progresst.close();
         if( error ) {
-          vm.$emit("showMessageBox", '확인', error ,{},4);
+          vm.$root.confirmt.open('확인', error ,{},4);
         }                        
       }
     );
@@ -1088,10 +1083,6 @@ export default {
           var vm = this;
           vm.$emit( "showDetail", gubun, paramData );
       },
-      showMessageBox: function(title, msg, option, gubun) {
-          var vm = this;
-          vm.$emit( "showMessageBox", title, msg, option, gubun );
-      },
       fn_showDetailIndex( gubun, paramData) {
           var vm = this;
           vm.$emit( "fn_showDetailIndex", gubun, paramData );
@@ -1113,7 +1104,7 @@ export default {
           }
 
           if( !tableList || tableList.length == 0 ) {
-              vm.$emit("showMessageBox", '확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
+              vm.$root.confirmt.open('확인','조회된 내용이 1건 이상 존재해야 합니다.',{},1);
               return  false;
           }            
 
@@ -1259,3 +1250,8 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+  .v-menu__content{box-shadow: none !important;}
+</style>
+

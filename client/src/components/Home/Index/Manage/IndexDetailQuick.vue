@@ -304,7 +304,7 @@ export default {
                         vm.$emit( "showProgress", false );
                         
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -320,10 +320,10 @@ export default {
 
             var vm = this;
             
-            console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
+            // console.log( "ComIndexJongmok.vue -> fn_getIndexJongmokList" );
 
             if( vm.form.jongmokSearch.length < 2 ) {
-                vm.$emit("showMessageBox", '확인', "2자 이상 입력해 주세요.",{},1);
+                vm.$root.confirmt.open('확인', "2자 이상 입력해 주세요.",{},1);
                 return false;
             }
 
@@ -348,7 +348,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -367,7 +367,7 @@ export default {
                         vm.$emit( "showProgress", false );
                         
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -383,7 +383,7 @@ export default {
 
             var vm = this;
             
-            console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
+            // console.log( "ComIndexJongmok.vue -> fn_getIndexListByFirst" );
 
             vm.$emit( "showProgress", true ); 
 
@@ -405,7 +405,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -429,7 +429,7 @@ export default {
                         vm.$emit( "showProgress", false );
                         
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -445,7 +445,7 @@ export default {
 
             var vm = this;
            
-            console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
+            // console.log( "ComIndexJongmok.vue -> fn_getIndexList" );
 
             if( jisuTable ) {
                 jisuTable.clear().draw();
@@ -471,7 +471,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit("showMessageBox", '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -492,7 +492,7 @@ export default {
                         vm.$emit( "showProgress", false );
                         
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );

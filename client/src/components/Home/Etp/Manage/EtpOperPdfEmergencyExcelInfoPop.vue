@@ -131,10 +131,7 @@
                     </li>
                 </ul>
             </div>
-
-            <v-flex>
-                <ProgressBar ref="progress"></ProgressBar>
-            </v-flex>
+lex>
         </v-card>
     </v-dialog>
 </template>
@@ -143,24 +140,15 @@
 import Config from "@/js/config.js";
 import util   from "@/js/util.js";
 
-import ProgressBar from "@/components/common/ProgressBar.vue";
-
 export default {
     data() {
         return {
             dialog: false,
         };
     },
-
-    components : {
-        ProgressBar: ProgressBar,
-    },
-
     mounted() {
     },
-
     methods: {
-
         /*
          * PDF 샘플을 다운로드 한다.
          * 2019-06-21  bkLove(촤병국)
@@ -168,8 +156,7 @@ export default {
         fn_getPdfSampleFileDown() {
             var vm = this;
 
-            util.processing(vm.$refs.progress, true);
-
+            vm.$root.progresst.open();
             axios.get( Config.base_url + "/user/etp/getPdfSampleFileDown", {
                 responseType : "blob"
             }).then((response, status, xhr) => {
@@ -180,13 +167,10 @@ export default {
                 link.setAttribute('download', 'pdf_sample.xlsx');
                 document.body.appendChild(link);
                 link.click();
-
                 document.body.removeChild( link );
-
-                util.processing(vm.$refs.progress, false);
-
+                vm.$root.progresst.close();
             }).catch( function(e) {
-                util.processing(vm.$refs.progress, false);
+                vm.$root.progresst.close();
             });    
         }        
     }

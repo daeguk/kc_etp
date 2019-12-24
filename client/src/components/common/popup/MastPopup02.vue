@@ -168,22 +168,6 @@ export default {
 
 		vm.fn_filterData();
     },
-
-    fn_showMessageBox: function(title, msg, option, gubun) {
-        this.$refs.confirm2.open(title,msg, option, gubun);
-    },
-
-    /*
-    *  진행 progress 를 보여준다.
-    *  2019-07-26  bkLove(촤병국)
-    */
-    fn_showProgress: function(visible) {
-
-        if( this.$refs && this.$refs.progress2 ) {
-            util.processing( this.$refs.progress2, visible );
-        }
-    },
-
     /*
     * 종목코드를 검색한다.
     * 2019-07-26  bkLove(촤병국)

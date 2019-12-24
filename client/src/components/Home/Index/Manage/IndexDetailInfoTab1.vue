@@ -177,7 +177,7 @@ export default {
 
                             // console.log(response);
                             if (response.data.success == false) {
-                                vm.$emit("showMessageBox", '확인', "지수정보가 없습니다." ,{},1 );
+                                vm.$root.confirmt.open('확인', "지수정보가 없습니다." ,{},1 );
                             } else {
                                 var items = response.data.results;
                                 vm.index_item = items[0];
@@ -192,7 +192,7 @@ export default {
                 ,   function(error) {
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인', error ,{},4 );
+                            vm.$root.confirmt.open('확인', error ,{},4 );
                         }
                     }
             );

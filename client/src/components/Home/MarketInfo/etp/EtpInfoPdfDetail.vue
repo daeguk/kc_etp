@@ -77,7 +77,6 @@ import _ from "lodash";
 import dt from "datatables.net";
 import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-import dtFc from "datatables.net-fixedcolumns";
 
 import Config from "@/js/config.js";
 import ProgressBar from "@/components/common/ProgressBar.vue";

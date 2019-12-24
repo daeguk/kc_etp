@@ -65,7 +65,7 @@ export default {
                     ,   function(response) {
 
                             if(response.data.success == false){
-                                vm.$emit("showMessageBox", '확인', "데이터가 없습니다" ,{},1 );
+                                vm.$root.confirmt.open('확인', "데이터가 없습니다" ,{},1 );
                             }else {
                                 var items = response.data.results;
                                 var close_idx = 0.0;
@@ -80,7 +80,7 @@ export default {
                     ,   function(error) {
 
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인',error,{},4 );
+                                vm.$root.confirmt.open('확인',error,{},4 );
                             }
                         }
                 );

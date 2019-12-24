@@ -56,11 +56,6 @@
                                             </table>
 
                                         </v-flex>
-                                        <v-flex>
-                                            <ProgressBar ref="progress"></ProgressBar>
-                                            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-                                        </v-flex>
-
                              </v-card>
 
                      </v-card>
@@ -76,22 +71,13 @@
 import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-import dtFc from "datatables.net-fixedcolumns";
-
 import Config from "@/js/config.js";
-import ProgressBar from "@/components/common/ProgressBar.vue";
-import ConfirmDialog                from "@/components/common/ConfirmDialog.vue";
 
 var tblPdfHistList = null;
 
 export default {
     props : [ "showDialog", "paramData" ],
-    components : {
-        ProgressBar: ProgressBar,
-        ConfirmDialog: ConfirmDialog
-    },
     data() {
         return {
             searchParam : {
@@ -109,7 +95,7 @@ export default {
     mounted: function() {
         var vm = this;
 
-        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfHistPop.vue mounted");8
+        // console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfHistPop.vue mounted");8
 
         vm.fn_init();
     },
@@ -161,11 +147,8 @@ export default {
          */
         fn_getEtpOperPdfEmergencyHistNow() {
             var vm = this;
-
-            console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfEmergencyHistNow");            
-
-            util.processing(vm.$refs.progress, true);
-
+            // console.log("EtpOperPdfEmergencyModifyPop -> fn_getEtpOperPdfEmergencyHistNow");            
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/etp/getEtpOperPdfEmergencyHistNow"
@@ -173,19 +156,13 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-
                         try{
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             if (response.data) {
-
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
-                                        vm.$emit('showMessageBox', '확인', msg,{},1);
+                                        vm.$root.confirmt.open('확인', msg,{},1);
                                         return  false;
                                     }
                                 }
@@ -329,32 +306,19 @@ export default {
                             }
 
                         }catch(ex) {
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }                            
-                            console.log( "error", ex );
+                          vm.$root.progresst.close();
+                          console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
-                    }
+                    vm.$root.progresst.close();
+                    if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                }
             );
 
         },
-
-        /*
-         * 팝업창을 종료한다.
-         * 2019-05-03  bkLove(촤병국)
-         */
         fn_close() {
-            var vm = this;
-
-            vm.$emit( "fn_closePop", "close" );
+          this.$emit( "fn_closePop", "close" );
         }        
     }
 };

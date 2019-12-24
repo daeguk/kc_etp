@@ -432,13 +432,10 @@
                         </v-container>
                     </v-card>
                 </div>
-
                 <!-- 특정기관과 공유 end-->
                 <div class="text-xs-center">
                     <v-btn depressed large class="btn_blue01" dark @click="fn_registerJisu()">등록</v-btn>
                 </div>
-
-                <ConfirmDialog ref="confirm1"    v-show="false"></ConfirmDialog>
             </v-container>
         </v-form>
     </v-card>
@@ -446,10 +443,8 @@
 
 
 <script>
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import util       from "@/js/util.js";
@@ -457,10 +452,6 @@ import util       from "@/js/util.js";
 var table01 = null;
 
 export default {
-
-    components: {
-        ConfirmDialog: ConfirmDialog
-    },    
     data: () => {
         return {
 
@@ -645,12 +636,9 @@ export default {
 
 
     mounted() {
-
-        // 메시지 박스 참조
-        this.$root.$confirm1 = this.$refs.confirm1;        
+        var vm = this;
 
         this.dragAndDropCapable = this.determineDragAndDropCapable();
-
         if (this.dragAndDropCapable) {
             [
                 "drag",
@@ -707,7 +695,7 @@ export default {
                     if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                         if( typeCd != "0003" ) {
 
-                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                             return  false;
                         }
                     }
@@ -765,7 +753,7 @@ export default {
                     if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                         if( typeCd != "0003" ) {
 
-                            this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                            vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                             return  false;
                         }
                     }
@@ -809,7 +797,7 @@ export default {
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( typeCd != "0003" ) {
 
-                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                         return  false;
                     }
                 }
@@ -874,7 +862,7 @@ export default {
                 if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                     if( typeCd != "0003" ) {
 
-                        this.$emit( 'showMessageBox', '확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
+                        vm.$root.confirmt.open('확인','지수사업자만 업로드 하실수 있습니다.',{},1 );
                         return  false;
                     }
                 }
@@ -966,7 +954,7 @@ export default {
             /* 1. 지수 ID 필수 체크 */
             if (!this.form.jisu_id) {
 
-                if( await vm.$emit("showMessageBox", '확인', '[지수 ID] is required' ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', '[지수 ID] is required' ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.form.duplCheckResult = false;
                     return false;
@@ -974,7 +962,7 @@ export default {
                 
             } else if (this.form.jisu_id.length > 10) {
 
-                if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 10자리 까지만 입력 가능합니다.' ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', '[지수 ID] 10자리 까지만 입력 가능합니다.' ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.form.duplCheckResult = false;
                     return false;
@@ -982,7 +970,7 @@ export default {
 
             } else if (this.form.jisu_id.length < 5) {
 
-                if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 5자리 이상 입력해 주세요.' ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', '[지수 ID] 5자리 이상 입력해 주세요.' ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.form.duplCheckResult = false;
                     return false;
@@ -990,7 +978,7 @@ export default {
 
             } else if( !regType.test( this.form.jisu_id ) ) {
 
-                if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 숫자와 영문자만 가능합니다.' ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', '[지수 ID] 숫자와 영문자만 가능합니다.' ,{},1) ) {
                     vm.$refs.jisu_id.focus();
                     vm.form.duplCheckResult = false;
                     return false;
@@ -1016,7 +1004,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                 if (response.data.result == true) {
-                                    if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 이미 존재합니다.' ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', '[지수 ID] 이미 존재합니다.' ,{},1) ) {
                                         vm.$refs.jisu_id.focus();
                                         vm.form.duplCheckResult = false;
                                         return false;
@@ -1024,7 +1012,7 @@ export default {
 
                                 } else {
 
-                                    if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 사용 가능합니다.' ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', '[지수 ID] 사용 가능합니다.' ,{},1) ) {
                                         vm.form.duplCheckResult = true;
                                         return false;
                                     }
@@ -1041,7 +1029,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1059,14 +1047,14 @@ export default {
             if( !( typeCd == "9998" || typeCd == "9999" ) ) {
                 if( typeCd != "0003" ) {
 
-                    this.$emit( 'showMessageBox', '확인','지수사업자만 등록 하실수 있습니다.',{},1 );
+                    vm.$root.confirmt.open('확인','지수사업자만 등록 하실수 있습니다.',{},1 );
                     return  false;
                 }
             }
 
             if (!this.form.duplCheckResult) {
 
-                if( await vm.$emit("showMessageBox", '확인', '[지수 ID] 중복확인을 해주세요.' ,{},1) ) {
+                if( await vm.$root.confirmt.open('확인', '[지수 ID] 중복확인을 해주세요.' ,{},1) ) {
                     this.$refs.jisu_id.focus();
 
                     return false;
@@ -1078,14 +1066,14 @@ export default {
             }
 
 
-            if( await this.$root.$confirm1.open(
+            if( await vm.$root.confirmt.open(
                         '[신규 지수 등록]',
                         '저장하시겠습니까?',
                         {}
                     ,   2
                 )
             ) {
-                if( "Y" != this.$root.$confirm1.val ) {
+                if( "Y" != this.$root.confirmt.val ) {
                     return false;
                 }
             }
@@ -1116,7 +1104,7 @@ export default {
                                 var msg = ( response.data.msg ? response.data.msg : "" );
 
                                 if( msg ) {
-                                    if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                    if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                         if (!response.data.result) {
                                             return false;
                                         }
@@ -1137,7 +1125,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1149,11 +1137,8 @@ export default {
             var div = document.createElement("div");
 
             return (
-                ("draggable" in div ||
-                    ("ondragstart" in div && "ondrop" in div)) &&
-                "FormData" in window &&
-                "FileReader" in window
-            );
+                ("draggable" in div || ("ondragstart" in div && "ondrop" in div))
+                 && "FormData" in window && "FileReader" in window);
         },
 
         /*
@@ -1207,7 +1192,7 @@ export default {
                     /* 1. 확장자가 존재하지 않는지 확인 */
                     if (lastDot == -1) {
 
-                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                        if( await vm.$root.confirmt.open('확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
                             resolve( {result : false} );
                             return  false;;
                         }
@@ -1219,7 +1204,7 @@ export default {
                     /* 2. 허용되는 확장자에 포함되는지 확인 */
                     if (!allowExt.includes(fileExt)) {
 
-                        if( await vm.$emit("showMessageBox", '확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
+                        if( await vm.$root.confirmt.open('확인', "엑셀유형의 파일인지 확인 해 주세요." ,{},1) ) {
                             resolve( {result : false} );
                             return  false;;
                         }
@@ -1273,7 +1258,7 @@ export default {
 
                                     if( !response.data.result ) {
 
-                                        if( await vm.$emit("showMessageBox", '확인', response.data.msg ,{},1) ) {
+                                        if( await vm.$root.confirmt.open('확인', response.data.msg ,{},1) ) {
                                             resolve( { result : false } );
                                             return  false;
                                         }
@@ -1305,7 +1290,7 @@ export default {
                             vm.$emit( "fn_showProgress", false );
 
                             if( error ) {
-                                vm.$emit("showMessageBox", '확인',error,{},4);
+                                vm.$root.confirmt.open('확인',error,{},4);
                             }
                         }
                 );
@@ -1342,7 +1327,7 @@ export default {
                                 if (!response.data.success) {
 
                                     if( msg ) {
-                                        if( await vm.$emit("showMessageBox", '확인', msg ,{},1) ) {
+                                        if( await vm.$root.confirmt.open('확인', msg ,{},1) ) {
                                             return false;
                                         }
                                     }
@@ -1362,7 +1347,7 @@ export default {
                         vm.$emit( "fn_showProgress", false );
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인',error,{},4);
+                            vvm.$root.confirmt.open('확인',error,{},4);
                         }
                     }
             );
@@ -1479,14 +1464,14 @@ export default {
 
                     if( maxSize > 0 ) {
                         if( file.size == 0 ) {
-                            if( await vm.$emit("showMessageBox", title + ' 파일용량이 0 byte 입니다.', msg ,{},1) ) {
+                            if( await vm.$root.confirmt.open(title + ' 파일용량이 0 byte 입니다.', msg ,{},1) ) {
                                 resolve( { result: false } );
                                 return  false;
                             }
                         }
 
                         if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                            if( await vm.$emit("showMessageBox", title + title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.', msg ,{},1) ) { 
+                            if( await vm.$root.confirmt.open(title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.', msg ,{},1) ) { 
                                 resolve( { result: false } );
                                 return  false;
                             }

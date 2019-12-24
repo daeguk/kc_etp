@@ -79,7 +79,7 @@ export default {
                         vm.$emit("showProgress", false); 
 
                         if( error ) {
-                            vm.$emit("showMessageBox", '확인', error,{},4);      
+                            vm.$root.confirmt.open('확인', error,{},4);      
                         }
                     }
             );
