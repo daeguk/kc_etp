@@ -2,7 +2,7 @@
 
 <v-card>
 
- <!--비교자산 탭end--->
+ <!-- 비교자산 탭end -->
     <v-card class="pop_btn_w text-xs-right">
         <v-btn depressed color="primary" @click="addData()" >추가하기</v-btn>
     </v-card>
@@ -52,44 +52,6 @@
 
 </v-card>
 </template>
-
-<style>
-#context-menu {
-  top: 0;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  display: none;
-  list-style: none;
-  position: absolute;
-  z-index: 2147483647;
-  background-color: white;
-  border: 1px solid #ebebeb;
-  border-bottom-width: 0px;
-}
-
-#context-menu.active {
-  display: block;
-}
-
-.context-menu-icon {
-  top: 1px;
-  position: relative;
-  margin-right: 10px;
-}
-
-.context-menu-item {
-  display: flex;
-  cursor: pointer;
-  padding: 8px 15px;
-  align-items: center;
-  border-bottom: 1px solid #ebebeb;
-}
-
-.context-menu-item:hover {
-  background-color: #ebebeb;
-}
-</style>
 
 <script>
 import $      from 'jquery'
@@ -278,3 +240,41 @@ var jisu_grid = null;
     }
   }
 </script>
+
+<style>
+#context-menu {
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  display: none;
+  list-style: none;
+  position: absolute;
+  z-index: 2147483647;
+  background-color: white;
+  border: 1px solid #ebebeb;
+  border-bottom-width: 0px;
+}
+
+#context-menu.active {
+  display: block;
+}
+
+.context-menu-icon {
+  top: 1px;
+  position: relative;
+  margin-right: 10px;
+}
+
+.context-menu-item {
+  display: flex;
+  cursor: pointer;
+  padding: 8px 15px;
+  align-items: center;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.context-menu-item:hover {
+  background-color: #ebebeb;
+}
+</style>

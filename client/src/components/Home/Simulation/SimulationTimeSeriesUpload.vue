@@ -126,10 +126,6 @@
                 </div>
             </v-card>
         </v-flex>
-
-        <v-flex>
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
-        </v-flex>
     </v-layout>
 </template>
 
@@ -137,7 +133,6 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
@@ -145,7 +140,6 @@ import _ from "lodash";
 import excel from "xlsx";
 
 import MastPopup02 from "@/components/common/popup/MastPopup02";
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import SimulationExcelupModal  from "@/components/Home/simulation/SimulationExcelupModal.vue";
 import SimulationTimeSeriesUploadPop  from "@/components/Home/simulation/SimulationTimeSeriesUploadPop.vue";
 
@@ -190,7 +184,6 @@ export default {
 
     components: {
         MastPopup02,
-        ConfirmDialog,
         SimulationExcelupModal : SimulationExcelupModal, 
         SimulationTimeSeriesUploadPop : SimulationTimeSeriesUploadPop,    
     },    
@@ -288,14 +281,14 @@ export default {
 
 			var vm = this;
 
-			if( await vm.$refs.confirm2.open(
+			if( await vm.$root.confirmt.open(
 						'[시뮬레이션]',
 						'입력된 내용이 모두 초기화 됩니다. 그래도 진행하시겠습니까?',
 						{}
 					,   2
 				)
 			) {
-				if( "Y" == vm.$refs.confirm2.val ) {
+				if( "Y" == vm.$root.confirmt.val ) {
 
                     vm.grp_cd                       =   "*";
 
@@ -420,7 +413,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -467,7 +460,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );            
         },
@@ -531,7 +524,7 @@ export default {
                             resolve( { result : false } );
 
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -598,7 +591,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },        
@@ -807,7 +800,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -833,7 +826,7 @@ export default {
 
                 /* 1. 확장자가 존재하지 않는지 확인 */
                 if (lastDot == -1) {
-                    if( await vm.$refs.confirm2.open(
+                    if( await vm.$root.confirmt.open(
                                 '[엑셀파일 유형확인]'
                             ,   "엑셀유형의 파일인지 확인 해 주세요."
                             ,   {}
@@ -850,7 +843,7 @@ export default {
                 /* 2. 허용되는 확장자에 포함되는지 확인 */
                 if (!allowExt.includes(fileExt)) {
 
-                    if( vm.$refs.confirm2.open(
+                    if( vm.$root.confirmt.open(
                                 '[엑셀파일 유형확인]',
                                 "엑셀유형의 파일인지 확인 해 주세요.",
                                 {}
@@ -890,7 +883,7 @@ export default {
 
                     if( maxSize > 0 ) {
                         if( file.size == 0 ) {
-                            if( await vm.$refs.confirm2.open(
+                            if( await vm.$root.confirmt.open(
                                         '확인',
                                         title + ' 파일용량이 0 byte 입니다.',
                                         {}
@@ -902,7 +895,7 @@ export default {
                         }
 
                         if( ( maxSize * 1024 * 1024 ) < file.size ) {
-                            if( await vm.$refs.confirm2.open(
+                            if( await vm.$root.confirmt.open(
                                         '확인',
                                         title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.',
                                         {}
@@ -960,7 +953,7 @@ export default {
 
             if( !vm.paramData.grp_cd || !vm.paramData.scen_cd ) {
 
-                if( await vm.$refs.confirm2.open(
+                if( await vm.$root.confirmt.open(
                             '[엑셀파일 유형확인]'
                         ,   "신규등록은 다운로드 하실수 없습니다."
                         ,   {}
@@ -1089,7 +1082,7 @@ export default {
                                     ,   function(ex) {
                                             console.log( "error", ex );
 
-                                            if ( ex && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                            if ( ex && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                                             resolve( { result : false } );
                                         }
                                 );

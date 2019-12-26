@@ -126,11 +126,9 @@ export default {
          * 2019-04-16  bkLove(촤병국)
          */
         fn_getIndexFixList : function() {
-
             var vm = this;
 
-            util.processing(vm.$refs.progress, true);
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getIndexFixList"
@@ -138,15 +136,9 @@ export default {
                         ,   "method"    :   "post"
                     }
                 ,   function(response) {
-
                         try{
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             if (response && response.data) {
-
                                 var msg = ( response.data.msg ? response.data.msg : "" );
                                 if (!response.data.result) {
                                     if( msg ) {
@@ -227,19 +219,12 @@ export default {
                             }
 
                         }catch(ex) {
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }

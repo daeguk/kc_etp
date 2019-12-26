@@ -17,7 +17,7 @@ export const market_common = {
       var vm = this;
       var idx = 0;
 
-      vm.$emit('showProgress', true);
+      vm.$root.progresst.open();
       // console.log("########## mixins_marketinfo.js -> fn_getEtpList ############");
       // console.log("ctg_large_code=[" + ctg_large_code + "]");
       // console.log("vm.table_name=[" + vm.table_name + "]");
@@ -143,9 +143,9 @@ export const market_common = {
             });
           }
         }
-        vm.$emit('showProgress', false);
+        vm.$root.progresst.close();
       }).catch(error => {
-        vm.$emit("showProgress", false);
+        vm.$root.progresst.close();
       });
     },
     fn_movePageFromMarket: function( data, gubun ) {

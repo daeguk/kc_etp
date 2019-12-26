@@ -134,9 +134,9 @@ export default {
         };
     },
     components: {
-        IndexSummaryCard: IndexSummaryCard,
-        IndexSummaryBox: IndexSummaryBox,
-        InfoOpenReq: InfoOpenReq,
+        IndexSummaryCard,
+        IndexSummaryBox,
+        InfoOpenReq,
     },
     mounted: function() {
         this.getIndexSummaryInfo();
@@ -146,8 +146,7 @@ export default {
     methods: {
         getIndexSummaryInfo: function() {
             var vm = this;
-            util.processing(vm.$refs.progress, true);
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getIndexSummaryInfo"
@@ -201,23 +200,14 @@ export default {
                                 
                             }
 
-                            if( vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                         }catch(ex) {
-
-                            if( vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        util.processing(vm.$refs.progress, false);
-
+                        vm.$root.progresst.close();
                         if ( error ) {
                             vm.$root.confirmt.open('확인', error,{},4);
                         }

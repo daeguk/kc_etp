@@ -163,9 +163,7 @@ export default {
         var vm = this;
 
         return  await new Promise(function(resolve, reject) {
-
-            util.processing(vm.$refs.progress2, true);
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/common/getAllKspjongBasic"
@@ -176,11 +174,7 @@ export default {
                 ,   async function(response) {
 
                         try{
-
-                            if( vm.$refs && vm.$refs.progress2 ) {
-                                util.processing(vm.$refs.progress2, false);
-                            }
-
+                            vm.$root.progresst.close();
                             if (response.data) {
                                 var results = response.data.results;
 
@@ -196,22 +190,14 @@ export default {
                             resolve( { result : true } );
 
                         }catch(ex) {
-
-                            if( vm.$refs && vm.$refs.progress2 ) {
-                                util.processing(vm.$refs.progress2, false);
-                            }
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
 
                             resolve( { result : false } );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress2 ) {
-                            util.processing(vm.$refs.progress2, false);
-                        }
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }

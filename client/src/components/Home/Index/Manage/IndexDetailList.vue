@@ -71,9 +71,6 @@ export default {
         };
     },
     mounted () {
-
-       // this.$root.$progress = this.$refs.progress;
-
         var vm = this;        
 
         // console.log( "IndexDetailList.vue -> mounted" );

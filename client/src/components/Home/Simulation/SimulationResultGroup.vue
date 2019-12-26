@@ -275,7 +275,6 @@ export default {
     },
 
     components: {
-        ConfirmDialog,
         LineSimulationChartG,
         sharePopup02,
         sharePopup03,
@@ -816,7 +815,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -878,7 +877,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -942,7 +941,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1468,7 +1467,7 @@ export default {
 
             if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
 
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '공유받은 시나리오가 한개 이상 포함되어 있어 공유가 불가합니다.',
                         {}

@@ -1,83 +1,77 @@
 <template>
-    <v-container>
+  <v-container>
     <v-flex>
-<v-dialog v-model="signupDialog" persistent max-width="600px">
-  <v-card>
-    <v-container grid-list-md>
-      <v-layout wrap>
-     <v-flex xs12 class="login_pop_pad">
-            <v-card-title>회원가입
-                <v-spacer></v-spacer>
-        <v-btn icon small flat @click.stop="closeModal">
-          <v-icon>close</v-icon>
-        </v-btn>
-            </v-card-title>
-      </v-flex>
-      <v-flex xs12 md6>
-        <v-select
-          :items="typeList"
-          item-text="type_name"
-          item-value="type_cd"
-          label="사용자 그룹*"
-          dense
-          v-model="editedItem.type_cd"
-        ></v-select>
-      </v-flex>
-      <v-flex xs12 md6>
-        <v-select
-          :items="comDomainList"
-          item-text="inst_name"
-          item-value="inst_cd"
-          label="기관명*"
-          dense
-          v-model="editedItem.inst_cd"
-          @change="setDomain"
-        ></v-select>
-      </v-flex>
-      <v-flex xs12 md6>
-        <v-text-field v-model="editedItem.in_email" label="EMAIL ID"></v-text-field>
-      </v-flex>
-      <v-flex xs12 md6>
-        <v-text-field readonly v-model="editedItem.domain_url"></v-text-field>
-      </v-flex>
-      <v-flex xs12 md6>
-          <v-text-field v-model="editedItem.password" label="PASSWORD" type="password"></v-text-field>
-      </v-flex>
-      <v-flex xs12 md6>
-          <v-text-field v-model="editedItem.repassword" label="RE-PASSWORD*" type="password"></v-text-field>
-      </v-flex>
-      <v-flex xs12>
-          <v-text-field v-model="editedItem.name" label="사용자 이름"></v-text-field>
-      </v-flex>
-      <v-flex xs12 md6>
-          <v-text-field v-model="editedItem.hp_no" label="HP"></v-text-field>
-      </v-flex>
-      <v-flex xs12 md6>
-          <v-text-field v-model="editedItem.tel_no" label="TEL"></v-text-field>
-      </v-flex>
-      <v-flex xs12 class="login_pop_pad">
-            <v-card-title>
-                <v-spacer></v-spacer>
-                <v-btn  depressed color="#85c406" outline flat @click.stop="newAccount">REGISTER</v-btn>
-            </v-card-title>
-      </v-flex>
-      </v-layout>
-    </v-container>
-  </v-card>
-</v-dialog>
+      <v-dialog v-model="signupDialog" persistent max-width="600px">
+        <v-card>
+          <v-container grid-list-md>
+            <v-layout wrap>
+          <v-flex xs12 class="login_pop_pad">
+                  <v-card-title>회원가입
+                      <v-spacer></v-spacer>
+              <v-btn icon small flat @click.stop="closeModal">
+                <v-icon>close</v-icon>
+              </v-btn>
+                  </v-card-title>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-select
+                :items="typeList"
+                item-text="type_name"
+                item-value="type_cd"
+                label="사용자 그룹*"
+                dense
+                v-model="editedItem.type_cd"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-select
+                :items="comDomainList"
+                item-text="inst_name"
+                item-value="inst_cd"
+                label="기관명*"
+                dense
+                v-model="editedItem.inst_cd"
+                @change="setDomain"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-text-field v-model="editedItem.in_email" label="EMAIL ID"></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-text-field readonly v-model="editedItem.domain_url"></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6>
+                <v-text-field v-model="editedItem.password" label="PASSWORD" type="password"></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6>
+                <v-text-field v-model="editedItem.repassword" label="RE-PASSWORD*" type="password"></v-text-field>
+            </v-flex>
+            <v-flex xs12>
+                <v-text-field v-model="editedItem.name" label="사용자 이름"></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6>
+                <v-text-field v-model="editedItem.hp_no" label="HP"></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6>
+                <v-text-field v-model="editedItem.tel_no" label="TEL"></v-text-field>
+            </v-flex>
+            <v-flex xs12 class="login_pop_pad">
+                  <v-card-title>
+                      <v-spacer></v-spacer>
+                      <v-btn  depressed color="#85c406" outline flat @click.stop="newAccount">REGISTER</v-btn>
+                  </v-card-title>
+            </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card>
+      </v-dialog>
     </v-flex>
-
-    <v-flex>
-        <ConfirmDialog ref="confirm"></ConfirmDialog>
-    </v-flex>
-
-    </v-container>
+  </v-container>
 </template>
 
 <script>
 import Config       from "@/js/config.js"
 import Constant from "@/store/store_constant.js"
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 export default {
   data() {
@@ -100,9 +94,6 @@ export default {
         status: 0,
     };
   },
-  components : {
-      ConfirmDialog: ConfirmDialog
-  },  
   computed: {
     comDomainList: function() {
       var vm = this;
@@ -142,8 +133,8 @@ export default {
         console.log(response);
         if(response.data.success == false){
            vm.status = 1;
-            if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
-                if(vm.$refs.confirm.val == 'Y') {
+            if( await vm.$root.confirmt.open('확인',response.data.message,{},1) ) {
+                if(vm.$root.confirmt.val == 'Y') {
                     vm.status = 0;
                     return  false;
                 }
@@ -165,8 +156,8 @@ export default {
         console.log(response);
         if(response.data.success == false){
             vm.status = 1;
-            if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
-                if(vm.$refs.confirm.val == 'Y') {
+            if( await vm.$root.confirmt.open('확인',response.data.message,{},1) ) {
+                if(vm.$root.confirmt.val == 'Y') {
                     vm.status = 0;
                     return  false;
                 }
@@ -195,8 +186,8 @@ export default {
         this.editedItem.type_cd == "0000") {
 
         vm.status = 1;
-        if( await vm.$refs.confirm.open('확인',"사용자 그룹을 선택해주세요",{},1) ) {
-            if(vm.$refs.confirm.val == 'Y') {
+        if( await vm.$root.confirmt.open('확인',"사용자 그룹을 선택해주세요",{},1) ) {
+            if(vm.$root.confirmt.val == 'Y') {
                 vm.status = 0;            
                 return  false;
             }
@@ -205,8 +196,8 @@ export default {
         this.editedItem.inst_cd == "00000") {
 
         vm.status = 1;
-        if( await vm.$refs.confirm.open('확인',"사용자 기관 코드를 선택해주세요",{},1) ) {
-            if(vm.$refs.confirm.val == 'Y') {
+        if( await vm.$root.confirmt.open('확인',"사용자 기관 코드를 선택해주세요",{},1) ) {
+            if(vm.$root.confirmt.val == 'Y') {
                 vm.status = 0;            
                 return  false;
             }
@@ -214,8 +205,8 @@ export default {
       }else if(this.editedItem.name.length == 0){
 
         vm.status = 1;
-        if( await vm.$refs.confirm.open('확인',"사용자 이름을 입력해주세요",{},1) ) {
-            if(vm.$refs.confirm.val == 'Y') {
+        if( await vm.$root.confirmt.open('확인',"사용자 이름을 입력해주세요",{},1) ) {
+            if(vm.$root.confirmt.val == 'Y') {
                 vm.status = 0;            
                 return  false;
             }
@@ -225,8 +216,8 @@ export default {
         this.editedItem.password != this.editedItem.password){
 
         vm.status = 1;
-        if( await vm.$refs.confirm.open('확인',"패스워드가 잘못 입력되었습니다.",{},1) ) {
-            if(vm.$refs.confirm.val == 'Y') {
+        if( await vm.$root.confirmt.open('확인',"패스워드가 잘못 입력되었습니다.",{},1) ) {
+            if(vm.$root.confirmt.val == 'Y') {
                 vm.status = 0;
                 return  false;
             }
@@ -240,16 +231,16 @@ export default {
             console.log(response);
             if(response.data.success == false){
                 vm.status = 1;
-                if( await vm.$refs.confirm.open('확인',response.data.message,{},1) ) {
-                    if(vm.$refs.confirm.val == 'Y') {
+                if( await vm.$root.confirmt.open('확인',response.data.message,{},1) ) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;                    
                         return  false;
                     }
                 }
             }else {
                 vm.status = 1;
-                if( await vm.$refs.confirm.open('확인',"사용자 등록이 완료되었습니다.",{},1) ) {
-                    if(vm.$refs.confirm.val == 'Y') {
+                if( await vm.$root.confirmt.open('확인',"사용자 등록이 완료되었습니다.",{},1) ) {
+                    if(vm.$root.confirmt.val == 'Y') {
                         vm.status = 0;                    
                         return  false;
                     }
@@ -259,8 +250,8 @@ export default {
 
         }else {
             vm.status = 1;
-            if( await vm.$refs.confirm.open('확인',"이메일 주소는 회사의 도메인주소를 사용하여야 합니다.",{},1) ) {
-                if(vm.$refs.confirm.val == 'Y') {
+            if( await vm.$root.confirmt.open('확인',"이메일 주소는 회사의 도메인주소를 사용하여야 합니다.",{},1) ) {
+                if(vm.$root.confirmt.val == 'Y') {
                     vm.status = 0;                
                     return  false;
                 }

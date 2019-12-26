@@ -549,7 +549,7 @@ export default {
                 ,   function(error) {
                         vm.$root.progresst.close();
 
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {
                         }
                     }
             );
@@ -612,14 +612,14 @@ export default {
                         }
 
 
-                        if( await vm.$refs.confirm2.open(
+                        if( await vm.$root.confirmt.open(
                                     '[시나리오 그룹]',
                                     '[' + p_item.scen_name + '] 삭제 하시겠습니까?',
                                     {}
                                 ,   2
                             )
                         ) {
-                            if( "Y" != vm.$refs.confirm2.val ) {
+                            if( "Y" != vm.$root.confirmt.val ) {
                                 return  false;
                             }
                         }
@@ -669,7 +669,7 @@ export default {
                             }
                         ,   function(error) {
                                 vm.$root.progresst.close();
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
                 }
@@ -755,14 +755,14 @@ export default {
                         v_msg   =   '[' + p_item .scen_name + '] ' + '공유된 건수가 ' + vm.v_share_count + ' 건 존재합니다. 시나리오 정보와 함께 모두 삭제하시겠습니까?';
                     }
 
-                    if( await vm.$refs.confirm2.open(
+                    if( await vm.$root.confirmt.open(
                                 '[시나리오]',
                                 v_msg,
                                 {}
                             ,   2
                         )
                     ) {
-                        if( "Y" != vm.$refs.confirm2.val ) {
+                        if( "Y" != vm.$root.confirmt.val ) {
                             return  false;
                         }
                     }
@@ -805,7 +805,7 @@ export default {
                             }
                         ,   function(error) {
                                 vm.$root.progresst.close();
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
                 }
@@ -875,7 +875,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -931,7 +931,7 @@ export default {
                                 }
 
                                 if( msg ) {
-                                    if ( await vm.$refs.confirm2.open(
+                                    if ( await vm.$root.confirmt.open(
                                             '확인',
                                             msg,
                                             {}
@@ -969,7 +969,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -991,7 +991,7 @@ export default {
 
             if( item.grp_yn == "1" ) {
 
-                if ( await vm.$refs.confirm2.open(
+                if ( await vm.$root.confirmt.open(
                         '확인',
                         '그룹은 선택하실수 없습니다.',
                         {}
@@ -1011,7 +1011,7 @@ export default {
 
                 if( vm.arr_comp.length >= 10 ) {
 
-                    if ( await vm.$refs.confirm2.open(
+                    if ( await vm.$root.confirmt.open(
                             '확인',
                             '최대 10개 까지만 선택 가능합니다.',
                             {}
@@ -1088,7 +1088,7 @@ export default {
 
                                 if( msg ) {
                                     
-                                    if ( await vm.$refs.confirm2.open(
+                                    if ( await vm.$root.confirmt.open(
                                             '확인',
                                             msg,
                                             {}
@@ -1124,7 +1124,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.progresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -1184,7 +1184,7 @@ export default {
 
                     if( [ "fn_show_rename", "fn_rename" ].includes( vm.now_event ) ) {
 
-                        if ( await vm.$refs.confirm2.open(
+                        if ( await vm.$root.confirmt.open(
                                 '확인',
                                 '이름변경이 완료되지 않은 건이 존재합니다.',
                                 {}
@@ -1236,14 +1236,14 @@ export default {
                 return  false;
             }
 
-            if ( await vm.$refs.confirm2.open(
+            if ( await vm.$root.confirmt.open(
                     '확인',
                     '[' + p_item.scen_name + '] 복사 하시겠습니까?',
                     {}
                     ,2
                 )
             ) {
-                if( "Y" != vm.$refs.confirm2.val ) {
+                if( "Y" != vm.$root.confirmt.val ) {
                     return  false;
                 }
             }            
@@ -1297,7 +1297,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1379,7 +1379,7 @@ export default {
                             ,   function(error) {
                                     resolve( { result : false } );
 
-                                    if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                    if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                                 }
                         );
 
@@ -1458,7 +1458,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
 
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1547,7 +1547,7 @@ export default {
 
                         if( p_item.owner_yn != "1" ) {
 
-                            if ( await vm.$refs.confirm2.open(
+                            if ( await vm.$root.confirmt.open(
                                     '확인',
                                     '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 소유자만 시나리오 화면으로 이동가능합니다.',
                                     {}
@@ -1559,7 +1559,7 @@ export default {
 
                         }else{
 
-                            if ( await vm.$refs.confirm2.open(
+                            if ( await vm.$root.confirmt.open(
                                     '확인',
                                     '시뮬레이션 결과와 시나리오 정보가 변동이 발생되었습니다. 시나리오 화면으로 이동하시겠습니까?',
                                     {}
@@ -1567,7 +1567,7 @@ export default {
                                 )
                             ) {
 
-                                if( "Y" == vm.$refs.confirm2.val ) {
+                                if( "Y" == vm.$root.confirmt.val ) {
                                     /* 수정정보를 보여준다. */
                                     p_item.showSimulationId        =   1;
                                     vm.fn_showSimulation( p_item );
@@ -1613,7 +1613,7 @@ export default {
 
                 if( v_obj.val() == "" ) {
 
-                    if ( await vm.$refs.confirm2.open(
+                    if ( await vm.$root.confirmt.open(
                             '확인',
                             '시나리오명 을 입력해 주세요.',
                             {}
@@ -1671,7 +1671,7 @@ export default {
                         }
                     ,   function(error) {
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
             }
@@ -1768,7 +1768,7 @@ export default {
 
             if( !p_item || !p_item.grp_cd || !p_item.scen_cd  ) {
 
-                if ( vm.$refs.confirm2.open(
+                if ( vm.$root.confirmt.open(
                         '확인',
                         "기본정보가 존재하지 않습니다.",
                         {}
@@ -1808,7 +1808,7 @@ export default {
                                         vm.$root.progresst.close();
                                         if( msg ) {
 
-                                            if ( vm.$refs.confirm2.open(
+                                            if ( vm.$root.confirmt.open(
                                                     '확인',
                                                     msg,
                                                     {}
@@ -1837,7 +1837,7 @@ export default {
                         }
                     ,   function(error) {
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             resolve( { result : false } );
                         }
                 );

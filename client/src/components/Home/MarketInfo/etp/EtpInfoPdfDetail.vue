@@ -52,22 +52,13 @@
                         </v-card-title>
                     </div>      
                 </v-card>
-
-
                 <v-card flat>
                         <table id="tblPdfList" class="tbl_type ver7"></table>
                 </v-card>
 
             </v-flex>
-
-            <v-flex>
-                <ProgressBar ref="progress"></ProgressBar>
-            </v-flex>
-
         </v-layout>
-
     </v-card>
-     
 </template>
 
 
@@ -75,19 +66,13 @@
 import $ from "jquery";
 import _ from "lodash";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-
 import Config from "@/js/config.js";
-import ProgressBar from "@/components/common/ProgressBar.vue";
 
 var tblPdfList = null;
 
 export default {
     props: [ "paramData", "showEtpInfoPdfDetail" ],
-    components : {
-        ProgressBar: ProgressBar
-    },
     data() {
         return {
             stateInfo: {
@@ -110,20 +95,14 @@ export default {
     mounted: function() {
         var vm = this;
 
-        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfDetail.vue mounted");
-        console.log( vm.paramData );
-
+        // console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdfDetail.vue mounted");
+        // console.log( vm.paramData );
         vm.pdfData  =   vm.paramData;
-
         vm.fn_init();
-
     },
     created: function() {
-        var vm = this;
-
     },
     beforeDestory: function() {
-        var vm = this;
     },
 
     methods: {
@@ -161,7 +140,7 @@ export default {
         fn_getEtpOerPdf( initYn ) {
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
+            // console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
 
             var  url = Config.base_url + "/user/etp/getEtpOperPdf";
 
@@ -184,13 +163,12 @@ export default {
                     }
                 }
 
-                util.processing(vm.$refs.progress, true);
+                vm.$root.progresst.open();
                 axios.post( url, {
                     data: vm.searchParam
                 }).then(function(response) {
-                    console.log(response);
-
-                    util.processing(vm.$refs.progress, false);
+                    // console.log(response);
+                    vm.$root.progresst.close();
                     if (response.data) {
                         var msg = ( response.data.msg ? response.data.msg : "" );
                         if (!response.data.result) {
@@ -208,7 +186,7 @@ export default {
                     }
 
                 }).catch(error => {
-                    util.processing(vm.$refs.progress, false);
+                    vm.$root.progresst.close();
                     vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
                 });
             }
@@ -448,7 +426,7 @@ export default {
                 if( vm.searchParam.show_date ) {
                     resolve(true);
                 }else{
-                    util.processing(vm.$refs.progress, true);
+                    vm.$root.progresst.open();
 
                     util.axiosCall(
                             {
@@ -474,16 +452,11 @@ export default {
                                         }
                                     }
 
-                                    if( vm.$refs && vm.$refs.progress ) {
-                                        util.processing(vm.$refs.progress, false);
-                                    }
-
+                                    vm.$root.progresst.close();
                                     resolve(true);
 
                                 }catch(ex) {
-                                    if( vm.$refs && vm.$refs.progress ) {
-                                        util.processing(vm.$refs.progress, false);
-                                    }
+                                    vm.$root.progresst.close();
                                     console.log( "error", ex );
 
                                     resolve(false);
@@ -491,10 +464,7 @@ export default {
                             }
                         ,   function(error) {
 
-                                if( vm.$refs && vm.$refs.progress ) {
-                                    util.processing(vm.$refs.progress, false);
-                                }
-
+                                vm.$root.progresst.close();
                                 if( error ) {
                                     vm.$root.confirmt.open('확인', msg,{},4);
                                 }
@@ -507,11 +477,7 @@ export default {
 
             }).catch( function(e) {
                 console.log( e );
-
-                if( vm.$refs && vm.$refs.progress ) {
-                    util.processing(vm.$refs.progress, false);
-                }
-
+                vm.$root.progresst.close();
                 vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);                
 
                 resolve(false);

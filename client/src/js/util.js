@@ -118,13 +118,6 @@ var util = {
 
       return diffRate;
     },
-    processing: function(component, visible) {
-        if (visible) {
-            component.open(visible);
-        } else {
-            component.close();
-        }
-    },
     strSubString: function(str, len) {
       var rtn = str ;
       if(str.length > len) {

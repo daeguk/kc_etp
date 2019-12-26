@@ -32,11 +32,9 @@
     </v-dialog>
 <!--고객지원end-->  
   <UserInfo></UserInfo>
-  <ConfirmDialog ref="confirm" v-show="false"></ConfirmDialog>
 </v-toolbar>
 </template>
 <script>
-import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 import ContextMenu          from './ContextMenu.vue';
 import UserInfo          from './UserInfo.vue';
 import Config       from "@/js/config.js";
@@ -58,16 +56,14 @@ export default {
     };
   },
   components: {
-    ContextMenu, UserInfo,
-    ConfirmDialog: ConfirmDialog
+    ContextMenu, 
+    UserInfo,
   },
   created: function() {
   },
   beforeDestroy() {
   },    
   mounted: function() {
-    // 메시지 박스 참조
-    this.$root.$confirm = this.$refs.confirm;
 //        this.contents = this.defaultContents;
 
     /* 지수 사업자 */
@@ -119,7 +115,7 @@ export default {
       var vm = this;
 
       if(await !vm.contents || vm.contents.length == 0 || vm.contents.replace(/^\s+|\s+$/g,"").length == 0 ) {
-        if( vm.$root.$confirm.open('', "내용을 입력해 주세요", {}, 1)) {
+        if( vm.$root.confirmt.open('', "내용을 입력해 주세요", {}, 1)) {
           return false;                    
         }                
       }
@@ -131,7 +127,7 @@ export default {
         try{
             var resultData = response.data;
             if( resultData.msg ) {
-                if( vm.$root.$confirm.open('', resultData.msg, {}, 1)) {}
+                if( vm.$root.confirmt.open('', resultData.msg, {}, 1)) {}
 
                 if( !resultData.result ) {
                     return  false;
@@ -147,7 +143,7 @@ export default {
         }
       }, function(error) {
         if( error ) {
-          if ( vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+          if ( vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
         }
       });
     }
@@ -156,5 +152,5 @@ export default {
 </script>
 
 <style scoped>
-.v-menu__content.menuable__content__active{left:60% !important;}
+  .v-menu__content.menuable__content__active{left:60% !important;}
 </style>

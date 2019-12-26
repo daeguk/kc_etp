@@ -438,7 +438,7 @@ export default {
         /* 전체 종목 etn 종목리스트 */
         getPublicEtpList: function() {
             var vm = this;
-            util.processing(this.$refs.progress, true);
+            vm.$root.progresst.open();
             // console.log("etn_grid");
 
             util.axiosCall(
@@ -451,12 +451,7 @@ export default {
                 ,   function(response) {
 
                         try{
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-                            
-                            // console.log(response);
+                            vm.$root.progresst.close();
                             if (response.data.success == false) {
                                 if ( vm.$root.confirmt.open( '확인', '종목정보가 없습니다.', {}, 1 ) ) {}
                             } else {
@@ -468,19 +463,13 @@ export default {
                             }
 
                         }catch(ex) {
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
 
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }                    
+                        vm.$root.progresst.close();
 
                         if( error ) {
                             if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
@@ -492,11 +481,10 @@ export default {
 
         /* 전체 종목 etf 종목리스트 */
         getALLEtpList: function() {
-
             var vm = this;
 
             // console.log("etn_grid");
-            util.processing(this.$refs.progress, true);
+            vm.$root.progresst.open();
 
             util.axiosCall(
                     {
@@ -506,14 +494,8 @@ export default {
                         ,   "paramKey"  :   "params"
                     }
                 ,   function(response) {
-
                         try{
-
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-                            
-                            // console.log(response);
+                            vm.$root.progresst.close();
                             if (response.data.success == false) {
                                 if ( vm.$root.confirmt.open( '확인', '종목정보가 없습니다.', {}, 1 ) ) {}
                             } else {
@@ -524,22 +506,13 @@ export default {
                                 all_etp_table.rows.add(items).draw();
                         
                             }
-
                         }catch(ex) {
-                            
-                            if( vm.$refs && vm.$refs.progress ) {
-                                util.processing(vm.$refs.progress, false);
-                            }
-
+                            vm.$root.progresst.close();
                             console.log( "error", ex );
                         }
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }                    
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }

@@ -149,12 +149,9 @@ export default {
     },
     methods: {
         getRecentIndex: function() {
-            console.log("getRecentIndex");
-
             var vm = this;
             
-            util.processing(this.$refs.progress, true);
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getRecentIndex"
@@ -192,16 +189,10 @@ export default {
                             });
                         }
                                       
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
+                        vm.$root.progresst.close();
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('', error, {}, 1);
                         }
@@ -210,12 +201,8 @@ export default {
 
         }, 
         getInfoIndexList: function() {
-            console.log("getInfoIndexList");
-
             var vm = this;
-            
-            util.processing(this.$refs.progress, true);
-
+            vm.$root.progresst.open();
             util.axiosCall(
                     {
                             "url"       :   Config.base_url + "/user/index/getInfoIndexList"
@@ -241,16 +228,10 @@ export default {
                             
                         }
                                       
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
+                        vm.$root.progresst.close();
                     }
                 ,   function(error) {
-
-                        if( vm.$refs && vm.$refs.progress ) {
-                            util.processing(vm.$refs.progress, false);
-                        }
-
+                        vm.$root.progresst.close();
                         if( error ) {
                             vm.$root.confirmt.open('', error, {}, 1);
                         }

@@ -446,8 +446,6 @@
                 :share_row_data="share_row_data"
                 @fn_close_share_modal="fn_close_share_modal"
             ></sharePopup01>
-
-            <ConfirmDialog ref="confirm2"></ConfirmDialog>
         </v-flex>
     </v-layout>
 </template>
@@ -456,7 +454,6 @@
 <script>
 import $ from "jquery";
 import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
 import select from "datatables.net-select";
 import Config from "@/js/config.js";
@@ -464,7 +461,6 @@ import _ from "lodash";
 import excel from "xlsx";
 
 import LineSimulationChart  from "@/components/common/chart/LineSimulationChart.vue";
-import ConfirmDialog  from "@/components/common/ConfirmDialog.vue";
 import sharePopup01 from "@/components/common/popup/sharePopup01";
 
 export default {
@@ -509,7 +505,6 @@ export default {
     },
 
     components: {
-        ConfirmDialog,
         LineSimulationChart,
         sharePopup01		
     },
@@ -605,7 +600,7 @@ export default {
                 ||  ( vm.paramData.arr_contribute && vm.paramData.arr_contribute.length > 0 )
             ){
 
-                vm.$root.wprogresst.open({'open':true, 'title':'시계열 분석 중입니다.'});
+                vm.$root.wprogresst.open({title:'시계열 분석 중입니다.'});
                 /* 초기 설정 데이터를 조회한다. */
                 vm.fn_initData().then( function(e) {
 
@@ -1195,7 +1190,7 @@ export default {
                         ,   function(error) {
                                 resolve( { result : false } );
 
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
                 }
@@ -1283,7 +1278,7 @@ export default {
                         }
                     ,   function(error) {
                             resolve( { result : false } );
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -1333,7 +1328,7 @@ export default {
                                     var	v_scen_cd	=	response.data.scen_cd;
 
                                     if( msg ) {
-                                        if ( vm.$refs.confirm2.open(
+                                        if ( vm.$root.confirmt.open(
                                                 '확인',
                                                 msg,
                                                 {}
@@ -1356,7 +1351,7 @@ export default {
                     }
                 ,   function(error) {
                         vm.$root.wprogresst.close();
-                        if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                        if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                     }
             );
         },
@@ -1578,7 +1573,7 @@ export default {
                         ,   function(error) {
                                 resolve( { result : false } );
 
-                                if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                             }
                     );
                 }
@@ -1648,7 +1643,7 @@ export default {
                 var dataWS;
                 var wb = excel.utils.book_new();
 
-                vm.$root.wprogresst.open({'title':'자료생성 중입니다.'});
+                vm.$root.wprogresst.open({title:'자료생성 중입니다.'});
 
                 step1().then( function(e){
                     if( e && e.result ) {
@@ -1957,7 +1952,7 @@ export default {
                                     ,   function(ex) {
                                             console.log( "error", ex );
 
-                                            if ( ex && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                                            if ( ex && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                                             resolve( { result : false } );
                                         }
                                 );
@@ -2331,7 +2326,7 @@ export default {
                     ,   function(error) {
                             resolve( { result : false } );
                             vm.$root.progresst.close();
-                            if ( error && vm.$refs.confirm2.open( '확인', error, {}, 4 ) ) {}
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
                         }
                 );
 
@@ -2359,7 +2354,7 @@ export default {
 
             if( typeof vm.owner_all_yn != "undefined" && vm.owner_all_yn == "0" ) {
 
-                if (await vm.$refs.confirm2.open(
+                if (await vm.$root.confirmt.open(
                         '확인',
                         '공유받은 시나리오는 공유가 불가합니다.',
                         {}

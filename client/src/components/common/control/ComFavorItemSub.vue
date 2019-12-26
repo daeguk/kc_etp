@@ -584,7 +584,7 @@ export default {
         /* 전체 종목 etn 종목리스트 */
         getEtnList: function() {
             var vm = this;
-            util.processing(this.$refs.progress, true);
+            vm.$root.progresst.open();
             // console.log("etn_grid");
             axios.get(Config.base_url + "/user/common/getETNList", {
                 params: {
@@ -592,9 +592,7 @@ export default {
             }).then(response => {
                 // console.log(response);
 
-                if( vm.$refs.progress ) {
-                    util.processing(vm.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
                 if (response.data.success == false) {
                     vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
                 } else {
@@ -605,9 +603,7 @@ export default {
                                         
                 }
             }).catch(error => {
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
                 vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -616,16 +612,14 @@ export default {
         getEtfList: function() {
           var vm = this;
             // console.log("etn_grid");
-            util.processing(this.$refs.progress, true);
+            vm.$root.progresst.open();
             axios.get(Config.base_url + "/user/common/getETFList", {
                 params: {
                 }
             }).then(response => {
                 // console.log(response);
 
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
                 if (response.data.success == false) {
                     vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
                 } else {
@@ -637,9 +631,7 @@ export default {
             
                 }
             }).catch(error => {
-                if( this.$refs.progress ) {
-                    util.processing(this.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
                 vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         }, 
@@ -648,15 +640,13 @@ export default {
         getIndexList: function() {
             var vm = this;
             // console.log("etn_grid");
-            util.processing(this.$refs.progress, true);
+            vm.$root.progresst.open();
             axios.get(Config.base_url + "/user/common/getIndexList", {
                 params: {
                 }
             }).then(response => {
                 // console.log(response);
-                if( this.$refs.progress ) {     
-                    util.processing(this.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
 
                 if (response.data.success == false) {
                     vm.$root.confirmt.open('확인','종목정보가 없습니다.',{},1);
@@ -669,9 +659,7 @@ export default {
                     
                 }
             }).catch(error => {
-                if( this.$refs.progress ) {     
-                    util.processing(this.$refs.progress, false);
-                }
+                vm.$root.progresst.close();
                 vm.$root.confirmt.open('확인','서버로 부터 응답을 받지 못하였습니다.',{},4);
             });
         },
