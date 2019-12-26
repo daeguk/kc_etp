@@ -64,7 +64,6 @@
 
 <script>
 import $ from "jquery";
-import _ from "lodash";
 import dt from "datatables.net";
 import util       from "@/js/util.js";
 import Config from "@/js/config.js";

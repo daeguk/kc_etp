@@ -150,10 +150,7 @@
 <script>
 
 
-import $ from "jquery";
-import dt from "datatables.net";
 import util       from "@/js/util.js";
-import select from "datatables.net-select";
 import Config from "@/js/config.js";
 
 export default {

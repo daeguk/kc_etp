@@ -237,9 +237,6 @@
 </template>   
 
 <script>
-import $      from 'jquery'
-import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import Config from '@/js/config.js';
 var table01 = null;

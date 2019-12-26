@@ -285,7 +285,6 @@
 import jongmokPopup from "@/components/common/popup/jongmokPopup";
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import util       from "@/js/util.js";
 import select from 'datatables.net-select'
 import Config from '@/js/config.js'

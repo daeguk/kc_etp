@@ -531,7 +531,7 @@ export default {
             pdf_table.clear().draw();
             pdf_table.rows.add(this.pdfList).draw();
 
-            vm.$root.progresst.close();
+            this.$root.progresst.close();
         },
         formatNumber:function(num) {
            if (num != null && typeof num !== 'undefined') {

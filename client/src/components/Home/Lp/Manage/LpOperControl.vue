@@ -36,10 +36,7 @@
 
 <script>
 
-import $                            from "jquery";
-import dt                           from "datatables.net";
-import select                       from "datatables.net-select";
-import _                            from "lodash";
+
 import Config                       from "@/js/config.js";
 import util                         from "@/js/util.js";
 

@@ -420,9 +420,7 @@
 
 <script>
 import $ from "jquery";
-import dt from "datatables.net";
 import util       from "@/js/util.js";
-import select from "datatables.net-select";
 import Config from "@/js/config.js";
 import Simulation from "@/components/Home/Simulation/Simulation.vue";
 import sharePopup01 from "@/components/common/popup/sharePopup01";

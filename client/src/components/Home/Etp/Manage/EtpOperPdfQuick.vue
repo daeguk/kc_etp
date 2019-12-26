@@ -95,11 +95,7 @@
 .v-menu__content{box-shadow: none !important;}
 </style>
 <script>
-import $ from "jquery";
-import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
 import util       from "@/js/util.js";
-import select from "datatables.net-select";
 import _ from "lodash";
 import Config from "@/js/config.js";
 import Constant from "@/store/store_constant.js";

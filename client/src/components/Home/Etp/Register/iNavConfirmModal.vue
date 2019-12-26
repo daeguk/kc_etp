@@ -72,7 +72,6 @@
 <script>
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js'
 var dataTable = null;
 export default {

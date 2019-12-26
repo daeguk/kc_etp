@@ -117,9 +117,7 @@
 <script>
 
 import $ from "jquery";
-import dt from "datatables.net";
-import buttons from "datatables.net-buttons";
-import select from "datatables.net-select";
+import dt from "datatables.net"
 import _ from "lodash";
 import Config       from "@/js/config.js";
 import util       from "@/js/util.js";
