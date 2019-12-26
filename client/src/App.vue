@@ -26,7 +26,8 @@ export default {
   },
   components: {
     ConfirmDialog,
-    ProgressBar
+    ProgressBar,
+    WaitProgressBar
   },
   created() {
     // this.$router.push({ path: '/landing'});
@@ -36,6 +37,7 @@ export default {
     this.$root.confirmt = this.$refs.confirmt;
     this.$root.progresst = this.$refs.progresst;
     this.$root.wprogresst = this.$refs.wprogresst;
+
     // 실시간 데이터 테스트 완료 (2019.11.02)
     // this.initWebSocket();
     this.setBefDates();

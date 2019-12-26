@@ -131,8 +131,8 @@ export default {
     mounted: function() {
         var vm = this;
 
-        console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
-        console.log(this.paramData);
+        // console.log( ">>>>>>>>>>>>>>>>>>>> EtpOperPdf.vue mounted");
+        // console.log(this.paramData);
 
         if( vm.paramData ) {
             vm.pdfData  =   vm.paramData;
@@ -151,12 +151,8 @@ export default {
     },
 
     methods: {
-
         fn_init() {
-
             var vm = this;
-
-
             if( vm.pdfData && Object.keys( vm.pdfData ).length > 0 ) {
 //              vm.searchParam.F16583       =   vm.pdfData.F16583;          /* 사무수탁회사번호 */
                 vm.searchParam.F16002       =   vm.pdfData.F16002;          /* 한글종목명 */
@@ -194,7 +190,7 @@ export default {
         fn_getEtpOerPdf( initYn ) {
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
+            // console.log("EtpOperPdf.vue -> fn_getEtpOperPdf");
 
             var  url = Config.base_url + "/user/etp/getEtpOperPdf";
 
@@ -281,7 +277,7 @@ export default {
 
             var vm = this;
 
-            console.log("EtpOperPdf.vue -> fn_getEtpOperPdfByRateTitle");
+            // console.log("EtpOperPdf.vue -> fn_getEtpOperPdfByRateTitle");
 
             vm.searchParam.search_date  =   vm.searchParam.show_date.replace(/-/g,"");
             vm.searchParam.search_date  =   vm.searchParam.search_date.replace(/\./g,"");
