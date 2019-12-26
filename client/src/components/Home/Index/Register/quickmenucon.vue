@@ -55,14 +55,6 @@ export default {
     created() {
 
         this.fn_getStatusList();
-/*        
-        console.log( "eventBus on >> ");
-
-        this.$EventBus.$on( "test", res => {
-            alert();
-            console.log( ">> val=[" + res + "]");
-        })
-*/
     },
 
     mounted() {
@@ -70,7 +62,6 @@ export default {
     },    
 
     beforeDestory : function() {
-//        this.$EventBus.$off("test");
     },    
 
     methods: {

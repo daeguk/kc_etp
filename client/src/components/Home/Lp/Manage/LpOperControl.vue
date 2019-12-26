@@ -160,6 +160,10 @@ export default {
 */
     });
   },
+  beforeDestroy: function() {
+    var vm = this;
+    vm.$EventBus.$off('showList2');
+  },
   beforeUpdated: function() {
   },
   updated: function() {

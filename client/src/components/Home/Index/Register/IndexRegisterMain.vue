@@ -71,6 +71,10 @@ export default {
             }
         });
     },
+    beforeDestroy: function() {
+      var vm = this;
+      vm.$EventBus.$off('quickmenucon_IndexRegisterMain_call');
+    },
 
     mounted() {
     },

@@ -104,8 +104,10 @@ export default {
          });
     },
   
-    beforeDestroy() {
-     },
+    beforeDestroy: function() {
+      var vm = this;
+      vm.$EventBus.$off('iNavListModal');
+    },
     mounted: function() {
      },
     methods: {

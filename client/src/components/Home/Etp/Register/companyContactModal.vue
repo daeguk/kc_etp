@@ -1,6 +1,6 @@
 <template>
      <v-dialog :value="dialog" persistent max-width="550">
-        <!--발행사 담당자 연락처 팝업--->
+        <!-- 발행사 담당자 연락처 팝업 -->
             <v-card>
                 <h5>
                     <v-card-title ma-0>
@@ -25,7 +25,6 @@
                    </v-card>
                 <v-card class="pop_bot_h"></v-card>
             </v-card>
-         <!--발행사 담당자 연락처 팝업 end --->
     </v-dialog>
 </template>
 
@@ -33,7 +32,6 @@
 <script>
 import $      from 'jquery'
 import dt      from 'datatables.net'
-import buttons from 'datatables.net-buttons'
 import Config from '@/js/config.js'
 var contact_grid = null;
 export default {
@@ -65,8 +63,10 @@ export default {
         });
     },
   
-    beforeDestroy() {
-     },
+    beforeDestroy: function() {
+      var vm = this;
+      vm.$EventBus.$off('contactModal');
+    },
     mounted: function() {
         //var vm = this;
         //vm.getCompanyContactList();   

@@ -251,6 +251,11 @@ export default {
 */
     });
   },
+  beforeDestroy: function() {
+    var vm = this;
+    vm.$EventBus.$off('showList1');
+  },
+
   beforeUpdated: function() {
   },
   updated: function() {

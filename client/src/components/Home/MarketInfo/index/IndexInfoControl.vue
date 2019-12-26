@@ -59,8 +59,12 @@ export default {
             this.showFaver = false;
         });
     },
+    beforeDestroy: function() {
+      var vm = this;
+      vm.$EventBus.$off('showList');
+    },
     beforeUpdated: function() {
-        
+      
     },
     updated: function() {
     },

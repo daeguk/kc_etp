@@ -53,14 +53,14 @@ export default {
   created: function() {	  
     var vm = this;
 
-	vm.$EventBus.$on('fn_etfFilterData', data => {
-		vm.search = data;
-		vm.filterData();
-	});		  
+    vm.$EventBus.$on('fn_etfFilterData', data => {
+      vm.search = data;
+      vm.filterData();
+    });		  
   },
   beforeDestroy() {
-      var vm = this;
-      vm.$EventBus.$off('fn_etfFilterData');
+    var vm = this;
+    vm.$EventBus.$off('fn_etfFilterData');
   },
   mounted: function() {
     var vm = this;
