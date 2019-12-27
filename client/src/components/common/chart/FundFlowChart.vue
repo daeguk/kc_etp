@@ -63,9 +63,9 @@ export default {
 
       c.fillStyle = "#424242";
       c.font = '14px san-serif';
-      c.fillText(Math.round(this.sitem.FLOW/100000000), cX1, cY+5);
+      c.fillText(Math.round( ( ( typeof this.sitem == "undefined" || typeof this.sitem.FLOW == "undefined" ) ? 0 : this.sitem.FLOW )/100000000), cX1, cY+5);
       c.fillText(this.sitem.F16002, cX1, cY+55);
-      c.fillText(Math.round(this.eitem.FLOW/100000000), cX2, cY+5);
+      c.fillText(Math.round( ( ( typeof this.eitem == "undefined" || typeof this.eitem.FLOW == "undefined" ) ? 0 : this.eitem.FLOW )/100000000), cX2, cY+5);
       c.fillText(this.eitem.F16002, cX2, cY+55);
 
       c.beginPath();
