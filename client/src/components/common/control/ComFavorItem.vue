@@ -86,13 +86,13 @@ export default {
          * 2019-04-16  bkLove(촤병국)
          */
         fn_closeIndexDetailPop : function( param ) {
-            console.log( "ComFavorItem.vue -> fn_closeIndexDetailPop" );
+            // console.log( "ComFavorItem.vue -> fn_closeIndexDetailPop" );
 
             this.showIndexDetailDialog =       false;
         },
 
         fn_closeEtpDetailPop : function( param ) {
-            console.log( "ComFavorItem.vue -> fn_closeEtpDetailPop" );
+            // console.log( "ComFavorItem.vue -> fn_closeEtpDetailPop" );
 
             this.showEtpDetailDialog    =   false;
         },

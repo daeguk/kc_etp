@@ -7,11 +7,6 @@
             {{ tab.name }}
         </v-tab>                
       </v-tabs>
-      <v-tabs-items v-model="activeTab">
-        <v-tab-item v-for="tab of tabs"  :key="tab.id" >
-        </v-tab-item>
-      </v-tabs-items>
-      <!--router-view></router-view-->
       <EtpOperControl 
         :activeTab="activeTab"
         @fn_setActiveTab="fn_setActiveTab"
@@ -46,15 +41,7 @@ export default {
   methods: {
     pageMove : function(tab_id, paramData) {
       var vm = this;
-
-// console.log("EtpOperMain : pageMove........");
-// console.log(paramData);
-      // this.$EventBus.$off('changeIndexInfo');
-      // this.$EventBus.$off('changeEtpAnalysisInfo');
-      // this.$EventBus.$off('changeEtpInfo');
       this.$EventBus.$emit("showList1", {tab_id:tab_id, paramData : ( ( paramData && Object.keys(paramData).length > 0 ) ? paramData : vm.firstData ) });
-      //this.activeTab = id + 1;
-      //this.$router.push({path:'/info/etpinfo/EtpMarketInfo', props:{activeTab:this.activeTab}});
     },
 
     /*

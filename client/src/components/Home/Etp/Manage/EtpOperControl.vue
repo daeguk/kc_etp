@@ -3,7 +3,7 @@
     <v-flex grow :class="className">
       <!-- ETP 운용정보 -->
       <EtpOperInfo
-        v-if="showEtpOerInfo == 0" 
+        v-if="showEtpOperInfo == 0" 
         :toggle="toggle"
         :state="state"
         @showDetail="showDetail" 
@@ -20,14 +20,14 @@
 
       <!-- 지수관리 -->
       <EtpOperIndex
-        v-if="showEtpOerInfo == 1" 
+        v-if="showEtpOperInfo == 1" 
         @showDetail="showDetail" 
         @fn_showDetailIndex="fn_showDetailIndex">
       </EtpOperIndex>
 
       <!-- PDF 관리 -->
       <EtpOperPdf
-        v-if="showEtpOerInfo == 2" 
+        v-if="showEtpOperInfo == 2" 
         :paramData="paramData"
         :reloadYn="reloadYn"
         :toggle="toggle"
@@ -160,7 +160,7 @@ export default {
       showEtpOerPdfQuick : false,
       showFaver : false,
 
-      showEtpOerInfo : 0,
+      showEtpOperInfo : 0,
       paramData : [],
       className: '',
       FaverClassName: '',
@@ -218,7 +218,7 @@ export default {
 
     this.$EventBus.$on('showList1', data => {
       this.className = "conWidth_100";
-      this.showEtpOerInfo                     =   data.tab_id;
+      this.showEtpOperInfo                     =   data.tab_id;
       this.showEtpDetailDialog                =   false;
       this.showEtpManageDetailDialog          =   true;
       this.showIndexDetailDialog              =   false;
@@ -233,7 +233,7 @@ export default {
       this.showEtpOperIndexInavCalcPop        =   false;
       this.showFaver                          =   false;
       this.paramData                          =   data.paramData;
-      if( this.showEtpOerInfo == 2 ) {
+      if( this.showEtpOperInfo == 2 ) {
         this.className      =   "conWidth_left";
         this.FaverClassName =   "conWidth_right";
         this.showEtpOerPdfQuick =   true;
@@ -247,7 +247,7 @@ export default {
 */
     });
   },
-  beforeDestroy: function() {
+  destroyed() {
     var vm = this;
     vm.$EventBus.$off('showList1');
   },
@@ -265,23 +265,18 @@ export default {
         if( this.activeTab != 2 ) {                
           this.showIndexDetailDialog = false;
           if (this.showEtpDetailDialog) {
-              this.$EventBus.$off('changeIndexInfo', paramData);
               this.$EventBus.$emit('changeEtpInfo', paramData);
           }
           this.showEtpDetailDialog = true;
           if( this.activeTab != 2 ) {
               this.showFaver =   true;
           }
-          this.showEtpOerInfo = -1;
+          this.showEtpOperInfo = -1;
         }else{
-          this.showEtpOerInfo = -1;
+          this.showEtpOperInfo = -1;
           this.$nextTick().then(() => {
-              if (this.showEtpOerPdfMain) {         
-                  this.$EventBus.$off('changeIndexInfo', paramData);
-                  this.$EventBus.$off('changeEtpInfo', paramData);
-              }
               this.showEtpOerPdfMain = true;
-              this.showEtpOerInfo = this.activeTab;
+              this.showEtpOperInfo = this.activeTab;
           });
         }
       } else if (gubun == '2') { 
@@ -289,12 +284,10 @@ export default {
         this.showEtpDetailDialog = false;
         // this.faverSize = 760;
         if (this.showIndexDetailDialog) {
-          this.$EventBus.$off('changeEtpAnalysisInfo', paramData);
-          this.$EventBus.$off('changeEtpInfo', paramData);
           this.$EventBus.$emit('changeIndexInfo', paramData);
         }
         this.showIndexDetailDialog = true;                
-        this.showEtpOerInfo = this.activeTab;
+        this.showEtpOperInfo = this.activeTab;
         this.showFaver = false;
       } 
       this.className = "conWidth_left";

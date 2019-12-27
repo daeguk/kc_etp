@@ -116,7 +116,6 @@ export default {
         this.showEtpInfoPdfDetail = false;
         
         if (this.showEtpDetailDialog) {
-            this.$EventBus.$off('changeIndexInfo', paramData);
             this.$EventBus.$emit('changeEtpInfo', paramData);
         }
         this.showEtpDetailDialog = true;
@@ -133,7 +132,6 @@ export default {
         this.showEtpInfoPdfDetail = false;
 
         if (this.showIndexDetailDialog) {
-          this.$EventBus.$off('changeEtpInfo', paramData);
           this.$EventBus.$emit('changeIndexInfo', paramData);
         }
         

@@ -1,39 +1,53 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-tabs>
-<!--      
-  to 를 쓰면, tab에 있는 under-bar 가 반응하지 않음
-        <v-tab v-for="tab of tabs" :key="tab.id" :to="tab.route">
--->        
-        <v-tab v-for="tab of tabs" :key="tab.id" @click="pageMove(tab.route)">
-          {{tab.name}}
+      <v-tabs slot="extension" v-model="activeTab" align-with-title light>
+        <v-tabs-slider color="#1e99e8"></v-tabs-slider>
+        <v-tab v-for="tab of tabs" :key="tab.id" @click="pageMove(tab.id)" >
+            {{ tab.name }}
         </v-tab>                
       </v-tabs>
-      <router-view></router-view>
+      <LpOperControl 
+        @fn_setActiveTab="fn_setActiveTab">
+      </LpOperControl>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import LpOperControl from  '@/components/Home/Lp/Manage/LpOperControl.vue'
 
 export default {
   data() {
     return {
+      activeTab: 0,
       tabs: [
-        {id: 0, name: "LP 운용정보", route: '/lp/manage/lpOperInfo'},
-        // {id: 1, name: "LP 운용정보1", route: '/lp/manage/lpOperInfo'},
+        {id: 0, name: "LP 운용정보"},
       ],
     };
   },
   components: {
+    LpOperControl,
+  },
+  created() {
+    console.log("LpOperMain.......created.........");
+
+  },
+  destroyed() {
+    console.log("LpOperMain.......destroyed.........");
   },
   mounted: function() {
+    this.activeTab = 0;
+    this.pageMove(0);
   },
   methods: {
-    pageMove: function(rpath) {
-      // console.log("path : " + rpath) ;
-      this.$router.push({path:rpath});
+    pageMove : function(tab_id) {
+      console.log("pageMove : " + tab_id);
+      this.$EventBus.$emit("showList2", {tab_id:tab_id, paramData : {}});
+    },
+
+    fn_setActiveTab : function(activeTab) {
+      this.activeTab = activeTab;
     }
   }
 };

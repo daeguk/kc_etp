@@ -157,15 +157,18 @@ export default {
     this.init(false);
   },
   created: function() {
+console.log("EtpManageDetail...........created..........")  ;
     var vm = this;
     vm.$EventBus.$on('changeEtpInfo', data => {
+console.log("changeEtpInfo..........")  ;
       vm.toggle_one = '1M';
       vm.init(true);
     });
   },
   updated: function() {
   },
-  beforeDestory: function() {
+  destroyed: function() {
+console.log("EtpManageDetail...........destoryed..........")  ;
     this.$EventBus.$off('changeEtpInfo');
   },
   
@@ -204,12 +207,12 @@ export default {
       * 2019-04-25  bkLove(촤병국)
       */
     fn_getEtpBasic: function() {
-        // console.log("fn_getEtpBasic");
+        console.log("fn_getEtpBasic..................");
         var vm = this;
         axios.post(Config.base_url + "/user/etp/getEtpBasic", {
             data:   vm.basicData
         }).then(function(response) {
-            // console.log(response);
+            console.log(response);
             if (response.data) {
                 
                 var msg = ( response.data.msg ? response.data.msg : "" );
@@ -227,7 +230,6 @@ export default {
                 vm.indexBasic.F16257        =   vm.etpBasic.F16257;
                 vm.indexBasic.LARGE_TYPE    =   vm.indexBasic.large_type;
                 vm.indexBasic.MARKET_ID     =   vm.indexBasic.market_id;
-
 
                 vm.showEtpManageDetailDialogBySub   =   true;
             }

@@ -81,14 +81,13 @@
         </LpOperInfoQuick>
       </v-flex>       
     </v-layout>
-    <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
+  <EtpLpModal v-if="EtpLpModalFlag" :etpInfo="etpBasic" @closeEtpLpModal="closeEtpLpModal"></EtpLpModal>
   </v-container>
 </template>
 
 <script>
 import $      from 'jquery';
 import dt      from 'datatables.net';
-import buttons from 'datatables.net-buttons';
 import util       from "@/js/util.js";
 
 import Config from '@/js/config.js';
@@ -101,9 +100,8 @@ var table01 = null;
 var table02 = null;
 
 export default {
-  props : [ "toggle", "state" ],
+  props : ['toggle'],
   components: {
-    //indexDetailrtmenupop: indexDetailrtmenupop
     LpOperInfoQuick,
     EtpLpModal,
   },
@@ -133,20 +131,18 @@ export default {
       EtpLpModalFlag: false,
     };
   },
+  created() {
+    // console.log("LpOperInfo.......created.........");
+
+  },
+  destroyed() {
+    // console.log("LpOperInfo.......destroyed.........");
+  },
+
   mounted: function() {
     var vm = this;
 
-    if( vm.state ) {
-      vm.stateInfo.pageState  =   vm.state.pageState;
-      vm.stateInfo.gubun  =   vm.state.gubun;
-    }
-    if( vm.toggle ) {
-      if( vm.toggle.arrCustomizeColumn && vm.toggle.arrCustomizeColumn.length > 0 ) {
-        vm.arrCustomizeColumn   =   vm.toggle.arrCustomizeColumn;
-      }
-    }
     if( typeof Config.showLpSpreadTooltip1 != "undefined" ) {
-// console.log( ">>>>>>>>>>>>> $$$$$$$$$$$$ Config.showLpSpreadTooltip1=", Config.showLpSpreadTooltip1 );
       vm.showLpSpreadTooltip1   =   Config.showLpSpreadTooltip1;
     }
 
@@ -184,7 +180,7 @@ export default {
       });
 
       // 테이블별 이벤트
-      $('#table02 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo],button[id=btnPdf]', function () {
+      $('#table02 tbody').on('click', 'button[id=btnInav],button[id=btnEtpInfo]', function () {
         var table = $('#table02').DataTable();
         var data = table.row($(this).parents('tr')).data();
         var rowInx = table.row($(this)).index();
@@ -213,9 +209,6 @@ export default {
             break;
           case    'btnEtpInfo'    :
             vm.$emit('showDetail', 1, data );
-            break;
-          case    'btnPdf'    :
-            vm.$emit('fn_pageMove', btnId, data);
             break;
         }
         // console.log("########## EtpOperInfo.vue -> pageMove END ############");
@@ -250,7 +243,6 @@ export default {
           table01.clear().draw();
       }
     }
-
     vm.$root.progresst.open();
     util.axiosCall(
       {"url" : Config.base_url + "/user/etp/getEtpOperInfo"
@@ -266,7 +258,7 @@ export default {
             vm.result_cnt   =   0;
             if (!response.data.result) {
               if( msg ) {
-                vm.$root.confirmt.open('확인', msg, {}, 1);
+                vm.$root.confirmt.open('확인', msg,{},1);
                 return  false;
               }
             }
@@ -279,9 +271,13 @@ export default {
                 vm.etpBasic     =   table01.rows().data()[0];
               }
 //            vm.etpBasic     =   dataList[0];
-              vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
+
               vm.result_cnt   =   util.formatInt( dataList.length );
-              vm.$emit( "fn_setFirstData", vm.etpBasic );
+
+              if( typeof vm.etpBasic != "undefined" ) {
+                vm.fmt_F12506   =   vm.etpBasic.fmt_F12506;
+                vm.$emit( "fn_setFirstData", vm.etpBasic );
+              }
             }
             vm.$emit( "fn_setStateInfo", vm.stateInfo );
           }
@@ -292,7 +288,7 @@ export default {
       }, function(error) {
         vm.$root.progresst.close();
         if( error ) {
-          vm.$root.confirmt.open('확인', msg, {}, 4);
+          vm.$root.confirmt.open('확인', error ,{},4);
         }                        
       }
     );
@@ -401,17 +397,17 @@ export default {
 
 
           // 테이블별 이벤트
-          $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnSpread],button[id=btnEtpInfo],button[id=btnPdf],button[id=btnLpSpreadClose]', function () {
+          $('#table01 tbody').on('click', 'button[id=btnInav],button[id=btnSpread],button[id=btnEtpInfo],button[id=btnLpSpreadClose]', function () {
 
               var table = $('#table01').DataTable();
               var data = table.row($(this).parents('tr')).data();
               var rowInx = table.row($(this)).index();
               var btnId   =   $(this).attr('id');
 
-              console.log("########## EtpOperInfo.vue -> pageMove START ############");
-              console.log( "data.F16012=[" + data.F16012 + "] /* 국제표준코드  */" );
-              console.log( "data.F16257=[" + data.F16257 + "] /* ETP기초지수코드  */" );
-              console.log( "data.F34239=[" + data.F34239 + "] /* ETP기초지수MID  */" );
+              // console.log("########## EtpOperInfo.vue -> pageMove START ############");
+              // console.log( "data.F16012=[" + data.F16012 + "] /* 국제표준코드  */" );
+              // console.log( "data.F16257=[" + data.F16257 + "] /* ETP기초지수코드  */" );
+              // console.log( "data.F34239=[" + data.F34239 + "] /* ETP기초지수MID  */" );
 
               vm.paramData.F16012         =   data.F16012;        /* 국제표준코드  */
               vm.paramData.F16257         =   data.F16257;        /* ETP기초지수코드  */
@@ -436,8 +432,8 @@ export default {
                               break;
 
                   case    'btnSpread'    :
-                    console.log("btnSpread..........");
-                    console.log(data);
+                    // console.log("btnSpread..........");
+                    // console.log(data);
                     vm.openEtpLpModal(data);
                     break;
 
@@ -463,7 +459,7 @@ export default {
 
               }
               
-              console.log("########## EtpOperInfo.vue -> pageMove END ############");
+              // console.log("########## EtpOperInfo.vue -> pageMove END ############");
           });                
       },
 
@@ -475,9 +471,9 @@ export default {
           
           var vm = this;
 
-          console.log("########## EtpOperInfo.vue -> fn_setInavData START ############");
-          console.log("# paramData");
-          console.log( paramData );
+          // console.log("########## EtpOperInfo.vue -> fn_setInavData START ############");
+          // console.log("# paramData");
+          // console.log( paramData );
 
           /* iNAV 산출현황 버튼이 체크된 경우에는 iNAV 정보를 노출한다. */
           if( paramData && paramData.toggleINav ) {
@@ -493,7 +489,7 @@ export default {
 
           vm.$emit( "fn_setInavData", paramData, vm.stateInfo );
 
-          console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
+          // console.log("########## EtpOperInfo.vue -> fn_setInavData END ############");
       },
 
       /*
@@ -504,9 +500,9 @@ export default {
 
           var vm = this;
 
-          console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData START ############");
-          console.log("# paramData");
-          console.log( paramData );
+          // console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData START ############");
+          // console.log("# paramData");
+          // console.log( paramData );
 
           /* ETP Performance 버튼이 체크된 경우에는 iNAV 정보를 노출한다. */
           if( paramData && paramData.toggleEtpPerformance ) {
@@ -522,20 +518,21 @@ export default {
 
           vm.$emit( "fn_setEtpPerformanceData", paramData, vm.stateInfo );
 
-          console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData END ############");
+          // console.log("########## EtpOperInfo.vue -> fn_setEtpPerformanceData END ############");
       },
 
       fn_setEtpLpspread( paramData ) {
 
           var vm = this;
 
-          console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread START ############");
+          // console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread START ############");
           console.log("# paramData");
           console.log( paramData );
 
           /* ETP Lpspread 버튼이 체크된 경우에는 iNAV 정보를 노출한다. */
+          /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
           if( paramData && paramData.toggleEtpLpspread ) {
-              vm.stateInfo.pageState  =  'lpspread';              /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
+              vm.stateInfo.pageState  =  'lpspread';              
           }
           /* ETP Performance 버튼이 두번 눌러 체크해제된 경우 etp 기본 정보를 노출한다.  */
           else{
@@ -547,7 +544,7 @@ export default {
 
           vm.$emit( "fn_setEtpLpspread", paramData, vm.stateInfo );
 
-          console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread END ############");
+          // console.log("########## EtpOperInfo.vue -> fn_setEtpLpspread END ############");
       },
 
       /*
@@ -974,44 +971,10 @@ export default {
                               /* ETF 상세정보 */
                               graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnEtpInfo", "btnContent" : "equalizer", "btnSpanContent" : "ETP정보" } );
 
-                              /* ETF 인 경우에만 PDF 아이콘 노출 - ETP상품구분코드(1:ETF(투자회사형),2:ETF(수익증권형),3:ETN,4:손실제한형ETN) */
-                              if( row.F16493 == "1" || row.F16493 == "2" ) {
-
-                                  /* PDF 정보 */
-                                  graphContent    +=  vm.fn_getGraphInfo( { "btnId" : "btnPdf", "btnContent" : "pie_chart", "btnSpanContent" : "PDF관리" } );
-                              }
-
                               return  graphContent;
                           }
                   },                
 
-/*            
-              {       'name' : 'F33929'   
-                  ,   "render": function ( data, type, row ) {
-                          if (data) {
-                              return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
-                          } else {
-                              return "";
-                          }
-                      }
-              },
-              {       'name' : 'F15301'             
-                  ,   "render": function ( data, type, row ) {
-                          if (data) {
-                              return "<img src='/assets/img/icon_bar01.png'><span>&nbsp;&nbsp;&nbsp;" + data + "</span>";
-                          } else {
-                              return "";
-                          }
-                      }            
-              },
-              {       'name' : 'F03329'             
-                  ,   "render": function ( data, type, row ) {
-                              let htm = "<span>";
-                              htm += "           <b>"+data+"</b>";
-                              return htm;
-                      }
-              },
-*/            
           ];
 
           vm.stateInfo.totWidth    =   0;
@@ -1059,11 +1022,12 @@ export default {
       },
       showDetail: function(gubun, paramData) {      
           var vm = this;
-          vm.$emit( "showDetail", gubun, paramData );
+
+          vm.$emit("showDetail", gubun, paramData);
       },
       fn_showDetailIndex( gubun, paramData) {
           var vm = this;
-          vm.$emit( "fn_showDetailIndex", gubun, paramData );
+          vm.$emit("fn_showDetailIndex", gubun, paramData);
       },
       /*
         *  엑셀을 다운로드 한다.
@@ -1229,7 +1193,7 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.v-menu__content  {box-shadow: none !important;}
+  .v-menu__content{box-shadow: none !important;}
 </style>
+

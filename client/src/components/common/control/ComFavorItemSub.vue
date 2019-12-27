@@ -672,18 +672,18 @@ export default {
 
             var vm = this;
 
-            console.log( "ComFavorItem.vue -> fn_detailPop" );
-            console.log( param );
+            // console.log( "ComFavorItem.vue -> fn_detailPop" );
+            // console.log( param );
 
             vm.paramData    =   param;
 
             /* ETP 인 경우 */
             if( param.GUBUN == "1" ) {
 
-                console.log("########## ComFavorItemSub.vue -> fn_detailPop ############");
-                console.log( "param.F16012=[" + param.F16012 + "] /* 국제표준코드  */" );
-                console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
-                console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
+                // console.log("########## ComFavorItemSub.vue -> fn_detailPop ############");
+                // console.log( "param.F16012=[" + param.F16012 + "] /* 국제표준코드  */" );
+                // console.log( "param.F16257=[" + param.F16257 + "] /* ETP기초지수코드  */" );
+                // console.log( "param.F34239=[" + param.F34239 + "] /* ETP기초지수MID  */" );
 
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */
@@ -699,10 +699,10 @@ export default {
             /* 인덱스인 경우 */
             else if( param.GUBUN == "2" ) {
 
-                console.log("########## ComFavorItemSub.vue -> fn_detailPop ############");
-                console.log( "param.F16257=["       + param.F16257     + "]     /* 지수코드  */" );
-                console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
-                console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
+                // console.log("########## ComFavorItemSub.vue -> fn_detailPop ############");
+                // console.log( "param.F16257=["       + param.F16257     + "]     /* 지수코드  */" );
+                // console.log( "param.LARGE_TYPE=["   + param.LARGE_TYPE  + "]    /* 지수대분류(FNGUIDE, KRX, KIS, KAP)  */" );
+                // console.log( "param.MARKET_ID=["    + param.MARKET_ID   + "]    /* 시장 ID  */" );
 
                 vm.paramData.F16012     =   param.F16012;           /* 국제표준코드 */
                 vm.paramData.F16257     =   param.F16257;           /* ETP기초지수코드 */

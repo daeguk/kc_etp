@@ -75,7 +75,6 @@ export default {
                 vm.paramData = paramData;
                 vm.showIndexDetailDialog = false;
                 if (vm.showEtpDetailDialog) {
-                    vm.$EventBus.$off('changeIndexInfo', paramData);
                     vm.$EventBus.$emit('changeEtpInfo', paramData);
                 }
                 vm.showEtpDetailDialog = true;                
@@ -87,7 +86,6 @@ export default {
                 vm.showEtpDetailDialog = false;
 
                 if (vm.showIndexDetailDialog) {
-                    vm.$EventBus.$off('changeEtpInfo', paramData);
                     vm.$EventBus.$emit('changeIndexInfo', paramData);
                 }
                 

@@ -314,6 +314,8 @@ export default {
       *  2019-05-03  bkLove(촤병국)
       */
     showDetail: function(gubun, paramData) {
+
+      console.log("EtpOperInfoQuick..............showDetail.....");
       this.$emit( "showDetail", gubun, paramData );
     },
 

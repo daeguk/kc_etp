@@ -3,20 +3,6 @@
     <v-layout row wrap>
       <v-card flat class="right_menu_w2 ver3">
         <v-list class="pt-0" dense>
-          <v-list-tile-content class="rightmenu_con">
-            <v-subheader>지수 조치 현황
-              <v-btn
-                small
-                depressed
-                outline
-                color="primary"
-                @click="fn_showDetailIndex"
-                :disabled = "fix_info.fix_disabled"
-              >내역확인</v-btn>
-            </v-subheader>
-            <!--p class="text_red">
-                <v-icon small>arrow_right</v-icon>{{ fix_info.fix_msg }}
-            </p-->
           </v-list-tile-content>
             <v-list-tile-content class="rightmenu_con case2 Oper_menu">
               <v-subheader>Operation Tools</v-subheader>
@@ -52,26 +38,6 @@
                         :class="( toggleEtpLpspread ? 'border_b select' : 'border_b' )"
                         @click="fn_setEtpLpspread"
                         v-model="toggleEtpLpspread">
-                        <!--
-                        <v-list-tile-avatar>
-                          <div class="text-xs-center">
-                            <v-menu v-model="showLpSpreadTooltip" :nudge-width="80" offset-x left class="arrow_menu">
-                              <template v-slot:activator="{ on }">
-                                <div :class="( toggleEtpLpspread ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon9"></span></div>
-                              </template>
-                              <v-layout>
-                                <v-flex>
-                                  <div class="arrow_box">
-                                  <span>신규 서비스</span>
-                                  <v-btn flat @click="fn_closePdfTooltip()" icon small dark><v-icon>close</v-icon></v-btn>
-                                  </div>
-                                </v-flex>
-                                <v-flex class="arrow_flex"></v-flex>
-                              </v-layout>
-                            </v-menu>
-                          </div>
-                        </v-list-tile-avatar>
-                        -->
                       <v-list-tile-avatar>
                         <div :class="( toggleEtpLpspread ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon9"></span></div>
                       </v-list-tile-avatar>
@@ -130,6 +96,9 @@
     </v-layout>
   </v-container>
 </template>
+<style scoped>
+.v-menu__content{box-shadow: none !important;}
+</style>
 
 <script>
 import util       from "@/js/util.js";
@@ -311,9 +280,15 @@ export default {
       *  2019-05-03  bkLove(촤병국)
       */
     showDetail: function(gubun, paramData) {
+
+      console.log("EtpOperInfoQuick..............showDetail.....");
       this.$emit( "showDetail", gubun, paramData );
     },
 
+    /*
+      *  메시지창 정보가 필요한 경우 해당 정보를 보여준다.
+      *  2019-05-03  bkLove(촤병국)
+      */        
     fn_closePdfTooltip() {
       this.showLpSpreadTooltip = false; 
       Config.showLpSpreadTooltip = false;
@@ -322,6 +297,3 @@ export default {
 };
 </script>
 
-<style scoped>
-  .v-menu__content{box-shadow: none !important;}
-</style>

@@ -29,8 +29,8 @@ import  EtpContractMain                     from './components/Home/Etp/Contract
 import  EtpManageDetail                     from './components/Home/Etp/Manage/EtpManageDetail.vue';
 
 // LP
-import  LpOperMain                         from './components/Home/Lp/Manage/LpOperMain.vue'                         /* LP 운용관리 메인 */
-import  LpOperInfo                         from "./components/Home/Lp/Manage/LpOperInfo.vue";                        /* LP 운용정보 */
+import  LpOperMain                  from './components/Home/Lp/Manage/LpOperMain.vue'                         /* LP 운용관리 메인 */
+import  LpOperInfo                  from "./components/Home/Lp/Manage/LpOperInfo.vue";                        /* LP 운용정보 */
 
 // simulation
 import  SimulationControl           from '@/components/Home/Simulation/SimulationControl.vue'
@@ -50,52 +50,62 @@ export const routes = [
     component: Home,
     children: [        
       // MARKET INFO
-      { path : 'info/etpinfo',
+      { name : 'etpInfo',
+        path : 'info/etpinfo',
         component: EtpInfoMain,
         meta: {
             requiresAuth: false
         },
       },
-      { path : 'info/indexinfo',
+      { name : 'indexInfo',
+        path : 'info/indexinfo',
         component: IndexInfoMain,
         children: [
-          { path: 'krxindexlist',
+          { name : 'krxindexlist',
+            path: 'krxindexlist',
             component: KrxIndexList
           },
-          { path: 'fngindexlist',
+          { name : 'fngindexlist',
+            path: 'fngindexlist',
             component: FngIndexList
           },
         ]
       },
-      { path : 'sample/test',
+      { name : 'sampleTest',
+        path : 'sample/test',
         component: sampleChart,
       },
-      { path : 'sample/upload',
+      { name : 'sampleUpload',
+        path : 'sample/upload',
         component: sampleUpload,
       },
       // INDEX
-      { path : 'index/manage',
+      { name : 'indexManage',
+        path : 'index/manage',
         component: IndexManageMain,
         meta: {
           requiresAuth: true,
           requiresType: ['0003', '0005']
         },
         children: [
-          { path : 'indexSummary',
+          { name : 'indexSummary',
+            path : 'indexSummary',
             component: IndexMainSummary,
             meta: {
               requiresAuth: true,
               requiresType: ['0003', '0005']
             },
           }, 
-          { path : 'indexList',
+          { name : 'indexList',
+            path : 'indexList',
             component: IndexMainIndexList,
             meta: {
               requiresAuth: true,
               requiresType: ['0003', '0005']
             },
           }, 
-          { path : 'indexDetailList',
+          { name : 'indexDetailList',
+            path : 'indexDetailList',
             component: IndexMainIndexDetailList,
             meta: {
               requiresAuth: true,
@@ -104,14 +114,16 @@ export const routes = [
           }, 
         ]
       },
-      { path : '/index/manage/IndexDetailInfo',
+      { name : 'IndexDetailInfo',
+        path : '/index/manage/IndexDetailInfo',
         component: IndexDetailInfo,
         meta: {
           requiresAuth: true,
           requiresType: ['0003', '0005']
         },
       },
-      { path : '/index/register',
+      { name : 'indexRegister',
+        path : '/index/register',
         component: IndexRegisterMain,
         meta: {
           requiresAuth: true,
@@ -120,28 +132,32 @@ export const routes = [
       },
 
       //  ETP 운용관리
-      { path : 'etp/manage',
+      { name : 'etpOperMain',
+        path : 'etp/manage',
         component: EtpOperMain,                         /* ETP 운용관리 메인 */
         meta: {
           requiresAuth: true,
           requiresType: ['0001', '0002', '0004', '0005']
         },
         children: [
-          { path : 'etpOperInfo',
+          { name : 'etpOperInfo',
+            path : 'etpOperInfo',
             component: EtpOperInfo,                 /* ETP 운용정보 */
             meta: {
               requiresAuth: true,
               requiresType: ['0001', '0002', '0004', '0005']
             },
           }, 
-          { path : 'etpOperIndex',
+          { name : 'etpOperIndex',
+            path : 'etpOperIndex',
             component: EtpOperIndex,                /* 지수관리 */
             meta: {
               requiresAuth: true,
               requiresType: ['0001', '0002', '0004', '0005']
             },
           }, 
-          { path : 'etpOperPdf',
+          { name : 'etpOperPdf',
+            path : 'etpOperPdf',
             component: EtpOperPdf,                  /* PDF 관리 */
             meta: {
               requiresAuth: true,
@@ -150,35 +166,41 @@ export const routes = [
           }, 
         ]            
       },
-      { path : 'etp/register',
+      { name : 'etpRegister',
+        path : 'etp/register',
         component: EtpRegisterMain,
         meta: {
           requiresAuth: true,
           requiresType: ['0001', '0002', '0004', '0005']
         },
       },
-      { path : 'etp/contract',
+      { name : 'etpContract',
+        path : 'etp/contract',
         component: EtpContractMain,
         meta: {
           requiresAuth: true,
           requiresType: ['0001', '0002', '0004', '0005']
         },
       },
-      { path : 'etp/etpManageDetail',
-        component: EtpManageDetail,
-        meta: {
-          requiresAuth: true,
-          requiresType: ['0001', '0002', '0004', '0005']
-        },
-      },
+      // route 처리 하려면, props 전달방식 변경해야함.
+      // { name : 'etpManageDetail',
+      //   path : 'etp/etpManageDetail',
+      //   component: EtpManageDetail,
+      //   meta: {
+      //     requiresAuth: true,
+      //     requiresType: ['0001', '0002', '0004', '0005']
+      //   },
+      // },
       //  LP 운용관리
-      { path : 'lp/manage',
+      { name : 'lpOperMain',
+        path : 'lp/manage',
         component: LpOperMain,                         /* LP 운용관리 메인 */
         meta: {
           requiresAuth: false,
         },
         children: [
-          { path : 'lpOperInfo',
+          { name : 'lpOperInfo',
+            path : 'lpOperInfo',
             component: LpOperInfo,                 /* LP 운용정보 */
             meta: {
               requiresAuth: false,
@@ -188,31 +210,36 @@ export const routes = [
       },
 
       //  시뮬레이션
-      { path : 'simulation/simulationControl',
+      { name : 'simulationControl',
+        path : 'simulation/simulationControl',
         component: SimulationControl,
         meta: {
           requiresAuth: false,
         },
       },        
-      { path : 'simulation/simulationList',
+      { name : 'simulationList',
+        path : 'simulation/simulationList',
         component: SimulationList,
         meta: {
           requiresAuth: false,
         },
       },
-      { path : 'simulation/simulation',
+      { name : 'simulation',
+        path : 'simulation/simulation',
         component: Simulation,
         meta: {
           requiresAuth: false,
         },
       },
-      { path : 'simulation/simulationResult',
+      { name : 'simulationResult',
+        path : 'simulation/simulationResult',
         component: SimulationResult,
         meta: {
           requiresAuth: false,
         },
       },
-      { path : 'simulation/SimulationTimeSeriesUpload',
+      { name : 'SimulationTimeSeriesUpload',
+        path : 'simulation/SimulationTimeSeriesUpload',
         component: SimulationTimeSeriesUpload,
         meta: {
           requiresAuth: false,
@@ -220,7 +247,8 @@ export const routes = [
       },
 
       //운용지원
-      { path : 'OperSupport/OperSupportControl',
+      { name : 'OperSupportControl',
+        path : 'OperSupport/OperSupportControl',
         component: OperSupportControl,
         meta: {
             requiresAuth: false,
@@ -230,11 +258,13 @@ export const routes = [
   },
 
   // MOBILE
-  { path : '/mobile',
+  { name : 'mobileHome',
+    path : '/mobile',
     component: MobileHome,    
     children: [        
       // MARKET INFO
-      { path : 'info/etpinfo',
+      { name : 'mobileEtpInfo',
+        path : 'info/etpinfo',
         component: EtpInfoMain,
         meta: {
             requiresAuth: false

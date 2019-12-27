@@ -80,11 +80,15 @@ export default {
             vm.fn_getEtpOperIndex();
         });
     },
-    created: function() {},
-    beforeDestory: function() {},
-    destroyed: function() {
-      // console.log("destoyed...... EtpOperIndex......");
-    },
+  created() {
+    // console.log("EtpOperIndex.......created.........");
+  },
+  beforeDestroy() {
+    // console.log("EtpOperIndex.......destroyed.........");
+  },
+  destroyed() {
+    // console.log("EtpOperIndex.......destroyed.........");
+  },
 
     methods: {
         /*
