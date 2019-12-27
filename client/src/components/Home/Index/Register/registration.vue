@@ -618,6 +618,17 @@ export default {
 
                     if( vm.$refs.form && typeof vm.$refs.form.reset != "undefined" ) {
                         vm.$refs.form.reset();
+
+                        vm.formData                 =   new FormData(); /* 지수방법론 파일 선택시 */
+                        vm.form.show_method_file    =   null;           /* 지수방법론 파일명 */
+                        vm.form.method_file_id      =   -1;             /* 지수방법론 파일 ID */
+
+                        vm.form.duplCheckResult     =   false;          /* 중복체크 결과 */
+                        vm.form.req_content         =   "";             /* 요청사항 */
+
+                        vm.form.arr_jisu_inst       =   [];             /* 선택된 기관 정보 */
+
+                        vm.form.jisu_file_id        =   -1;             /* 소급지수 파일 ID */                        
                     }
                 });
             }
