@@ -44,11 +44,13 @@
                     </v-tab-item>
                     <v-tab-item>
                       <etfList 		v-if="showTab == 2"
+                                    :results="etfList" 
 
 					  				@selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
                       <etnList 		v-if="showTab == 3"
+                                    :results="etnList" 
 
 					  				@selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
@@ -91,6 +93,8 @@ export default {
 
         ,   kospiList : []
         ,   kosdaqList : []
+        ,   etfList : []
+        ,   etnList : []
 
 		,	search		: ""
         ,   showTab     :   0
@@ -112,7 +116,11 @@ export default {
 
     this.dialog = true;
 
+    /* 종목코드를 검색한다. */
     this.fn_getAllKspjongBasic().then( function(e) {
+        /*  ETF, ETN 정보를 조회한다. */
+        return  vm.fn_getEtpMast();
+    }).then( function( e) {
         vm.fn_pageMove( 0 );
     });
   },
@@ -158,6 +166,9 @@ export default {
     */
     async fn_getAllKspjongBasic() {
         var vm = this;
+
+        vm.kospiList        =   [];
+        vm.kosdaqList       =   [];
 
         return  await new Promise(function(resolve, reject) {
             vm.$root.progresst.open();
@@ -205,9 +216,68 @@ export default {
 
         }).catch( function(e1) {
             console.log( e1 );
-            resolve( { result : false } );
         });
-    },    
+    },
+
+    /*
+    * ETF, ETN 정보를 조회한다.
+    * 2019-07-26  bkLove(촤병국)
+    */
+    async fn_getEtpMast() {
+      var vm = this;
+
+        vm.etfList          =   [];
+        vm.etnList          =   [];
+
+        return  await new Promise(function(resolve, reject) {
+            vm.$root.progresst.open();
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/marketinfo/getEtpMast"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   async function(response) {
+
+                        try{
+                            vm.$root.progresst.close();
+                            if (response.data) {
+                                var results = response.data.results;
+
+                                results.forEach( function(item, index, array) {
+
+                                    if(item.F16493 == '1' || item.F16493 == '2') {
+                                        vm.etfList.push(item);
+                                    }else {
+                                        vm.etnList.push(item);
+                                    }
+                                })
+                            }
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            vm.$root.progresst.close();
+                            console.log( "error", ex );
+
+                            resolve( { result : false } );
+                        }
+                    }
+                ,   function(error) {
+                        vm.$root.progresst.close();
+                        if( error ) {
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
+                        }
+
+                        resolve( { result : false } );
+                    }
+            );
+
+        }).catch( function(e1) {
+            console.log( e1 );
+        });
+    },     
 
 	fn_filterData() {
 		var vm = this;

@@ -36,6 +36,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var jisu_grid = null;
 export default {
+  props: [ "results" ],
   data () {
     return {
       search: '',       
@@ -73,11 +74,11 @@ export default {
     getInfoIndexList: function() {
       let tmp = [];
 // console.log("getInfoIndexList...................");
-      tmp = this.$store.state.indexmast;
-      this.results = tmp.filter(function(o) {
-        if(o.large_type == 'KRX' || o.large_type == 'FNGUIDE') return true;
-        else return false;
-      });
+//      tmp = this.$store.state.indexmast;
+    //   this.results = tmp.filter(function(o) {
+    //     if(o.large_type == 'KRX' || o.large_type == 'FNGUIDE') return true;
+    //     else return false;
+    //   });
       if (!$.fn.dataTable.isDataTable( '#jisu_grid' ) ) {
         jisu_grid = $('#jisu_grid').DataTable( {
           "processing": true,

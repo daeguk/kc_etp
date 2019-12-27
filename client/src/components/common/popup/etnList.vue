@@ -36,7 +36,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var etn_grid = null;
 export default {
-  props : [ ],
+  props: [ "results" ],
   data () {
     return {
       search: '',
@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     getEtnList: function() {
-      this.results = this.$store.state.etnmast;
+      // this.results = this.$store.state.etnmast;
       // console.log("getEtnList.....................");
       // console.log(this.results);
       if (!$.fn.dataTable.isDataTable( '#etn_grid' ) ) {

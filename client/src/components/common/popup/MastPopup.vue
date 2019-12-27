@@ -31,16 +31,27 @@
 
                   <v-tabs-items v-model="activeTab">
                     <v-tab-item>
-                      <etfList      v-if="showTab == 0"    @selectedItem="getSelectedItem"></etfList>
+                      <etfList      v-if="showTab == 0"    
+                                    :results="etfList"
+
+                                    @selectedItem="getSelectedItem"></etfList>
                     </v-tab-item>
                     <v-tab-item>
-                      <etnList      v-if="showTab == 1"    @selectedItem="getSelectedItem"></etnList>
+                      <etnList      v-if="showTab == 1"    
+                                    :results="etnList"
+                                    
+                                    @selectedItem="getSelectedItem"></etnList>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListDom v-if="showTab == 2"   @selectedItem="getSelectedItem"></indexListDom>
+                      <indexListDom v-if="showTab == 2"   
+                                    :results="domainIndexList"
+                                    @selectedItem="getSelectedItem"></indexListDom>
                     </v-tab-item>
                     <v-tab-item>
-                      <indexListAll v-if="showTab == 3"   @selectedItem="getSelectedItem"></indexListAll>
+                      <indexListAll v-if="showTab == 3"   
+                                    :results="indexListAll"
+
+                                    @selectedItem="getSelectedItem"></indexListAll>
                     </v-tab-item>
                     </v-tabs-items>
                 </v-flex>
@@ -58,6 +69,8 @@ import etfList from "./etfList.vue";
 import etnList from "./etnList.vue";
 import indexListDom from "./indexListDom.vue";
 import indexListAll from "./indexListAll.vue";
+
+import util       from "@/js/util.js";
 import Config from '@/js/config.js'
 export default {
   props: [],
@@ -71,6 +84,12 @@ export default {
                 { id: 3, name: "INDEX(전체)"     },
             ]
         ,   dialog: false
+
+        ,   etfList : []
+        ,   etnList : []        
+        ,   domainIndexList : []
+        ,   forIndexList : []
+        ,   indexListAll : []
 
         ,   search		: ""
         ,   showTab     :   0
@@ -92,7 +111,13 @@ export default {
 
     this.dialog = true;
 
-    vm.fn_pageMove( 0 );
+    /*  ETF, ETN 정보를 조회한다. */
+    this.fn_getEtpMast().then( function(e) {
+        /* INDEX 정보를 조회한다. */
+        return  vm.fn_getIndexMast();
+    }).then( function( e) {
+        vm.fn_pageMove( 0 );
+    });    
   },
   methods: {
     getSelectedItem: function(sel_items, gubun) {
@@ -127,6 +152,143 @@ export default {
 
 		vm.fn_filterData();
     },
+
+    /*
+    * ETF, ETN 정보를 조회한다.
+    * 2019-07-26  bkLove(촤병국)
+    */
+    async fn_getEtpMast() {
+      var vm = this;
+
+        vm.etfList          =   [];
+        vm.etnList          =   [];
+
+        return  await new Promise(function(resolve, reject) {
+            vm.$root.progresst.open();
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/marketinfo/getEtpMast"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   async function(response) {
+
+                        try{
+                            vm.$root.progresst.close();
+                            if (response.data) {
+                                var results = response.data.results;
+
+                                results.forEach( function(item, index, array) {
+
+                                    if(item.F16493 == '1' || item.F16493 == '2') {
+                                        vm.etfList.push(item);
+                                    }else {
+                                        vm.etnList.push(item);
+                                    }
+                                });
+                            }
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            vm.$root.progresst.close();
+                            console.log( "error", ex );
+
+                            resolve( { result : false } );
+                        }
+                    }
+                ,   function(error) {
+                        vm.$root.progresst.close();
+                        if( error ) {
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
+                        }
+
+                        resolve( { result : false } );
+                    }
+            );
+
+        }).catch( function(e1) {
+            console.log( e1 );
+        });
+    },     
+
+
+    /*
+    * INDEX 정보를 조회한다.
+    * 2019-07-26  bkLove(촤병국)
+    */
+    async fn_getIndexMast() {
+      var vm = this;
+
+        vm.domainIndexList      =   [];
+        vm.forIndexList         =   [];
+        vm.indexListAll         =   [];
+
+        return  await new Promise(function(resolve, reject) {
+            vm.$root.progresst.open();
+            util.axiosCall(
+                    {
+                            "url"       :   Config.base_url + "/user/marketinfo/getIndexMast"
+                        ,   "data"      :   {}
+                        ,   "method"    :   "get"
+                        ,   "paramKey"  :   "params"
+                    }
+                ,   async function(response) {
+
+                        try{
+                            vm.$root.progresst.close();
+                            if (response.data) {
+                                var results = response.data.results;
+
+                                results.forEach( function(item, index, array) {
+
+                                    vm.indexListAll.push( item );
+
+                                    if(item.large_type == 'KRX' || item.large_type == 'FNGUIDE') {
+                                        vm.domainIndexList.push( item );
+                                    }else {
+                                        vm.forIndexList.push( item );
+                                    }
+                                });
+
+                                vm.indexListAll.sort(function(a, b) {
+                                    if(a.F16002 > b.F16002) return 1;
+                                    else return -1;
+                                });
+                                vm.domainIndexList.sort(function(a, b) {
+                                    if(a.F16002 > b.F16002) return 1;
+                                    else return -1;
+                                });
+                                vm.forIndexList.sort(function(a, b) {
+                                    if(a.F16002 > b.F16002) return 1;
+                                    else return -1;
+                                });
+                            }
+
+                            resolve( { result : true } );
+
+                        }catch(ex) {
+                            vm.$root.progresst.close();
+                            console.log( "error", ex );
+
+                            resolve( { result : false } );
+                        }
+                    }
+                ,   function(error) {
+                        vm.$root.progresst.close();
+                        if( error ) {
+                            if ( error && vm.$root.confirmt.open( '확인', error, {}, 4 ) ) {}
+                        }
+
+                        resolve( { result : false } );
+                    }
+            );
+
+        }).catch( function(e1) {
+            console.log( e1 );
+        });
+    },     
 
 	fn_filterData() {
 		var vm = this;

@@ -37,7 +37,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var etf_grid = null;
 export default {
-  props : [ ],
+  props: [ "results" ],
   data () {
     return {
       search: '',
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     getEtfList: function() {
-      this.results = this.$store.state.etfmast;
+//      this.results = this.$store.state.etfmast;
       if (!$.fn.dataTable.isDataTable( '#etf_grid' ) ) {
         etf_grid = $('#etf_grid').DataTable( {
           "processing": true,

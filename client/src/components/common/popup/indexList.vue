@@ -33,6 +33,7 @@ import _ from "lodash";
 import Config from '@/js/config.js'
 var jisu_grid = null;
 export default {
+  props: [ "results" ],
   data () {
     return {
       search: '',       
@@ -60,7 +61,7 @@ export default {
     getInfoIndexList: function() {
 
 // console.log("getInfoIndexList...................");
-      this.results = this.$store.state.indexmast;
+//      this.results = this.$store.state.indexmast;
       if (!$.fn.dataTable.isDataTable( '#jisu_grid' ) ) {
         jisu_grid = $('#jisu_grid').DataTable( {
           "processing": true,
