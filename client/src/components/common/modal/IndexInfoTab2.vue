@@ -139,14 +139,38 @@ export default {
     },
     // gubun : 1 ETF, 2 ETN, 3 INDEX
     getSelectedItem: function(items, gubun) {
-      for(let i=0; i < items.length; i++) {
-        // this.indexLists.push(items[i]);
-        if(gubun == 3) {
-          this.getIndexAnal(items[i]);
-        }else {
-          this.getEtpAnal(items[i]);
+
+        var vm = this;
+
+        if ( vm.indexLists.length + items.length > 5 ) {
+            vm.$root.confirmt.open('확인','자산 비교는 5개 까지 가능 합니다.',{},1);
+            return;
         }
-      }
+
+        for(let i=0; i < items.length; i++) {
+
+            let compare_cnt = vm.indexLists.filter(
+                function(item, index) {
+                    var JISU_CD = ( gubun == '1' ? items[i].F16012 : items[i].F16013 );
+                    var value = ( gubun == '1' ? item.F16012 : item.F16013 );
+
+                    return JISU_CD == value ? true : false;
+                }
+            );
+
+
+            if ( typeof compare_cnt == "undefined" || compare_cnt.length == 0 ) {
+
+                // this.indexLists.push(items[i]);
+                if(gubun == 3) {
+                    this.getIndexAnal(items[i]);
+                }else {
+                    this.getEtpAnal(items[i]);
+                }
+            }else{
+                vm.$root.confirmt.open('확인', items[i].F16002 +"은 이미 추가된 자산입니다.",{},1);
+            }                
+        }
     },
     deleteItem: function(item, index) {
       this.indexLists.splice(index, 1);

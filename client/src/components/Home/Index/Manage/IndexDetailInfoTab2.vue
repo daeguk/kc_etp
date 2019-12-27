@@ -860,7 +860,6 @@ export default {
 
             for(let i=0; i < items.length; i++) {
 
-
                 let compare_cnt = vm.indexLists.filter(
                     function(item, index) {
                         var JISU_CD = ( gubun == '1' ? items[i].F16012 : items[i].F16013 );
@@ -871,7 +870,7 @@ export default {
                 );
 
 
-                if ( typeof compare_cnt == "undefined" || compare_cnt.length == 0 ) {      
+                if ( typeof compare_cnt == "undefined" || compare_cnt.length == 0 ) {
                     // this.indexLists.push(items[i]);
                     if(gubun == 3) {
                         this.getIndexAnal(items[i]);
