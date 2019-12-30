@@ -82,7 +82,7 @@
 
                     <v-dialog v-model="customizeDialog" persistent max-width="650">
                       <template v-slot:activator="{ on }">
-                        <v-list-tile v-on="on" @click="toggleCustomize=true;toggleINav=false;toggleEtpPerformance=false;" :class="( toggleCustomize ? 'border_b select' : 'border_b' )">
+                        <v-list-tile v-on="on" @click="toggleCustomize=true;toggleINav=false;toggleEtpPerformance=false;toggleEtpLpspread=false;" :class="( toggleCustomize ? 'border_b select' : 'border_b' )">
                           <v-list-tile-avatar>
                             <div :class="( toggleCustomize ? 'oper_list_icon select' : 'oper_list_icon' )"><span class="icon3"></span></div>
                           </v-list-tile-avatar>
