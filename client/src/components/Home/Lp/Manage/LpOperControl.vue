@@ -8,7 +8,6 @@
         @showDetail="showDetail" 
         @fn_showDetailPdf="fn_showDetailPdf"
         @fn_pageMove="fn_pageMove"
-        @fn_setFirstData="fn_setFirstData"
         @fn_setInavData="fn_setInavData"
         @fn_setEtpPerformanceData="fn_setEtpPerformanceData"
         @fn_setEtpLpspread="fn_setEtpLpspread"
@@ -200,13 +199,8 @@ export default {
     fn_showDetailPdf(gubun, paramData) {
       this.paramData = paramData;
 
-      /* PDF 관리 -> PDF 긴급반영 팝업 */
-      if( gubun == '6' ) {
-        this.toggle.togglePdfEmergencyPop  = true;
-        this.toggle.toggleIanvPop = false;
-      }
       /* (PDF) iNAV 계산기 팝업 */
-      else if( gubun == '7' ) {
+      if( gubun == '7' ) {
         this.toggle.togglePdfEmergencyPop  = false;
         this.toggle.toggleIanvPop = true;
         
@@ -216,31 +210,27 @@ export default {
       else if( gubun == '8' ) {
         this.showEtpOperIndexInavCalcPop = true;
       }
-      /* PDF 관리 -> PDF 수정내역 팝업 */
-      else if( gubun == '9' ) {
-        this.showEtpOperPdfHistPop  =   true;
-      }
     },
 
     /*
       *  ETP 운용정보에서 이미지 버튼 클릭시 상세페이지로 이동시킨다.
       *  2019-05-03  bkLove(촤병국)
       */
-    fn_pageMove( btnId, paramData ) {
-      switch( btnId ) {
-        case    'btnPdf'    :
-          this.paramData  =   paramData;
-          this.$emit( "fn_setActiveTab", 2, this.paramData );
-          break;
-      }            
-    },
+    // fn_pageMove( btnId, paramData ) {
+    //   switch( btnId ) {
+    //     case    'btnPdf'    :
+    //       this.paramData  =   paramData;
+    //       this.$emit( "fn_setActiveTab", 2, this.paramData );
+    //       break;
+    //   }            
+    // },
 
-    fn_setFirstData( firstData ) {
-      var vm = this;
+    // fn_setFirstData( firstData ) {
+    //   var vm = this;
 
-      vm.paramData = firstData;
-      vm.$emit( "fn_setFirstData", firstData );
-    },
+    //   vm.paramData = firstData;
+    //   vm.$emit( "fn_setFirstData", firstData );
+    // },
 
     fn_setInavData( paramData, stateInfo ) {
       var vm = this;

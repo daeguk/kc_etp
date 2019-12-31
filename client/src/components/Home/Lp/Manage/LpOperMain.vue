@@ -30,11 +30,11 @@ export default {
     LpOperControl,
   },
   created() {
-    console.log("LpOperMain.......created.........");
+    // console.log("LpOperMain.......created.........");
 
   },
   destroyed() {
-    console.log("LpOperMain.......destroyed.........");
+    // console.log("LpOperMain.......destroyed.........");
   },
   mounted: function() {
     this.activeTab = 0;
