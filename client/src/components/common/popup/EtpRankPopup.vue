@@ -4,49 +4,57 @@
       <div class="title01_w case2">
         <v-card-title primary-title>
           <div class="title_wrap01">
-            <h3 class="headline">
-              {{title}}
-            </h3>
+            <h3 class="headline">{{title}}</h3>
             <div class="right_btn">
               <v-layout align-right>
-                <v-flex xs12 sm4 text-xs-center>                                         
+                <v-flex xs12 sm4 text-xs-center>
                   <div class="btn_r">
-                    <v-btn icon  @click.stop="closeModal">
-                        <v-icon>close</v-icon>
+                    <v-btn icon @click.stop="closeModal">
+                      <v-icon>close</v-icon>
                     </v-btn>
                   </div>
                 </v-flex>
               </v-layout>
-              </div>
+            </div>
           </div>
         </v-card-title>
       </div>
       <div class="table-box-wrap">
         <div ref="table1" class="table-box" style="max-height:700px;">
-        <table class="tbl_type ver8">
-          <colgroup>
-            <col width="15%">
-            <col width="35%">
-            <col width="20%">
-            <col width="30%">
-          </colgroup>
-          <thead>
-            <tr>
-              <th style="width:15%">순위</th>
-              <th style="width:35%" class="txt_left">종목명</th>
-              <th style="width:20%" class="txt_right">종목코드</th>
-              <th style="width:30%" class="txt_right">자금유출입</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in itemList" :key="index">
-              <td ><span :class="{text_hightlight:(item.F16013==curCode)}">{{index+1}}</span></td>
-              <td class="txt_left"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16002}}</span></td>
-              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16013}}</span></td>
-              <td class="txt_right"><span :class="{text_hightlight:(item.F16013==curCode)}">{{formatInt(Math.floor(item.FLOW))}}</span></td>
-            </tr>
-          </tbody>
-        </table>
+          <table class="tbl_type ver8">
+            <colgroup>
+              <col width="15%" />
+              <col width="35%" />
+              <col width="20%" />
+              <col width="30%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th style="width:15%">순위</th>
+                <th style="width:35%" class="txt_left">종목명</th>
+                <th style="width:20%" class="txt_right">종목코드</th>
+                <th style="width:30%" class="txt_right">자금유출입</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in itemList" :key="index">
+                <td>
+                  <span :class="{text_hightlight:(item.F16013==curCode)}">{{index+1}}</span>
+                </td>
+                <td class="txt_left">
+                  <span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16002}}</span>
+                </td>
+                <td class="txt_right">
+                  <span :class="{text_hightlight:(item.F16013==curCode)}">{{item.F16013}}</span>
+                </td>
+                <td class="txt_right">
+                  <span
+                    :class="{text_hightlight:(item.F16013==curCode)}"
+                  >{{formatInt(Math.floor(item.FLOW))}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </v-card>
@@ -54,57 +62,51 @@
 </template>
 
 <script>
-
-import Config from "@/js/config.js";
-import util from "@/js/util.js";
-
-export default {
-  props: ['gubun', 'itemList', 'curCode', 'rank'],
-  data() {
-    return {
-        dialog: false, 
+  import Config from "@/js/config.js";
+  import util from "@/js/util.js";
+  export default {
+    props: ['gubun', 'itemList', 'curCode', 'rank'],
+    data() {
+      return {
+        dialog: false,
         title: "",
-    };
-  },
-  components: {
-  }, 
-  computed: {},
-  created: function() {
-  },
-  beforeDestroy() {
-  },
-  mounted: function() {
-    var vm = this;
-    this.dialog = true;
-    if(this.gubun == 0) this.title = "1주";
-    else if(this.gubun == 1) this.title = "1개월";
-    else if(this.gubun == 2) this.title = "3개월";
-    else if(this.gubun == 3) this.title = "6개월";
-    this.title = this.title + " 자금유입 순위";
-    // console.log("EtpRankPopup......");
-    // console.log(this.itemList);
-  },
-  updated() {
-    var factor = 26;
-    if(this.rank < 100) factor = 15;
-    this.$refs.table1.scrollTop = (this.rank - 1) * factor;
-    // console.log(this.$refs.table1.scrollTop);
-  },
-  methods: {
-    closeModal: function() {
+      };
+    },
+    components: {},
+    computed: {},
+    created: function() {},
+    beforeDestroy() {},
+    mounted: function() {
       var vm = this;
-      vm.$emit("closeRankModal");
-      vm.dialog = false;
+      this.dialog = true;
+      if(this.gubun == 0) this.title = "1주";
+      else if(this.gubun == 1) this.title = "1개월";
+      else if(this.gubun == 2) this.title = "3개월";
+      else if(this.gubun == 3) this.title = "6개월";
+      this.title = this.title + " 자금유입 순위";
+      // console.log("EtpRankPopup......");
+      // console.log(this.itemList);
     },
-    formatInt:function(num) {
+    updated() {
+      var factor = 26;
+      if(this.rank < 100) factor = 15;
+      this.$refs.table1.scrollTop = (this.rank - 1) * factor;
+      // console.log(this.$refs.table1.scrollTop);
+    },
+    methods: {
+      closeModal: function() {
+        var vm = this;
+        vm.$emit("closeRankModal");
+        vm.dialog = false;
+      },
+      formatInt: function(num) {
         return util.formatInt(num);
-    },
-  } 
-};
+      },
+    }
+  };
 </script>
-
 <style scoped>
-.text_hightlight {
-  background-color: yellow;
-}
+  .text_hightlight {
+    background-color: yellow;
+  }
 </style>
