@@ -1,10 +1,11 @@
 <template>
-<v-dialog v-model="dialog" persistent content-class="progressbar_w">     
-  <template>
-    <v-progress-circular :size="50" indeterminate></v-progress-circular>
-  </template>
-</v-dialog>
+  <v-dialog v-model="dialog" persistent content-class="progressbar_w">
+    <template>
+      <v-progress-circular :size="50" indeterminate></v-progress-circular>
+    </template>
+  </v-dialog>
 </template>
+
 <script>
 export default {
   props: [],
