@@ -719,7 +719,7 @@ export default {
         },
       },
       /* 종가1달수익률 */
-      {'name' : 'W00003'   
+      {'name' : 'W00003',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -727,7 +727,7 @@ export default {
         },
       },
       /* 종가3달수익률 */
-      {'name' : 'W00004'   
+      {'name' : 'W00004',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -735,7 +735,7 @@ export default {
         },
       },
       /* 종가YTD수익률 */
-      {'name' : 'W00005'   
+      {'name' : 'W00005',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -743,7 +743,7 @@ export default {
         },
       },
       /* NAV1주수익률 */
-      {'name' : 'W00012'   
+      {'name' : 'W00012',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -751,7 +751,7 @@ export default {
         },
       },
       /* NAV1달수익률 */
-      {'name' : 'W00013'   
+      {'name' : 'W00013',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -759,7 +759,7 @@ export default {
         },
       },
       /* NAV3달수익률 */
-      {'name' : 'W00014'   
+      {'name' : 'W00014',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -767,7 +767,7 @@ export default {
         },
       },
       /* NAVYTD수익률 */
-      {'name' : 'W00015'   
+      {'name' : 'W00015',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -775,7 +775,7 @@ export default {
         },
       },
       /* 기준가 */
-      {'name' : 'F15007'   
+      {'name' : 'F15007',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -783,7 +783,7 @@ export default {
         },
       },
       /* ETF 현재가 */
-      {'name' : 'F15001'   
+      {'name' : 'F15001',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -791,7 +791,7 @@ export default {
         },
       },
       /* ETF 전일가 */
-      {'name' : 'F18001'   
+      {'name' : 'F18001',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatNumber(data);
@@ -799,7 +799,7 @@ export default {
         },
       },                    
       /* 거래량 */
-      {'name' : 'F15015'   
+      {'name' : 'F15015',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -807,7 +807,7 @@ export default {
         },
       },
       /* 거래대금 */
-      {'name' : 'F15023'   
+      {'name' : 'F15023',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -815,7 +815,7 @@ export default {
         },
       },
       /* 발행주식수 */
-      {'name' : 'F16143'   
+      {'name' : 'F16143',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -823,7 +823,7 @@ export default {
         },
       },
       /* 1CU주식수 */
-      {'name' : 'F16499'   
+      {'name' : 'F16499',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -831,7 +831,7 @@ export default {
         },
       },
       /* 설정주식수(전일) */
-      {'name' : 'F33835'   
+      {'name' : 'F33835',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -839,7 +839,7 @@ export default {
         },
       },
       /* 환매주식수(전일) */
-      {'name' : 'F33836'   
+      {'name' : 'F33836',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -847,7 +847,7 @@ export default {
         },
       },
       /* 순자산 총액 */
-      {'name' : 'F16500'   
+      {'name' : 'F16500',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += util.formatInt(data);
@@ -855,7 +855,7 @@ export default {
         },
       },
       /* 총보수 */
-      {'name' : 'F34763'   
+      {'name' : 'F34763',
         "render": function ( data, type, row ) {
           let htm = ""
           htm += data + '%';
@@ -863,7 +863,7 @@ export default {
         },
       },
       /* 과세구분 과세유형코드(0:해당없음,1:비과세,2:배당소득세(보유기간과세),3:증권거래세(회사형ETF),4:배당소득세(해외주식투자전용ETF))*/
-      {'name' : 'F33833'   
+      {'name' : 'F33833',
         "render": function ( data, type, row ) {
           let htm = "";
           if (data == 0) {
@@ -881,7 +881,7 @@ export default {
         },
       },
       /* 그래프 */
-      {'name' : 'graph'   
+      {'name' : 'graph',
         "render": function ( data, type, row, meta ) {
           var graphContent = "";
           /* etpInfo - ETP운용정보, iNav - iNav 산출현황, performance - ETP Performance, customize - 컬럼 선택 */
