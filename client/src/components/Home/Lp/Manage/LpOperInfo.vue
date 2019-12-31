@@ -693,7 +693,7 @@ export default {
         },
       },
       /* 환율 */
-      {'name' : 'F18438'   
+      {'name' : 'F18438',
         "render": function ( data, type, row ) {
           var v_F30819      =   util.formatNumber( row.F30819 );        /* 매매기준율 */
           var v_F30824      =   util.formatNumber( row.F30824 );        /* 장전기준율 */
