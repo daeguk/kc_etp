@@ -1,294 +1,276 @@
 <template>
-    <v-layout row wrap class="content_margin etp_new">
-        <v-flex grow xs12>
-            <v-card flat>
-                <v-card-title primary-title>
-                    <h3 class="headline w100" pb-0>
-                        PORTFOLIO SIMULATION |
-                        <span
-                            class="grey--text"
-                        >KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
+  <v-layout row wrap class="content_margin etp_new">
+    <v-flex grow xs12>
+      <v-card flat>
+        <v-card-title primary-title>
+          <h3 class="headline w100" pb-0>
+            PORTFOLIO SIMULATION |
+            <span
+              class="grey--text"
+            >KOSPI, KOSDAQ, ETF를 이용해 포트폴리오를 구성하고 백테스트를 수행합니다.</span>
 
-                        <span class="btn_r">
-                            <v-btn small flat icon v-on:click="fn_refresh()">
-                                <v-icon>refresh</v-icon>
-                            </v-btn>
-                        </span>
-                        <span class="btn_r">
-                            <v-btn small flat icon v-on:click="fn_goList()">
-                                <v-icon>reply</v-icon>
-                            </v-btn>
-                        </span>
-                    </h3>
-                </v-card-title>
+            <span class="btn_r">
+              <v-btn small flat icon v-on:click="fn_refresh()">
+                <v-icon>refresh</v-icon>
+              </v-btn>
+            </span>
+            <span class="btn_r">
+              <v-btn small flat icon v-on:click="fn_goList()">
+                <v-icon>reply</v-icon>
+              </v-btn>
+            </span>
+          </h3>
+        </v-card-title>
 
-                <v-card class="register_wrap pt0" flat xs12 color="lighten-1">
-                    <h4>조건 설정</h4>
+        <v-card class="register_wrap pt0" flat xs12 color="lighten-1">
+          <h4>조건 설정</h4>
 
-                    <v-layout row>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">상위그룹</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-select
-                                :items="arr_grp_cd"
-                                item-text="grp_name"
-                                item-value="grp_cd"
-                                @change="fn_resetErrorMessage();"
-                                v-model="grp_cd"
-                                outline
-                            ></v-select>
-                        </v-flex>
-                    </v-layout>
+          <v-layout row>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">상위그룹</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-select
+                :items="arr_grp_cd"
+                item-text="grp_name"
+                item-value="grp_cd"
+                @change="fn_resetErrorMessage();"
+                v-model="grp_cd"
+                outline
+              ></v-select>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">시나리오명</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-text-field
-                                outline
-                                v-model="scen_name"
-                                @blur="fn_resetErrorMessage();"
-                                maxlength="50"
-                            ></v-text-field>
-                        </v-flex>
-                    </v-layout>
+          <v-layout row>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">시나리오명</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-text-field
+                outline
+                v-model="scen_name"
+                @blur="fn_resetErrorMessage();"
+                maxlength="50"
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">시작년도</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-select
-                                :items="arr_start_year"
-                                item-text="text"
-                                item-value="value"
-                                @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
-                                v-model="start_year"
-                                :disabled="rebalance_cycle_cd == ''"
-                                outline
-                            ></v-select>
-                        </v-flex>
-                    </v-layout>
+          <v-layout row>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">시작년도</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-select
+                :items="arr_start_year"
+                item-text="text"
+                item-value="value"
+                @change="fn_resetErrorMessage();fn_checkRebalance( 'start_year');"
+                v-model="start_year"
+                :disabled="rebalance_cycle_cd == ''"
+                outline
+              ></v-select>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">리밸런싱주기</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-select
-                                :items="arr_rebalance_cycle_cd"
-                                item-text="com_dtl_name"
-                                item-value="com_dtl_cd"
-                                @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_cycle_cd');"
-                                v-model="rebalance_cycle_cd"
-                                :disabled="rebalance_cycle_cd == ''"
-                                outline
-                            ></v-select>
-                        </v-flex>
-                        <v-flex xs8 row class="checkbox_w pl-2">
-                            <v-layout row wrap class="light--text">
-                                <v-radio-group v-model="rebalance_date_cd" row>
-                                    <v-radio
-                                        v-for="(item, index) in arr_rebalance_date_cd"
-                                        :key="'rebalance_date_cd_' + index"
-                                        :label="item.com_dtl_name"
-                                        :value="item.com_dtl_cd"
-                                        :disabled="rebalance_cycle_cd == '' ||  disabled_rebalance_cd[index]"
-                                        @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date_cd');"
-                                        color="primary"
-                                    ></v-radio>
-                                </v-radio-group>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
+          <v-layout row>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">리밸런싱주기</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-select
+                :items="arr_rebalance_cycle_cd"
+                item-text="com_dtl_name"
+                item-value="com_dtl_cd"
+                @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_cycle_cd');"
+                v-model="rebalance_cycle_cd"
+                :disabled="rebalance_cycle_cd == ''"
+                outline
+              ></v-select>
+            </v-flex>
+            <v-flex xs8 row class="checkbox_w pl-2">
+              <v-layout row wrap class="light--text">
+                <v-radio-group v-model="rebalance_date_cd" row>
+                  <v-radio
+                    v-for="(item, index) in arr_rebalance_date_cd"
+                    :key="'rebalance_date_cd_' + index"
+                    :label="item.com_dtl_name"
+                    :value="item.com_dtl_cd"
+                    :disabled="rebalance_cycle_cd == '' ||  disabled_rebalance_cd[index]"
+                    @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date_cd');"
+                    color="primary"
+                  ></v-radio>
+                </v-radio-group>
+              </v-layout>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row xs12>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">초기투자금액(KRW)</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-text-field
-                                type="text"
-                                v-model="init_invest_money"
-                                outline
-                                @blur="fn_resetErrorMessage();"
-                                maxlength="15"
-                            ></v-text-field>
-                        </v-flex>
-                    </v-layout>
+          <v-layout row xs12>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">초기투자금액(KRW)</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-text-field
+                type="text"
+                v-model="init_invest_money"
+                outline
+                @blur="fn_resetErrorMessage();"
+                maxlength="15"
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row xs12>
-                        <v-flex xs2>
-                            <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
-                        </v-flex>
-                        <v-flex xs2>
-                            <v-select
-                                :items="arr_bench_mark_cd"
-                                item-text="com_dtl_name"
-                                item-value="com_dtl_cd"
-                                v-model="bench_mark_cd"
-                                outline
-                                @change="fn_resetErrorMessage();"
-                            ></v-select>
-                        </v-flex>
-                    </v-layout>
-                </v-card>
+          <v-layout row xs12>
+            <v-flex xs2>
+              <v-subheader class="subheader_r">벤치마크 설정</v-subheader>
+            </v-flex>
+            <v-flex xs2>
+              <v-select
+                :items="arr_bench_mark_cd"
+                item-text="com_dtl_name"
+                item-value="com_dtl_cd"
+                v-model="bench_mark_cd"
+                outline
+                @change="fn_resetErrorMessage();"
+              ></v-select>
+            </v-flex>
+          </v-layout>
+        </v-card>
 
-                <v-card class="register_wrap pt0" flat xs12 color="lighten-1">
-                    <h4>포트폴리오 설정</h4>
-                    <v-layout row>
-                        <v-flex xs12>
-                            <div class="left_w">
-                                <span class="intext">비중설정방식:</span>
-                                <span class="toggle2">
-                                    <v-btn-toggle v-model="importance_method_cd" class="toggle_01">
-                                        <v-btn
-                                            v-for="(item, index) in arr_importance_method_cd"
-                                            :key="'importance_method_cd_' + index"
-                                            :value="item.com_dtl_cd"
-                                            flat
-                                            @click.stop="fn_setImportanceMethodCdEvent( item.com_dtl_cd )"
-                                        >{{ item.com_dtl_name }}</v-btn>
-                                    </v-btn-toggle>
-                                </span>
+        <v-card class="register_wrap pt0" flat xs12 color="lighten-1">
+          <h4>포트폴리오 설정</h4>
+          <v-layout row>
+            <v-flex xs12>
+              <div class="left_w">
+                <span class="intext">비중설정방식:</span>
+                <span class="toggle2">
+                  <v-btn-toggle v-model="importance_method_cd" class="toggle_01">
+                    <v-btn
+                      v-for="(item, index) in arr_importance_method_cd"
+                      :key="'importance_method_cd_' + index"
+                      :value="item.com_dtl_cd"
+                      flat
+                      @click.stop="fn_setImportanceMethodCdEvent( item.com_dtl_cd )"
+                    >{{ item.com_dtl_name }}</v-btn>
+                  </v-btn-toggle>
+                </span>
 
-                                <span class="inselect">
-                                    <v-select
-                                        :items="arr_stock_gubun"
-                                        item-text="com_dtl_name"
-                                        item-value="com_dtl_cd"
-                                        v-model="stock_gubun"
-                                        outline
-                                        :disabled="[ '1', '2' ].includes(importance_method_cd)"
-                                        @change="fn_resetErrorMessage();"
-                                    ></v-select>
-                                </span>
-                                <!--
+                <span class="inselect">
+                  <v-select
+                    :items="arr_stock_gubun"
+                    item-text="com_dtl_name"
+                    item-value="com_dtl_cd"
+                    v-model="stock_gubun"
+                    outline
+                    :disabled="[ '1', '2' ].includes(importance_method_cd)"
+                    @change="fn_resetErrorMessage();"
+                  ></v-select>
+                </span>
+                <!--
                                 <span class="inselect v2">
                                    <span class="intxt">CAP비율:</span>  
                                    <v-text-field   outline    maxlength="50"></v-text-field> 
                                    <span class="intxt"> %</span>
                                 </span>
-                                -->
-                            </div>
-                            <div class="right_w">
-                                <span class="intext" v-if="change_rebalance_yn == '1'">리밸런싱 날짜:</span>
-                                <span v-if="change_rebalance_yn == '1'">
-                                    <v-select
-                                        :items="arr_rebalance_date"
-                                        item-text="text"
-                                        item-value="value"
-                                        @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date');"
-                                        v-model="rebalance_date"
-                                        outline
-                                    ></v-select>
-                                </span>
-                                <span>
-                                    <!-- 엑셀 업로드 -->
+                -->
+              </div>
+              <div class="right_w">
+                <span class="intext" v-if="change_rebalance_yn == '1'">리밸런싱 날짜:</span>
+                <span v-if="change_rebalance_yn == '1'">
+                  <v-select
+                    :items="arr_rebalance_date"
+                    item-text="text"
+                    item-value="value"
+                    @change="fn_resetErrorMessage();fn_checkRebalance( 'rebalance_date');"
+                    v-model="rebalance_date"
+                    outline
+                  ></v-select>
+                </span>
+                <span>
+                  <!-- 엑셀 업로드 -->
 
-                                    <SimulationExcelupModal></SimulationExcelupModal>
-                                    <v-btn
-                                        depressed
-                                        outline
-                                        small
-                                        color="primary"
-                                        @click.stop="fn_fileClick();"
-                                    >포트폴리오 업로드</v-btn>
+                  <SimulationExcelupModal></SimulationExcelupModal>
+                  <v-btn
+                    depressed
+                    outline
+                    small
+                    color="primary"
+                    @click.stop="fn_fileClick();"
+                  >포트폴리오 업로드</v-btn>
 
-                                    <input
-                                        type="file"
-                                        name="portfolioFile"
-                                        ref="portfolioFile"
-                                        style="display:none;"
-                                    />
-                                </span>
-                            </div>
-                        </v-flex>
-                    </v-layout>
+                  <input type="file" name="portfolioFile" ref="portfolioFile" style="display:none;" />
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
 
-                    <v-layout row>
-                        <v-flex>
-                            <v-card flat>
-                                <div class="table-box-wrap v2 mar15">
-                                    <div class="table-box" style="max-height:380px;">
-                                        <table class="tbl_type ver10" id="table01">
-                                            <caption>헤더 고정 테이블</caption>
-                                            <colgroup>
-                                                <col width="15%" />
-                                                <col width="25%" />
-                                                <col width="20%" />
-                                                <col width="20%" />
-                                                <col width="20%" />
-                                            </colgroup>
-                                            <thead>
-                                                <tr>
-                                                    <th width="15%"></th>
-                                                    <th width="25%">종목코드</th>
-                                                    <th width="20%" class="txt_left">종목명</th>
-                                                    <th width="20%" class="txt_right">시가총액</th>
-                                                    <th width="20%" class="txt_right">비중</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="sum">
-                                                    <td>Total</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td class="txt_right"></td>
-                                                    <td class="txt_right">
-                                                        <input
-                                                            type="text"
-                                                            name="importance"
-                                                            class="txt_right wid100"
-                                                            value
-                                                        /> %
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div
-                                    class="warning_box"
-                                    v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
-                                >
-                                    <span
-                                        v-for="(item, index) in arr_show_error_message"
-                                        :key="index"
-                                    >
-                                        <v-icon color="#ff4366">error_outline</v-icon>
-                                        {{item}}
-                                        <br />
-                                    </span>
-                                </div>
-                                <div class="text-xs-center mt-3">
-                                    <v-btn
-                                        depressed
-                                        outline
-                                        color="primary"
-                                        @click="fn_changeRebalance()"
-                                    >리밸런싱 내역조정</v-btn>
-                                    <v-btn
-                                        depressed
-                                        color="primary"
-                                        @click.stop="fn_runBacktestWithSaveBasicInfo()"
-                                    >백테스트 실행</v-btn>
-                                </div>
+          <v-layout row>
+            <v-flex>
+              <v-card flat>
+                <div class="table-box-wrap v2 mar15">
+                  <div class="table-box" style="max-height:380px;">
+                    <table class="tbl_type ver10" id="table01">
+                      <caption>헤더 고정 테이블</caption>
+                      <colgroup>
+                        <col width="15%" />
+                        <col width="25%" />
+                        <col width="20%" />
+                        <col width="20%" />
+                        <col width="20%" />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th width="15%"></th>
+                          <th width="25%">종목코드</th>
+                          <th width="20%" class="txt_left">종목명</th>
+                          <th width="20%" class="txt_right">시가총액</th>
+                          <th width="20%" class="txt_right">비중</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="sum">
+                          <td>Total</td>
+                          <td></td>
+                          <td></td>
+                          <td class="txt_right"></td>
+                          <td class="txt_right">
+                            <input type="text" name="importance" class="txt_right wid100" value /> %
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div
+                  class="warning_box"
+                  v-if="arr_show_error_message != null && arr_show_error_message.length > 0"
+                >
+                  <span v-for="(item, index) in arr_show_error_message" :key="index">
+                    <v-icon color="#ff4366">error_outline</v-icon>
+                    {{item}}
+                    <br />
+                  </span>
+                </div>
+                <div class="text-xs-center mt-3">
+                  <v-btn depressed outline color="primary" @click="fn_changeRebalance()">리밸런싱 내역조정</v-btn>
+                  <v-btn
+                    depressed
+                    color="primary"
+                    @click.stop="fn_runBacktestWithSaveBasicInfo()"
+                  >백테스트 실행</v-btn>
+                </div>
 
-                                <MastPopup02
-                                    v-if="MastModalFlag"
-                                    @selectedItem="fn_getSelectedItem"
-                                    @closeMastModal="fn_closeMastModal"
-                                ></MastPopup02>
-                            </v-card>
-                        </v-flex>
-                    </v-layout>
-                </v-card>
-            </v-card>
-        </v-flex>
-    </v-layout>
+                <MastPopup02
+                  v-if="MastModalFlag"
+                  @selectedItem="fn_getSelectedItem"
+                  @closeMastModal="fn_closeMastModal"
+                ></MastPopup02>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 
