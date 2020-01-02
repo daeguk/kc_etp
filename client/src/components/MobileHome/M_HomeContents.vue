@@ -9,30 +9,25 @@
 </template> 
 
 <script>
-import Config       from "@/js/config.js";
-import EtpInfoMain     from '@/components/Home/MarketInfo/etp/EtpInfoMain.vue';
-export default {
-  components: {
-    EtpInfoMain
-  },
-  data() {
-    return {
-    };
-  },
-  beforeCreate() {
-  },
-  created: function() {
-    let finalPath = localStorage.getItem('finalPath');
-
-    this.$router.push({ path: Config.mobile_home + Config.info_url });      
-    
-  },
-  beforeDestroy() {
-  },
-  methods: {
+  import Config from "@/js/config.js";
+  import EtpInfoMain from '@/components/Home/MarketInfo/etp/EtpInfoMain.vue';
+  export default {
+    components: {
+      EtpInfoMain
+    },
+    data() {
+      return {};
+    },
+    beforeCreate() {},
+    created: function() {
+      let finalPath = localStorage.getItem('finalPath');
+      this.$router.push({
+        path: Config.mobile_home + Config.info_url
+      });
+    },
+    beforeDestroy() {},
+    methods: {}
   }
-}
 </script>
-
 <style scoped>
 </style>
