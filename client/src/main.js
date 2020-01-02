@@ -1,9 +1,9 @@
 import Vue from 'vue'
 // Vue Router
-import VueRouter  from 'vue-router'
-import { routes } from './routes'
-import store      from './store'
-import App        from './App.vue'
+import VueRouter from 'vue-router'
+import {routes} from './routes'
+import store from './store'
+import App from './App.vue'
 import VueResource from 'vue-resource'
 import Vuetify from 'vuetify'
 //import 'date-input-polyfill'
@@ -12,43 +12,36 @@ import Vuetify from 'vuetify'
 // import 'bootstrap/dist/css/bootstrap.css';
 // import 'vue-awesome/icons';
 // import Icon from 'vue-awesome/components/Icon';
-
 // axios.defaults.withCredentials = true;
-
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(Vuetify);
-
 const router = new VueRouter({
-    routes,
-    // get rid of #
-    mode: 'history'
+  routes,
+  // get rid of #
+  mode: 'history'
 });
-
 // Event Bus
 Vue.prototype.$EventBus = new Vue();
-
 new Vue({
-    store,
-    el: '#app',
-    router,
-    render: h => h(App)
+  store,
+  el: '#app',
+  router,
+  render: h => h(App)
 })
-
 // 메뉴에서 레벨 체크해서 갈 수 있는 URL 만 표시
 // 강제로 URL 입력했을 경우, 경고창 띄우고 현재 페이지 그대로 있슴
 router.beforeEach((to, _from, next) => {
   // console.log("test store.........");
   // console.log(store);
   var type_cd = store.state.user.type_cd;
-
   if(to.path !== '/') {
     let nDate = new Date();
     localStorage.setItem("finalPath", to.path);
     localStorage.setItem("loginDt", nDate.getTime());
-console.log("main.js........")    ;
-console.log(localStorage.getItem("finalPath"));
-console.log(localStorage.getItem("loginDt"));
+    console.log("main.js........");
+    console.log(localStorage.getItem("finalPath"));
+    console.log(localStorage.getItem("loginDt"));
   }
   if(to.meta.requiresAuth) {
     // console.log("type_cd : " + type_cd);
@@ -57,14 +50,14 @@ console.log(localStorage.getItem("loginDt"));
       localStorage.removeItem("finalPath");
       alert("접근할 수 없는 페이지 입니다.");
       next(_from);
-    }else if(type_cd == "9998" || type_cd == "9999") {
+    } else if(type_cd == "9998" || type_cd == "9999") {
       next();
-    }else {
+    } else {
       // console.log("to.meta.requiresType...........");
       // console.log(to.meta.requiresType);
       if(to.meta.requiresType.includes(type_cd)) {
         next();
-      }else {
+      } else {
         localStorage.removeItem("finalPath");
         alert("접근할 수 없는 페이지 입니다.");
         next(_from);
