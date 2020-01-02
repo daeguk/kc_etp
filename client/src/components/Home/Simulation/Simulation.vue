@@ -1933,8 +1933,8 @@
         if(vm.rebalancePortfolioObj && Object.keys(vm.rebalancePortfolioObj).length >= 2) {
           var v_rebalancePortfolioObj_1 = vm.rebalancePortfolioObj[Object.keys(vm.rebalancePortfolioObj)[1]];
           if(v_rebalancePortfolioObj_1 && Object.keys(v_rebalancePortfolioObj_1).length > 0) {
-            if(await vm.$refs.confirm2.open('[시뮬레이션]', '리밸런싱 주기 변경을 하면 포트폴리오가 모두 초기화 됩니다. 그래도 진행하시겠습니까?', {}, 2)) {
-              if("Y" == vm.$refs.confirm2.val) {
+            if(await vm.$root.confirmt.open('[시뮬레이션]', '리밸런싱 주기 변경을 하면 포트폴리오가 모두 초기화 됩니다. 그래도 진행하시겠습니까?', {}, 2)) {
+              if("Y" == vm.$root.confirmt.val) {
                 return {
                   confirm: "Y"
                 };
