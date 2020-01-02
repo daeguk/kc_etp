@@ -3,9 +3,16 @@
     <v-card class="intro_bg">
       <v-layout row wrap>
         <v-flex xs12 text-xs-center>
-          <div class="intro_logo">EMP<span>ETP Management<br> Platform</span>
-              <p>Built to create, manage and analyze capital market <br> 
-                  Live simple, it's all in EMP</p>
+          <div class="intro_logo">
+            EMP
+            <span>
+              ETP Management
+              <br />Platform
+            </span>
+            <p>
+              Built to create, manage and analyze capital market
+              <br />Live simple, it's all in EMP
+            </p>
           </div>
         </v-flex>
         <v-flex xs12>
@@ -14,35 +21,32 @@
             <v-btn depressed color="#85c406" dark @click="doLogin">LOG-IN</v-btn>
           </div>
         </v-flex>
-        
       </v-layout>
-      <UserLoginModal v-if="login_flag" ></UserLoginModal>
-      <UserSignupModal v-if="signup_flag" ></UserSignupModal>
-      <UserFindPwdModal v-if="findpwd_flag" ></UserFindPwdModal>
+      <UserLoginModal v-if="login_flag"></UserLoginModal>
+      <UserSignupModal v-if="signup_flag"></UserSignupModal>
+      <UserFindPwdModal v-if="findpwd_flag"></UserFindPwdModal>
     </v-card>
   </v-app>
 </template> 
 
 <script>
-import UserLoginModal       from './UserLoginModal.vue';
-import UserSignupModal       from './UserSignupModal.vue';
-import UserFindPwdModal       from './UserFindPwdModal.vue';
-
-export default {
+  import UserLoginModal from './UserLoginModal.vue';
+  import UserSignupModal from './UserSignupModal.vue';
+  import UserFindPwdModal from './UserFindPwdModal.vue';
+  export default {
     data() {
-        return {
-          login_flag: false,
-          signup_flag: false,
-          findpwd_flag: false,
-        };
+      return {
+        login_flag: false,
+        signup_flag: false,
+        findpwd_flag: false,
+      };
     },
     components: {
       UserLoginModal: UserLoginModal,
       UserSignupModal: UserSignupModal,
       UserFindPwdModal: UserFindPwdModal,
     },
-    beforeCreate() {
-    },
+    beforeCreate() {},
     created: function() {
       this.$EventBus.$on('closeLoginModal', this.closeLoginModal);
       this.$EventBus.$on('closeNewAccountModal', this.closeNewAccountModal);
@@ -59,7 +63,6 @@ export default {
       this.$EventBus.$off('userNewAccount');
       this.$EventBus.$off('forgotPassword');
     },
-
     methods: {
       doView: function() {
         this.$EventBus.$emit("enterService");
@@ -93,8 +96,7 @@ export default {
         this.findpwd_flag = true;
       },
     }
-}
+  }
 </script>
-
 <style scoped>
 </style>
