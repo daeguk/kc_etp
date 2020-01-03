@@ -8,9 +8,6 @@ var config = require('../../../config/config');
 var sms = require('../../../util/sms');
 var Promise = require("bluebird");
 var log = require('../../../util/logg');
-var MSG = {
-  error01: "처리중 오류가 발생하였습니다."
-};
 
 /*
  * 고객지원 정보를 저장한다.

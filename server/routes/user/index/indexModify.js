@@ -8,7 +8,6 @@ var config = require('../../../config/config');
 var util = require('../../../util/util');
 var Promise = require("bluebird");
 var multer = require('multer');
-var xlsx = require('xlsx');
 var fs = require('fs');
 var async = require('async');
 /* logging 추가함.  2019-06-10 */

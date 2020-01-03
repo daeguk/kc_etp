@@ -4,13 +4,10 @@
  *  @date 2019-09-06
  *  @author bkLove
  */
-var os = require('os');
 var fs = require('fs');
 var config = require('../../../config/config');
 var util = require('../../../util/util');
 var Promise = require("bluebird");
-// var multer = require('multer');
-// var xlsx = require('xlsx');
 var async = require('async');
 var _ = require("lodash");
 var simulationUpload = require('../simulation/simulationUpload');
@@ -18,13 +15,6 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var fs = require('fs');
 var log = require('../../../util/logg');
-var limit = {
-  max_size: 1 /* 포트폴리오 (Mb) */
-};
-var initGrpInfo = {
-  INIT_GRP_CD: "*" /* 그룹코드 최초값 */ ,
-  INIT_INCRE_GRP_CD: 100000 /* 그룹인 경우 시나리오 코드는 해당값 단위로 증가 */
-};
 
 /*
  * PDF 를 업로드 한다.
