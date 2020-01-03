@@ -1142,14 +1142,17 @@
       fn_jsonFileDownload() {
         var vm = this;
         const data = vm.inputData;
-        var fileURL = window.URL.createObjectURL(new Blob([data], {
-          type: 'text/plain'
-        }));
-        var fileLink = document.createElement('a');
-        fileLink.href = fileURL;
-        fileLink.setAttribute('download', vm.jsonFileName);
-        document.body.appendChild(fileLink);
-        fileLink.click();
+        var blobData = new Blob([data], { type: 'text/plain' });
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blobData, vm.jsonFileName);
+        }else{
+          var fileURL = window.URL.createObjectURL(blobData);
+          var fileLink = document.createElement('a');
+          fileLink.href = fileURL;
+          fileLink.setAttribute('download', vm.jsonFileName);
+          document.body.appendChild(fileLink);
+          fileLink.click();
+        }
       },
       /*
        * 엑셀을 다운로드 한다.
