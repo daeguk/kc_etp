@@ -1145,5 +1145,31 @@ module.exports = {
       session: 'uncheck',
       type: 'post'
     },
+    // FNGUIDE API BUSINESS
+    { file: './api/fnguideApi', 
+      path: '/api/fnjisujong.json', 
+      method: 'getFnjisuJong', 
+      session: 'uncheck', 
+      type: 'get'
+    },
+    { file: './api/fnguideApi', 
+      path: '/api/fnjisujong.json', 
+      method: 'getFnjisuJong', 
+      session: 'uncheck', 
+      type: 'post'
+    },
+    { file: './api/fnguideApi', 
+      path: '/api/fnjisuinfo.json', 
+      method: 'getFnjisuInfo', 
+      session: 'uncheck', 
+      type: 'get'
+    },
+    { file: './api/fnguideApi', 
+      path: '/api/fnjisuinfo.json', 
+      method: 'getFnjisuInfo', 
+      session: 'uncheck', 
+      type: 'post'
+    },
+
   ]
 }

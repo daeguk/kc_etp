@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fnguideApi">  
+    <!--
+    * FNGUIDE JISU INFO API 
+    -->
+    <select id="selectJisuInfo">
+      SELECT *
+      FROM m168uidxrefe
+      WHERE F12506 = (SELECT MAX(F12506) from m168uidxrefe)
+      AND F16013 = #{f16013}
+    </select>
+    <!--
+    * FNGUIDE JISU JONG API 
+    -->
+    <select id="selectJisuJong">
+      SELECT A.*, 
+        B.F33711, 
+        B.F03003, 
+        B.F34241, 
+        B.F30812, 
+        B.F30813
+      FROM m168uidxmap A
+        LEFT OUTER JOIN m168uidxcomp B
+        ON A.ISIN_CODE = B.F16013
+      WHERE A.F12506 = (SELECT MAX(F12506) from m168uidxcomp)
+      AND A.UP_CODE = #{up_code}
+    </select>
+</mapper>

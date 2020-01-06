@@ -79,6 +79,11 @@ module.exports = class {
     // 운용지원
     ibatisMapper.createMapper(['./database/mysql/user/operSupport/operSupport.xml']);        
 
+    // API
+    ibatisMapper.createMapper(['./database/mysql/api/fnguideApi.xml']);        
+    ibatisMapper.createMapper(['./database/mysql/api/fnguideApiLog.xml']);        
+    ibatisMapper.createMapper(['./database/mysql/api/fnguideApiMember.xml']);        
+
     return ibatisMapper;
   }
 };

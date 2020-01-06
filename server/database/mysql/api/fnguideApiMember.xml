@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fnguideApiMember">  
+    <!--
+    * API 계정관리
+    -->
+    <select id="selectApiMemberList">
+      SELECT *
+        FROM tm_api_fnguide_user
+    </select>
+
+    <select id="selectApiMemberCheck">
+      SELECT *
+        FROM tm_api_fnguide_user
+      WHERE inst_cd = #{inst_cd}
+        AND user_ip = #{user_ip}
+        AND auth_key = #{auth_key}
+    </select>
+
+    <insert id="insertApiMember">
+      INSERT INTO tm_api_fnguide_user (inst_cd, user_ip, auth_key, user_name) 
+      VALUES (#{inst_cd}, #{user_ip}, #{auth_key}, #{user_name})
+    </insert>
+
+    <update id="updateApiMember">
+      UPDATE tm_api_fnguide_user SET 
+        auth_key = #{auth_key},
+        user_name = #{user_name}
+      WHERE inst_cd = #{inst_cd}
+        AND user_ip = #{user_ip}
+    </update>
+
+    <delete id="deleteApiMember">
+      DELETE FROM tm_api_fnguide_user
+      WHERE inst_cd = #{inst_cd}
+        AND user_ip = #{user_ip}
+    </delete>
+</mapper>

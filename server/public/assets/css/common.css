@@ -1,19 +1,6 @@
 
 @charset "utf-8";
-/*@font-face {
-    font-family:'Noto Sans';
-    src: url(../webfonts/NotoSansKR-Medium.woff) format('woff'), 
-         url(../webfonts/NotoSansKR-Medium.ttf)  format('truetype'), 
-         url(../webfonts/NotoSansKR-Medium.eot); 
-    font-weight:400;
-  }
-@font-face {
-    font-family:'Noto Sans';
-    src: url(../webfonts/NotoSansKR-Bold.woff) format('woff'), 
-         url(../webfonts/NotoSansKR-Bold.ttf)  format('truetype'), 
-         url(../webfonts/NotoSansKR-Bold.eot); 
-    font-weight:600;
-  }*/
+
 @import url(https://fonts.googleapis.com/css?family=Noto+Sans);
 @import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
 @import url(https://fonts.googleapis.com/css?family=Droid+Sans);

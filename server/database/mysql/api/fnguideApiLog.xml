@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fnguideApiLog">  
+    <!--
+    * API LOG 
+    -->
+    <insert id="insertApiLog">
+      INSERT INTO tm_api_fnguide_log (inst_cd, user_ip, reply_cnt, gubun, request_date) 
+      VALUES (#{inst_cd}, #{user_ip}, #{reply_cnt}, #{gubun}, NOW())
+    </insert>
+
+    <select id="selectApiLogTotcnt">
+      SELECT count(*) AS totcnt
+        FROM tm_api_fnguide_log
+    </select>
+
+    <select id="selectApiLog">
+      SELECT A.*, B.user_name
+        FROM tm_api_fnguide_log A, tm_api_fnguide_user B
+      WHERE A.inst_cd = B.inst_cd
+        AND A.user_ip = B.user_ip
+        ORDER BY A.seq DESC LIMIT ${page}, ${perPage}
+    </select>
+
+</mapper>
