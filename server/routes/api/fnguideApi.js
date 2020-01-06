@@ -146,12 +146,12 @@ var getFnjisuInfo = function(req, res) {
     inItem.inst_cd = req.query.inst_cd;
     inItem.user_ip = req.query.user_ip;
     inItem.auth_key = req.query.auth_key;
-    inItem.f16013 = req.query.f16013;
+    inItem.f16013 = req.query.up_code;
   }else {
     inItem.inst_cd = req.body.inst_cd;
     inItem.user_ip = req.body.user_ip;
     inItem.auth_key = req.body.auth_key;
-    inItem.f16013 = req.body.f16013;
+    inItem.f16013 = req.body.up_code;
   }
 
   if(inItem.user_ip == undefined) {
