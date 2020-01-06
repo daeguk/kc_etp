@@ -2,16 +2,15 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Constant from './store_constant.js';
 Vue.use(Vuex);
-
 const store = new Vuex.Store({
   state: {
     user: {
-      email: "", 
-      password: "", 
-      name: "", 
-      type_cd: "", 
-      type_name: "", 
-      inst_cd: "",                 
+      email: "",
+      password: "",
+      name: "",
+      type_cd: "",
+      type_name: "",
+      inst_cd: "",
       inst_name: "",
       krx_cd: "",
       hp_no: "",
@@ -28,12 +27,12 @@ const store = new Vuex.Store({
       bef5Year: "",
       bef10Year: "",
     },
-    etpmast: [],    
+    etpmast: [],
     etfmast: [],
     etnmast: [],
-    indexmast: [],  // 지수전체
-    domindexmast: [],  // 국내지수
-    forindexmast: [],  // 해외지수
+    indexmast: [], // 지수전체
+    domindexmast: [], // 국내지수
+    forindexmast: [], // 해외지수
   },
   mutations: {
     [Constant.ADD_USER]: (state, payload) => {
@@ -75,13 +74,13 @@ const store = new Vuex.Store({
       state.user.lp_auth = "";
     },
     [Constant.SET_INDEX]: (state, payload) => {
-      for(let i=0; i < payload.length; i++) {
+      for(let i = 0; i < payload.length; i++) {
         if(payload[i].F16002 == null) continue;
         let tmp = JSON.parse(JSON.stringify(payload[i]));
         state.indexmast.push(tmp);
         if(tmp.large_type == 'KRX' || tmp.large_type == 'FNGUIDE') {
           state.domindexmast.push(tmp);
-        }else {
+        } else {
           state.forindexmast.push(tmp);
         }
       }
@@ -97,19 +96,18 @@ const store = new Vuex.Store({
         if(a.F16002 > b.F16002) return 1;
         else return -1;
       });
-  },
+    },
     [Constant.SET_ETP]: (state, payload) => {
-      for(let i=0; i < payload.length; i++) {
+      for(let i = 0; i < payload.length; i++) {
         let tmp = JSON.parse(JSON.stringify(payload[i]));
         state.etpmast.push(tmp);
         if(tmp.F16493 == '1' || tmp.F16493 == '2') {
           state.etfmast.push(tmp);
-        }else {
+        } else {
           state.etnmast.push(tmp);
         }
       }
     },
   }
 });
-
 export default store;
