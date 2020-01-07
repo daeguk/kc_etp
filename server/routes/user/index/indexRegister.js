@@ -267,11 +267,14 @@ var fileuploadSingle = function(req, res) {
       log.debug(JSON.stringify(reqParam));
       fn_sizeCheck(req.file, "file", resultMsg);
       /* 엑셀파일을 파싱한다. */
+      var v_param = {
+        p_startIndex: 2
+      };
       var workbook = xlsx.readFile(reqParam.uploadFolder + "/" + req.file.filename);
       var sheet_name_list = workbook.SheetNames;
       var dataLists = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {
         header: ["col01", "col02", "col03"],
-        range: 2
+        range: v_param.p_startIndex
       });
       /* 엑셀 건수 체크 */
       if(dataLists.length == 0) {
@@ -286,36 +289,36 @@ var fileuploadSingle = function(req, res) {
           if(typeof data.col01 == "undefined") {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 첫번째 컬럼이 존재하지 않습니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 첫번째 컬럼이 존재하지 않습니다.";
             break;
           } else if(data.col01.length > 100) {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 첫번째 컬럼이 100자리 이내여야 합니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 첫번째 컬럼이 100자리 이내여야 합니다.";
             break;
           }
           /*******************/
           if(typeof data.col02 == "undefined") {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 두번째 컬럼이 존재하지 않습니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 두번째 컬럼이 존재하지 않습니다.";
             break;
           } else if(data.col02.length > 100) {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 두번째 컬럼이 100자리 이내여야 합니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 두번째 컬럼이 100자리 이내여야 합니다.";
             break;
           }
           /*******************/
           if(typeof data.col03 == "undefined") {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 세번째 컬럼이 존재하지 않습니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 세번째 컬럼이 존재하지 않습니다.";
             break;
           } else if(data.col03.length > 100) {
             check = false;
             resultMsg.result = false;
-            resultMsg.msg = "[" + (i + 1) + " 행] 세번째 컬럼이 100자리 이내여야 합니다.";
+            resultMsg.msg = "[" + (i + v_param.p_startIndex + 1) + " 행] 세번째 컬럼이 100자리 이내여야 합니다.";
             break;
           }
           /*******************/
