@@ -1212,13 +1212,13 @@
             }
             if(maxSize > 0) {
               if(file.size == 0) {
-                if(await vm.$root.confirmt.open(title + ' 파일용량이 0 byte 입니다.', msg, {}, 1)) {
+                if(await vm.$root.confirmt.open('확인', title + ' 파일용량이 0 byte 입니다.', {}, 1)) {
                   resolve({result: false});
                   return false;
                 }
               }
               if((maxSize * 1024 * 1024) < file.size) {
-                if(await vm.$root.confirmt.open(title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.', msg, {}, 1)) {
+                if(await vm.$root.confirmt.open('확인', title + ' 파일용량은 ' + maxSize + ' Mb 보다 작아야 합니다.', {}, 1)) {
                   resolve({result: false});
                   return false;
                 }
