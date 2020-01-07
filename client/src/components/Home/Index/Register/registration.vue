@@ -390,6 +390,7 @@
                       >
                         <v-flex xs3>
                           <v-checkbox
+                            v-if="typeof item.one.inst_name != 'undefined'"
                             v-model="form.arr_jisu_inst"
                             :label="item.one.inst_name"
                             color="primary"
@@ -399,6 +400,7 @@
                         </v-flex>
                         <v-flex xs3>
                           <v-checkbox
+                          v-if="typeof item.two.inst_name != 'undefined'"
                             v-model="form.arr_jisu_inst"
                             :label="item.two.inst_name"
                             color="primary"
@@ -408,6 +410,7 @@
                         </v-flex>
                         <v-flex xs3>
                           <v-checkbox
+                          v-if="typeof item.three.inst_name != 'undefined'"
                             v-model="form.arr_jisu_inst"
                             :label="item.three.inst_name"
                             color="primary"
