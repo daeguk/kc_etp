@@ -921,7 +921,9 @@
         util.axiosCall({
           "url": Config.base_url + "/user/index/getJisuDuplCheck",
           "data": {
-            jisu_id: this.modForm.jisu_id
+            jisu_id: this.modForm.jisu_id,
+            prev_jisu_id: this.modForm.prev_jisu_id,
+            status : "modify"
           },
           "method": "post"
         }, async function(response) {
@@ -1364,6 +1366,7 @@
                 }
                 if(response.data.jisuInfo) {
                   vm.modForm = response.data.jisuInfo;
+                  vm.modForm.prev_jisu_id = response.data.jisuInfo.jisu_id;
                   vm.modForm.duplCheckResult = true;
                 }
                 vm.modForm.arr_jisu_inst = [];

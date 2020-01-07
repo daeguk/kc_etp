@@ -14,6 +14,9 @@
           FROM  tm_jisu_mast
          WHERE  tm_jisu_mast.jisu_id                =   #{jisu_id}
     ]]>
+        <if test='status != null  and  status == "modify" ' >
+           AND  tm_jisu_mast.jisu_id               !=   #{prev_jisu_id}
+        </if>          
     </select>
 
     <!--

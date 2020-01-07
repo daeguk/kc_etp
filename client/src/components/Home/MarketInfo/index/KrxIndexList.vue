@@ -208,12 +208,34 @@
     },
     computed: {},
     mounted: function() {
+      var vm = this;
       this.befDates = this.$store.state.befDates;
-      for(var i = 0; i < this.rep_info.length; i++) {
-        this.getIndexBasic(this.rep_info[i]);
-        this.getIndexIntra(this.rep_info[i]);
+      step1().then(function(e){
+        if( e && e.result ) {
+          return  vm.getIndexList(vm.selIndexType);
+        }
+      }).then(function(e){
+        vm.$root.progresst.close();
+      }).catch(function(e){
+        vm.$root.progresst.close();
+      });
+      function  step1() {
+        vm.$root.progresst.open();
+        return new Promise( async function(resolve, reject) {
+          try{
+            for(var i = 0; i < vm.rep_info.length; i++) {
+              await vm.getIndexBasic(vm.rep_info[i]);
+              await vm.getIndexIntra(vm.rep_info[i]);
+            }
+            resolve({result:true});
+          }catch(e){
+            console.log(e);
+            resolve({result:false});
+          }
+        }).catch(function(e1) {
+          console.log(e1);
+        });        
       }
-      this.getIndexList(this.selIndexType);
     },
     created: function() {},
     beforeDestroy() {},
@@ -227,39 +249,59 @@
         console.log("closeIndexModal One............");
         this.IndexModalFlag = false;
       },
-      getIndexBasic: function(rinfo) {
+      getIndexBasic: async function(rinfo) {
         // console.log("getIndexBasic : " + rinfo.seq);
         var vm = this;
-        axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
-          params: rinfo
-        }).then(function(response) {
-          // console.log(response);
-          if(response.data.success == false) {
-            alert("해당 지수의 데이터가 없습니다");
-          } else {
-            rinfo.F15001 = response.data.results[0].F15001;
-            rinfo.F15472 = response.data.results[0].F15472;
-            rinfo.F15004 = response.data.results[0].F15004;
+        return await new Promise( async function(resolve, reject) {
+          try{               
+            axios.get(Config.base_url + "/user/marketinfo/getIndexBasic", {
+              params: rinfo
+            }).then(function(response) {
+              // console.log(response);
+              if(response.data.success == false) {
+               alert("해당 지수의 데이터가 없습니다");
+              } else {
+                rinfo.F15001 = response.data.results[0].F15001;
+                rinfo.F15472 = response.data.results[0].F15472;
+                rinfo.F15004 = response.data.results[0].F15004;
+              }
+              resolve({result:true});
+            });
+          }catch(e){
+            console.log(e);
+            resolve({result:false});
           }
-        });
+        }).catch(function(e1) {
+          console.log(e1);
+        });            
       },
-      getIndexIntra: function(rinfo) {
+      getIndexIntra: async function(rinfo) {
         // console.log("getIndexIntra : " + rinfo.seq);
         var vm = this;
-        axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
-          params: rinfo
-        }).then(function(response) {
-          // console.log(response);
-          if(response.data.success == false) {
-            alert("해당 지수의 데이터가 없습니다");
-          } else {
-            // vm.intra_data.push = response.data.results;
-            vm.intra_data.push(response.data.results);
-            // console.log(vm.intra_data[rinfo.seq]);
-            // 데이터 없는 상태에서 getDataSet 하면 에러남.
-            // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
-            if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
+        return await new Promise( async function(resolve, reject) {
+          try{         
+            axios.get(Config.base_url + "/user/marketinfo/getIndexIntra", {
+              params: rinfo
+            }).then(function(response) {
+              // console.log(response);
+              if(response.data.success == false) {
+               alert("해당 지수의 데이터가 없습니다");
+              } else {
+                // vm.intra_data.push = response.data.results;
+                vm.intra_data.push(response.data.results);
+                // console.log(vm.intra_data[rinfo.seq]);
+                // 데이터 없는 상태에서 getDataSet 하면 에러남.
+                // Error in render: "TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+                if(vm.intra_data.length == vm.rep_info.length) vm.chartLoadFlag = true;
+              }
+              resolve({result:true});
+            });
+          }catch(e){
+            console.log(e);
+            resolve({result:false});
           }
+        }).catch(function(e1) {
+          console.log(e1);
         });
       },
       getDataSet: function(idx) {
@@ -272,59 +314,69 @@
         }
         return items;
       },
-      getIndexList: function(indexType) {
+      getIndexList: async function(indexType) {
         // console.log("getKrxIndexList");
         var vm = this;
         vm.indexLists = [];
-        axios.get(Config.base_url + "/user/marketinfo/getIndexListAnalByType", {
-          params: {
-            large_type: "KRX",
-            middle_type: indexType.value,
-            bef1Week: vm.befDates.bef1Week,
-            bef1Month: vm.befDates.bef1Month,
-            befYtd: vm.befDates.befYtd,
-            bef1Year: vm.befDates.bef1Year,
-            bef3Year: vm.befDates.bef3Year,
-            bef5Year: vm.befDates.bef5Year,
-            bef10Year: vm.befDates.bef10Year,
-          }
-        }).then(function(response) {
-          // console.log(response);
-          if(response.data.success == false) {
-            alert("해당 종목이 없습니다");
-          } else {
-            vm.resultLists = response.data.results;
-            // console.log(vm.resultLists);
-            for(let i = 0; i < vm.resultLists.length; i++) {
-              let tmp = {};
-              tmp = JSON.parse(JSON.stringify(vm.resultLists[i]));
-              tmp.F15472 = util.getPlus(tmp.F15472, 2);
-              tmp.F15004 = vm.resultLists[i].F15004;
-              tmp.F15004 = util.getPlus(tmp.F15004, 2);
-              tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
-              tmp.weekRate = util.getDiffRate1(tmp.F15001, tmp.bef1Week);
-              tmp.wStyle = util.getUpAndDownStyle(tmp.weekRate);
-              tmp.monthRate = util.getDiffRate1(tmp.F15001, tmp.bef1Month);
-              tmp.mStyle = util.getUpAndDownStyle(tmp.monthRate);
-              tmp.ytdRate = util.getDiffRate1(tmp.F15001, tmp.befYtd);
-              tmp.ytdStyle = util.getUpAndDownStyle(tmp.ytdRate);
-              tmp.yearRate = util.getDiffRate1(tmp.F15001, tmp.bef1Year);
-              tmp.yStyle = util.getUpAndDownStyle(tmp.yearRate);
-              tmp.year3Rate = util.getDiffRate1(tmp.F15001, tmp.bef3Year);
-              tmp.y3Style = util.getUpAndDownStyle(tmp.year3Rate);
-              tmp.year5Rate = util.getDiffRate1(tmp.F15001, tmp.bef5Year);
-              tmp.y5Style = util.getUpAndDownStyle(tmp.year5Rate);
-              tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
-              tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
-              tmp.F15001 = util.formatNumber(tmp.F15001);
-              vm.indexLists.push(tmp);
-            }
-            vm.indexLists.sort(function(a, b) {
-              if(Number(a.ytdRate) > Number(b.ytdRate)) return -1;
-              else return 1;
+        return await new Promise( async function(resolve, reject) {
+          try{                
+            axios.get(Config.base_url + "/user/marketinfo/getIndexListAnalByType", {
+              params: {
+                large_type: "KRX",
+                middle_type: indexType.value,
+                bef1Week: vm.befDates.bef1Week,
+                bef1Month: vm.befDates.bef1Month,
+                befYtd: vm.befDates.befYtd,
+                bef1Year: vm.befDates.bef1Year,
+                bef3Year: vm.befDates.bef3Year,
+                bef5Year: vm.befDates.bef5Year,
+                bef10Year: vm.befDates.bef10Year,
+              }
+            }).then(function(response) {
+              // console.log(response);
+              if(response.data.success == false) {
+                alert("해당 종목이 없습니다");
+              } else {
+                vm.resultLists = response.data.results;
+                // console.log(vm.resultLists);
+                for(let i = 0; i < vm.resultLists.length; i++) {
+                  let tmp = {};
+                  tmp = JSON.parse(JSON.stringify(vm.resultLists[i]));
+                  tmp.F15472 = util.getPlus(tmp.F15472, 2);
+                  tmp.F15004 = vm.resultLists[i].F15004;
+                  tmp.F15004 = util.getPlus(tmp.F15004, 2);
+                  tmp.dStyle = util.getUpAndDownStyle(tmp.F15004);
+                  tmp.weekRate = util.getDiffRate1(tmp.F15001, tmp.bef1Week);
+                  tmp.wStyle = util.getUpAndDownStyle(tmp.weekRate);
+                  tmp.monthRate = util.getDiffRate1(tmp.F15001, tmp.bef1Month);
+                  tmp.mStyle = util.getUpAndDownStyle(tmp.monthRate);
+                  tmp.ytdRate = util.getDiffRate1(tmp.F15001, tmp.befYtd);
+                  tmp.ytdStyle = util.getUpAndDownStyle(tmp.ytdRate);
+                  tmp.yearRate = util.getDiffRate1(tmp.F15001, tmp.bef1Year);
+                  tmp.yStyle = util.getUpAndDownStyle(tmp.yearRate);
+                  tmp.year3Rate = util.getDiffRate1(tmp.F15001, tmp.bef3Year);
+                  tmp.y3Style = util.getUpAndDownStyle(tmp.year3Rate);
+                  tmp.year5Rate = util.getDiffRate1(tmp.F15001, tmp.bef5Year);
+                  tmp.y5Style = util.getUpAndDownStyle(tmp.year5Rate);
+                  tmp.year10Rate = util.getDiffRate1(tmp.F15001, tmp.bef10Year);
+                  tmp.y10Style = util.getUpAndDownStyle(tmp.year10Rate);
+                  tmp.F15001 = util.formatNumber(tmp.F15001);
+                  vm.indexLists.push(tmp);
+                }
+                vm.indexLists.sort(function(a, b) {
+                  if(Number(a.ytdRate) > Number(b.ytdRate)) return -1;
+                  else return 1;
+                });
+              }
+              resolve({result:true});
             });
+          }catch(e){
+            console.log(e);
+            resolve({result:false});
           }
-        });
+        }).catch(function(e1) {
+          console.log(e1);
+        });            
       },
       getUpAndDownStyle: function(value) {
         var tmp = Number(value);
