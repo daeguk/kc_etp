@@ -65,6 +65,10 @@
   </v-card>
 </template>
 
+<style scoped>
+.v-menu__content{position:fixed !important;}
+</style>
+
 <script>
   import $ from "jquery";
   import dt from "datatables.net";
