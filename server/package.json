@@ -6,7 +6,7 @@
         "start": "node src/server.js"
     },
     "dependencies": {
-        "async": "^2.6.0",
+        "async": "^3.2.2",
         "bluebird": "^3.5.3",
         "body-parser": "^1.15.2",
         "connect-flash": "^0.1.1",
